@@ -1,6 +1,12 @@
 server:
   port: 60004
 
+spring:
+  devtools:
+    livereload:
+      # 정적 리소스 변화가 있을 때 반영
+      enabled: true
+
   thymeleaf:
     # 타임리프 참조 경로
     prefix: classpath:/templates/
