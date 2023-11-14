@@ -18,11 +18,11 @@ https://templatemo.com/tm-584-pod-talk
 -----------------------------------------*/
 :root {
   --white-color:                  #ffffff;
-  --primary-color:                #d204fb;
+  --primary-color:                #660099;
   --secondary-color:              #000000;
   --section-bg-color:             #fbf0ff;
-  --custom-btn-bg-color:          #a000cc6a;
-  --custom-btn-bg-hover-color:    #00CC99;
+  --custom-btn-bg-color:          #660099;
+  --custom-btn-bg-hover-color:    #aa00ff;
   --dark-color:                   #000000;
   --p-color:                      #717275;
   --border-color:                 #7fffd4;
@@ -53,12 +53,12 @@ https://templatemo.com/tm-584-pod-talk
 
 body {
   background-color: var(--white-color);
-  font-family: var(--body-font-family); 
+  font-family: var(--body-font-family);
 }
 
 
 /*---------------------------------------
-  TYPOGRAPHY               
+  TYPOGRAPHY
 -----------------------------------------*/
 
 h2,
@@ -75,7 +75,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--title-font-family); 
+  font-family: var(--title-font-family);
   font-weight: var(--font-weight-semibold);
 }
 
@@ -117,7 +117,7 @@ ul li {
   font-weight: var(--font-weight-light);
 }
 
-a, 
+a,
 button {
   touch-action: manipulation;
   transition: all 0.3s;
@@ -145,7 +145,7 @@ strong {
 
 
 /*---------------------------------------
-  SECTION               
+  SECTION
 -----------------------------------------*/
 .section-title-wrap {
   position: relative;
@@ -204,7 +204,7 @@ main {
 
 
 /*---------------------------------------
-  CUSTOM ICON COLOR               
+  CUSTOM ICON COLOR
 -----------------------------------------*/
 .custom-icon {
   color: var(--primary-color);
@@ -212,7 +212,7 @@ main {
 
 
 /*---------------------------------------
-  CUSTOM BUTTON               
+  CUSTOM BUTTON
 -----------------------------------------*/
 .custom-btn {
   background: var(--custom-btn-bg-color);
@@ -251,14 +251,14 @@ main {
 
 
 /*---------------------------------------
-  SITE HEADER              
+  SITE HEADER
 -----------------------------------------*/
 .site-header {
-  background-image: url('../images/templatemo-wave-header.jpg'), linear-gradient(#348CD2, #FFFFFF);;
+  background-image: linear-gradient(#cf82f5, #FFFFFF);
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: contain;
   background-position: center;
-  min-height: 480px;
+  min-height: 200px;
   position: relative;
 }
 
@@ -268,7 +268,7 @@ main {
 
 
 /*---------------------------------------
-  NAVIGATION              
+  NAVIGATION
 -----------------------------------------*/
 .navbar {
   background-color: transparent;
@@ -309,7 +309,7 @@ main {
 .navbar-nav .nav-link {
   display: inline-block;
   color: var(--section-bg-color);
-  font-family: var(--title-font-family); 
+  font-family: var(--title-font-family);
   font-size: var(--menu-font-size);
   font-weight: var(--font-weight-medium);
   text-transform: uppercase;
@@ -324,7 +324,7 @@ main {
   padding-left: 18px;
 }
 
-.navbar-nav .nav-link.active, 
+.navbar-nav .nav-link.active,
 .navbar-nav .nav-link:hover {
   color: var(--secondary-color);
 }
@@ -357,7 +357,7 @@ main {
 .navbar .dropdown-item {
   display: inline-block;
   color: var(--p-bg-color);
-  font-family: var(--title-font-family); 
+  font-family: var(--title-font-family);
   font-size: var(--menu-font-size);
   font-weight: var(--font-weight-medium);
   text-transform: uppercase;
@@ -365,9 +365,9 @@ main {
   position: relative;
 }
 
-.navbar .dropdown-item.active, 
+.navbar .dropdown-item.active,
 .navbar .dropdown-item:active,
-.navbar .dropdown-item:focus, 
+.navbar .dropdown-item:focus,
 .navbar .dropdown-item:hover {
   background: transparent;
   color: var(--secondary-color);
@@ -476,7 +476,7 @@ main {
 
 
 /*---------------------------------------
-  CAROUSEL        
+  CAROUSEL
 -----------------------------------------*/
 .hero-section {
   background-image: url('../images/templatemo-wave-banner.jpg'), linear-gradient(#348CD2, #FFFFFF);
@@ -592,14 +592,14 @@ main {
   margin-top: 40px;
 }
 
-.owl-theme .owl-dots .owl-dot.active span, 
+.owl-theme .owl-dots .owl-dot.active span,
 .owl-theme .owl-dots .owl-dot:hover span {
   background: var(--secondary-color);
 }
 
 
 /*---------------------------------------
-  CUSTOM BLOCK              
+  CUSTOM BLOCK
 -----------------------------------------*/
 .custom-block {
   border: 2px solid var(--primary-color);
@@ -793,7 +793,7 @@ main {
 
 
 /*---------------------------------------
-  PROIFLE BLOCK               
+  PROIFLE BLOCK
 -----------------------------------------*/
 .profile-block {
   margin-top: 10px;
@@ -824,7 +824,7 @@ main {
 
 
 /*---------------------------------------
-  ABOUT & TEAM SECTION               
+  ABOUT & TEAM SECTION
 -----------------------------------------*/
 .about-image {
   border-radius: var(--border-radius-medium);
@@ -848,7 +848,7 @@ main {
 
 
 /*---------------------------------------
-  PAGINATION               
+  PAGINATION
 -----------------------------------------*/
 .pagination {
   border: 1px solid #dee2e6;
@@ -883,7 +883,7 @@ main {
 
 
 /*---------------------------------------
-  CONTACT               
+  CONTACT
 -----------------------------------------*/
 .contact-info p strong {
   font-family: var(--title-font-family);
@@ -909,6 +909,23 @@ main {
   height: 150px;
 }
 
+.contact-form button[type="confirm"] {
+  background: var(--custom-btn-bg-color);
+  border: none;
+  border-radius: var(--border-radius-large);
+  color: var(--white-color);
+  font-family: var(--title-font-family);
+  font-size: var(--p-font-size);
+  font-weight: var(--font-weight-semibold);
+  transition: all 0.3s;
+  margin-top: 10%;
+}
+
+.contact-form button[type="confirm"]:hover,
+.contact-form button[type="confirm"]:focus {
+  background: var(--custom-btn-bg-hover-color);
+  border-color: transparent;
+}
 
 /*---------------------------------------
   SUBSCRIBE FORM               
@@ -1007,7 +1024,7 @@ main {
   SITE FOOTER              
 -----------------------------------------*/
 .site-footer {
-  background-image: url('../images/templatemo-wave-footer.jpg'), linear-gradient(#FFFFFF, #348CD2);
+  background-image: linear-gradient(#FFFFFF, #cf82f5);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -1105,10 +1122,10 @@ main {
   RESPONSIVE STYLES               
 -----------------------------------------*/
 @media screen and (min-width: 2160px) {
-	.hero-section {
-	  background-size: 100% 90%;
-	  /* T o o p l a t e . c o m   C u s t o m i z e d */
-	}
+  .hero-section {
+    background-size: 100% 90%;
+    /* T o o p l a t e . c o m   C u s t o m i z e d */
+  }
 }
 
 
@@ -1119,10 +1136,10 @@ main {
 }
 
 @media screen and (max-width: 1240px) {
-	.hero-section {
-	  background-size: 116%;
-	  /* T o o p l a t e . c o m   C u s t o m i z e d */
-	}
+  .hero-section {
+    background-size: 116%;
+    /* T o o p l a t e . c o m   C u s t o m i z e d */
+  }
 }
 
 @media screen and (max-width: 991px) {
@@ -1149,11 +1166,11 @@ main {
   h6 {
     font-size: 18px;
   }
-  
+
   .hero-section {
-	  background-size: 160% 66%; 
-	  /* T o o p l a t e . c o m   C u s t o m i z e d */
-	}
+    background-size: 160% 66%;
+    /* T o o p l a t e . c o m   C u s t o m i z e d */
+  }
 
   .section-padding {
     padding-top: 50px;
@@ -1205,10 +1222,10 @@ main {
 }
 
 @media screen and (max-width: 540px) {
-	.hero-section {
-  		background-size: 180% 65%;
-		/* T o o p l a t e . c o m   C u s t o m i z e d */
-	}
+  .hero-section {
+    background-size: 180% 65%;
+    /* T o o p l a t e . c o m   C u s t o m i z e d */
+  }
 
   .custom-block .custom-block-top {
     flex-direction: column;
