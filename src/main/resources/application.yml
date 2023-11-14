@@ -11,8 +11,10 @@ spring:
     # 타임리프 참조 경로
     prefix: classpath:/templates/
     suffix: .html
+
     # 캐시 저장 여부
     cache: false
+
     # 디렉토리에 파일이 있는지 체크, 없으면 에러발생 유도
     check-template-location: true
 
