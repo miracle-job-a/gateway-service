@@ -7,15 +7,15 @@
     <title>Test</title>
 
     <!-- config fragment -->
-    <th:block th:replace="fragment/config :: configFragment"></th:block>
+    <th:block th:replace="/fragment/config :: configFragment"></th:block>
 
     <!-- header fragment -->
-    <th:block th:replace="fragment/header :: commonHeader"></th:block>
+    <th:block th:replace="/fragment/header :: commonHeader"></th:block>
 
     <!-- Body content -->
     <th:block layout:fragment="content"></th:block>
 
     <!-- footer content -->
-    <th:block th:replace="fragment/footer :: commonFooter"></th:block>
+    <th:block th:replace="/fragment/footer :: commonFooter"></th:block>
 
 </html>
