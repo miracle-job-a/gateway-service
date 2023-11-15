@@ -918,7 +918,7 @@ main {
 
 }
 
-.contact-form button[type="confirm"] {
+.contact-form [type="confirm"] {
   background: var(--custom-btn-bg-color);
   border: none;
   border-radius: var(--border-radius-large);
