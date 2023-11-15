@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("v1")
-public class WindowController {
+public class GuestController {
     @GetMapping
     public String index(){
         return "index";
