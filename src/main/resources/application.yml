@@ -6,6 +6,8 @@ spring:
     livereload:
       # 정적 리소스 변화가 있을 때 반영
       enabled: true
+    restart:
+      enabled: true
 
   thymeleaf:
     # 타임리프 참조 경로
