@@ -12,8 +12,13 @@ public class WindowController {
         return "index";
     }
 
-    @GetMapping("/join")
-    public String userJoin(){
-        return "contact";
+    @GetMapping("/company/join")
+    public String companyJoin(){
+        return "company-join";
+    }
+
+    @GetMapping("/login-form")
+    public String loginForm(){
+        return "login";
     }
 }
