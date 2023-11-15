@@ -10,26 +10,33 @@
         $(document).ready(function() {
 
             $('#inputPw').keyup(function() {
-                $('#checkPw').text(' ');
+                checkPassword();
             });
 
             $('#pwConfirm').keyup(function() {
+                checkPassword();
+            });
 
-                if ($('#inputPw').val() != $('#pwConfirm').val()) {
+            function checkPassword() {
+                var password = $('#inputPw').val();
+                var confirmPassword = $('#pwConfirm').val();
+
+                // 비밀번호가 6자리 이상이고, 특수문자가 최소 1개 이상 포함되어 있는지 확인
+                var passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/;
+
+                if (password !== confirmPassword || !passwordRegex.test(password)) {
                     $('#checkPw').text(' ');
                     $('#checkPw').addClass("red");
-                    $('#checkPw').html('<b>암호가 틀립니다.</b>');
+                    $('#checkPw').html('<b>암호가 틀립니다. (알파벳 포함 6자리 이상, 특수문자 1개 포함)</b>');
                     $('#submit').prop("disabled", true);
-
-
                 } else {
                     $('#checkPw').text(' ');
                     $('#checkPw').addClass("blue");
                     $('#checkPw').html('<b>암호가 일치합니다.</b>');
                     $('#submit').prop("disabled", false);
-
                 }
-            });
+
+            }
         });
 
         /* 사업자 번호 유효성 체크 */
@@ -39,7 +46,7 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: 'v1/company/bno/',
+                    url: '/v1/company/bno/',
                     data: { bno:value},
                     success: function (result){
                         $('bnoResult').html(result);
@@ -50,7 +57,7 @@
                 });
             });
         });
-        function onInputBno(target){
+        /*function onInputBno(target){
             var numberMap = target.replace(/-/gi, '').split('').map(function (d){
                 return parseInt(d, 10);
             });
@@ -69,7 +76,7 @@
             }
 
             return false;
-        }
+        }*/
 
         /* 주소 API */
         window.onload = function(){
@@ -182,7 +189,7 @@
                                 <div class="form-floating">
                                     <input type="password" name="password" id="inputPw" class="form-control"
                                            placeholder="비밀번호" required="">
-                                    <label for="floatingInput">비밀번호(6자리 이상, 특수문자 1개 포함)</label>
+                                    <label for="floatingInput">비밀번호(알파벳 포함 6자리 이상, 특수문자 1개 포함)</label>
                                 </div>
                             </div>
 
