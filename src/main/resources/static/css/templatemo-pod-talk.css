@@ -909,6 +909,14 @@ main {
   height: 150px;
 }
 
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+}
+
 .contact-form button[type="confirm"] {
   background: var(--custom-btn-bg-color);
   border: none;
@@ -918,13 +926,48 @@ main {
   font-size: var(--p-font-size);
   font-weight: var(--font-weight-semibold);
   transition: all 0.3s;
-  margin-top: 10%;
+  margin-top: 10px;
+  margin-bottom: 10px; /* 적절한 여백으로 조절합니다. */
 }
 
 .contact-form button[type="confirm"]:hover,
 .contact-form button[type="confirm"]:focus {
   background: var(--custom-btn-bg-hover-color);
   border-color: transparent;
+}
+
+
+/*---------------------------------------
+  SUBSCRIBE FORM
+-----------------------------------------*/
+.subscribe-form-wrap {
+  border: 1px solid var(--white-color);
+  border-radius: var(--border-radius-small);
+  width: 80%;
+  position: relative;
+  top: 12px;
+  padding: 35px;
+}
+
+.subscribe-form-wrap h6 {
+  background: var(--white-color);
+  border-radius: var(--border-radius-medium);
+  color: var(--primary-color);
+  text-align: center;
+  position: relative;
+  bottom: 55px;
+  margin-bottom: -25px;
+  padding: 8px;
+}
+
+.subscribe-form #subscribe-email {
+  border: 0;
+  border-radius: 10px 10px 0 0;
+  margin-bottom: 0;
+}
+
+.subscribe-form #submit {
+  border-radius: 0 0 10px 10px;
 }
 
 /*---------------------------------------
