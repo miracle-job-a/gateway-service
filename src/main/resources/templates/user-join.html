@@ -32,45 +32,6 @@
             });
         });
 
-        /* 사업자 번호 유효성 체크 */
-        $(document).ready(function () {
-            $('#bnoCertify').on('click', function () {
-                var value = $('#bno').val();
-
-                $.ajax({
-                    type: 'POST',
-                    url: 'v1/company/bno/',
-                    data: { bno:value},
-                    success: function (result){
-                        $('bnoResult').html(result);
-                    },
-                    error: function (error) {
-                        $('bnoResult').html(error);
-                    }
-                });
-            });
-        });
-        function onInputBno(target){
-            var numberMap = target.replace(/-/gi, '').split('').map(function (d){
-                return parseInt(d, 10);
-            });
-
-            if(numberMap.length == 10){
-                var keyArr = [1, 3, 7, 1, 3, 7, 1, 3, 5];
-                var chk = 0;
-
-                keyArr.forEach(function(d, i){
-                    chk += d * numberMap[i];
-                });
-
-                chk += parseInt((keyArr[8] * numberMap[8])/ 10, 10);
-                console.log(chk);
-                return Math.floor(numberMap[9]) === ( (10 - (chk % 10) ) % 10);
-            }
-
-            return false;
-        }
-
         /* 주소 API */
         window.onload = function(){
             document.getElementById("addressInputBtn").addEventListener("click", function(){ //주소입력칸을 클릭하면
@@ -123,6 +84,13 @@
             });
         }
 
+        /* 전화번호 정규식 */
+        function onInputPhone(target) {
+            target.value = target.value
+                .replace(/[^0-9]/g, '')
+                .replace(/(^02.{0}|^01.{1}|[0-9]{3,4})([0-9]{3,4})([0-9]{4})/g, "$1-$2-$3");
+        }
+
         // 약관 동의 버튼
         document.getElementById('termsAgree').addEventListener('change', function () {
             // 체크박스가 체크되면 가입하기 버튼을 활성화, 언체크되면 비활성화
@@ -140,7 +108,7 @@
 
                 <div class="col-lg-8 col-12 mx-auto">
                     <div class="section-title-wrap mb-5">
-                        <h4 class="section-title">기업 회원가입</h4>
+                        <h4 class="section-title">유저 회원가입</h4>
                     </div>
 
                     <!-- 회원가입 폼  -->
@@ -157,7 +125,7 @@
                             </div>
                             <div class="col-lg-2 col-md-2 col-12">
                                 <div class="form-floating">
-                                    <button type="button" class="custom-btn">인증하기</button>
+                                    <button type="confirm" class="btn">인증하기</button>
                                 </div>
                             </div>
 
@@ -171,7 +139,7 @@
                             </div>
                             <div class="col-lg-2 col-md-2 col-12">
                                 <div class="form-floating" >
-                                    <button type="button" class="custom-btn">인증확인</button>
+                                    <button type="confirm" class="btn">인증확인</button>
                                 </div>
                             </div>
 
@@ -186,7 +154,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-12 col-md-5 col-12">
+                            <div class="col-lg-12 col-md-5 col-12 pt-2">
                                 <div class="form-floating">
                                     <input type="password" name="password" id="pwConfirm" class="form-control"
                                            placeholder="비밀번호확인" required="">
@@ -198,39 +166,38 @@
                                 <p id="checkPw" style="color: blue;"></p>
                             </div>
 
-                            <!-- 기업이름 -->
+                            <!-- 유저이름 -->
                             <div class="col-lg-5 col-md-5 col-12">
                                 <div class="form-floating">
                                     <input type="text" name="name" id="name" class="form-control"
-                                           placeholder="기업명" required="">
-                                    <label for="floatingInput">기업명</label>
+                                           placeholder="이름" required="">
+                                    <label for="floatingInput">이름</label>
                                 </div>
                             </div>
-                            <!-- 대표자명 -->
+                            <div class="col-lg-7 col-md-7 col-12"></div>
+
+
+
+                            <!-- 생년월일 -->
                             <div class="col-lg-5 col-md-5 col-12">
                                 <div class="form-floating">
-                                    <input type="text" name="cedName" id="ceoName" class="form-control"
-                                           placeholder="대표자" required="">
-                                    <label for="floatingInput">대표자 명</label>
+                                    <input type="date" name="birth" id="birth" class="form-control"
+                                           placeholder="생년월일" required="">
+                                    <label for="floatingInput">생년월일</label>
                                 </div>
                             </div>
 
 
-                            <!-- 사업자 번호 -->
+                            <!-- 전화번호 -->
                             <div class="col-lg-5 col-md-5 col-12">
                                 <div class="form-floating">
-                                    <input type="text" name="bno" id="bno" class="form-control"
-                                           placeholder="사업자번호" required="" oninput="onInputBno(this)" maxlength="10">
-                                    <label for="floatingInput">사업자 번호</label>
+                                    <input type="text" name="phone" id="phone" class="form-control"
+                                           placeholder="전화번호" required="" oninput="onInputPhone(this)" maxlength="14">
+                                    <label for="floatingInput">전화번호</label>
                                 </div>
                             </div>
                             <div class="col-lg-2 col-md-2 col-12">
-                                <div class="form-floating" >
-                                    <button type="button" class="custom-btn" id="bnoCertify">사업자 인증</button>
-                                </div>
-                            </div>
-                            <div class="col-lg-5 col-md-5 col-12">
-                                <p id="bnoResult"></p>
+
                             </div>
 
                             <!-- 주소 -->
@@ -257,29 +224,6 @@
                             </div>
                             <div class="col-12 pt-3"></div>
 
-
-                            <!-- 업종 -->
-                            <div class="col-lg-5 col-md-5 col-12">
-                                <div class="form-floating">
-                                    <input type="text" name="sector" id="sector" class="form-control"
-                                           placeholder="sector" required="">
-
-                                    <label for="floatingInput">업종</label>
-                                </div>
-                            </div>
-
-
-                            <!-- 직원수 -->
-                            <div class="col-lg-5 col-md-5 col-12">
-                                <div class="form-floating">
-                                    <!-- 텍스트, 음수 입력 못하게 정규식 패턴 추가 -->
-                                    <input type="number" name="employeeNum" id="employeeNum" class="form-control"
-                                           placeholder="employeeNum" required="" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
-
-                                    <label for="floatingInput">직원수</label>
-                                </div>
-                            </div>
-                            <div class="col-lg-2 col-md-2 col-12"></div>
 
                             <div class="col-lg-8 col-md-8 col-12">
                                 <p>이용약관</p>

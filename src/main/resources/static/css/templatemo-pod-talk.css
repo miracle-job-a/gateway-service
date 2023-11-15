@@ -18,11 +18,11 @@ https://templatemo.com/tm-584-pod-talk
 -----------------------------------------*/
 :root {
   --white-color:                  #ffffff;
-  --primary-color:                #d204fb;
+  --primary-color:                #660099;
   --secondary-color:              #000000;
   --section-bg-color:             #fbf0ff;
-  --custom-btn-bg-color:          #a000cc6a;
-  --custom-btn-bg-hover-color:    #00CC99;
+  --custom-btn-bg-color:          #660099;
+  --custom-btn-bg-hover-color:    #aa00ff;
   --dark-color:                   #000000;
   --p-color:                      #717275;
   --border-color:                 #7fffd4;
@@ -223,7 +223,8 @@ main {
   font-weight: var(--font-weight-semibold);
   line-height: normal;
   transition: all 0.3s;
-  padding: 10px 20px;
+  padding: 10px 10px;
+  margin-top: 10px;
 }
 
 .custom-btn:hover {
@@ -253,7 +254,7 @@ main {
   SITE HEADER              
 -----------------------------------------*/
 .site-header {
-  background-image: linear-gradient(#cf82f5, #FFFFFF);;
+  background-image:  linear-gradient(#cf82f5, #FFFFFF);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -1050,8 +1051,8 @@ main {
 }
 
 .search-form button[type="submit"] {
-  background: var(--secondary-color);
-  border-color: var(--secondary-color);
+  background: var(--primary-color);
+  border-color: var(--primary-color);
   max-width: 50px;
   height: 100%;
   padding-left: 15px;
