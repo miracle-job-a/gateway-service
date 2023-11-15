@@ -175,6 +175,7 @@ strong {
 
 .section-padding {
   padding-top: 100px;
+  padding-bottom: 100px;
 }
 
 main {
@@ -253,11 +254,11 @@ main {
   SITE HEADER              
 -----------------------------------------*/
 .site-header {
-  background-image: linear-gradient(#cf82f5, #FFFFFF);;
+  background-image: url('../images/templatemo-wave-header.jpg'), linear-gradient(#348CD2, #FFFFFF);;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  min-height: 200px;
+  min-height: 480px;
   position: relative;
 }
 
@@ -478,12 +479,11 @@ main {
   CAROUSEL        
 -----------------------------------------*/
 .hero-section {
-  background-image: linear-gradient(#cf82f5, #FFFFFF);
+  background-image: url('../images/templatemo-wave-banner.jpg'), linear-gradient(#348CD2, #FFFFFF);
   background-repeat: no-repeat;
   background-size: 108% 76%;
   background-position: top;
-  padding-top: 150px;
-  min-height: 100px;
+  padding-top: 200px;
 }
 
 .owl-carousel {
@@ -909,6 +909,23 @@ main {
   height: 150px;
 }
 
+.contact-form button[type="confirm"] {
+  background: var(--custom-btn-bg-color);
+  border: none;
+  border-radius: var(--border-radius-large);
+  color: var(--white-color);
+  font-family: var(--title-font-family);
+  font-size: var(--p-font-size);
+  font-weight: var(--font-weight-semibold);
+  transition: all 0.3s;
+  margin-top: 10%;
+}
+
+.contact-form button[type="confirm"]:hover,
+.contact-form button[type="confirm"]:focus {
+  background: var(--custom-btn-bg-hover-color);
+  border-color: transparent;
+}
 
 /*---------------------------------------
   SUBSCRIBE FORM               
@@ -1007,12 +1024,13 @@ main {
   SITE FOOTER              
 -----------------------------------------*/
 .site-footer {
-  background-image: linear-gradient(#FFFFFF, #cf82f5);
+  background-image: url('../images/templatemo-wave-footer.jpg'), linear-gradient(#FFFFFF, #348CD2);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
   margin-top: -80px;
-  padding-bottom: 100px;
+  padding-top: 100px;
+  padding-bottom: 150px;
 }
 
 .site-footer > .container {
