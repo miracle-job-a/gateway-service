@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("v1")
+@RequestMapping("/v1")
 public class GuestController {
     @GetMapping
     public String index(){
