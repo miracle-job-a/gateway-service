@@ -14,6 +14,6 @@ public class WindowController {
 
     @GetMapping("/join")
     public String userJoin(){
-        return "contact";
+        return "company-join";
     }
 }
