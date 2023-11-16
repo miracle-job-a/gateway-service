@@ -2,6 +2,8 @@ package com.miracle.memberservice.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -12,6 +14,7 @@ public class GuestController {
         return "index";
     }
 
+
     @GetMapping("/user/login-form")
     public String userLoginForm() {
         return "guest/user-login";
@@ -21,5 +24,18 @@ public class GuestController {
     public String companyLoginForm() {
         return "guest/company-login";
     }
+
+    //회원가입 폼 이동
+    @GetMapping("/user/join")
+    public String userJoinPage() {
+        return "guest/user-join";
+    }
+
+    @GetMapping("/company/join")
+    public String companyJoinPage() {
+        return "guest/company-join";
+    }
+
+
 
 }
