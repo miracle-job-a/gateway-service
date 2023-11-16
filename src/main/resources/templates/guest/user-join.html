@@ -20,17 +20,17 @@
             function checkPassword() {
                 var password = $('#inputPw').val();
 
-
                 // 비밀번호가 6자리 이상이고, 특수문자가 최소 1개 이상 포함되어 있는지 확인
                 var passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/;
 
                 if (!passwordRegex.test(password)) {
                     $('#checkPw').css("color", "grey").html('<b>알파벳 포함 숫자 6자리 이상, 특수문자 1개 포함해주세요.</b>');
-                    $('#submit').prop("disabled", true);
+                    $('#pwConfirm').prop("disabled", true);
+                    updateSubmitButton();
                 } else {
-                    $('#checkPw').css("color", "#660099").html('<b>사용가능</b>')
-                    $('#submit').prop("disabled", false);
-                    checkPasswordConfirmation(password);
+                    $('#checkPw').css("color", "#660099").html('<b>사용가능</b>');
+                    $('#pwConfirm').prop("disabled", false);
+                    checkPasswordConfirmation();
                 }
             }
 
@@ -38,14 +38,21 @@
                 var password = $('#inputPw').val();
                 var confirmPassword = $('#pwConfirm').val();
 
-
                 if (password === confirmPassword) {
                     $('#pwConfirmMsg').css("color", "#660099").html('<b>암호 일치</b>');
                 } else {
                     $('#pwConfirmMsg').css("color", "grey").html('<b>암호가 일치하지 않습니다.</b>');
                 }
+                updateSubmitButton();
+            }
+
+            function updateSubmitButton() {
+                // 비밀번호와 비밀번호 확인이 일치하고, 비밀번호가 조건을 충족하면 submit 버튼 활성화
+                var passwordValid = $('#inputPw').prop('disabled') || ($('#inputPw').val() !== "" && $('#pwConfirm').val() !== "" && $('#pwConfirmMsg').text() === "암호 일치");
+                $('#submit').prop("disabled", !passwordValid);
             }
         });
+
 
         /* 주소 API */
         window.onload = function(){
@@ -127,7 +134,7 @@
                     </div>
 
                     <!-- 회원가입 폼  -->
-                    <form action="#" method="post" class="custom-form contact-form" role="form">
+                    <form action="#" method="post" class="custom-form contact-form was-validated" role="form">
                         <div class="row">
 
                             <!-- 이메일 주소 입력 -->
@@ -164,21 +171,17 @@
                             <div class="col-lg-12 col-md-5 col-12">
                                 <div class="form-floating">
                                     <input type="password" name="password" id="inputPw" class="form-control"
-                                           placeholder="비밀번호" required="" />
-                                    <label for="floatingInput">비밀번호(6자리 이상, 특수문자 1개 포함)</label>
+                                           placeholder="비밀번호" required="">
+                                    <label for="floatingInput" id="checkPw">비밀번호(알파벳 포함 숫자 6자리 이상, 특수문자 1개 포함)</label>
                                 </div>
                             </div>
 
-                            <div class="col-lg-12 col-md-5 col-12 pt-2">
+                            <div class="col-lg-12 col-md-5 col-12">
                                 <div class="form-floating">
                                     <input type="password" name="passwordConfirm" id="pwConfirm" class="form-control"
                                            placeholder="비밀번호확인" required="">
-                                    <label for="floatingInput">비밀번호 확인</label>
+                                    <label for="floatingInput" id="pwConfirmMsg">비밀번호 확인</label>
                                 </div>
-                            </div>
-
-                            <div class="col-lg-12 col-md-2 col-12 pt-2">
-                                <p id="checkPw" style="color: blue;"></p>
                             </div>
 
                             <!-- 유저이름 -->
@@ -269,14 +272,12 @@
                         </div>
 
 
-                            <div class="col-4 d-flex justify-content-center">
-                                <label class="justify-content-center">
-                                    <input type="checkbox" name="termsAgree" id="termsAgree" required="">
-                                    동의합니다.
-                                </label>
+                            <div class="col-12 d-flex justify-content-center">
+                                <input class="form-check-input" type="checkbox" id="myCheck"  name="remember" required>
+                                <label class="form-check-label" for="myCheck">I agree on blabla.</label>
                             </div>
-                            <div class="col-4">
-                                <button type="submit" class="form-control" id="submit-button">가입하기</button>
+                            <div class="col-12">
+                                <button type="submit" class="custom-btn align-content-end" id="submit-button">가입하기</button>
                             </div>
 
                 </div>
