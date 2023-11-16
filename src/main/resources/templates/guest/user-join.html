@@ -17,20 +17,24 @@
                 checkPasswordConfirmation();
             });
 
+            $('#termsAgree').change(function () {
+                updateSubmitButton();
+            });
+
             function checkPassword() {
                 var password = $('#inputPw').val();
-
 
                 // 비밀번호가 6자리 이상이고, 특수문자가 최소 1개 이상 포함되어 있는지 확인
                 var passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/;
 
                 if (!passwordRegex.test(password)) {
                     $('#checkPw').css("color", "grey").html('<b>알파벳 포함 숫자 6자리 이상, 특수문자 1개 포함해주세요.</b>');
-                    $('#submit').prop("disabled", true);
+                    $('#pwConfirm').prop("disabled", true);
+                    updateSubmitButton();
                 } else {
-                    $('#checkPw').css("color", "#660099").html('<b>사용가능</b>')
-                    $('#submit').prop("disabled", false);
-                    checkPasswordConfirmation(password);
+                    $('#checkPw').css("color", "#660099").html('<b>사용가능</b>');
+                    $('#pwConfirm').prop("disabled", false);
+                    checkPasswordConfirmation();
                 }
             }
 
@@ -38,14 +42,29 @@
                 var password = $('#inputPw').val();
                 var confirmPassword = $('#pwConfirm').val();
 
+                if (confirmPassword === "") {
+                    $('#pwConfirmMsg').css("color", "grey").html('<b>비밀번호 확인을 입력해주세요.</b>');
+                    updateSubmitButton();
+                    return;
+                }
 
                 if (password === confirmPassword) {
                     $('#pwConfirmMsg').css("color", "#660099").html('<b>암호 일치</b>');
                 } else {
                     $('#pwConfirmMsg').css("color", "grey").html('<b>암호가 일치하지 않습니다.</b>');
+
                 }
+                updateSubmitButton();
+            }
+
+            function updateSubmitButton() {
+                // 약관 동의 체크박스가 체크되고, 비밀번호와 비밀번호 확인이 일치하며, 비밀번호가 조건을 충족하면 submit 버튼 활성화
+                var termsAgreeChecked = $('#termsAgree').prop('checked');
+                var passwordValid = $('#inputPw').prop('disabled') || ($('#inputPw').val() !== "" && $('#pwConfirm').val() !== "" && $('#pwConfirmMsg').text() === "암호 일치");
+                $('#submit-button').prop("disabled", !(termsAgreeChecked && passwordValid));
             }
         });
+
 
         /* 주소 API */
         window.onload = function(){
@@ -106,11 +125,6 @@
                 .replace(/(^02.{0}|^01.{1}|[0-9]{3,4})([0-9]{3,4})([0-9]{4})/g, "$1-$2-$3");
         }
 
-        // 약관 동의 버튼
-        document.getElementById('termsAgree').addEventListener('change', function () {
-            // 체크박스가 체크되면 가입하기 버튼을 활성화, 언체크되면 비활성화
-            document.getElementById('submitButton').disabled = !this.checked;
-        });
 
     </script>
 <main>
@@ -164,21 +178,17 @@
                             <div class="col-lg-12 col-md-5 col-12">
                                 <div class="form-floating">
                                     <input type="password" name="password" id="inputPw" class="form-control"
-                                           placeholder="비밀번호" required="" />
-                                    <label for="floatingInput">비밀번호(6자리 이상, 특수문자 1개 포함)</label>
+                                           placeholder="비밀번호" required="">
+                                    <label for="floatingInput" id="checkPw">비밀번호(알파벳 포함 숫자 6자리 이상, 특수문자 1개 포함)</label>
                                 </div>
                             </div>
 
-                            <div class="col-lg-12 col-md-5 col-12 pt-2">
+                            <div class="col-lg-12 col-md-5 col-12">
                                 <div class="form-floating">
                                     <input type="password" name="passwordConfirm" id="pwConfirm" class="form-control"
                                            placeholder="비밀번호확인" required="">
-                                    <label for="floatingInput">비밀번호 확인</label>
+                                    <label for="floatingInput" id="pwConfirmMsg">비밀번호 확인</label>
                                 </div>
-                            </div>
-
-                            <div class="col-lg-12 col-md-2 col-12 pt-2">
-                                <p id="checkPw" style="color: blue;"></p>
                             </div>
 
                             <!-- 유저이름 -->
