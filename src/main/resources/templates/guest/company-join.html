@@ -29,7 +29,7 @@
                     $('#submit').prop("disabled", true);
                 } else {
                     $('#checkPw').css("color", "#660099").html('<b>사용가능</b>')
-                    $('#submit').prop("disabled", false);
+                    $('#submit').prop("disabled", true);
                     checkPasswordConfirmation(password);
                 }
             }
@@ -41,6 +41,7 @@
 
                 if (password === confirmPassword) {
                     $('#pwConfirmMsg').css("color", "#660099").html('<b>암호 일치</b>');
+                    $('#submit').prop("disabled", false);
                 } else {
                     $('#pwConfirmMsg').css("color", "grey").html('<b>암호가 일치하지 않습니다.</b>');
                 }
@@ -55,7 +56,7 @@
                 $.ajax({
                     type: 'POST',
                     url: '/v1/company/bno/',
-                    data: { bno:value},
+                    data: {bno:value},
                     success: function (result){
                         $('bnoResult').html(result);
                     },
@@ -65,6 +66,13 @@
                 });
             });
         });
+
+        /* 사업자번호 정규식 적용 */
+        function onInputBno(target){
+            target.value = target.value
+                .replace(/[^0-9]/g, '')
+                .replace(/(\d{3})(\d{2})(\d{5})/, "$1-$2-$3");
+        }
 
 
         /* 주소 API */
@@ -214,11 +222,6 @@
                                     <label for="floatingInput" id="checkPw">비밀번호(알파벳 포함 숫자 6자리 이상, 특수문자 1개 포함)</label>
                                 </div>
                             </div>
-
-                            <!--<div class="col-lg-12 col-md-2 col-12 pt-2">
-                                <p id="checkPwq" style="color: blue"></p>
-                                <p id="pwConfirmMsgq" style="color: blue"></p>
-                            </div>-->
 
                             <div class="col-lg-12 col-md-5 col-12">
                                 <div class="form-floating">

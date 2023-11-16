@@ -16,12 +16,11 @@ public class JsonController {
 
     private final UserService userService;
 
-    @PostMapping(value = "/company/bno")
+    @PostMapping(value = "/company/bno/")
     public String bnoCertify(@RequestParam String bno) {
         log.info(bno);
 
-
-        return bno;
+        return null;
     }
 
     // 회원가입 버튼 구현
