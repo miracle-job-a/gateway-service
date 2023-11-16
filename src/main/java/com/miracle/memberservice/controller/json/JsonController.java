@@ -20,6 +20,7 @@ public class JsonController {
     public String bnoCertify(@RequestParam String bno) {
         log.info(bno);
 
+
         return bno;
     }
 
