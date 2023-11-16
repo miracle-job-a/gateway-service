@@ -38,12 +38,15 @@ public class UserService {
         assert response != null;
         log.info(response.toString());
 
-        String httpStatus = Objects.requireNonNull(response.getBody()).split(",")[0].split(":")[1];
+        String body = response.getBody();
+
+        String httpStatus = Objects.requireNonNull(body).split(",")[0].split(":")[1];
         if("200".equals(httpStatus)) return new PageMoveWithMessage("index", null);
 
-        String errorMessage = Objects.requireNonNull(response.getBody()).split(",")[1].split(":")[1].split("\"")[1];
-        log.error(errorMessage);
-        return new PageMoveWithMessage("guest/user-join", errorMessage);
+        body = body.substring(body.indexOf(":") + 2, body.lastIndexOf("\""));
+        log.error(body);
+
+        return new PageMoveWithMessage("guest/user-join", body);
     }
 
 }
