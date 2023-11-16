@@ -14,6 +14,7 @@ public class JsonController {
     public String bnoCertify(@RequestParam String bno){
         logger.info(bno);
 
+
         return bno;
     }
 }
