@@ -17,6 +17,10 @@
                 checkPasswordConfirmation();
             });
 
+            $('#termsAgree').change(function () {
+                updateSubmitButton();
+            });
+
             function checkPassword() {
                 var password = $('#inputPw').val();
 
@@ -38,18 +42,26 @@
                 var password = $('#inputPw').val();
                 var confirmPassword = $('#pwConfirm').val();
 
+                if (confirmPassword === "") {
+                    $('#pwConfirmMsg').css("color", "grey").html('<b>비밀번호 확인을 입력해주세요.</b>');
+                    updateSubmitButton();
+                    return;
+                }
+
                 if (password === confirmPassword) {
                     $('#pwConfirmMsg').css("color", "#660099").html('<b>암호 일치</b>');
                 } else {
                     $('#pwConfirmMsg').css("color", "grey").html('<b>암호가 일치하지 않습니다.</b>');
+
                 }
                 updateSubmitButton();
             }
 
             function updateSubmitButton() {
-                // 비밀번호와 비밀번호 확인이 일치하고, 비밀번호가 조건을 충족하면 submit 버튼 활성화
+                // 약관 동의 체크박스가 체크되고, 비밀번호와 비밀번호 확인이 일치하며, 비밀번호가 조건을 충족하면 submit 버튼 활성화
+                var termsAgreeChecked = $('#termsAgree').prop('checked');
                 var passwordValid = $('#inputPw').prop('disabled') || ($('#inputPw').val() !== "" && $('#pwConfirm').val() !== "" && $('#pwConfirmMsg').text() === "암호 일치");
-                $('#submit').prop("disabled", !passwordValid);
+                $('#submit-button').prop("disabled", !(termsAgreeChecked && passwordValid));
             }
         });
 
@@ -113,11 +125,6 @@
                 .replace(/(^02.{0}|^01.{1}|[0-9]{3,4})([0-9]{3,4})([0-9]{4})/g, "$1-$2-$3");
         }
 
-        // 약관 동의 버튼
-        document.getElementById('termsAgree').addEventListener('change', function () {
-            // 체크박스가 체크되면 가입하기 버튼을 활성화, 언체크되면 비활성화
-            document.getElementById('submitButton').disabled = !this.checked;
-        });
 
     </script>
 <main>
@@ -134,7 +141,7 @@
                     </div>
 
                     <!-- 회원가입 폼  -->
-                    <form action="#" method="post" class="custom-form contact-form was-validated" role="form">
+                    <form action="#" method="post" class="custom-form contact-form" role="form">
                         <div class="row">
 
                             <!-- 이메일 주소 입력 -->
@@ -272,12 +279,14 @@
                         </div>
 
 
-                            <div class="col-12 d-flex justify-content-center">
-                                <input class="form-check-input" type="checkbox" id="myCheck"  name="remember" required>
-                                <label class="form-check-label" for="myCheck">I agree on blabla.</label>
+                            <div class="col-4 d-flex justify-content-center">
+                                <label class="justify-content-center">
+                                    <input type="checkbox" name="termsAgree" id="termsAgree" required="">
+                                    동의합니다.
+                                </label>
                             </div>
-                            <div class="col-12">
-                                <button type="submit" class="custom-btn align-content-end" id="submit-button">가입하기</button>
+                            <div class="col-4">
+                                <button type="submit" class="form-control" id="submit-button">가입하기</button>
                             </div>
 
                 </div>
