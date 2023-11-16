@@ -1,8 +1,10 @@
 package com.miracle.memberservice.dto.response;
 
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class ServiceApiResponse<T> extends ApiResponse{
     private final String code;
     private final String exception;

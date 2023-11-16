@@ -8,6 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 @RestController
 @Slf4j
 @RequestMapping("/v1")
@@ -26,8 +29,9 @@ public class JsonController {
 
     // 회원가입 버튼 구현
     @PostMapping("/user/join")
-    public String userJoin(@ModelAttribute UserJoinDto userJoinDto, Model model) {
-        PageMoveWithMessage pageMoveWithMessage = userService.userJoin(userJoinDto);
+    public String userJoin(@ModelAttribute UserJoinDto userJoinDto, Model model, HttpSession session) {
+        String sessionId = session.getId();
+        PageMoveWithMessage pageMoveWithMessage = userService.userJoin(userJoinDto, sessionId);
         model.addAttribute("errorMessage", pageMoveWithMessage.getErrorMessage());
         return pageMoveWithMessage.getPageName();
     }
