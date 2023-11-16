@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Objects;
+
 @Service
 @Slf4j
 public class UserService {
@@ -33,9 +35,15 @@ public class UserService {
                 .retrieve()
                 .toEntity(String.class).block();
         log.info(userJoinDto.toString());
+        assert response != null;
         log.info(response.toString());
 
-        return null;
+        String httpStatus = Objects.requireNonNull(response.getBody()).split(",")[0].split(":")[1];
+        if("200".equals(httpStatus)) return new PageMoveWithMessage("index", null);
+
+        String errorMessage = Objects.requireNonNull(response.getBody()).split(",")[1].split(":")[1].split("\"")[1];
+        log.error(errorMessage);
+        return new PageMoveWithMessage("guest/user-join", errorMessage);
     }
 
 }

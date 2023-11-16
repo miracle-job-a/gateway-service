@@ -5,13 +5,16 @@ import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-@RestController
+@Controller
 @Slf4j
 @RequestMapping("/v1")
 @RequiredArgsConstructor

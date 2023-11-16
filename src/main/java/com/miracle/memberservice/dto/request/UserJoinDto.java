@@ -20,9 +20,9 @@ public class UserJoinDto {
     public UserJoinDto(String email, String name, String password, String phone, LocalDate birth, String address, String detailAddress) {
         this.email = email;
         this.name = name;
-        String[] split = password.split("-");
-        this.password = split[0]+split[1]+split[2];
-        this.phone = phone;
+        this.password = password;
+        String[] split = phone.split("-");
+        this.phone = split[0]+split[1]+split[2];
         this.birth = birth;
         this.address = address + " " + detailAddress;
     }
