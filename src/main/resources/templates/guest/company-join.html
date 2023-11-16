@@ -7,35 +7,43 @@
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script type="text/javascript">
         /* 비밀번호 체크 */
-        $(document).ready(function() {
+        $(document).ready(function () {
 
-            $('#inputPw').keyup(function() {
+            $('#inputPw').keyup(function () {
                 checkPassword();
             });
 
-            $('#pwConfirm').keyup(function() {
-                checkPassword();
+            $('#pwConfirm').keyup(function () {
+                checkPasswordConfirmation();
             });
 
             function checkPassword() {
                 var password = $('#inputPw').val();
-                var confirmPassword = $('#pwConfirm').val();
+
 
                 // 비밀번호가 6자리 이상이고, 특수문자가 최소 1개 이상 포함되어 있는지 확인
                 var passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/;
 
-                if (password !== confirmPassword || !passwordRegex.test(password)) {
-                    $('#checkPw').text(' ');
-                    $('#checkPw').addClass("red");
-                    $('#checkPw').html('<b>암호가 틀립니다. (알파벳 포함 6자리 이상, 특수문자 1개 포함)</b>');
+                if (!passwordRegex.test(password)) {
+                    $('#checkPw').css("color", "grey").html('<b>알파벳 포함 숫자 6자리 이상, 특수문자 1개 포함해주세요.</b>');
                     $('#submit').prop("disabled", true);
                 } else {
-                    $('#checkPw').text(' ');
-                    $('#checkPw').addClass("blue");
-                    $('#checkPw').html('<b>암호가 일치합니다.</b>');
+                    $('#checkPw').css("color", "#660099").html('<b>사용가능</b>')
                     $('#submit').prop("disabled", false);
+                    checkPasswordConfirmation(password);
                 }
+            }
 
+            function checkPasswordConfirmation() {
+                var password = $('#inputPw').val();
+                var confirmPassword = $('#pwConfirm').val();
+
+
+                if (password === confirmPassword) {
+                    $('#pwConfirmMsg').css("color", "#660099").html('<b>암호 일치</b>');
+                } else {
+                    $('#pwConfirmMsg').css("color", "grey").html('<b>암호가 일치하지 않습니다.</b>');
+                }
             }
         });
 
@@ -57,26 +65,7 @@
                 });
             });
         });
-        /*function onInputBno(target){
-            var numberMap = target.replace(/-/gi, '').split('').map(function (d){
-                return parseInt(d, 10);
-            });
 
-            if(numberMap.length == 10){
-                var keyArr = [1, 3, 7, 1, 3, 7, 1, 3, 5];
-                var chk = 0;
-
-                keyArr.forEach(function(d, i){
-                    chk += d * numberMap[i];
-                });
-
-                chk += parseInt((keyArr[8] * numberMap[8])/ 10, 10);
-                console.log(chk);
-                return Math.floor(numberMap[9]) === ( (10 - (chk % 10) ) % 10);
-            }
-
-            return false;
-        }*/
 
         /* 주소 API */
         window.onload = function(){
@@ -129,6 +118,39 @@
                 }).open();
             });
         }
+
+        // 이미지 파일 업로드 썸네일
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+
+        imageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+
+                reader.onload = (event) => {
+                    const image = new Image();
+                    image.src = event.target.result;
+                    image.style.width = '200px';
+                    image.style.height = 'auto';
+
+                    // `imagePreview` div를 `imageInput` 칸의 자식 요소에서 제거합니다.
+                    imagePreview.parentNode.removeChild(imagePreview);
+
+                    // `imagePreview` div를 `body` 요소의 자식 요소로 추가합니다.
+                    document.body.appendChild(imagePreview);
+
+                    // `imagePreview` div에 이미지를 추가합니다.
+                    imagePreview.appendChild(image);
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                alert('확장자 jpeg, png 이미지 업로드만 가능합니다.');
+                imageInput.value = '';
+            }
+        });
 
         // 약관 동의 버튼
         document.getElementById('termsAgree').addEventListener('change', function () {
@@ -189,21 +211,24 @@
                                 <div class="form-floating">
                                     <input type="password" name="password" id="inputPw" class="form-control"
                                            placeholder="비밀번호" required="">
-                                    <label for="floatingInput">비밀번호(알파벳 포함 6자리 이상, 특수문자 1개 포함)</label>
+                                    <label for="floatingInput" id="checkPw">비밀번호(알파벳 포함 숫자 6자리 이상, 특수문자 1개 포함)</label>
                                 </div>
                             </div>
+
+                            <!--<div class="col-lg-12 col-md-2 col-12 pt-2">
+                                <p id="checkPwq" style="color: blue"></p>
+                                <p id="pwConfirmMsgq" style="color: blue"></p>
+                            </div>-->
 
                             <div class="col-lg-12 col-md-5 col-12">
                                 <div class="form-floating">
                                     <input type="password" name="password" id="pwConfirm" class="form-control"
                                            placeholder="비밀번호확인" required="">
-                                    <label for="floatingInput">비밀번호 확인</label>
+                                    <label for="floatingInput" id="pwConfirmMsg">비밀번호 확인</label>
                                 </div>
                             </div>
 
-                            <div class="col-lg-12 col-md-2 col-12 pt-2">
-                                <p id="checkPw" style="color: blue;"></p>
-                            </div>
+
 
                             <!-- 기업이름 -->
                             <div class="col-lg-5 col-md-5 col-12">
@@ -259,7 +284,7 @@
                             </div>
                             <div class="col-lg-2 col-md-2 col-12">
                                 <div class="form-floating" >
-                                    <button type="confirm" class="btn" id="addressInputBtn">주소 찾기</button>
+                                    <button type="button" class="custom-btn" id="addressInputBtn">주소 찾기</button>
                                 </div>
                             </div>
                             <div class="col-12 pt-3"></div>
@@ -281,14 +306,26 @@
                                 <div class="form-floating">
                                     <!-- 텍스트, 음수 입력 못하게 정규식 패턴 추가 -->
                                     <input type="number" name="employeeNum" id="employeeNum" class="form-control"
-                                           placeholder="employeeNum" required="" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                           placeholder="employeeNum" value="0" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
 
                                     <label for="floatingInput">직원수</label>
                                 </div>
                             </div>
-                            <div class="col-lg-2 col-md-2 col-12"></div>
 
-                            <div class="col-lg-8 col-md-8 col-12">
+                            <div class="col-lg-2 col-md-2 col-12 mb-2"></div>
+
+                            <!-- 대표 사진 이미지 업로드 -->
+                            <div class="col-lg-12 col-md-12 col-12">
+                                <label for="floatingInput">기업 대표 이미지</label>
+                                <div class="form-floating mb-3 mt-1">
+                                    <div class="input-group">
+                                        <input type="file" class="form-control" id="imageInput" accept="image/jpeg,image/png" aria-describedby="imageInputHelp" required>
+                                    </div>
+                                    <small id="imageInputHelp" class="form-text text-muted">jpeg, png 이미지만 업로드 가능합니다.</small>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-8 col-md-8 col-12 mt-2">
                                 <p>이용약관</p>
                             </div>
                             <div class="form-floating">
