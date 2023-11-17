@@ -1,6 +1,8 @@
 package com.miracle.memberservice.controller.json;
 
+import com.miracle.memberservice.dto.request.CompanyJoinDto;
 import com.miracle.memberservice.dto.request.UserJoinDto;
+import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import javax.servlet.http.HttpSession;
 public class JsonController {
 
     private final UserService userService;
+    private final CompanyService companyService;
 
     @PostMapping(value = "/company/bno/")
     public String bnoCertify(@RequestParam String bno) {
@@ -39,7 +42,10 @@ public class JsonController {
     }
 
     @PostMapping("/company/join")
-    public String companyJoin() {
-        return null;
+    public String companyJoin(@ModelAttribute CompanyJoinDto companyJoinDto, Model model, HttpSession session) {
+        String sessionId = session.getId();
+        PageMoveWithMessage pageMoveWithMessage = companyService.companyJoin(companyJoinDto, sessionId);
+        model.addAttribute("errorMessage", pageMoveWithMessage.getErrorMessage());
+        return pageMoveWithMessage.getPageName();
     }
 }

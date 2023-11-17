@@ -1,6 +1,7 @@
 package com.miracle.memberservice.service;
 
 import com.miracle.memberservice.dto.request.UserJoinDto;
+import com.miracle.memberservice.util.HttpResponseMethod;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -9,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.Objects;
-
 @Service
 @Slf4j
 public class UserService {
@@ -18,6 +17,8 @@ public class UserService {
     private static final String PRIVATE_KEY = "TkwkdsladkdlrhdnjfrmqdhodlfjgrpaksgdlwnjTdjdy";
 
     public PageMoveWithMessage userJoin(UserJoinDto userJoinDto, String sessionId) {
+
+        log.info(userJoinDto.toString());
 
         WebClient webClient = WebClient.builder()
                 .baseUrl("http://localhost:60001")
@@ -34,19 +35,15 @@ public class UserService {
                 .header("sessionId", sessionId)
                 .retrieve()
                 .toEntity(String.class).block();
-        log.info(userJoinDto.toString());
+
         assert response != null;
-        log.info(response.toString());
+        String httpStatus = HttpResponseMethod.makeHttpStatus(response);
+        if ("200".equals(httpStatus)) return new PageMoveWithMessage("index", null);
 
-        String body = response.getBody();
+        String errorMessage = HttpResponseMethod.makeErrorMessage(response);
+        log.error(errorMessage);
 
-        String httpStatus = Objects.requireNonNull(body).split(",")[0].split(":")[1];
-        if("200".equals(httpStatus)) return new PageMoveWithMessage("index", null);
-
-        body = body.substring(body.indexOf(":") + 2, body.lastIndexOf("\""));
-        log.error(body);
-
-        return new PageMoveWithMessage("guest/user-join", body);
+        return new PageMoveWithMessage("guest/user-join", errorMessage);
     }
 
 }
