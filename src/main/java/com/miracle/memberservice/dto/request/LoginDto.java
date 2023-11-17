@@ -10,7 +10,8 @@ import java.time.LocalDate;
 @ToString
 @Getter
 @RequiredArgsConstructor
-public class UserLoginDto {
+public class LoginDto {
     private final String email;
     private final String password;
+    private final String memberType;
 }

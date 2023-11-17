@@ -16,7 +16,7 @@
                             <h4 class="section-title">로그인</h4>
                         </div>
 
-                        <form action="/v1/company/login" method="post" class="custom-form contact-form" role="form">
+                        <form action="/v1/login" method="post" class="custom-form contact-form" role="form">
                             <div class="row">
 
                                 <div class="col-lg-6 col-md-6 col-12 pb-4">
@@ -49,6 +49,7 @@
                                         </button>
                                     </div>
                                     <div class="col-lg-3 col-6">
+                                        <input type="hidden" name="memberType" value="company" />
                                         <button type="submit" class="form-control ms-auto">로그인</button>
                                     </div>
 

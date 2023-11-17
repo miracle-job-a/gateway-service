@@ -1,9 +1,10 @@
 package com.miracle.memberservice.controller;
 
 import com.miracle.memberservice.dto.request.CompanyJoinDto;
+import com.miracle.memberservice.dto.request.LoginDto;
 import com.miracle.memberservice.dto.request.UserJoinDto;
-import com.miracle.memberservice.dto.request.UserLoginDto;
 import com.miracle.memberservice.service.CompanyService;
+import com.miracle.memberservice.service.LoginService;
 import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class GuestController {
 
     private final UserService userService;
     private final CompanyService companyService;
+    private final LoginService loginService;
 
     @GetMapping
     public String index() {
@@ -74,11 +76,18 @@ public class GuestController {
     }
 
     //로그인 API
-    @PostMapping("/user/login")
-    public String userLogin(@ModelAttribute UserLoginDto userLoginDto, Model model, HttpSession session) {
-        PageMoveWithMessage pageMoveWithMessage = userService.userLogin(userLoginDto, session);
+    @PostMapping("/login")
+    public String login(@ModelAttribute LoginDto loginDto, Model model, HttpSession session) {
+        PageMoveWithMessage pageMoveWithMessage = loginService.login(loginDto, session);
+        String pageName = pageMoveWithMessage.getPageName();
+
+        if (pageName.equals("index")) {
+            session.setAttribute("id", pageMoveWithMessage.getId());
+            session.setAttribute("email", loginDto.getEmail());
+        }
+
         model.addAttribute("errorMessage", pageMoveWithMessage.getErrorMessage());
-        return pageMoveWithMessage.getPageName();
+        return pageName;
     }
 
 }
