@@ -3,14 +3,20 @@ package com.miracle.memberservice.dto.response;
 import lombok.*;
 
 @Getter
-@Setter
 @ToString
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class ApiResponse<T> {
-    private int httpStatus;
-    private String message;
-    private String code;
-    private String exception;
-    private T data;
+    private final int httpStatus;
+    private final String message;
+    private final String code;
+    private final String exception;
+    private final T data;
+
+    public ApiResponse() {
+        this.httpStatus = 0;
+        this.message = null;
+        this.code = null;
+        this.exception = null;
+        this.data = null;
+    }
 }
