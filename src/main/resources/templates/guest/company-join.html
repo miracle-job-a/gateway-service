@@ -73,23 +73,40 @@
                 $.ajax({
                     type: 'POST',
                     url: '/v1/company/bno/',
-                    data: {bno:value},
-                    success: function (result){
-                        $('bnoResult').html(result);
+                    data: { bno: value },
+                    success: function (result) {
+                        $('#bnoResult').css("color", "#660099").html('<b>정상 사업자 번호입니다.</b>');
                     },
-                    error: function (error) {
-                        $('bnoResult').html(error);
+                    error: function (xhr, status, error) {
+                        var errorMessage = xhr.responseJSON ? xhr.responseJSON.errorMessage : "서버 오류입니다.";
+
+                        // 상태 코드에 따라 다르게 처리
+                        if (xhr.status === 400) {
+                            // 클라이언트 오류
+                            $('#bnoResult').css("color", "#FF0000").html('<b>' + errorMessage + '</b>');
+                        } else if (xhr.status === 500) {
+                            // 서버 오류
+                            $('#bnoResult').css("color", "#660099").html('<b>' + errorMessage + '</b>');
+                        } else {
+                            // 기타 오류
+                            $('#bnoResult').css("color", "#FF0000").html('<b>알 수 없는 오류가 발생했습니다.</b>');
+                        }
                     }
                 });
             });
         });
 
+
         /* 사업자번호 정규식 적용 */
-        function onInputBno(target){
-            target.value = target.value
-                .replace(/[^0-9]/g, '')
-                .replace(/(\d{3})(\d{2})(\d{5})/, "$1-$2-$3");
-        }
+        $(document).ready(function () {
+            $('#bno').on('input', function () {
+                this.value = this.value
+                    .replace(/[^0-9]/g, '')
+                    .replace(/(\d{3})(\d{2})(\d{5})/, "$1-$2-$3");
+            });
+        });
+
+
 
 
         /* 주소 API */
@@ -271,8 +288,7 @@
                             <!-- 사업자 번호 -->
                             <div class="col-lg-5 col-md-5 col-12">
                                 <div class="form-floating">
-                                    <input type="text" name="bno" id="bno" class="form-control"
-                                           placeholder="사업자번호" required="" oninput="onInputBno(this)" maxlength="10">
+                                    <input type="text" name="bno" id="bno" class="form-control" placeholder="사업자번호" required="" maxlength="10">
                                     <label for="floatingInput">사업자 번호</label>
                                 </div>
                             </div>
