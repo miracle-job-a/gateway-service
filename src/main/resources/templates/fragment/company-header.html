@@ -50,8 +50,8 @@
       </ul>
 
       <div class="ms-4">
-       <a th:if="${session.companyId}" href="/v1" class="btn custom-btn custom-border-btn smoothscroll">로그아웃</a>
-       <a th:unless="${session.companyId}" href="/v1/user/login-form" class="btn custom-btn custom-border-btn smoothscroll">로그인/회원가입</a>
+       <a th:if="${session.companyId!=null}" href="/v1/company/logout" class="btn custom-btn custom-border-btn smoothscroll">로그아웃</a>
+       <a th:if="${session.companyId==null}" href="/v1/company/login-form" class="btn custom-btn custom-border-btn smoothscroll">로그인/회원가입</a>
       </div>
      </div>
     </div>

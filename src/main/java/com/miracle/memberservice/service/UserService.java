@@ -1,22 +1,16 @@
 package com.miracle.memberservice.service;
 
-import com.miracle.memberservice.dto.request.CompanyJoinDto;
 import com.miracle.memberservice.dto.request.LoginDto;
 import com.miracle.memberservice.dto.request.UserJoinDto;
 import com.miracle.memberservice.dto.response.ApiResponse;
-import com.miracle.memberservice.dto.response.CompanyLoginResponseDto;
 import com.miracle.memberservice.dto.response.UserLoginResponseDto;
-import com.miracle.memberservice.util.MiracleTokenKey;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import com.miracle.memberservice.util.ServiceCall;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.servlet.http.HttpSession;
+import java.util.LinkedHashMap;
 
 @Service
 @Slf4j
@@ -31,27 +25,27 @@ public class UserService {
      */
     public PageMoveWithMessage join(UserJoinDto userJoinDto, HttpSession session) {
 
-        log.info(userJoinDto.toString());
-
         ApiResponse response = ServiceCall.post(session, userJoinDto, "user", "/join");
 
-        log.info(response.toString());
-
-        if(response.getHttpStatus()!=200) return new PageMoveWithMessage("guest/user-join", response.getMessage());
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("guest/user-join", response.getMessage());
 
         return new PageMoveWithMessage("index");
     }
 
-    public PageMoveWithMessage login(LoginDto loginDto, HttpSession session){
-        log.info(loginDto.toString());
+    public PageMoveWithMessage login(LoginDto loginDto, HttpSession session) {
 
-        ApiResponse<UserLoginResponseDto> response = ServiceCall.post(session, loginDto, loginDto.getMemberType(), "/login");
+        ApiResponse response = ServiceCall.post(session, loginDto, loginDto.getMemberType(), "/login");
 
-        log.info(response.toString());
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("guest/user-login", response.getMessage());
 
-        if(response.getHttpStatus()!=200) return new PageMoveWithMessage("guest/user-login", response.getMessage());
+        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
-        UserLoginResponseDto data = response.getData();
-        return new PageMoveWithMessage("index", data.getId(), data.getEmail(), data.getName());
+        UserLoginResponseDto dto = UserLoginResponseDto.builder()
+                .id(data.get("id"))
+                .email(data.get("email"))
+                .name(data.get("name"))
+                .build();
+
+        return new PageMoveWithMessage("index", dto);
     }
 }

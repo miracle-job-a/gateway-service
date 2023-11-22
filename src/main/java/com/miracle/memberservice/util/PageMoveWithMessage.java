@@ -1,5 +1,7 @@
 package com.miracle.memberservice.util;
 
+import com.miracle.memberservice.dto.response.CompanyLoginResponseDto;
+import com.miracle.memberservice.dto.response.UserLoginResponseDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -44,5 +46,21 @@ public class PageMoveWithMessage {
         this.id = null;
         this.email = null;
         this.nameOrBno = null;
+    }
+
+    public PageMoveWithMessage(String pageName, CompanyLoginResponseDto dto) {
+        this.pageName = pageName;
+        this.errorMessage = null;
+        this.id = dto.getId();
+        this.email = dto.getEmail();
+        this.nameOrBno = dto.getBno();
+    }
+
+    public PageMoveWithMessage(String pageName, UserLoginResponseDto dto) {
+        this.pageName = pageName;
+        this.errorMessage = null;
+        this.id = dto.getId();
+        this.email = dto.getEmail();
+        this.nameOrBno = dto.getName();
     }
 }

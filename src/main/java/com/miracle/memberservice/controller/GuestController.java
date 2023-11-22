@@ -61,44 +61,46 @@ public class GuestController {
     // 회원가입 API
     @PostMapping("/user/join")
     public String userJoin(@ModelAttribute UserJoinDto userJoinDto, Model model, HttpSession session) {
-        PageMoveWithMessage pageMoveWithMessage = userService.join(userJoinDto, session);
-        model.addAttribute("errorMessage", pageMoveWithMessage.getErrorMessage());
-        return pageMoveWithMessage.getPageName();
+        PageMoveWithMessage pmwm = userService.join(userJoinDto, session);
+        model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        return pmwm.getPageName();
     }
 
     @PostMapping("/company/join")
     public String companyJoin(@ModelAttribute CompanyJoinDto companyJoinDto, Model model, HttpSession session) {
-        PageMoveWithMessage pageMoveWithMessage = companyService.join(companyJoinDto, session);
-        model.addAttribute("errorMessage", pageMoveWithMessage.getErrorMessage());
-        return pageMoveWithMessage.getPageName();
+        PageMoveWithMessage pmwm = companyService.join(companyJoinDto, session);
+        model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        return pmwm.getPageName();
     }
 
     //로그인 API
     @PostMapping("/company/login")
     public String companyLogin(@ModelAttribute LoginDto loginDto, Model model, HttpSession session) {
-        PageMoveWithMessage pageMoveWithMessage = companyService.login(loginDto, session);
-        String pageName = pageMoveWithMessage.getPageName();
+        PageMoveWithMessage pmwm = companyService.login(loginDto, session);
+        String pageName = pmwm.getPageName();
 
-        if (pageName.equals("index")) {
-            session.setAttribute(loginDto.getMemberType()+"Id", pageMoveWithMessage.getId());
-            session.setAttribute("email", loginDto.getEmail());
+        if (pmwm.getId()!=null) {
+            session.setAttribute("companyId", pmwm.getId());
+            session.setAttribute("email", pmwm.getEmail());
+            session.setAttribute("bno", pmwm.getNameOrBno());
         }
 
-        model.addAttribute("errorMessage", pageMoveWithMessage.getErrorMessage());
+        model.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pageName;
     }
 
     @PostMapping("/user/login")
     public String userLogin(@ModelAttribute LoginDto loginDto, Model model, HttpSession session) {
-        PageMoveWithMessage pageMoveWithMessage = userService.login(loginDto, session);
-        String pageName = pageMoveWithMessage.getPageName();
+        PageMoveWithMessage pmwm = userService.login(loginDto, session);
+        String pageName = pmwm.getPageName();
 
-        if (pageName.equals("index")) {
-            session.setAttribute(loginDto.getMemberType()+"Id", pageMoveWithMessage.getId());
-            session.setAttribute("email", loginDto.getEmail());
+        if (pmwm.getId()!=null) {
+            session.setAttribute("userId", pmwm.getId());
+            session.setAttribute("email", pmwm.getEmail());
+            session.setAttribute("name", pmwm.getNameOrBno());
         }
 
-        model.addAttribute("errorMessage", pageMoveWithMessage.getErrorMessage());
+        model.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pageName;
     }
 

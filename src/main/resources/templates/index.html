@@ -4,9 +4,15 @@
         layout:decorate="~{layout/default_layout}" lang="ko">
 
 <div layout:fragment="content">
+    <script th:inline="javascript">
+        const companyId = sessionStorage.getItem('companyId');
 
+        if (companyId !== null) {
+            // companyId가 있다면 특정 URL로 이동하거나 작업을 수행
+            location.href = '/v1/company'; // 이동하길 원하는 페이지 URL
+        }
+    </script>
     <main>
-
         <section class="hero-section">
             <div class="container">
                 <div class="row">
