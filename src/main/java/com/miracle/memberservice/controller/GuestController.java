@@ -58,10 +58,7 @@ public class GuestController {
     //사업자 번호 조회 API
     @PostMapping(value = "/company/bno")
     public ResponseEntity<String> bnoCertify(@ModelAttribute CompanyCheckBnoRequestDto bno, HttpSession session) {
-        log.info(bno.toString());
-
         return companyService.bnoCertify(bno, session);
-
     }
 
     // 회원가입 API
@@ -86,7 +83,7 @@ public class GuestController {
         String pageName = pmwm.getPageName();
 
         if (pmwm.getId()!=null) {
-            session.setAttribute("companyId", pmwm.getId());
+            session.setAttribute("id", pmwm.getId());
             session.setAttribute("email", pmwm.getEmail());
             session.setAttribute("bno", pmwm.getNameOrBno());
         }
@@ -101,7 +98,7 @@ public class GuestController {
         String pageName = pmwm.getPageName();
 
         if (pmwm.getId()!=null) {
-            session.setAttribute("userId", pmwm.getId());
+            session.setAttribute("id", pmwm.getId());
             session.setAttribute("email", pmwm.getEmail());
             session.setAttribute("name", pmwm.getNameOrBno());
         }

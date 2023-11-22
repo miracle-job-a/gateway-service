@@ -10,11 +10,6 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/v1/company")
 public class CompanyController {
 
-    @GetMapping
-    public String index(){
-        return "company/index";
-    }
-
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();

@@ -5,7 +5,8 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class CompanyCheckBnoRequestDto {
+public class
+CompanyCheckBnoRequestDto {
 
 
     private final String bno;

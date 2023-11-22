@@ -8,6 +8,7 @@ import com.miracle.memberservice.dto.response.CompanyLoginResponseDto;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import com.miracle.memberservice.util.ServiceCall;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
@@ -18,30 +19,10 @@ import java.util.LinkedHashMap;
 public class CompanyService {
 
     public ResponseEntity<String> bnoCertify(CompanyCheckBnoRequestDto bno, HttpSession session) {
-        log.info(bno.toString());
 
-        log.info("first");
-        WebClient webClient = WebClient.builder()
-                .baseUrl("http://localhost:60002")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
-        log.info("second");
-        MiracleTokenKey key = new MiracleTokenKey(session);
-        log.info("third");
-        ApiResponse response = webClient.post()
-                .uri(uriBuilder -> uriBuilder.path("/v1/company/bno").build())
-                .bodyValue(bno)
-                .header("miracle", key.getHashcode())
-                .header("sessionId", key.getSessionId())
-                .retrieve()
-                .bodyToMono(ApiResponse.class).block();
+        ApiResponse response = ServiceCall.post(session, bno, "company", "/bno");
 
-        log.info("four");
-        System.out.println("response object" + response.toString());
-        //return response;
-        int httpStatus = response.getHttpStatus();
-        String errorMessage = response.getMessage();
-        return ResponseEntity.status(httpStatus).body(errorMessage);
+        return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
     }
 
     public PageMoveWithMessage join(CompanyJoinDto companyJoinDto, HttpSession session) {
@@ -69,7 +50,7 @@ public class CompanyService {
                 .bno(data.get("bno"))
                 .build();
 
-        return new PageMoveWithMessage("company/index", dto);
+        return new PageMoveWithMessage("index", dto);
     }
 
 

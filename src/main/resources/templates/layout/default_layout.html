@@ -3,21 +3,26 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net/nz/thymeleaf/layout">
 
-    <meta charset="UTF-8">
-    <title>Test</title>
+<meta charset="UTF-8">
+<title>Test</title>
 
-    <!-- config fragment -->
-    <th:block th:replace="/fragment/config :: configFragment"></th:block>
+<!-- config fragment -->
+<th:block th:replace="/fragment/config :: configFragment"></th:block>
 
-    <body>
-    <!-- header fragment -->
+<body>
+<!-- header fragment -->
+<div th:if="${session.bno == null}">
     <th:block th:replace="/fragment/header :: commonHeader"></th:block>
+</div>
+<div th:if="${session.bno != null}">
+    <th:block th:replace="/fragment/company-header :: commonHeader"></th:block>
+</div>
 
-    <!-- Body content -->
-    <th:block layout:fragment="content"></th:block>
+<!-- Body content -->
+<th:block layout:fragment="content"></th:block>
 
-    <!-- footer content -->
-    <th:block th:replace="/fragment/footer :: commonFooter"></th:block>
-    </body>
+<!-- footer content -->
+<th:block th:replace="/fragment/footer :: commonFooter"></th:block>
+</body>
 
 </html>
