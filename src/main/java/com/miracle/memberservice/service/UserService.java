@@ -7,6 +7,7 @@ import com.miracle.memberservice.dto.response.UserLoginResponseDto;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import com.miracle.memberservice.util.ServiceCall;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +54,8 @@ public class UserService {
     public ResponseEntity<String> duplicateEmail(HttpSession session, String email){
 
         ApiResponse response = ServiceCall.get(session, "user", "/user/check-email/" + email);
+
+        if(Boolean.TRUE.equals(response.getData())) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage());
 
         return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
     }

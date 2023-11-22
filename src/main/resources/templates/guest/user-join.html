@@ -68,8 +68,9 @@
             function updateSubmitButton() {
                 // 약관 동의 체크박스가 체크되고, 비밀번호와 비밀번호 확인이 일치하며, 비밀번호가 조건을 충족하면 submit 버튼 활성화
                 var termsAgreeChecked = $('#termsAgree').prop('checked');
+                var authentication = $('#authenticationButton').prop('disabled');
                 var passwordValid = $('#inputPw').prop('disabled') || ($('#inputPw').val() !== "" && $('#pwConfirm').val() !== "" && $('#pwConfirmMsg').text() === "암호 일치");
-                $('#submit-button').prop("disabled", !(termsAgreeChecked && passwordValid));
+                $('#submit-button').prop("disabled", !(termsAgreeChecked && passwordValid && authentication));
             }
         });
 
@@ -110,7 +111,6 @@
                     url: '/v1/user/email/duplicate/'+value,
                     data: { email: value },
                     success: function (result) {
-                        $('#emailResult').css("color", "#660099").html(result);
                         $('#emailCheck').prop('disabled', true); // 버튼 비활성화
                         $('#authenticationButton').style.display = 'block';
                         $('#authentication').style.display = 'block';
@@ -120,12 +120,43 @@
                         console.log(msg);
 
                         // 상태 코드에 따라 다르게 처리
-                        $('#emailResult').css("color", "#FF0000").html('<b>' + xhr.responseText + '</b>');
+                        alert(xhr.responseText);
 
                     }
                 });
             });
         });
+
+        $(document).ready(function () {
+            $('#authenticationButton').on('click', function () {
+                var value = $('#authentication').val();
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/v1/email/authentication/'+value,
+                    data: { authentication: value },
+                    success: function (result) {
+                        $('#authenticationButton').prop('disabled', true); // 버튼 비활성화
+                    },
+                    error: function (xhr) {
+                        msg=xhr;
+                        console.log(msg);
+                        if(xhr.status===408){
+                            $('#emailCheck').prop('disabled', false);
+                            $('#authenticationButton').style.display = 'none';
+                            $('#authentication').style.display = 'none';
+                            alert(xhr.responseText);
+                        }else{
+                            alert(xhr.responseText);
+                        }
+                        // 상태 코드에 따라 다르게 처리
+
+
+                    }
+                });
+            });
+        });
+
 
 
 
@@ -219,9 +250,6 @@
                                 <div class="form-floating">
                                     <button type="button" id="emailCheck" class="btn">인증하기</button>
                                 </div>
-                            </div>
-                            <div class="col-lg-5 col-md-5 col-12">
-                                <p id="emailResult"></p>
                             </div>
 
                             <!-- 이메일 인증 번호 입력 -->
