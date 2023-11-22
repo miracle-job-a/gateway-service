@@ -31,7 +31,7 @@ public class ServiceCall {
         MiracleTokenKey key = new MiracleTokenKey(httpSession);
 
         return webClient.get()
-                .uri(uriBuilder -> uriBuilder.path("/v1/" + service + url).build())
+                .uri(uriBuilder -> uriBuilder.path("/v1/" + url).build())
                 .header("miracle", key.getHashcode())
                 .header("sessionId", key.getSessionId())
                 .retrieve()
