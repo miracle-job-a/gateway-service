@@ -25,7 +25,7 @@ public class UserService {
      */
     public PageMoveWithMessage join(UserJoinDto userJoinDto, HttpSession session) {
 
-        ApiResponse response = ServiceCall.post(session, userJoinDto, "user", "/join");
+        ApiResponse response = ServiceCall.post(session, userJoinDto, "user", "/user/join");
 
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("guest/user-join", response.getMessage());
 
@@ -34,7 +34,7 @@ public class UserService {
 
     public PageMoveWithMessage login(LoginDto loginDto, HttpSession session) {
 
-        ApiResponse response = ServiceCall.post(session, loginDto, loginDto.getMemberType(), "/login");
+        ApiResponse response = ServiceCall.post(session, loginDto, "user", "/user/login");
 
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("guest/user-login", response.getMessage());
 
