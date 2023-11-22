@@ -116,12 +116,11 @@ public class GuestController {
     }
 
     @GetMapping("/user/email/duplicate/{email}")
-    public ResponseEntity<String> userEmailDuplicationCheck(@PathVariable String email, HttpSession session) {
+    public ResponseEntity<String> userEmailDuplicationCheck(@PathVariable String email, HttpSession session) throws MessagingException {
         ResponseEntity<String> response = userService.duplicateEmail(session, email);
 
         if (Boolean.FALSE.equals(response.getBody())) {
-            String key = TempKey.make();
-            mailService.sendEmailToUser(email, "Job-a 회원가입 인증번호", "인증번호는 " + key + "입니다.");
+            String key = mailService.sendEmail(email);
             session.setAttribute("key", key);
             session.setMaxInactiveInterval((int) TimeUnit.MINUTES.toSeconds(10));
         }

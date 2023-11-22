@@ -112,8 +112,8 @@
                     data: { email: value },
                     success: function (result) {
                         $('#emailCheck').prop('disabled', true); // 버튼 비활성화
-                        $('#authenticationButton').style.display = 'block';
-                        $('#authentication').style.display = 'block';
+                        $('#authenticationButton').style.display = 'inline';
+                        $('#authentication').style.display = 'inline';
                     },
                     error: function (xhr) {
                         msg=xhr;
@@ -257,7 +257,6 @@
                                 <div class="form-floating">
                                     <input type="text" name="authentication" id="authentication" class="form-control"
                                            placeholder="인증번호" required="" style="display: none;">
-                                    <label for="floatingInput">인증번호 입력</label>
                                 </div>
                             </div>
                             <div class="col-lg-2 col-md-2 col-12">
