@@ -7,6 +7,7 @@ import com.miracle.memberservice.dto.response.UserLoginResponseDto;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import com.miracle.memberservice.util.ServiceCall;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
@@ -47,5 +48,12 @@ public class UserService {
                 .build();
 
         return new PageMoveWithMessage("index", dto);
+    }
+
+    public ResponseEntity<String> duplicateEmail(HttpSession session, String email){
+
+        ApiResponse response = ServiceCall.get(session, "user", "/user/check-email/" + email);
+
+        return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
     }
 }

@@ -7,17 +7,20 @@ import com.miracle.memberservice.dto.request.UserJoinDto;
 import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
+import com.miracle.memberservice.util.TempKey;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 @Slf4j
@@ -27,6 +30,7 @@ public class GuestController {
 
     private final UserService userService;
     private final CompanyService companyService;
+    private final JavaMailSender emailSender;
 
     @GetMapping
     public String index() {
@@ -82,7 +86,7 @@ public class GuestController {
         PageMoveWithMessage pmwm = companyService.login(loginDto, session);
         String pageName = pmwm.getPageName();
 
-        if (pmwm.getId()!=null) {
+        if (pmwm.getId() != null) {
             session.setAttribute("id", pmwm.getId());
             session.setAttribute("email", pmwm.getEmail());
             session.setAttribute("bno", pmwm.getNameOrBno());
@@ -97,7 +101,7 @@ public class GuestController {
         PageMoveWithMessage pmwm = userService.login(loginDto, session);
         String pageName = pmwm.getPageName();
 
-        if (pmwm.getId()!=null) {
+        if (pmwm.getId() != null) {
             session.setAttribute("id", pmwm.getId());
             session.setAttribute("email", pmwm.getEmail());
             session.setAttribute("name", pmwm.getNameOrBno());
@@ -105,6 +109,46 @@ public class GuestController {
 
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pageName;
+    }
+
+    @GetMapping("/user/email/duplicate/{email}")
+    public ResponseEntity<String> userEmailDuplicationCheck(@PathVariable String email, HttpSession session) {
+        ResponseEntity<String> response = userService.duplicateEmail(session, email);
+
+        if (!response.getStatusCode().isError()) {
+            String key = TempKey.make();
+            sendEmailToUser(email, "Job-a 회원가입 인증번호", "인증번호는 " + key + "입니다.");
+            session.setAttribute("key", key);
+            session.setMaxInactiveInterval((int) TimeUnit.MINUTES.toSeconds(10));
+        }
+        return response;
+    }
+
+    @GetMapping("/company/email/duplicate/{email}")
+    public ResponseEntity<String> companyEmailDuplicationCheck(@PathVariable String email, HttpSession session) {
+        ResponseEntity<String> response = companyService.duplicateEmail(session, email);
+        //TODO 제대로 만들기
+        return response;
+    }
+
+    @GetMapping("")
+    public ResponseEntity<String> authenticationCheck(){
+        return null;
+    }
+
+    private void sendEmailToUser(String userEmail, String subject, String text) {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        try {
+            helper.setTo(userEmail);
+            helper.setSubject(subject);
+            helper.setText(text);
+
+            emailSender.send(message);
+        } catch (MessagingException e) {
+            // 예외 처리
+        }
     }
 
 }

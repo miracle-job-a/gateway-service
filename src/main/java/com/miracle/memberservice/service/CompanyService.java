@@ -53,5 +53,11 @@ public class CompanyService {
         return new PageMoveWithMessage("index", dto);
     }
 
+    public ResponseEntity<String> duplicateEmail(HttpSession session, String email){
+
+        ApiResponse response = ServiceCall.get(session, "company", "/user/check-email/" + email);
+
+        return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
+    }
 
 }
