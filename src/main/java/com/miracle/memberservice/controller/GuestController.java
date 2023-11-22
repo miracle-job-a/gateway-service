@@ -10,6 +10,7 @@ import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -58,18 +59,12 @@ public class GuestController {
 
     //사업자 번호 조회 API
     @PostMapping(value = "/company/bno")
-    public ResponseEntity<Map<String, String>> bnoCertify(@ModelAttribute CompanyCheckBnoRequestDto bno, HttpSession session) {
+    public ResponseEntity<String> bnoCertify(@ModelAttribute CompanyCheckBnoRequestDto bno, HttpSession session) {
         log.info(bno.toString());
 
-        PageMoveWithMessage pageMoveWithMessage = companyService.bnoCertify(bno, session);
+        return companyService.bnoCertify(bno, session);
 
-        Map<String, String> response = new HashMap<>();
-        response.put("errorMessage", pageMoveWithMessage.getErrorMessage());
-
-        return ResponseEntity.ok(response);
     }
-
-
 
     // 회원가입 API
     @PostMapping("/user/join")

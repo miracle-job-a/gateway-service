@@ -18,35 +18,33 @@ import javax.servlet.http.HttpSession;
 @Slf4j
 public class CompanyService {
 
-    public PageMoveWithMessage bnoCertify(CompanyCheckBnoRequestDto bno, HttpSession session) {
+    public ResponseEntity<String> bnoCertify(CompanyCheckBnoRequestDto bno, HttpSession session) {
         log.info(bno.toString());
 
+        log.info("first");
         WebClient webClient = WebClient.builder()
                 .baseUrl("http://localhost:60002")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
-
+        log.info("second");
         MiracleTokenKey key = new MiracleTokenKey(session);
-
-        ResponseEntity<ApiResponse> response = webClient.post()
+        log.info("third");
+        ApiResponse response = webClient.post()
                 .uri(uriBuilder -> uriBuilder.path("/v1/company/bno").build())
                 .bodyValue(bno)
                 .header("miracle", key.getHashcode())
                 .header("sessionId", key.getSessionId())
                 .retrieve()
-                .toEntity(ApiResponse.class).block();
+                .bodyToMono(ApiResponse.class).block();
 
-        ApiResponse body = response.getBody();
-
-        log.info(body.toString());
-
-        int httpStatus = body.getHttpStatus();
-        if (httpStatus == 200) return new PageMoveWithMessage("index", null);
-
-        String errorMessage = body.getMessage();
-        log.error(errorMessage);
-        return new PageMoveWithMessage("guest/company/bno", errorMessage);
+        log.info("four");
+        System.out.println("response object" + response.toString());
+        //return response;
+        int httpStatus = response.getHttpStatus();
+        String errorMessage = response.getMessage();
+        return ResponseEntity.status(httpStatus).body(errorMessage);
     }
+
 
     public PageMoveWithMessage companyJoin(CompanyJoinDto companyJoinDto, HttpSession session) {
 
@@ -77,6 +75,7 @@ public class CompanyService {
         String errorMessage = body.getMessage();
         log.error(errorMessage);
         return new PageMoveWithMessage("guest/company-join", errorMessage);
+
     }
 
 
