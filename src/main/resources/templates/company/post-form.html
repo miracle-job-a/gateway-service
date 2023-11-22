@@ -1,0 +1,104 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
+
+        <section class="latest-podcast-section" id="section_2">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="card bg-light text-dark ">
+                        <div class="card-body">
+                            <div class="col-12">
+                                <h3>공고 등록</h3>
+                            </div>
+
+                            <div class="col-8 mt-2">
+                                <input type="text" name="career" placeholder="경력"/>
+                            </div>
+
+                            <div class="col-8 mt-2">
+                                <input type="date" name="endDate" placeholder="마감일"/>
+                            </div>
+
+                            <div class="col-8 mt-2">
+                                <input type="text" name="jobId" placeholder="직무"/>
+                            </div>
+
+                            <div class="col-8 mt-2">
+                                <span>직무종류</span>
+                                <input class="form-check-input" type="checkbox" id="job1" name="job1" value="프론트" />
+                                <label class="form-check-label">프론트</label>
+                                <input class="form-check-input" type="checkbox" id="job2" name="job2" value="백엔드" />
+                                <label class="form-check-label">백엔드</label>
+                                <input class="form-check-input" type="checkbox" id="job3" name="job3" value="빅데이터" />
+                                <label class="form-check-label">빅데이터</label>
+                                <input class="form-check-input" type="checkbox" id="job4" name="job4" value="풀스택" />
+                                <label class="form-check-label">풀스택</label>
+                                <input class="form-check-input" type="checkbox" id="job5" name="job5" value="모르겠다" />
+                                <label class="form-check-label">몰라요</label>
+                            </div>
+
+
+
+                            <div class="col-8 mt-2">
+                                <h4>회사 정보</h4>
+                                <!--
+                                 회사명 : name
+                                 대표자 : ceoName
+                                 재직인원 : employeeNum
+                                 근무주소(디폴트 회사 주소) : address
+                                 사진 : photo
+                                 -->
+                                <div class="col-8 mt-2">
+                                <input type="text" name="name" placeholder="회사명"/>
+                                </div>
+                                <div class="col-8 mt-2">
+                                    <input type="text" name="ceoName" placeholder="대표자"/>
+                                </div>
+                                <div class="col-8 mt-2">
+                                    <input type="number" name="employeeNum" placeholder="재직인원"/>
+                                </div>
+                                <div class="col-8 mt-2">
+                                    <input type="text" name="address" placeholder="근무주소"/>
+                                </div>
+                                <div class="col-8 mt-2">
+                                    <input type="image" name="photo" placeholder=""/>
+                                </div>
+                            </div>
+
+                            <div class="col-8 mt-2">
+                                <h5>소개</h5>
+                                <!--
+                                    기업소개(기업테이블) : introduction
+                                    주요업무 : mainTask
+                                    근무조건 : workCondition
+                                    자격요건
+                                    개발 툴
+                                    복지 및 혜택
+                                    우대 기술사항
+                                    채용절차
+                                    유의사항
+                                -->
+                                <div class="col-8 mt-2">
+                                    <textarea class="form-control" rows="5" id="comment" name="text"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+    </main>
+</div>
+
+</html>

@@ -25,4 +25,11 @@ public class CompanyController {
     public String detail() {
         return "company/detail-page";
     }
+
+    @GetMapping("/postlist")
+    public String postList(){ return "company/post-list"; }
+
+    @GetMapping("/post-form")
+    public String postForm(){ return "company/post-form"; }
+
 }
