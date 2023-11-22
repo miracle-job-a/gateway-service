@@ -5,7 +5,6 @@ import com.miracle.memberservice.dto.request.CompanyJoinDto;
 import com.miracle.memberservice.dto.request.LoginDto;
 import com.miracle.memberservice.dto.request.UserJoinDto;
 import com.miracle.memberservice.service.CompanyService;
-import com.miracle.memberservice.service.LoginService;
 import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,6 @@ public class GuestController {
 
     private final UserService userService;
     private final CompanyService companyService;
-    private final LoginService loginService;
 
     @GetMapping
     public String index() {
@@ -69,26 +67,40 @@ public class GuestController {
     // 회원가입 API
     @PostMapping("/user/join")
     public String userJoin(@ModelAttribute UserJoinDto userJoinDto, Model model, HttpSession session) {
-        PageMoveWithMessage pageMoveWithMessage = userService.userJoin(userJoinDto, session);
+        PageMoveWithMessage pageMoveWithMessage = userService.join(userJoinDto, session);
         model.addAttribute("errorMessage", pageMoveWithMessage.getErrorMessage());
         return pageMoveWithMessage.getPageName();
     }
 
     @PostMapping("/company/join")
     public String companyJoin(@ModelAttribute CompanyJoinDto companyJoinDto, Model model, HttpSession session) {
-        PageMoveWithMessage pageMoveWithMessage = companyService.companyJoin(companyJoinDto, session);
+        PageMoveWithMessage pageMoveWithMessage = companyService.join(companyJoinDto, session);
         model.addAttribute("errorMessage", pageMoveWithMessage.getErrorMessage());
         return pageMoveWithMessage.getPageName();
     }
 
     //로그인 API
-    @PostMapping("/login")
-    public String login(@ModelAttribute LoginDto loginDto, Model model, HttpSession session) {
-        PageMoveWithMessage pageMoveWithMessage = loginService.login(loginDto, session);
+    @PostMapping("/company/login")
+    public String companyLogin(@ModelAttribute LoginDto loginDto, Model model, HttpSession session) {
+        PageMoveWithMessage pageMoveWithMessage = companyService.login(loginDto, session);
         String pageName = pageMoveWithMessage.getPageName();
 
         if (pageName.equals("index")) {
-            session.setAttribute("id", pageMoveWithMessage.getId());
+            session.setAttribute(loginDto.getMemberType()+"Id", pageMoveWithMessage.getId());
+            session.setAttribute("email", loginDto.getEmail());
+        }
+
+        model.addAttribute("errorMessage", pageMoveWithMessage.getErrorMessage());
+        return pageName;
+    }
+
+    @PostMapping("/user/login")
+    public String userLogin(@ModelAttribute LoginDto loginDto, Model model, HttpSession session) {
+        PageMoveWithMessage pageMoveWithMessage = userService.login(loginDto, session);
+        String pageName = pageMoveWithMessage.getPageName();
+
+        if (pageName.equals("index")) {
+            session.setAttribute(loginDto.getMemberType()+"Id", pageMoveWithMessage.getId());
             session.setAttribute("email", loginDto.getEmail());
         }
 

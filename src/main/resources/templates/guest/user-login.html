@@ -3,6 +3,14 @@
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         layout:decorate="~{layout/default_layout}" lang="ko">
 <div layout:fragment="content">
+    <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+
+        if (errorMessage != null) {
+            alert(errorMessage);
+            // 이후 로직 추가 가능
+        }
+    </script>
     <main>
         <header class="site-header d-flex flex-column justify-content-center align-items-center">
         </header>
@@ -15,7 +23,7 @@
                             <h4 class="section-title">로그인</h4>
                         </div>
 
-                        <form action="/v1/login" method="post" class="custom-form contact-form" role="form">
+                        <form action="/v1/user/login" method="post" class="custom-form contact-form" role="form">
                             <div class="row">
 
                                 <div class="col-lg-6 col-md-6 col-12 pb-4">
@@ -46,7 +54,6 @@
                                             <button type="button" class="form-control ms-auto" onclick="location.href='/v1/user/join'">회원가입</button>
                                         </div>
                                         <div class="col-lg-3 col-6">
-                                            <input type="hidden" name="memberType" value="user" />
                                             <button type="submit" class="form-control ms-auto">로그인</button>
                                         </div>
 

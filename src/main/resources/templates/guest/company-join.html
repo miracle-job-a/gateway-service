@@ -5,6 +5,14 @@
 
 <div layout:fragment="content">
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+
+        if (errorMessage != null) {
+            alert(errorMessage);
+            // 이후 로직 추가 가능
+        }
+    </script>
     <script type="text/javascript">
         /* 비밀번호 체크 */
         $(document).ready(function () {
@@ -309,9 +317,9 @@
                             <!-- 대표자명 -->
                             <div class="col-lg-5 col-md-5 col-12">
                                 <div class="form-floating">
-                                    <input type="text" name="cedName" id="ceoName" class="form-control"
-                                           placeholder="대표자" required="">
-                                    <label for="floatingInput">대표자 명</label>
+                                    <input type="text" name="ceoName" id="ceoName" class="form-control"
+                                           placeholder="대표자명" required="">
+                                    <label for="floatingInput">대표자명</label>
                                 </div>
                             </div>
 
@@ -386,10 +394,18 @@
                                 <label for="floatingInput">기업 대표 이미지</label>
                                 <div class="form-floating mb-3 mt-1">
                                     <div class="input-group">
-                                        <input type="file" class="form-control" id="imageInput" accept="image/jpeg,image/png" aria-describedby="imageInputHelp" required>
+                                        <input type="file" class="form-control" name="photo" id="imageInput" accept="image/jpeg,image/png" aria-describedby="imageInputHelp" required>
                                     </div>
                                     <small id="imageInputHelp" class="form-text text-muted">jpeg, png 이미지만 업로드 가능합니다.</small>
                                 </div>
+                            </div>
+
+                            <div class="col-lg-8 col-md-8 col-12 mt-2">
+                                <p>기업소개</p>
+                            </div>
+                            <div class="form-floating">
+                                        <textarea class="form-control" name="introduction"
+                                                  placeholder="Describe message here" required minlength="20"></textarea>
                             </div>
 
                             <div class="col-lg-8 col-md-8 col-12 mt-2">

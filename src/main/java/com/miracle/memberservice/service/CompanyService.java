@@ -2,9 +2,13 @@ package com.miracle.memberservice.service;
 
 import com.miracle.memberservice.dto.request.CompanyCheckBnoRequestDto;
 import com.miracle.memberservice.dto.request.CompanyJoinDto;
+import com.miracle.memberservice.dto.request.LoginDto;
 import com.miracle.memberservice.dto.response.ApiResponse;
+import com.miracle.memberservice.dto.response.CompanyLoginResponseDto;
+import com.miracle.memberservice.dto.response.SuccessApiResponse;
 import com.miracle.memberservice.util.MiracleTokenKey;
 import com.miracle.memberservice.util.PageMoveWithMessage;
+import com.miracle.memberservice.util.ServiceCall;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -45,37 +49,32 @@ public class CompanyService {
         return ResponseEntity.status(httpStatus).body(errorMessage);
     }
 
-
-    public PageMoveWithMessage companyJoin(CompanyJoinDto companyJoinDto, HttpSession session) {
+    public PageMoveWithMessage join(CompanyJoinDto companyJoinDto, HttpSession session) {
 
         log.info(companyJoinDto.toString());
 
-        WebClient webClient = WebClient.builder()
-                .baseUrl("http://localhost:60002")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
+        ApiResponse response = ServiceCall.post(session, companyJoinDto, "company", "/join");
 
-        MiracleTokenKey key = new MiracleTokenKey(session);
+        log.info(response.toString());
 
-        ResponseEntity<ApiResponse> response = webClient.post()
-                .uri(uriBuilder -> uriBuilder.path("/v1/company/signup").build())
-                .bodyValue(companyJoinDto)
-                .header("miracle", key.getHashcode())
-                .header("sessionId", key.getSessionId())
-                .retrieve()
-                .toEntity(ApiResponse.class).block();
+        if(response.getHttpStatus()!=200) return new PageMoveWithMessage("guest/company-join", response.getMessage());
 
-        ApiResponse body = response.getBody();
+        return new PageMoveWithMessage("index");
+    }
 
-        log.info(body.toString());
+    public PageMoveWithMessage login(LoginDto loginDto, HttpSession session){
+        log.info(loginDto.toString());
 
-        int httpStatus = body.getHttpStatus();
-        if (httpStatus == 200) return new PageMoveWithMessage("index", null);
+        ApiResponse<String> response = ServiceCall.post(session, loginDto, loginDto.getMemberType(), "/login");
 
-        String errorMessage = body.getMessage();
-        log.error(errorMessage);
-        return new PageMoveWithMessage("guest/company-join", errorMessage);
+        log.info(response.toString());
 
+        if(response.getHttpStatus()!=200) return new PageMoveWithMessage("guest/company-login", response.getMessage());
+
+        log.info(response.getData().toString());
+
+        //TODO login 구현
+        return null;
     }
 
 
