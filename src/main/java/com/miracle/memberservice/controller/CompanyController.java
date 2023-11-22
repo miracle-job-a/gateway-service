@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/v1/company")
 public class CompanyController {
 
-    @GetMapping("/post/create")
-    public String detail(){
-        return "company/detail-page";
-    }
+    @GetMapping("/postlist")
+    public String postList(){ return "company/post-list"; }
+
+    @GetMapping("/post-form")
+    public String postForm(){ return "company/post-form"; }
+
 }

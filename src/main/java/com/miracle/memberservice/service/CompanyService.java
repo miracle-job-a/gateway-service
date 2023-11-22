@@ -1,6 +1,6 @@
 package com.miracle.memberservice.service;
 
-import com.miracle.memberservice.dto.request.CompanyBnoDto;
+import com.miracle.memberservice.dto.request.CompanyCheckBnoRequestDto;
 import com.miracle.memberservice.dto.request.CompanyJoinDto;
 import com.miracle.memberservice.dto.request.LoginDto;
 import com.miracle.memberservice.dto.response.ApiResponse;
@@ -22,8 +22,31 @@ import javax.servlet.http.HttpSession;
 @Slf4j
 public class CompanyService {
 
-    public String bnoCerti(CompanyBnoDto bnoDto) {
-        return null;
+    public ResponseEntity<String> bnoCertify(CompanyCheckBnoRequestDto bno, HttpSession session) {
+        log.info(bno.toString());
+
+        log.info("first");
+        WebClient webClient = WebClient.builder()
+                .baseUrl("http://localhost:60002")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+        log.info("second");
+        MiracleTokenKey key = new MiracleTokenKey(session);
+        log.info("third");
+        ApiResponse response = webClient.post()
+                .uri(uriBuilder -> uriBuilder.path("/v1/company/bno").build())
+                .bodyValue(bno)
+                .header("miracle", key.getHashcode())
+                .header("sessionId", key.getSessionId())
+                .retrieve()
+                .bodyToMono(ApiResponse.class).block();
+
+        log.info("four");
+        System.out.println("response object" + response.toString());
+        //return response;
+        int httpStatus = response.getHttpStatus();
+        String errorMessage = response.getMessage();
+        return ResponseEntity.status(httpStatus).body(errorMessage);
     }
 
     public PageMoveWithMessage join(CompanyJoinDto companyJoinDto, HttpSession session) {
@@ -53,5 +76,6 @@ public class CompanyService {
         //TODO login 구현
         return null;
     }
+
 
 }
