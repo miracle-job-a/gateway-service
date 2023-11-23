@@ -34,9 +34,11 @@ public class CompanyController {
     @GetMapping("/postlist")
     public String postList(){ return "company/post-list"; }
 
+    // 공고 생성 폼 이동 (구현 X, 프로트 페이지만 이동)
     @GetMapping("/post-form")
     public String postForm(){ return "company/mz-post"; }
 
+    // 기업 자주하는 질문페이지 이동
     @GetMapping("/faq")
     public String faqList(){ return "company/faq"; }
 
