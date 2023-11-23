@@ -1,0 +1,85 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
+
+        <section class="latest-podcast-section" id="section_2">
+            <div class="container">
+                <div class="row justify-content-center">
+
+                    <div class="col-lg-10 col-12">
+                        <div class="section-title-wrap mb-5">
+                            <h4 class="section-title">자주하는 질문 관리</h4>
+                        </div>
+
+                        <div class="row justify-content-center">
+                            <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
+                                <div class="col-12 mt-5"></div>
+
+                                <div class="card p-4 col-11 align-self-center post-form ">
+                                    <div class="col-12 mt-2 align-self-center">
+                                        <div class="mb-2">
+                                            <button type="button" class="btn btn-outline-danger" disabled>질문</button>
+                                        </div>
+                                        <input type="text" readonly name="question1" id="question1"
+                                               class="form-control-plaintext" value="질문 내용이 들어갑니다." />
+                                    </div>
+
+                                    <div class="col-12 mt-3 align-self-center">
+                                        <div class="mb-2">
+                                            <button type="button" class="btn btn-outline-danger" disabled>답</button>
+                                        </div>
+                                        <textarea readonly class="form-control-plaintext" rows="2"
+                                                  id="answer1" name="answer1" style="resize: none;">답변 내용이 들어 갑니다. 블라블라</textarea>
+                                    </div>
+                                </div>
+
+                                <!-- 구분선 -->
+                                <div class="col-10 m-5 align-self-center">
+                                    <hr>
+                                </div>
+
+                                <!-- 질문 생성 -->
+                                <div class="card p-4 col-11 align-self-center post-form ">
+                                    <div class="col-12 mt-2 align-self-center">
+                                        <div class="mb-2">
+                                            <label for="question">질문</label>
+                                        </div>
+                                        <input type="text" name="question" id="question"
+                                               class="form-control" value="질문 내용이 들어갑니다." />
+                                    </div>
+
+                                    <div class="col-12 mt-3 align-self-center">
+                                        <div class="mb-2">
+                                            <label for="answer">답</label>
+                                        </div>
+                                        <textarea class="form-control" rows="2" id="answer" name="answer" readonly>답변 내용이 들어 갑니다. 블라블라</textarea>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-10 mt-4 align-self-center text-center">
+                                    <h5 class="text-secondary">자주하는 질문은 최대 10개 가지 등록가능합니다.</h5>
+                                </div>
+                                <div class="col-8 mb-5 align-self-center">
+                                    <button type="submit" class="form-control">등록하기</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+    </main>
+</div>
+
+</html>

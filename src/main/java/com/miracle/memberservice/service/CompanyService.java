@@ -1,9 +1,6 @@
 package com.miracle.memberservice.service;
 
-import com.miracle.memberservice.dto.request.CompanyCheckBnoRequestDto;
-import com.miracle.memberservice.dto.request.CompanyJoinDto;
-import com.miracle.memberservice.dto.request.LoginDto;
-import com.miracle.memberservice.dto.request.PostIdListDto;
+import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.ApiResponse;
 import com.miracle.memberservice.dto.response.CompanyLoginResponseDto;
 import com.miracle.memberservice.util.PageMoveWithMessage;
@@ -62,7 +59,6 @@ public class CompanyService {
         return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
     }
 
-
     //공고관리 목록
     public PageMoveWithMessage postList(HttpSession session) {
 
@@ -86,6 +82,14 @@ public class CompanyService {
         return null;
     }
 
+    // MZ 공고 등록
+    public PageMoveWithMessage createMZ(MzPostDto mzPostDto, HttpSession session){
+        ApiResponse response = ServiceCall.post(session, mzPostDto, "company", "/mzPost");
+
+        if (response.getHttpStatus() != 200 ) return new PageMoveWithMessage("/company/post/mzPost", response.getMessage());
+
+        return new PageMoveWithMessage("/company/postlist");
+    }
 
     
 
