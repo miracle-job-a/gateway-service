@@ -7,6 +7,8 @@ import com.miracle.memberservice.dto.response.UserLoginResponseDto;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import com.miracle.memberservice.util.ServiceCall;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
@@ -25,7 +27,7 @@ public class UserService {
      */
     public PageMoveWithMessage join(UserJoinDto userJoinDto, HttpSession session) {
 
-        ApiResponse response = ServiceCall.post(session, userJoinDto, "user", "/join");
+        ApiResponse response = ServiceCall.post(session, userJoinDto, "user", "/user/join");
 
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("guest/user-join", response.getMessage());
 
@@ -34,7 +36,7 @@ public class UserService {
 
     public PageMoveWithMessage login(LoginDto loginDto, HttpSession session) {
 
-        ApiResponse response = ServiceCall.post(session, loginDto, loginDto.getMemberType(), "/login");
+        ApiResponse response = ServiceCall.post(session, loginDto, "user", "/user/login");
 
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("guest/user-login", response.getMessage());
 
@@ -47,5 +49,14 @@ public class UserService {
                 .build();
 
         return new PageMoveWithMessage("index", dto);
+    }
+
+    public ResponseEntity<String> duplicateEmail(HttpSession session, String email){
+
+        ApiResponse response = ServiceCall.get(session, "user", "/user/check-email/" + email);
+
+        if(Boolean.TRUE.equals(response.getData())) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage());
+
+        return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
     }
 }

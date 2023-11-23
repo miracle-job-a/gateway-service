@@ -20,4 +20,14 @@ spring:
     # 디렉토리에 파일이 있는지 체크, 없으면 에러발생 유도
     check-template-location: true
 
-
+  mail:
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    host: smtp.gmail.com
+    username: junn4580@gmail.com
+    password: rcmpdczueczqjhao

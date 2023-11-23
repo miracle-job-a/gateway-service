@@ -22,14 +22,14 @@ public class CompanyService {
 
     public ResponseEntity<String> bnoCertify(CompanyCheckBnoRequestDto bno, HttpSession session) {
 
-        ApiResponse response = ServiceCall.post(session, bno, "company", "/bno");
+        ApiResponse response = ServiceCall.post(session, bno, "company", "/company/bno");
 
         return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
     }
 
     public PageMoveWithMessage join(CompanyJoinDto companyJoinDto, HttpSession session) {
 
-        ApiResponse response = ServiceCall.post(session, companyJoinDto, "company", "/join");
+        ApiResponse response = ServiceCall.post(session, companyJoinDto, "company", "/company/join");
 
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("guest/company-join", response.getMessage());
@@ -39,7 +39,7 @@ public class CompanyService {
 
     public PageMoveWithMessage login(LoginDto loginDto, HttpSession session) {
 
-        ApiResponse response = ServiceCall.post(session, loginDto, loginDto.getMemberType(), "/login");
+        ApiResponse response = ServiceCall.post(session, loginDto, loginDto.getMemberType(), "/company/login");
 
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("guest/company-login", response.getMessage());
@@ -54,6 +54,14 @@ public class CompanyService {
 
         return new PageMoveWithMessage("index", dto);
     }
+  
+    public ResponseEntity<String> duplicateEmail(HttpSession session, String email){
+
+        ApiResponse response = ServiceCall.get(session, "company", "/user/check-email/" + email);
+
+        return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
+    }
+
 
     //공고관리 목록
     public PageMoveWithMessage postList(HttpSession session) {
@@ -77,6 +85,9 @@ public class CompanyService {
 
         return null;
     }
+
+
+    
 
 
 }

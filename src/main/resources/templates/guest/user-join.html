@@ -68,10 +68,96 @@
             function updateSubmitButton() {
                 // 약관 동의 체크박스가 체크되고, 비밀번호와 비밀번호 확인이 일치하며, 비밀번호가 조건을 충족하면 submit 버튼 활성화
                 var termsAgreeChecked = $('#termsAgree').prop('checked');
+                var authentication = $('#authenticationButton').prop('disabled');
                 var passwordValid = $('#inputPw').prop('disabled') || ($('#inputPw').val() !== "" && $('#pwConfirm').val() !== "" && $('#pwConfirmMsg').text() === "암호 일치");
-                $('#submit-button').prop("disabled", !(termsAgreeChecked && passwordValid));
+                $('#submit-button').prop("disabled", !(termsAgreeChecked && passwordValid && authentication));
             }
         });
+
+        $(document).ready(function () {
+            $('#emailCheck').on('click', function () {
+                var value = $('#email').val();
+                var msg;
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/v1/user/email/duplicate/'+value,
+                    data: { email: value },
+                    success: function (result) {
+                        $('#emailResult').css("color", "#660099").html(result);
+                        $('#emailCheck').prop('disabled', true); // 버튼 비활성화
+                        $('#authenticationButton').style.display = 'block';
+                        $('#authentication').style.display = 'block';
+                    },
+                    error: function (xhr) {
+                        msg=xhr;
+                        console.log(msg);
+
+                        // 상태 코드에 따라 다르게 처리
+                        $('#emailResult').css("color", "#FF0000").html('<b>' + xhr.responseText + '</b>');
+
+                    }
+                });
+            });
+        });
+
+        $(document).ready(function () {
+            $('#emailCheck').on('click', function () {
+                var value = $('#email').val();
+                var msg;
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/v1/user/email/duplicate/'+value,
+                    data: { email: value },
+                    success: function (result) {
+                        $('#emailCheck').prop('disabled', true); // 버튼 비활성화
+                        $('#authenticationButton').style.display = 'inline';
+                        $('#authentication').style.display = 'inline';
+                    },
+                    error: function (xhr) {
+                        msg=xhr;
+                        console.log(msg);
+
+                        // 상태 코드에 따라 다르게 처리
+                        alert(xhr.responseText);
+
+                    }
+                });
+            });
+        });
+
+        $(document).ready(function () {
+            $('#authenticationButton').on('click', function () {
+                var value = $('#authentication').val();
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/v1/email/authentication/'+value,
+                    data: { authentication: value },
+                    success: function (result) {
+                        $('#authenticationButton').prop('disabled', true); // 버튼 비활성화
+                    },
+                    error: function (xhr) {
+                        msg=xhr;
+                        console.log(msg);
+                        if(xhr.status===408){
+                            $('#emailCheck').prop('disabled', false);
+                            $('#authenticationButton').style.display = 'none';
+                            $('#authentication').style.display = 'none';
+                            alert(xhr.responseText);
+                        }else{
+                            alert(xhr.responseText);
+                        }
+                        // 상태 코드에 따라 다르게 처리
+
+
+                    }
+                });
+            });
+        });
+
+
 
 
         /* 주소 API */
@@ -162,7 +248,7 @@
                             </div>
                             <div class="col-lg-2 col-md-2 col-12">
                                 <div class="form-floating">
-                                    <button type="button" class="btn">인증하기</button>
+                                    <button type="button" id="emailCheck" class="btn">인증하기</button>
                                 </div>
                             </div>
 
@@ -170,13 +256,12 @@
                             <div class="col-lg-4 col-md-4 col-12">
                                 <div class="form-floating">
                                     <input type="text" name="authentication" id="authentication" class="form-control"
-                                           placeholder="인증번호" required="">
-                                    <label for="floatingInput">인증번호 입력</label>
+                                           placeholder="인증번호" required="" style="display: none;">
                                 </div>
                             </div>
                             <div class="col-lg-2 col-md-2 col-12">
                                 <div class="form-floating" >
-                                    <button type="button" class="btn">인증확인</button>
+                                    <button type="button" style="display: none;" id="authenticationButton" class="btn">인증확인</button>
                                 </div>
                             </div>
 

@@ -5,12 +5,12 @@ import lombok.*;
 @Getter
 @ToString
 @RequiredArgsConstructor
-public class ApiResponse<T> {
+public class ApiResponse {
     private final int httpStatus;
     private final String message;
     private final String code;
     private final String exception;
-    private final T data;
+    private final Object data;
 
     public ApiResponse() {
         this.httpStatus = 0;
