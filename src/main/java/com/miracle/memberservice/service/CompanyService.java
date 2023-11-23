@@ -59,7 +59,6 @@ public class CompanyService {
         return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
     }
 
-
     //공고관리 목록
     public PageMoveWithMessage postList(HttpSession session) {
 
@@ -81,5 +80,13 @@ public class CompanyService {
         return null;
     }
 
+    // MZ 공고 등록
+    public PageMoveWithMessage createMZ(MzPostDto mzPostDto, HttpSession session){
+        ApiResponse response = ServiceCall.post(session, mzPostDto, "company", "/mzPost");
+
+        if (response.getHttpStatus() != 200 ) return new PageMoveWithMessage("/company/post/mzPost", response.getMessage());
+
+        return new PageMoveWithMessage("/company/postlist");
+    }
 
 }

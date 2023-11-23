@@ -14,4 +14,7 @@ public class UserController {
         session.invalidate();
         return "index";
     }
+
+    @GetMapping("/normalPost")
+    public String mzPostDatail(){ return "user/normal-post"; }
 }
