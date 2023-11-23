@@ -6,17 +6,6 @@
 <div layout:fragment="content">
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script>
-        /* 자소서 질문 추가 (임시) */
-        function add_item(){
-            // pre_set 에 있는 내용을 읽어와서 처리..
-            var div = document.createElement('div');
-            div.innerHTML = document.getElementById('pre_set').innerHTML;
-            document.getElementById('field').appendChild(div);
-        }
-        function remove_item(obj){
-            // obj.parentNode 를 이용하여 삭제
-            document.getElementById('field').removeChild(obj.parentNode);
-        }
 
         /* 주소 변경하기 */
         /* 주소 API */
@@ -259,22 +248,6 @@
                                 </div>
                                 <textarea class="form-control" rows="3" id="notice" name="notice"></textarea>
                             </div>
-
-
-                            <h5 class="mb-4 mt-4">자기소개서 질문</h5>
-
-                                    <div class="col-12" id="pre_set">
-                                        <input type="text" class="form-control" name="question" value="" >
-                                        <input type="button" class="form-control" value="삭제" onclick="remove_item(this)">
-                                    </div>
-
-
-
-                            <div id="field"></div>
-
-                            <input type="button" value=" 추가 " onclick="add_item()" /><br>
-                            최대 5개 등록 가능합니다.
-
 
 
                             <h5 class="mb-4 mt-4">MZ 질문</h5>

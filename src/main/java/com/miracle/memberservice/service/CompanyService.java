@@ -6,7 +6,6 @@ import com.miracle.memberservice.dto.request.LoginDto;
 import com.miracle.memberservice.dto.request.PostIdListDto;
 import com.miracle.memberservice.dto.response.ApiResponse;
 import com.miracle.memberservice.dto.response.CompanyLoginResponseDto;
-import com.miracle.memberservice.dto.response.CompanyPostListDto;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import com.miracle.memberservice.util.ServiceCall;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 
 @Getter
-public class CompanyPostListDto {
+public class CompanyPostListResponseDto {
 
     private final Long id;
     private final String postType;
@@ -14,7 +14,7 @@ public class CompanyPostListDto {
     private final String modifiedAt;
 
     @Builder
-    public CompanyPostListDto(Object id, Object postType, Object title, Object endDate, Object modifiedAt) {
+    public CompanyPostListResponseDto(Object id, Object postType, Object title, Object endDate, Object modifiedAt) {
         this.id = Long.parseLong(id.toString());
         this.postType = String.valueOf(postType);
         this.title = String.valueOf(title);
