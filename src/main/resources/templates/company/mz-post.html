@@ -44,17 +44,17 @@
                                 extraAddr = ' (' + extraAddr + ')';
                             }
                             // 조합된 참고항목을 해당 필드에 넣는다.
-                            document.getElementById("address").value = extraAddr;
+                            document.getElementById("work_address").value = extraAddr;
 
                         } else {
-                            document.getElementById("address").value = '';
+                            document.getElementById("work_address").value = '';
                         }
 
                         // 우편번호와 주소 정보를 해당 필드에 넣는다.
-                        document.getElementById('address').value = data.zonecode;
-                        document.getElementById("address").value = addr;
+                        document.getElementById('work_address').value = data.zonecode;
+                        document.getElementById("work_address").value = addr;
                         // 커서를 상세주소 필드로 이동한다.
-                        document.getElementById("detailAddress").focus();
+                        document.getElementById("work_address").focus();
                     }
                 }).open();
             });
@@ -72,7 +72,7 @@
                     <h4 class="section-title">공고 등록</h4>
                 </div>
                 <div class="row justify-content-center">
-                    <div class="card bg-outline-light text-dark ">
+                    <div class="card bg-outline-light text-dark shadow-lg">
                         <form action="#" method="post" class="post-form" role="form">
                         <div class="card-body">
 
@@ -160,18 +160,12 @@
                                 </div>
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
-                                        <label for="address">근무주소</label>
+                                        <label for="address">기업주소</label>
                                     </div>
                                     <input type="text" name="address" id="address"
-                                           class="form-control" placeholder="근무주소" value="기본 기업정보의 주소를 입력합니다." />
-                                    <input type="text" name="detailAddress" id="detailAddress" class="form-control"
-                                           placeholder="세부주소" required="">
+                                           class="form-control"  value="기본 기업정보의 주소가 들어갑니다.." />
                                 </div>
-                                <div class="col-8 mt-2">
-                                    <div class="form-floating" >
-                                        <button type="button" class="custom-btn" id="addressInputBtn">주소변경</button>
-                                    </div>
-                                </div>
+
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
                                         <label for="photo">기업사진</label>
@@ -198,6 +192,17 @@
                                     <label for="introduction">기업소개</label>
                                 </div>
                                 <textarea class="form-control" rows="3" id="introduction" name="introduction"></textarea>
+                            </div>
+                            <div class="col-8 mt-2">
+                                <div class="mb-1">
+                                    <label for="work_address">근무 지역주소</label>
+                                </div>
+                                <input class="form-control"  id="work_address" name="work_address" placeholder="근무주소" />
+                            </div>
+                            <div class="col-8 mt-2">
+                                <div class="form-floating" >
+                                    <button type="button" class="custom-btn" id="addressInputBtn">주소변경</button>
+                                </div>
                             </div>
                             <div class="col-8 mt-2">
                                 <div class="mb-1">
@@ -256,14 +261,14 @@
                                 <div class="mb-1">
                                     <label for="testStartDate">테스트 시작일</label>
                                 </div>
-                                <input type="date" name="testStartDate" id="testStartDate"
+                                <input type="datetime-local" name="testStartDate" id="testStartDate"
                                        class="form-control" placeholder="test_start" required="" />
                             </div>
                             <div class="col-8 mt-2">
                                 <div class="mb-1">
                                     <label for="testEndDate">테스트 종료일</label>
                                 </div>
-                                <input type="date" name="testEndDate" id="testEndDate"
+                                <input type="datetime-local" name="testEndDate" id="testEndDate"
                                        class="form-control" placeholder="test_end" required="" />
                             </div>
 
