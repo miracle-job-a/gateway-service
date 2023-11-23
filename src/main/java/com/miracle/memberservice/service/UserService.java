@@ -51,11 +51,12 @@ public class UserService {
         return new PageMoveWithMessage("index", dto);
     }
 
-    public ResponseEntity<String> duplicateEmail(HttpSession session, String email){
+    public ResponseEntity<String> duplicateEmail(HttpSession session, String email) {
 
         ApiResponse response = ServiceCall.get(session, "user", "/user/check-email/" + email);
 
-        if(Boolean.TRUE.equals(response.getData())) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage());
+        if (Boolean.TRUE.equals(response.getData()))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage());
 
         return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
     }

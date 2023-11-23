@@ -81,42 +81,15 @@
 
                 $.ajax({
                     type: 'GET',
-                    url: '/v1/user/email/duplicate/'+value,
-                    data: { email: value },
+                    url: '/v1/user/email/duplicate/' + value,
+                    data: {email: value},
                     success: function (result) {
-                        $('#emailResult').css("color", "#660099").html(result);
-                        $('#emailCheck').prop('disabled', true); // 버튼 비활성화
-                        $('#authenticationButton').style.display = 'block';
-                        $('#authentication').style.display = 'block';
+                        $('#authenticationButton').css('display', 'block');
+                        $('#authentication').css('display', 'block');
+                        $('#authenticationLabel').css('display', 'block');
                     },
                     error: function (xhr) {
-                        msg=xhr;
-                        console.log(msg);
-
-                        // 상태 코드에 따라 다르게 처리
-                        $('#emailResult').css("color", "#FF0000").html('<b>' + xhr.responseText + '</b>');
-
-                    }
-                });
-            });
-        });
-
-        $(document).ready(function () {
-            $('#emailCheck').on('click', function () {
-                var value = $('#email').val();
-                var msg;
-
-                $.ajax({
-                    type: 'GET',
-                    url: '/v1/user/email/duplicate/'+value,
-                    data: { email: value },
-                    success: function (result) {
-                        $('#emailCheck').prop('disabled', true); // 버튼 비활성화
-                        $('#authenticationButton').style.display = 'inline';
-                        $('#authentication').style.display = 'inline';
-                    },
-                    error: function (xhr) {
-                        msg=xhr;
+                        msg = xhr;
                         console.log(msg);
 
                         // 상태 코드에 따라 다르게 처리
@@ -133,20 +106,22 @@
 
                 $.ajax({
                     type: 'GET',
-                    url: '/v1/email/authentication/'+value,
-                    data: { authentication: value },
+                    url: '/v1/email/authentication/' + value,
+                    data: {authentication: value},
                     success: function (result) {
+                        alert("인증 번호 성공");
+                        $('#emailCheck').prop('disabled', true); // 버튼 비활성화
                         $('#authenticationButton').prop('disabled', true); // 버튼 비활성화
                     },
                     error: function (xhr) {
-                        msg=xhr;
+                        msg = xhr;
                         console.log(msg);
-                        if(xhr.status===408){
-                            $('#emailCheck').prop('disabled', false);
-                            $('#authenticationButton').style.display = 'none';
-                            $('#authentication').style.display = 'none';
+                        if (xhr.status === 408) {
+                            $('#authenticationButton').css('display', 'none');
+                            $('#authentication').css('display', 'none');
+                            $('#authenticationLabel').css('display', 'none');
                             alert(xhr.responseText);
-                        }else{
+                        } else {
                             alert(xhr.responseText);
                         }
                         // 상태 코드에 따라 다르게 처리
@@ -158,14 +133,12 @@
         });
 
 
-
-
         /* 주소 API */
-        window.onload = function(){
-            document.getElementById("addressInputBtn").addEventListener("click", function(){ //주소입력칸을 클릭하면
+        window.onload = function () {
+            document.getElementById("addressInputBtn").addEventListener("click", function () { //주소입력칸을 클릭하면
                 //카카오 지도 발생
                 new daum.Postcode({
-                    oncomplete: function(data) {
+                    oncomplete: function (data) {
                         // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
 
                         // 각 주소의 노출 규칙에 따라 주소를 조합한다.
@@ -181,18 +154,18 @@
                         }
 
                         // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
-                        if(data.userSelectedType === 'R'){
+                        if (data.userSelectedType === 'R') {
                             // 법정동명이 있을 경우 추가한다. (법정리는 제외)
                             // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
-                            if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                            if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
                                 extraAddr += data.bname;
                             }
                             // 건물명이 있고, 공동주택일 경우 추가한다.
-                            if(data.buildingName !== '' && data.apartment === 'Y'){
+                            if (data.buildingName !== '' && data.apartment === 'Y') {
                                 extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
                             }
                             // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
-                            if(extraAddr !== ''){
+                            if (extraAddr !== '') {
                                 extraAddr = ' (' + extraAddr + ')';
                             }
                             // 조합된 참고항목을 해당 필드에 넣는다.
@@ -221,134 +194,140 @@
 
 
     </script>
-<main>
-    <header class="site-header d-flex flex-column justify-content-center align-items-center">
-    </header>
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
 
-    <section class="contact-section section-padding pt-0">
-        <div class="container">
-            <div class="row">
+        <section class="contact-section section-padding pt-0">
+            <div class="container">
+                <div class="row">
 
-                <div class="col-lg-8 col-12 mx-auto">
-                    <div class="section-title-wrap mb-5">
-                        <h4 class="section-title">유저 회원가입</h4>
-                    </div>
+                    <div class="col-lg-8 col-12 mx-auto">
+                        <div class="section-title-wrap mb-5">
+                            <h4 class="section-title">유저 회원가입</h4>
+                        </div>
 
-                    <!-- 회원가입 폼  -->
-                    <form action="#" method="post" class="custom-form contact-form" role="form">
-                        <div class="row">
+                        <!-- 회원가입 폼  -->
+                        <form action="#" method="post" class="custom-form contact-form" role="form">
+                            <div class="row">
 
-                            <!-- 이메일 주소 입력 -->
-                            <div class="col-lg-4 col-md-4 col-12">
+                                <!-- 이메일 주소 입력 -->
+                                <div class="col-lg-4 col-md-4 col-12">
+                                    <div class="form-floating">
+                                        <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*"
+                                               class="form-control" placeholder="Email address" required="">
+                                        <label for="floatingInput">가입 이메일</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-12">
+                                    <div class="form-floating">
+                                        <button type="button" id="emailCheck" class="btn">인증하기</button>
+                                    </div>
+                                </div>
+
+                                <!-- 이메일 인증 번호 입력 -->
+                                <div class="col-lg-4 col-md-4 col-12">
+                                    <div class="form-floating" >
+                                        <input type="text" name="authentication"
+                                               class="form-control"
+                                               placeholder="인증번호" required="" id="authentication" style="display: none;">
+                                        <label for="floatingInput" id="authenticationLabel" style="display: none;">인증번호 입력</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-12">
+                                    <div class="form-floating">
+                                        <button type="button" style="display: none;" id="authenticationButton"
+                                                class="btn">인증확인
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 pt-3"></div>
+
+                                <!-- 비밀번호 -->
+                                <div class="col-lg-12 col-md-5 col-12">
+                                    <div class="form-floating">
+                                        <input type="password" name="password" id="inputPw" class="form-control"
+                                               placeholder="비밀번호" required="">
+                                        <label for="floatingInput" id="checkPw">비밀번호(알파벳 포함 숫자 6자리 이상, 특수문자 1개
+                                            포함)</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12 col-md-5 col-12">
+                                    <div class="form-floating">
+                                        <input type="password" name="passwordConfirm" id="pwConfirm"
+                                               class="form-control"
+                                               placeholder="비밀번호확인" required="">
+                                        <label for="floatingInput" id="pwConfirmMsg">비밀번호 확인</label>
+                                    </div>
+                                </div>
+
+                                <!-- 유저이름 -->
+                                <div class="col-lg-5 col-md-5 col-12">
+                                    <div class="form-floating">
+                                        <input type="text" name="name" id="name" class="form-control"
+                                               placeholder="이름" required="">
+                                        <label for="floatingInput">이름</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-7 col-md-7 col-12"></div>
+
+
+                                <!-- 생년월일 -->
+                                <div class="col-lg-5 col-md-5 col-12">
+                                    <div class="form-floating">
+                                        <input type="date" name="birth" id="birth" class="form-control"
+                                               placeholder="생년월일" required="">
+                                        <label for="floatingInput">생년월일</label>
+                                    </div>
+                                </div>
+
+
+                                <!-- 전화번호 -->
+                                <div class="col-lg-5 col-md-5 col-12">
+                                    <div class="form-floating">
+                                        <input type="text" name="phone" id="phone" class="form-control"
+                                               placeholder="전화번호" required="" oninput="onInputPhone(this)"
+                                               maxlength="14">
+                                        <label for="floatingInput">전화번호</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-12">
+
+                                </div>
+
+                                <!-- 주소 -->
+                                <div class="col-lg-5 col-md-5 col-12">
+                                    <div class="form-floating">
+                                        <input type="text" name="address" id="address" class="form-control"
+                                               placeholder="address" required="">
+
+                                        <label for="floatingInput">주소입력</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-5 col-md-5 col-12">
+                                    <div class="form-floating">
+                                        <input type="text" name="detailAddress" id="detailAddress" class="form-control"
+                                               placeholder="address" required="">
+
+                                        <label for="floatingInput">상세주소입력</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-12">
+                                    <div class="form-floating">
+                                        <button type="button" class="btn" id="addressInputBtn">주소 찾기</button>
+                                    </div>
+                                </div>
+                                <div class="col-12 pt-3"></div>
+
+
+                                <div class="col-lg-8 col-md-8 col-12">
+                                    <p>이용약관</p>
+                                </div>
                                 <div class="form-floating">
-                                    <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*"
-                                           class="form-control" placeholder="Email address" required="">
-                                    <label for="floatingInput">가입 이메일</label>
-                                </div>
-                            </div>
-                            <div class="col-lg-2 col-md-2 col-12">
-                                <div class="form-floating">
-                                    <button type="button" id="emailCheck" class="btn">인증하기</button>
-                                </div>
-                            </div>
-
-                            <!-- 이메일 인증 번호 입력 -->
-                            <div class="col-lg-4 col-md-4 col-12">
-                                <div class="form-floating">
-                                    <input type="text" name="authentication" id="authentication" class="form-control"
-                                           placeholder="인증번호" required="" style="display: none;">
-                                </div>
-                            </div>
-                            <div class="col-lg-2 col-md-2 col-12">
-                                <div class="form-floating" >
-                                    <button type="button" style="display: none;" id="authenticationButton" class="btn">인증확인</button>
-                                </div>
-                            </div>
-
-                            <div class="col-12 pt-3"></div>
-
-                            <!-- 비밀번호 -->
-                            <div class="col-lg-12 col-md-5 col-12">
-                                <div class="form-floating">
-                                    <input type="password" name="password" id="inputPw" class="form-control"
-                                           placeholder="비밀번호" required="">
-                                    <label for="floatingInput" id="checkPw">비밀번호(알파벳 포함 숫자 6자리 이상, 특수문자 1개 포함)</label>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-12 col-md-5 col-12">
-                                <div class="form-floating">
-                                    <input type="password" name="passwordConfirm" id="pwConfirm" class="form-control"
-                                           placeholder="비밀번호확인" required="">
-                                    <label for="floatingInput" id="pwConfirmMsg">비밀번호 확인</label>
-                                </div>
-                            </div>
-
-                            <!-- 유저이름 -->
-                            <div class="col-lg-5 col-md-5 col-12">
-                                <div class="form-floating">
-                                    <input type="text" name="name" id="name" class="form-control"
-                                           placeholder="이름" required="">
-                                    <label for="floatingInput">이름</label>
-                                </div>
-                            </div>
-                            <div class="col-lg-7 col-md-7 col-12"></div>
-
-
-
-                            <!-- 생년월일 -->
-                            <div class="col-lg-5 col-md-5 col-12">
-                                <div class="form-floating">
-                                    <input type="date" name="birth" id="birth" class="form-control"
-                                           placeholder="생년월일" required="">
-                                    <label for="floatingInput">생년월일</label>
-                                </div>
-                            </div>
-
-
-                            <!-- 전화번호 -->
-                            <div class="col-lg-5 col-md-5 col-12">
-                                <div class="form-floating">
-                                    <input type="text" name="phone" id="phone" class="form-control"
-                                           placeholder="전화번호" required="" oninput="onInputPhone(this)" maxlength="14">
-                                    <label for="floatingInput">전화번호</label>
-                                </div>
-                            </div>
-                            <div class="col-lg-2 col-md-2 col-12">
-
-                            </div>
-
-                            <!-- 주소 -->
-                            <div class="col-lg-5 col-md-5 col-12">
-                                <div class="form-floating">
-                                    <input type="text" name="address" id="address" class="form-control"
-                                           placeholder="address" required="">
-
-                                    <label for="floatingInput">주소입력</label>
-                                </div>
-                            </div>
-                            <div class="col-lg-5 col-md-5 col-12">
-                                <div class="form-floating">
-                                    <input type="text" name="detailAddress" id="detailAddress" class="form-control"
-                                           placeholder="address" required="">
-
-                                    <label for="floatingInput">상세주소입력</label>
-                                </div>
-                            </div>
-                            <div class="col-lg-2 col-md-2 col-12">
-                                <div class="form-floating" >
-                                    <button type="button" class="btn" id="addressInputBtn">주소 찾기</button>
-                                </div>
-                            </div>
-                            <div class="col-12 pt-3"></div>
-
-
-                            <div class="col-lg-8 col-md-8 col-12">
-                                <p>이용약관</p>
-                            </div>
-                            <div class="form-floating">
                                         <textarea class="form-control" id="message" name="message"
-                                                  placeholder="Describe message here" disabled >제1조 (목적)
+                                                  placeholder="Describe message here" disabled>제1조 (목적)
 본 약관은 ㈜사람인(이하 “회사”)이 “서비스”를 제공함에 있어, “회사”와 회원 간의 이용조건 및 제반 절차, 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다. 회사에서 운영하는 웹사이트(이하 “사이트”) 및 모바일 어플리케이션(이하 “어플리케이션”)을 총칭하여 “사이트 등”이라고 합니다.
 제2조 (용어의 정의)
 본 약관에서 사용하는 용어의 정의는 아래와 같습니다.
@@ -369,29 +348,29 @@
                                         </textarea>
 
 
-                        </div>
+                                </div>
 
 
-                            <div class="col-4 d-flex justify-content-center">
-                                <label class="justify-content-center">
-                                    <input type="checkbox" name="termsAgree" id="termsAgree" required="">
-                                    동의합니다.
-                                </label>
+                                <div class="col-4 d-flex justify-content-center">
+                                    <label class="justify-content-center">
+                                        <input type="checkbox" name="termsAgree" id="termsAgree" required="">
+                                        동의합니다.
+                                    </label>
+                                </div>
+                                <div class="col-4">
+                                    <button type="submit" class="form-control" id="submit-button">가입하기</button>
+                                </div>
+
                             </div>
-                            <div class="col-4">
-                                <button type="submit" class="form-control" id="submit-button">가입하기</button>
-                            </div>
+                        </form>
+                    </div>
 
                 </div>
-                </form>
             </div>
-
-        </div>
-        </div>
-    </section>
+        </section>
 
 
-</main>
+    </main>
 
 </div>
 </html>

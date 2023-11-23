@@ -21,13 +21,14 @@ spring:
     check-template-location: true
 
   mail:
+    host: smtp.naver.com
     port: 587
+    username: junn811@naver.com
+    password: S9X3DFPFH9T7
     properties:
       mail:
         smtp:
-          auth: true
           starttls:
             enable: true
-    host: smtp.gmail.com
-    username: junn4580@gmail.com
-    password: rcmpdczueczqjhao
+          auth: true
+

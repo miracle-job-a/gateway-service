@@ -5,23 +5,18 @@ import com.miracle.memberservice.dto.request.CompanyJoinDto;
 import com.miracle.memberservice.dto.request.LoginDto;
 import com.miracle.memberservice.dto.request.UserJoinDto;
 import com.miracle.memberservice.service.CompanyService;
-import com.miracle.memberservice.service.MailService;
+import com.miracle.memberservice.service.EmailService;
 import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
-import com.miracle.memberservice.util.TempKey;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpSession;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +29,7 @@ public class GuestController {
 
     private final UserService userService;
     private final CompanyService companyService;
-    private final MailService mailService;
+    private final EmailService emailService;
 
     @GetMapping
     public String index() {
@@ -119,36 +114,40 @@ public class GuestController {
     public ResponseEntity<String> userEmailDuplicationCheck(@PathVariable String email, HttpSession session) throws MessagingException {
         ResponseEntity<String> response = userService.duplicateEmail(session, email);
 
-        if (Boolean.FALSE.equals(response.getBody())) {
-            String key = mailService.sendEmail(email);
+        if (!response.getStatusCode().isError()) {
+            String key = emailService.sendMail(email);
             session.setAttribute("key", key);
             session.setMaxInactiveInterval((int) TimeUnit.MINUTES.toSeconds(10));
         }
-        //TODO 이메일 인증 아직 안됨
         return response;
     }
 
     @GetMapping("/company/email/duplicate/{email}")
-    public ResponseEntity<String> companyEmailDuplicationCheck(@PathVariable String email, HttpSession session) {
+    public ResponseEntity<String> companyEmailDuplicationCheck(@PathVariable String email, HttpSession session) throws MessagingException {
         ResponseEntity<String> response = companyService.duplicateEmail(session, email);
-        //TODO 제대로 만들기
+
+        if (!response.getStatusCode().isError()) {
+            String key = emailService.sendMail(email);
+            session.setAttribute("key", key);
+            session.setMaxInactiveInterval((int) TimeUnit.MINUTES.toSeconds(10));
+        }
         return response;
     }
 
     @GetMapping("/email/authentication/{authentication}")
-    public ResponseEntity<String> authenticationCheck(@PathVariable String authentication, HttpSession session){
+    public ResponseEntity<String> authenticationCheck(@PathVariable String authentication, HttpSession session) {
         String key = (String) session.getAttribute("key");
 
-        if(Objects.isNull(key)) return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body("인증 시간이 지났습니다. 다시 인증하기 버튼을 눌러주세요.");
+        if (Objects.isNull(key))
+            return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body("인증 시간이 지났습니다. 다시 인증하기 버튼을 눌러주세요.");
 
-        if(key.equals(authentication)) {
+        if (key.equals(authentication)) {
             session.invalidate();
             return ResponseEntity.status(HttpStatus.OK).body("성공");
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("인증 번호가 맞지 않습니다");
     }
-
 
 
 }
