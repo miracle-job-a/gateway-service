@@ -3,6 +3,7 @@ package com.miracle.memberservice.service;
 import com.miracle.memberservice.dto.request.CompanyCheckBnoRequestDto;
 import com.miracle.memberservice.dto.request.CompanyJoinDto;
 import com.miracle.memberservice.dto.request.LoginDto;
+import com.miracle.memberservice.dto.request.PostIdListDto;
 import com.miracle.memberservice.dto.response.ApiResponse;
 import com.miracle.memberservice.dto.response.CompanyLoginResponseDto;
 import com.miracle.memberservice.util.PageMoveWithMessage;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -46,18 +48,46 @@ public class CompanyService {
 
         CompanyLoginResponseDto dto = CompanyLoginResponseDto.builder()
                 .id(data.get("id"))
-                .email(data.get("email"))
+                 .email(data.get("email"))
                 .bno(data.get("bno"))
                 .build();
 
         return new PageMoveWithMessage("index", dto);
     }
-
+  
     public ResponseEntity<String> duplicateEmail(HttpSession session, String email){
 
         ApiResponse response = ServiceCall.get(session, "company", "/user/check-email/" + email);
 
         return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
     }
+
+
+    //공고관리 목록
+    public PageMoveWithMessage postList(HttpSession session) {
+
+        String id = (String) session.getAttribute("companyId");
+
+        ApiResponse response = ServiceCall.get(session, "company", "/postList/"+id);
+
+        if (response.getHttpStatus() != 200)
+            return null;
+
+        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+
+        //TODO
+        // 공고 id만 담음
+        List<Long> postId = (List<Long>) data.get("id");
+        PostIdListDto postIdListDto = new PostIdListDto();
+        postIdListDto.getId().addAll(postId);
+
+
+
+        return null;
+    }
+
+
+    
+
 
 }
