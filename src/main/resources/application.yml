@@ -21,10 +21,10 @@ spring:
     check-template-location: true
 
   mail:
-    host: smtp.naver.com
+    host: ${Smtp}
     port: 587
-    username: junn811@naver.com
-    password: S9X3DFPFH9T7
+    username: ${Email_id}
+    password: ${Email_password}
     properties:
       mail:
         smtp:

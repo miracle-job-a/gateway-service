@@ -2,6 +2,7 @@ package com.miracle.memberservice.service;
 
 import com.miracle.memberservice.util.TempKey;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -14,6 +15,9 @@ import javax.mail.internet.MimeMessage;
 @RequiredArgsConstructor
 public class EmailService {
     private final JavaMailSender mailSender;
+
+    @Value("${spring.mail.username}")
+    private String mailUsername;
 
     @Async
     public String sendMail(String email) throws MessagingException {
@@ -31,7 +35,7 @@ public class EmailService {
         text += key + "</strong><div><br/> ";
         text += "</div>";
         helper.setText(text, true);
-        helper.setFrom("junn811@naver.com");
+        helper.setFrom(mailUsername);
         mailSender.send(message);
 
         return key;
