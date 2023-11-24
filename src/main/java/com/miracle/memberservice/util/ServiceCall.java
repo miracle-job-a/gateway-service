@@ -89,6 +89,43 @@ public class ServiceCall {
                 }).block();
     }
 
+    /**
+     * delete로 보내줄 데이터와 세션 전달하여 APIResponse받아내는 메서드
+     *
+     * @param httpSession 현재 세션
+     * @param service     어떤 서비스에 넘겨줄지
+     * @param url         서비스에 어떤 요청을 할 것인지
+     * @return Webclient에 넘겨주고 받을 반응 데이터
+     */
+    public static ApiResponse delete(HttpSession httpSession, String service, String url) {
+
+        WebClient webClient = WebClient.builder()
+                .baseUrl("http://localhost:" + port(service))
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+
+        MiracleTokenKey key = new MiracleTokenKey(httpSession);
+
+        return webClient.delete()
+                .uri(uriBuilder -> uriBuilder.path("/v1/" + url).build())
+                .header("miracle", key.getHashcode())
+                .header("sessionId", key.getSessionId())
+                .retrieve()
+                .bodyToMono(ApiResponse.class)
+                .onErrorResume(e -> {
+                    ObjectMapper om = new ObjectMapper();
+                    WebClientResponseException exception = (WebClientResponseException) e;
+                    String errorResponseBody = exception.getResponseBodyAsString(StandardCharsets.UTF_8);
+                    ApiResponse apiResponse = null;
+                    try {
+                        apiResponse = om.readValue(errorResponseBody, ApiResponse.class);
+                    } catch (JsonProcessingException ex) {
+                        ex.printStackTrace();
+                    }
+                    return Mono.just(apiResponse);
+                }).block();
+    }
+
     private static int port(String memberType) {
         if (memberType.equals("user")) {
             return 60001;
