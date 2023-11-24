@@ -86,7 +86,7 @@
                     data: { bno: value },
                     success: function (result) {
                         $('#bnoResult').css("color", "#660099").html(result);
-                        $('#bnoResult').prop('disabled', true); // 버튼 비활성화
+                        $('#bnoCertify').prop('disabled', true); // 버튼 비활성화
                     },
                     error: function (xhr) {
                         msg=xhr;

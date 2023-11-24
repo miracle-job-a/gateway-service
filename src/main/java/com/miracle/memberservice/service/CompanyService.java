@@ -26,7 +26,7 @@ public class CompanyService {
 
     public PageMoveWithMessage join(CompanyJoinDto companyJoinDto, HttpSession session) {
 
-        ApiResponse response = ServiceCall.post(session, companyJoinDto, "company", "/company/join");
+        ApiResponse response = ServiceCall.post(session, companyJoinDto, "company", "/company/signup");
 
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("guest/company-join", response.getMessage());
