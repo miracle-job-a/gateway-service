@@ -1,5 +1,6 @@
 package com.miracle.memberservice.filter;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.PatternMatchUtils;
 
 import javax.servlet.*;
@@ -8,9 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-public class LoginCheckFilter implements Filter {
+@Slf4j
+public class CompanyLoginCheckFilter implements Filter {
 
-    private static final String[] whitelist = {"/v1/member"};
+    private static final String[] whitelist = {"/v1/company/faq/*"};
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -19,14 +21,14 @@ public class LoginCheckFilter implements Filter {
         String requestURI = httpRequest.getRequestURI();
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        System.out.println("인증 체크 필터 시작");
+        log.debug("인증 체크 필터 시작");
 
         if (isLoginCheckPath(requestURI)) {
-            System.out.println("인증 체크 로직 실행 : " + requestURI);
+            log.trace("인증 체크 로직 실행 : " + requestURI);
             HttpSession session = httpRequest.getSession(false);
-            if (session == null || session.getAttribute("id") == null) {
-                System.out.println("미 인증 사용자 요청");
-                httpResponse.sendRedirect("/v1/login");
+            if (session == null || session.getAttribute("bno") == null) {
+                log.debug("미 인증 사용자 요청");
+                httpResponse.sendRedirect("/v1/company/login-form");
                 return; // 미인증 사용자는 다음으로 진행하지 않고 끝낸다.
             }
         }
@@ -39,7 +41,7 @@ public class LoginCheckFilter implements Filter {
     simpleMatch 	: 파라미터 문자열이 특정 패턴에 매칭되는지를 검사함.
     */
     private boolean isLoginCheckPath(String requestURI) {
-        return !PatternMatchUtils.simpleMatch(whitelist, requestURI);
+        return PatternMatchUtils.simpleMatch(whitelist, requestURI);
 
     }
 }

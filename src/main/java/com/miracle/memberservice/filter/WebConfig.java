@@ -10,12 +10,23 @@ import javax.servlet.Filter;
 public class WebConfig {
 
     @Bean
-    public FilterRegistrationBean logFilter() {
+    public FilterRegistrationBean userLogFilter() {
         FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<Filter>();
 
-        filterRegistrationBean.setFilter(new LoginCheckFilter()); // LogFilter 등록
+        filterRegistrationBean.setFilter(new UserLoginCheckFilter()); // LogFilter 등록
         filterRegistrationBean.setOrder(1);
-        filterRegistrationBean.addUrlPatterns("/v1/member");		// 모든 url 다 적용
+        filterRegistrationBean.addUrlPatterns("/your-url-pattern");
+        return filterRegistrationBean;
+
+    }
+
+    @Bean
+    public FilterRegistrationBean companyLogFilter() {
+        FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<Filter>();
+
+        filterRegistrationBean.setFilter(new CompanyLoginCheckFilter()); // LogFilter 등록
+        filterRegistrationBean.setOrder(2);
+        filterRegistrationBean.addUrlPatterns("/v1/company/faq/*");
         return filterRegistrationBean;
 
     }
