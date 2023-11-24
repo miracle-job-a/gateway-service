@@ -3,7 +3,6 @@ package com.miracle.memberservice.util;
 import com.miracle.memberservice.dto.response.CompanyLoginResponseDto;
 import com.miracle.memberservice.dto.response.UserLoginResponseDto;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 public class PageMoveWithMessage {
@@ -12,6 +11,7 @@ public class PageMoveWithMessage {
     private final Long id;
     private final String email;
     private final String nameOrBno;
+    private final Object data;
 
     //메세지
     public PageMoveWithMessage(String pageName, String errorMessage) {
@@ -20,6 +20,7 @@ public class PageMoveWithMessage {
         this.id = null;
         this.email = null;
         this.nameOrBno = null;
+        this.data = null;
     }
 
     //id만 전달
@@ -30,6 +31,7 @@ public class PageMoveWithMessage {
         this.id = id;
         this.email = null;
         this.nameOrBno = null;
+        this.data = null;
     }
 
     public PageMoveWithMessage(String pageName, Long id, String email, String nameOrBno) {
@@ -38,6 +40,7 @@ public class PageMoveWithMessage {
         this.id = id;
         this.email = email;
         this.nameOrBno = nameOrBno;
+        this.data = null;
     }
 
     public PageMoveWithMessage(String pageName) {
@@ -46,6 +49,7 @@ public class PageMoveWithMessage {
         this.id = null;
         this.email = null;
         this.nameOrBno = null;
+        this.data = null;
     }
 
     public PageMoveWithMessage(String pageName, CompanyLoginResponseDto dto) {
@@ -54,6 +58,7 @@ public class PageMoveWithMessage {
         this.id = dto.getId();
         this.email = dto.getEmail();
         this.nameOrBno = dto.getBno();
+        this.data = null;
     }
 
     public PageMoveWithMessage(String pageName, UserLoginResponseDto dto) {
@@ -62,5 +67,15 @@ public class PageMoveWithMessage {
         this.id = dto.getId();
         this.email = dto.getEmail();
         this.nameOrBno = dto.getName();
+        this.data = null;
+    }
+
+    public PageMoveWithMessage(String pageName, Object dto){
+        this.pageName = pageName;
+        this.errorMessage = null;
+        this.id = null;
+        this.email = null;
+        this.nameOrBno = null;
+        this.data = dto;
     }
 }

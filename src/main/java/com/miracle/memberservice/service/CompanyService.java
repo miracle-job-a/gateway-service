@@ -2,6 +2,7 @@ package com.miracle.memberservice.service;
 
 import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.ApiResponse;
+import com.miracle.memberservice.dto.response.CompanyFaqResponseDto;
 import com.miracle.memberservice.dto.response.CompanyLoginResponseDto;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import com.miracle.memberservice.util.ServiceCall;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -81,12 +83,52 @@ public class CompanyService {
     }
 
     // MZ 공고 등록
-    public PageMoveWithMessage createMZ(MzPostDto mzPostDto, HttpSession session){
+    public PageMoveWithMessage createMZ(MzPostDto mzPostDto, HttpSession session) {
         ApiResponse response = ServiceCall.post(session, mzPostDto, "company", "/mzPost");
 
-        if (response.getHttpStatus() != 200 ) return new PageMoveWithMessage("/company/post/mzPost", response.getMessage());
+        if (response.getHttpStatus() != 200)
+            return new PageMoveWithMessage("/company/post/mzPost", response.getMessage());
 
         return new PageMoveWithMessage("/company/postlist");
+    }
+
+    public PageMoveWithMessage faqList(HttpSession session) {
+        Long companyId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.get(session, "company", "/company/" + companyId + "/faqs");
+
+        if (response.getHttpStatus() != 200)
+            return new PageMoveWithMessage("index", response.getMessage());
+
+        ArrayList data = (ArrayList) response.getData();
+        int size = data.size();
+
+        List<CompanyFaqResponseDto> dtos = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) data.get(i);
+
+            dtos.add(CompanyFaqResponseDto.builder()
+                    .id(map.get("id"))
+                    .question(map.get("question"))
+                    .answer(map.get("answer"))
+                    .build());
+        }
+        return new PageMoveWithMessage("company/faq", dtos);
+    }
+
+    public PageMoveWithMessage addFaq(HttpSession session, CompanyFaqRequestDto companyFaqRequestDto) {
+        Long companyId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.post(session, companyFaqRequestDto,"company", "/company/" + companyId + "/faq");
+        if (response.getHttpStatus() != 200)
+            return new PageMoveWithMessage("redirect:/v1/company/faq", response.getMessage());
+        return new PageMoveWithMessage("redirect:/v1/company/faq");
+    }
+
+    public PageMoveWithMessage deleteFaq(HttpSession session, String faqId) {
+        Long companyId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.delete(session,"company", "/company/" + companyId + "/faqs/" + faqId);
+        if (response.getHttpStatus() != 200)
+            return new PageMoveWithMessage("redirect:/v1/company/faq", response.getMessage());
+        return new PageMoveWithMessage("redirect:/v1/company/faq");
     }
 
 }
