@@ -1,0 +1,199 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
+
+        <section class="latest-podcast-section" id="section_2">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <!-- 전체 박스 크기 -->
+                    <div class="col-lg-9 col-12">
+                        <div class="section-title-wrap mb-5">
+                            <h4 class="section-title">이력서 등록</h4>
+                        </div>
+
+                        <div class="row justify-content-center">
+                            <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
+                                <div class="col-12 mt-5"></div>
+
+                                <!-- 유저의 기본 정보 -->
+                                <div class="card p-4 col-11 post-form align-self-center">
+                                    <div class="row">
+                                        <div class="m-2 col-12 justify-content-around">
+                                            <h6 class="justify-content-around align-items-center">000님의 정보</h6>
+                                        </div>
+
+                                        <div class="col-lg-4 col-12 ps-5 pe-5 align-self-auto">
+                                            <img src="/images/niniz.png" class="rounded float-start" alt="templatemo pod talk">
+                                        </div>
+                                        <!--<div class="col-lg-2 col-12 align-self-auto"></div>-->
+                                        <div class="col-lg-6 col-12 ps-5 pe-5 align-self-center">
+
+                                            <div class="mb-3 row">
+                                                <label for="name" class="col-sm-3 col-form-label">이름</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" readonly class="form-control-plaintext text-center"
+                                                           style="font-size: 18px;"
+                                                           id="name" value="죠르디">
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3 row">
+                                                <label for="email" class="col-sm-3 col-form-label">이메일</label>
+                                                <div class="col-sm-9">
+                                                    <input type="email" readonly class="form-control-plaintext text-center"
+                                                           style="font-size: 18px;"
+                                                           id="email" value="niniz_jordy@kakao.com">
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3 row">
+                                                <label for="birth" class="col-sm-3 col-form-label">생년월일</label>
+                                                <div class="col-sm-9">
+                                                    <input type="date" readonly class="form-control-plaintext text-center"
+                                                           style="font-size: 18px;"
+                                                           id="birth" value="2018-09-09">
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3 row">
+                                                <label for="phone" class="col-sm-3 col-form-label">이름</label>
+                                                <div class="col-sm-9">
+                                                    <input type="tel" readonly class="form-control-plaintext text-center"
+                                                           pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}"
+                                                           style="font-size: 18px;"
+                                                           id="phone" value="010-1234-1234">
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!-- 이력서 생성 폼 시작 -->
+                                <div class="card mt-4 p-4 col-11 post-form align-self-center">
+                                    <form action="#" method="post" role="form" class="row align-self-center col-12">
+                                        <div class="col-12 mt-2">
+                                            <div class="mb-1">
+                                                <label for="title">이력서 제목</label>
+                                            </div>
+                                            <input type="text" name="title" id="title"
+                                                   class="form-control" placeholder="이력서 제목" required="" />
+                                        </div>
+                                        <div class="col-12 mt-2">
+                                            <div class="mb-1">
+                                                <label for="job">개발 가능한 직무를 골라주세요.</label>
+                                            </div>
+                                            <input class="form-check-input" type="checkbox" id="job1" name="job1" value="프론트" />
+                                            <label class="form-check-label">프론트</label>
+                                            <input class="form-check-input" type="checkbox" id="job2" name="job2" value="백엔드" />
+                                            <label class="form-check-label">백엔드</label>
+                                            <input class="form-check-input" type="checkbox" id="job3" name="job3" value="빅데이터" />
+                                            <label class="form-check-label">빅데이터</label>
+                                            <input class="form-check-input" type="checkbox" id="job4" name="job4" value="풀스택" />
+                                            <label class="form-check-label">풀스택</label>
+                                            <input class="form-check-input" type="checkbox" id="job5" name="job5" value="모르겠다" />
+                                            <label class="form-check-label">몰라요</label>
+                                        </div>
+                                        <div class="col-12 mt-2">
+                                            <div class="mb-1">
+                                                <label for="stack">보유한 기술 스택</label>
+                                            </div>
+                                            <input class="form-check-input" type="checkbox" id="1" name="1" value="Java" />
+                                            <label class="form-check-label">Java</label>
+                                            <input class="form-check-input" type="checkbox" id="2" name="2" value="Python" />
+                                            <label class="form-check-label">Python</label>
+                                            <input class="form-check-input" type="checkbox" id="3" name="3" value="HTML" />
+                                            <label class="form-check-label">HTML</label>
+                                            <input class="form-check-input" type="checkbox" id="4" name="4" value="JavaScript" />
+                                            <label class="form-check-label">JavaScript</label>
+                                            <input class="form-check-input" type="checkbox" id="5" name="5" value="AWS" />
+                                            <label class="form-check-label">AWS</label>
+                                        </div>
+                                        <div class="col-12 mt-2">
+                                            <h6></h6>
+                                        </div>
+                                        <div class="col-12 mt-2">
+                                            <div class="mb-1">
+                                                <label for="education">최종학력</label>
+                                            </div>
+                                            <input type="text" name="education" id="education"
+                                                   class="form-control" placeholder="최종학력을 기입해주세요." required="" />
+                                        </div>
+                                        <div class="col-12 mt-2">
+                                            <div class="mb-1">
+                                                <label for="title">GitHub 주소</label>
+                                            </div>
+                                            <input type="url" id="website" name="website" placeholder="http://www.github.com" pattern="https://github.com/.*" size="30" required>₩
+                                            <input type="url" name="gitLink" id="gitLink"
+                                                   class="form-control" placeholder="이력서 제목" required="" />
+                                        </div>
+                                    </form>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        <!--<section class="latest-podcast-section" id="section_2">
+            <div class="container">
+                <div class="section-title-wrap mb-5">
+                    <h4 class="section-title">이력서 등록</h4>
+                </div>
+                <div class="row justify-content-center">
+                    &lt;!&ndash; 박스 시작 &ndash;&gt;
+                    <div class="card bg-outline-light bg-transparent text-dark shadow-lg post-form col-10">
+                        <div class="row post-form justify-content-center">
+                            <div class="card-body col-12">
+                                <div class="card p-4 col-11 post-form align-self-center">
+                                    <div class="m-2 col-10 justify-content-around">
+                                        <h6 class="justify-content-around align-items-center">000님의 정보</h6>
+                                    </div>
+                                </div>
+
+                                <div class="mt-5 mb-2 col-10 justify-content-around">
+                                    <h6 class="justify-content-around align-items-center">000님의 정보</h6>
+                                </div>
+
+                                &lt;!&ndash; 유저의 기본 정보 &ndash;&gt;
+                                <div class="row mt-5">
+                                    <div class="col-lg-4 col-12 align-self-auto">
+                                        <img src="/images/niniz.png" class="rounded float-start" alt="templatemo pod talk">
+                                    </div>
+                                    <div class="col-lg-8 col-12 align-self-auto">
+
+                                    </div>
+                                </div>
+
+                                <form action="#" method="post" role="form">
+                                    <div class="col-12 mt-2">
+                                        <div class="mb-1">
+                                            <label for="title">이력서 제목</label>
+                                        </div>
+                                        <input type="text" name="title" id="title"
+                                               class="form-control" placeholder="이력서 제목" required="" />
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    &lt;!&ndash; 박스 끗 &ndash;&gt;
+                </div>
+            </div>
+        </section>-->
+    </main>
+</div>
+
+</html>
