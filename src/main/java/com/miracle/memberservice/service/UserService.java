@@ -64,7 +64,7 @@ public class UserService {
 
     public PageMoveWithMessage formResume(HttpSession session){
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.get(session, "user", "/user/" + userId + "base-info");
+        ApiResponse response = ServiceCall.get(session, "user", "/user/" + userId + "/base-info");
 
         if(response.getHttpStatus() != 200)
             return new PageMoveWithMessage("/user/resumes", response.getMessage());
