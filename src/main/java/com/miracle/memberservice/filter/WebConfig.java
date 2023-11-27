@@ -27,6 +27,7 @@ public class WebConfig {
         filterRegistrationBean.setFilter(new CompanyLoginCheckFilter()); // LogFilter 등록
         filterRegistrationBean.setOrder(2);
         filterRegistrationBean.addUrlPatterns("/v1/company/faq/*");
+        filterRegistrationBean.addUrlPatterns("/v1/company/post/*");
         return filterRegistrationBean;
 
     }

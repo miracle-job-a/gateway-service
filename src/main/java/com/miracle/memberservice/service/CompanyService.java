@@ -4,6 +4,8 @@ import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.ApiResponse;
 import com.miracle.memberservice.dto.response.CompanyFaqResponseDto;
 import com.miracle.memberservice.dto.response.CompanyLoginResponseDto;
+import com.miracle.memberservice.dto.response.PostCommonDataResponseDto;
+import com.miracle.memberservice.util.ApiResponseToList;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import com.miracle.memberservice.util.ServiceCall;
 import lombok.extern.slf4j.Slf4j;
@@ -92,6 +94,32 @@ public class CompanyService {
         return new PageMoveWithMessage("/company/postlist");
     }
 
+    public PageMoveWithMessage formPost(HttpSession session) {
+        Long companyId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.get(session, "company", "/company/" + companyId + "/info");
+
+        if (response.getHttpStatus() != 200)
+            return new PageMoveWithMessage("/company/post/list", response.getMessage());
+
+        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+
+        List<CompanyFaqResponseDto> dtos = ApiResponseToList.faqList(data.get("faqList"));
+
+        PostCommonDataResponseDto info = PostCommonDataResponseDto.builder()
+                .name(data.get("name"))
+                .ceoName(data.get("ceoName"))
+                .photo(data.get("photo"))
+                .employeeNum(data.get("employeeNum"))
+                .address(data.get("address"))
+                .introduction(data.get("introduction"))
+                .faqList(dtos)
+                .build();
+
+
+        return new PageMoveWithMessage("company/normal-post", info);
+    }
+
+
     public PageMoveWithMessage faqList(HttpSession session) {
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.get(session, "company", "/company/" + companyId + "/faqs");
@@ -99,19 +127,8 @@ public class CompanyService {
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("index", response.getMessage());
 
-        ArrayList data = (ArrayList) response.getData();
-        int size = data.size();
+        List<CompanyFaqResponseDto> dtos = ApiResponseToList.faqList(response.getData());
 
-        List<CompanyFaqResponseDto> dtos = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) data.get(i);
-
-            dtos.add(CompanyFaqResponseDto.builder()
-                    .id(map.get("id"))
-                    .question(map.get("question"))
-                    .answer(map.get("answer"))
-                    .build());
-        }
         return new PageMoveWithMessage("company/faq", dtos);
     }
 

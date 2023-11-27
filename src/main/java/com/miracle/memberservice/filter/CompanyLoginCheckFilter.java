@@ -12,7 +12,7 @@ import java.io.IOException;
 @Slf4j
 public class CompanyLoginCheckFilter implements Filter {
 
-    private static final String[] whitelist = {"/v1/company/faq/*"};
+    private static final String[] whitelist = {"/v1/company/faq/*", "/v1/company/post/*"};
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

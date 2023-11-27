@@ -2,6 +2,7 @@ package com.miracle.memberservice.controller;
 
 import com.miracle.memberservice.dto.request.CompanyFaqRequestDto;
 import com.miracle.memberservice.dto.request.MzPostDto;
+import com.miracle.memberservice.dto.response.PostCommonDataResponseDto;
 import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +27,6 @@ public class CompanyController {
         return "index";
     }
 
-    @GetMapping("/post/create")
-    public String detail() {
-        return "company/detail-page";
-    }
-
     @GetMapping("/post/list")
     public String postList() {
         return "company/post-list";
@@ -38,6 +34,13 @@ public class CompanyController {
 
     // 공고 생성 폼 이동 (구현 X, 프로트 페이지만 이동)
     @GetMapping("/post/form")
+    public String detail(HttpSession session, Model model) {
+        PageMoveWithMessage pmwm = companyService.formPost(session);
+        model.addAttribute("info", (PostCommonDataResponseDto)pmwm.getData());
+        return pmwm.getPageName();
+    }
+
+    @GetMapping("/post/mz/form")
     public String postForm() {
         return "company/mz-post";
     }
