@@ -4,6 +4,22 @@
         layout:decorate="~{layout/default_layout}" lang="ko">
 
 <div layout:fragment="content">
+    <script>
+        // Thymeleaf를 사용하여 데이터 속성을 통해 id 값을 가져오는 함수
+        function confirmDelete(button) {
+            // Thymeleaf로 설정한 data-id 속성을 통해 id 값을 가져옴
+            var id = button.getAttribute("data-id");
+
+            // 확인 창 띄우기
+            var isConfirmed = confirm("정말로 삭제하시겠습니까? ID: " + id);
+
+            // 사용자가 확인을 선택한 경우
+            if (isConfirmed) {
+                // 여기에 실제 삭제 작업을 수행하는 코드 추가
+                alert("삭제되었습니다. ID: " + id);
+            }
+        }
+    </script>
 
     <main>
         <header class="site-header d-flex flex-column justify-content-center align-items-center">
@@ -15,19 +31,19 @@
 
                     <div class="col-lg-10 col-12">
                         <div class="section-title-wrap mb-5">
-                            <h4 class="section-title">공고 목록</h4>
+                            <h4 class="section-title">나의 자기소개서</h4>
                         </div>
                     </div>
 
 
                     <div class="row col-lg-10 col-12">
-                        <div class="col-auto">
+                        <!--<div class="col-auto">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-outline-secondary">최신순</button>
+                                <button type="button" class="btn btn-outline-secondary">최근</button>
                                 <button type="button" class="btn btn-outline-secondary">진행중</button>
                                 <button type="button" class="btn btn-outline-secondary">마감임박</button>
                             </div>
-                        </div>
+                        </div>-->
 
                         <div class="col-auto">
                             <div class="input-group mb-3 ">
@@ -45,20 +61,19 @@
                             <div class="custom-block-info">
                                 <h5 class="mb-2">
                                     <a href="detail-page.html">
-                                        공고 제목 입니다.(제목 클릭 시 상세페이지 이동)
+                                        자소서 제목 입니다.
                                     </a>
                                 </h5>
 
                                 <div class="custom-block-bottom d-flex  mt-3">
-                                    <div class="col-auto d-flex m-2"><span>게시날짜:2023.10.29</span></div>
-                                    <div class="col-auto d-flex m-2"><span>마감일:2023.11.23</span></div>
-                                    <div class="col-auto d-flex m-2"><span>지원현황: n 명</span></div>
+                                    <div class="col-auto d-flex m-2"><span>작성일:2023.11.23</span></div>
                                 </div>
                             </div>
 
                             <!-- 버튼 부 -->
                             <div class="d-flex flex-column ms-auto">
-                                <button type="button" class="btn">채용관리</button>
+                                <!-- 추후 th:attr="data-id=${resume.id}" button 내 추가하기 -->
+                                <button type="button" class="btn"  onclick="confirmDelete(this)">삭제하기</button>
                             </div>
                         </div>
                     </div>
@@ -69,20 +84,19 @@
                             <div class="custom-block-info">
                                 <h5 class="mb-2">
                                     <a href="detail-page.html">
-                                        공고 제목 입니다.(제목 클릭 시 상세페이지 이동)
+                                        자소서 제목 입니다.
                                     </a>
                                 </h5>
 
                                 <div class="custom-block-bottom d-flex  mt-3">
-                                    <div class="col-auto d-flex m-2"><span>게시날짜:2023.10.29</span></div>
-                                    <div class="col-auto d-flex m-2"><span>마감일:2023.11.23</span></div>
-                                    <div class="col-auto d-flex m-2"><span>지원현황: n 명</span></div>
+                                    <div class="col-auto d-flex m-2"><span>작성일:2023.11.23</span></div>
                                 </div>
                             </div>
 
                             <!-- 버튼 부 -->
                             <div class="d-flex flex-column ms-auto">
-                                <button type="button" class="btn">채용관리</button>
+                                <!-- 추후 th:attr="data-id=${resume.id}" button 내 추가하기 -->
+                                <button type="button" class="btn"  onclick="confirmDelete(this)">삭제하기</button>
                             </div>
                         </div>
                     </div>
@@ -93,20 +107,19 @@
                             <div class="custom-block-info">
                                 <h5 class="mb-2">
                                     <a href="detail-page.html">
-                                        공고 제목 입니다.(제목 클릭 시 상세페이지 이동)
+                                        자소서 제목 입니다.
                                     </a>
                                 </h5>
 
                                 <div class="custom-block-bottom d-flex  mt-3">
-                                    <div class="col-auto d-flex m-2"><span>게시날짜:2023.10.29</span></div>
-                                    <div class="col-auto d-flex m-2"><span>마감일:2023.11.23</span></div>
-                                    <div class="col-auto d-flex m-2"><span>지원현황: n 명</span></div>
+                                    <div class="col-auto d-flex m-2"><span>작성일:2023.11.23</span></div>
                                 </div>
                             </div>
 
                             <!-- 버튼 부 -->
                             <div class="d-flex flex-column ms-auto">
-                                <button type="button" class="btn">채용관리</button>
+                                <!-- 추후 th:attr="data-id=${resume.id}" button 내 추가하기 -->
+                                <button type="button" class="btn"  onclick="confirmDelete(this)">삭제하기</button>
                             </div>
                         </div>
                     </div>

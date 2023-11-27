@@ -22,4 +22,15 @@ public class UserController {
     // [임시] 이력서 생성 폼으로 이동
     @GetMapping("/resume")
     public String createResume(){ return "user/resumeForm"; }
+
+    // [임시] 이력서 목록으로 이동
+    @GetMapping("/resumeList")
+    public String resumeList(){ return "user/resumeList"; }
+
+    // [임시] 자소서 목록으로 이동
+    @GetMapping("/cover-letter")
+    public String covetLetterList(){ return "user/cover-letter"; }
+
+    @GetMapping("/coverLetterForm")
+    public String createCoverLetter(){ return "user/coverLetterForm"; }
 }
