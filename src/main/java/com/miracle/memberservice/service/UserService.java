@@ -3,6 +3,7 @@ package com.miracle.memberservice.service;
 import com.miracle.memberservice.dto.request.LoginDto;
 import com.miracle.memberservice.dto.request.UserJoinDto;
 import com.miracle.memberservice.dto.response.ApiResponse;
+import com.miracle.memberservice.dto.response.UserBaseInfoResponseDto;
 import com.miracle.memberservice.dto.response.UserLoginResponseDto;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import com.miracle.memberservice.util.ServiceCall;
@@ -59,5 +60,25 @@ public class UserService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage());
 
         return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
+    }
+
+    public PageMoveWithMessage formResume(HttpSession session){
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.get(session, "user", "/user/" + userId + "base-info");
+
+        if(response.getHttpStatus() != 200)
+            return new PageMoveWithMessage("/user/resumes", response.getMessage());
+
+        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+
+        UserBaseInfoResponseDto info = UserBaseInfoResponseDto.builder()
+                .email(data.get("email"))
+                .name(data.get("name"))
+                .phone(data.get("phone"))
+                .birth(data.get("birth"))
+                .address(data.get("address"))
+                .build();
+
+        return new PageMoveWithMessage("user/resumeForm", info);
     }
 }

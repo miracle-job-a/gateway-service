@@ -26,9 +26,7 @@
                                 <div class="card p-4 col-11 post-form align-self-center">
                                     <div class="row">
                                         <div class="m-2 col-12 justify-content-around">
-                                            <h6 class="justify-content-around align-items-center">
-                                                <span th:text="${info.name}"></span> 님의 정보
-                                            </h6>
+                                            <h6 class="justify-content-around align-items-center">000님의 정보</h6>
                                         </div>
 
                                         <div class="col-lg-4 col-12 ps-5 pe-5 align-self-auto">
@@ -42,7 +40,7 @@
                                                 <div class="col-sm-9">
                                                     <input type="text" readonly class="form-control-plaintext text-center"
                                                            style="font-size: 18px;"
-                                                           id="name" th:value="${info.name}">
+                                                           id="name" value="죠르디">
                                                 </div>
                                             </div>
 
@@ -51,7 +49,7 @@
                                                 <div class="col-sm-9">
                                                     <input type="email" readonly class="form-control-plaintext text-center"
                                                            style="font-size: 18px;"
-                                                           id="email" th:value="${info.email}">
+                                                           id="email" value="niniz_jordy@kakao.com">
                                                 </div>
                                             </div>
 
@@ -60,17 +58,17 @@
                                                 <div class="col-sm-9">
                                                     <input type="date" readonly class="form-control-plaintext text-center"
                                                            style="font-size: 18px;"
-                                                           id="birth" th:value="${info.birth}">
+                                                           id="birth" value="2018-09-09">
                                                 </div>
                                             </div>
 
                                             <div class="mb-3 row">
-                                                <label for="phone" class="col-sm-3 col-form-label">전화번호</label>
+                                                <label for="phone" class="col-sm-3 col-form-label">이름</label>
                                                 <div class="col-sm-9">
                                                     <input type="tel" readonly class="form-control-plaintext text-center"
                                                            pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}"
                                                            style="font-size: 18px;"
-                                                           id="phone" th:value="${info.phone}">
+                                                           id="phone" value="010-1234-1234">
                                                 </div>
                                             </div>
 
