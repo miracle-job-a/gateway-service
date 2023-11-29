@@ -15,6 +15,4 @@ public class StackResponseDto {
         this.name = String.valueOf(name);
     }
 
-
-
 }
