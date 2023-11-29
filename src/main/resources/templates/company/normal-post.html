@@ -88,44 +88,43 @@
                         <form action="" method="post" class="post-form" role="form">
                             <div class="card-body">
 
-                                <div class="col-8 mt-2">
+                                <div class="col-8">
                                     <div class="mb-1">
                                         <label for="title">공고 제목</label>
                                     </div>
                                     <input type="text" name="title" id="title"
                                            class="form-control" placeholder="공고제목" required=""/>
                                 </div>
-
-                                <div class="col-8 mt-2">
-                                    <div class="mb-1">
-                                        <label for="career">경력</label>
+                                    <div class="row">
+                                        <div class="col-4 mt-2 ">
+                                            <div class="mb-1">
+                                                <label for="endDate">마감일</label>
+                                            </div>
+                                            <input type="datetime-local" name="endDate" id="endDate"
+                                                   class="form-control" placeholder="마감일" required=""/>
+                                        </div>
+                                        <div class="col-4 mt-2">
+                                            <div class="mb-1">
+                                                <label for="career">경력</label>
+                                            </div>
+                                            <input type="number" name="career" id="career" class="form-control"
+                                                   placeholder="경력(년)" required=""
+                                                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"/>
+                                        </div>
                                     </div>
-                                    <input type="text" name="career" id="career"
-                                           class="form-control" placeholder="경력" required=""/>
-                                </div>
 
-                                <div class="col-8 mt-2">
-                                    <div class="mb-1">
-                                        <label for="endDate">마감일</label>
-                                    </div>
-                                    <input type="datetime-local" name="endDate" id="endDate"
-                                           class="form-control" placeholder="마감일" required=""/>
-                                </div>
+
+
 
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
                                         <label for="jobId">직무</label>
                                     </div>
-                                    <input class="form-check-input" type="checkbox" id="job1" name="jobIdSet[]" th:value="${1}"/>
-                                    <label class="form-check-label" th:text="${'프론트개발자'}"></label>
-                                    <input class="form-check-input" type="checkbox" id="job2" name="jobIdSet[]"  th:value="${2}"/>
-                                    <label class="form-check-label" th:text="${'백엔드개발자'}"></label>
-                                    <input class="form-check-input" type="checkbox" id="job3" name="jobIdSet[]"  th:value="${3}"/>
-                                    <label class="form-check-label" th:text="${'풀스택개발자'}"></label>
-                                    <input class="form-check-input" type="checkbox" id="job4" name="jobIdSet[]" th:value="${4}"/>
-                                    <label class="form-check-label" th:text="${'안드로이드개발자'}"></label>
-                                    <input class="form-check-input" type="checkbox" id="job5" name="jobIdSet[]" th:value="${5}"/>
-                                    <label class="form-check-label" th:text="${'풀스택개발자'}"></label>
+                                    <div th:each="job, jobStat : ${jobs}" style="display: inline-block;">
+                                        <input class="form-check-input" type="checkbox" id="job1" name="jobIdSet[]"
+                                               th:value="${job.id}"/>
+                                        <label class="form-check-label" th:text="${job.name}"></label>
+                                    </div>
                                 </div>
 
 
@@ -133,16 +132,12 @@
                                     <div class="mb-1">
                                         <label for="stackId">요구스택</label>
                                     </div>
-                                    <input class="form-check-input" type="checkbox" id="stack1" name="stackIdSet[]" th:value="${1}"/>
-                                    <label class="form-check-label" th:text="${'java'}"></label>
-                                    <input class="form-check-input" type="checkbox" id="stack2" name="stackIdSet[]"  th:value="${2}"/>
-                                    <label class="form-check-label" th:text="${'thymeleaf'}"></label>
-                                    <input class="form-check-input" type="checkbox" id="stack3" name="stackIdSet[]"  th:value="${3}"/>
-                                    <label class="form-check-label" th:text="${'mysql'}"></label>
-                                    <input class="form-check-input" type="checkbox" id="stack4" name="stackIdSet[]" th:value="${4}"/>
-                                    <label class="form-check-label" th:text="${'docker'}"></label>
-                                    <input class="form-check-input" type="checkbox" id="stack5" name="stackIdSet[]" th:value="${5}"/>
-                                    <label class="form-check-label" th:text="${'aws'}"></label>
+                                    <div th:each="stack, stackStat : ${stacks}" style="display: inline-block;">
+                                        <input class="form-check-input" type="checkbox" id="stack1" name="stackIdSet[]"
+                                               th:value="${stack.id}"/>
+                                        <label class="form-check-label" th:text="${stack.name}"></label>
+                                    </div>
+
                                 </div>
 
 
@@ -155,36 +150,40 @@
                                      근무주소(디폴트 회사 주소) : address
                                      사진 : photo
                                      -->
-                                    <div class="col-8 mt-2">
-                                        <div class="mb-1">
-                                            <label for="name">회사명</label>
+                                    <div class="row">
+                                        <div class="col-4 mt-2">
+                                            <div class="mb-1">
+                                                <label for="name">회사명</label>
+                                            </div>
+                                            <input type="text" name="name" id="name" th:value="${info.name}"
+                                                   class="form-control" placeholder="회사명" disabled/>
                                         </div>
-                                        <input type="text" name="name" id="name" th:value="${info.name}"
-                                               class="form-control" placeholder="회사명" disabled/>
-                                    </div>
-                                    <div class="col-8 mt-2">
-                                        <div class="mb-1">
-                                            <label for="ceoName">대표자명</label>
+                                        <div class="col-4 mt-2">
+                                            <div class="mb-1">
+                                                <label for="ceoName">대표자명</label>
+                                            </div>
+                                            <input type="text" name="ceoName" id="ceoName" th:value="${info.ceoName}"
+                                                   class="form-control" placeholder="대표자명" disabled/>
                                         </div>
-                                        <input type="text" name="ceoName" id="ceoName" th:value="${info.ceoName}"
-                                               class="form-control" placeholder="대표자명" disabled/>
-                                    </div>
-                                    <div class="col-8 mt-2">
-                                        <div class="mb-1">
-                                            <label for="employeeNum">재직인원</label>
+                                        <div class="col-4 mt-2">
+                                            <div class="mb-1">
+                                                <label for="employeeNum">재직인원</label>
+                                            </div>
+                                            <input type="number" name="employeeNum" id="employeeNum"
+                                                   th:value="${info.employeeNum}"
+                                                   class="form-control" placeholder="재직인원" disabled
+                                                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"/>
                                         </div>
-                                        <input type="number" name="employeeNum" id="employeeNum" th:value="${info.employeeNum}"
-                                               class="form-control" placeholder="재직인원" disabled
-                                               oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"/>
+
+                                        <div class="col-8 mt-2">
+                                            <div class="mb-1">
+                                                <label for="photo">기업사진</label>
+                                            </div>
+                                            <input type="text" name="photo" id="photo" th:value="${info.photo}"
+                                                   class="form-control" placeholder="기업사진" disabled/>
+                                        </div>
                                     </div>
 
-                                    <div class="col-8 mt-2">
-                                        <div class="mb-1">
-                                            <label for="photo">기업사진</label>
-                                        </div>
-                                        <input type="text" name="photo" id="photo" th:value="${info.photo}"
-                                               class="form-control" placeholder="기업사진" disabled/>
-                                    </div>
                                 </div>
 
                                 <h5 class="mb-4 mt-4">소개</h5>
@@ -204,7 +203,8 @@
                                     <div class="mb-1">
                                         <label for="introduction">기업소개</label>
                                     </div>
-                                    <textarea class="form-control" rows="3" id="introduction" name="introduction" th:value="${info.introduction}" th:text="${info.introduction}"></textarea>
+                                    <textarea class="form-control" rows="3" id="introduction" name="introduction"
+                                              th:value="${info.introduction}" th:text="${info.introduction}"></textarea>
                                 </div>
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
@@ -271,7 +271,9 @@
                                     </div>
                                 </div>
 
-                                <h5 class="mb-4 mt-4" style="display: inline-block;">자기소개서 질문</h5><button class="btn m-lg-3" type="button" onclick="add_item()">+</button><br>
+                                <h5 class="mb-4 mt-4" style="display: inline-block;">자기소개서 질문</h5>
+                                <button class="btn m-lg-3" type="button" onclick="add_item()">+</button>
+                                <br>
 
                                 <div class="col-12 mb-4" id="pre_set">
                                     <input type="text" class="form-control" name="question" value="">
@@ -290,8 +292,10 @@
                                     <div class="accordion-item mb-3">
                                         <h2 class="accordion-header" th:id="'heading' + ${faqStat.index}">
                                             <button class="accordion-button collapsed rounded" type="button"
-                                                    data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${faqStat.index}"
-                                                    aria-expanded="false" th:aria-controls="'collapse' + ${faqStat.index}">
+                                                    data-bs-toggle="collapse"
+                                                    th:data-bs-target="'#collapse' + ${faqStat.index}"
+                                                    aria-expanded="false"
+                                                    th:aria-controls="'collapse' + ${faqStat.index}">
                                                 <strong th:text="${faq.question}"></strong>
                                             </button>
                                         </h2>
@@ -305,7 +309,7 @@
                                 </div>
 
                                 <div class="col-6 pt-4 m-auto">
-                                    <input type="hidden" name="postType" value="NORMAL" />
+                                    <input type="hidden" name="postType" value="NORMAL"/>
                                     <button type="submit" class="form-control">등록하기</button>
                                 </div>
 
