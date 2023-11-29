@@ -47,73 +47,23 @@
                     <!-- 목록 페이지 시작 -->
 
                     <!-- 목록 1칸 -->
-                    <div class="col-lg-10 col-12 mb-4 mb-lg-2">
+                    <div class="col-lg-10 col-12 mb-4 mb-lg-2" th:each="post, postStat : ${postList}">
                         <div class="custom-block d-flex">
                             <div class="custom-block-info">
                                 <h5 class="mb-2">
-                                    <a href="detail-page.html">
-                                        공고 제목 입니다.(제목 클릭 시 상세페이지 이동)
-                                    </a>
+                                    <a th:href="@{/v1/company/post/detail(id=${post.id})}" th:text="${post.title}"></a>
                                 </h5>
 
                                 <div class="custom-block-bottom d-flex  mt-3">
-                                    <div class="col-auto d-flex m-2"><span>게시날짜:2023.10.29</span></div>
-                                    <div class="col-auto d-flex m-2"><span>마감일:2023.11.23</span></div>
+                                    <div class="col-auto d-flex m-2"><span>게시날짜:<span th:text="${post.createdAt}"></span></span></div>
+                                    <div class="col-auto d-flex m-2"><span>마감일:<span th:text="${post.endDate}"></span></span></div>
                                     <div class="col-auto d-flex m-2"><span>지원현황: n 명</span></div>
                                 </div>
                             </div>
 
                             <!-- 버튼 부 -->
                             <div class="d-flex flex-column ms-auto">
-                                <button type="button" class="btn">채용관리</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 목록 1칸 -->
-                    <div class="col-lg-10 col-12 mb-4 mb-lg-2">
-                        <div class="custom-block d-flex">
-                            <div class="custom-block-info">
-                                <h5 class="mb-2">
-                                    <a href="detail-page.html">
-                                        공고 제목 입니다.(제목 클릭 시 상세페이지 이동)
-                                    </a>
-                                </h5>
-
-                                <div class="custom-block-bottom d-flex  mt-3">
-                                    <div class="col-auto d-flex m-2"><span>게시날짜:2023.10.29</span></div>
-                                    <div class="col-auto d-flex m-2"><span>마감일:2023.11.23</span></div>
-                                    <div class="col-auto d-flex m-2"><span>지원현황: n 명</span></div>
-                                </div>
-                            </div>
-
-                            <!-- 버튼 부 -->
-                            <div class="d-flex flex-column ms-auto">
-                                <button type="button" class="btn">채용관리</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 목록 1칸 -->
-                    <div class="col-lg-10 col-12 mb-4 mb-lg-2">
-                        <div class="custom-block d-flex">
-                            <div class="custom-block-info">
-                                <h5 class="mb-2">
-                                    <a href="detail-page.html">
-                                        공고 제목 입니다.(제목 클릭 시 상세페이지 이동)
-                                    </a>
-                                </h5>
-
-                                <div class="custom-block-bottom d-flex  mt-3">
-                                    <div class="col-auto d-flex m-2"><span>게시날짜:2023.10.29</span></div>
-                                    <div class="col-auto d-flex m-2"><span>마감일:2023.11.23</span></div>
-                                    <div class="col-auto d-flex m-2"><span>지원현황: n 명</span></div>
-                                </div>
-                            </div>
-
-                            <!-- 버튼 부 -->
-                            <div class="d-flex flex-column ms-auto">
-                                <button type="button" class="btn">채용관리</button>
+                                <button type="button" class="btn-light">채용관리</button>
                             </div>
                         </div>
                     </div>

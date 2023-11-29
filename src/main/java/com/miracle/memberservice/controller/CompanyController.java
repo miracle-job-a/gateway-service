@@ -30,13 +30,16 @@ public class CompanyController {
     }
 
     @GetMapping("/post/list")
-    public String postList() {
-        return "company/post-list";
+    public String postList(HttpSession session, Model model) {
+        PageMoveWithMessage pmwm = companyService.postList(session);
+        model.addAttribute("postList", pmwm.getData());
+        model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        return pmwm.getPageName();
     }
 
     // 공고 생성 폼 이동
     @GetMapping("/post/form")
-    public String detail(HttpSession session, Model model) {
+    public String postFormPage(HttpSession session, Model model) {
         PageMoveWithMessage pmwm = companyService.formPost(session);
         Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
         model.addAttribute("info", pmwm.getData());

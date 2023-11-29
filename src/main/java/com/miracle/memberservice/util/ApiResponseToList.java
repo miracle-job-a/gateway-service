@@ -2,8 +2,10 @@ package com.miracle.memberservice.util;
 
 import com.miracle.memberservice.dto.response.CompanyFaqResponseDto;
 import com.miracle.memberservice.dto.response.JobResponseDto;
+import com.miracle.memberservice.dto.response.ManagePostsResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -49,6 +51,25 @@ public class ApiResponseToList {
             dtos.add(JobResponseDto.builder()
                     .id(id.longValue())
                     .name((String) lhm.get("name"))
+                    .build());
+        }
+        return dtos;
+    }
+
+    public static List<ManagePostsResponseDto> postList(Object object){
+        ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+
+        List<ManagePostsResponseDto> dtos = new ArrayList<>();
+        for (LinkedHashMap<String, Object> lhm : data) {
+
+            Integer id = (Integer) lhm.get("id");
+            dtos.add(ManagePostsResponseDto.builder()
+                    .id(id.longValue())
+                    .postType((String) lhm.get("postType"))
+                    .closed((Boolean)lhm.get("closed"))
+                    .createdAt((String)lhm.get("createdAt"))
+                    .title((String)lhm.get("title"))
+                    .endDate((String)lhm.get("endDate"))
                     .build());
         }
         return dtos;

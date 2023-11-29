@@ -1,10 +1,7 @@
 package com.miracle.memberservice.service;
 
 import com.miracle.memberservice.dto.request.*;
-import com.miracle.memberservice.dto.response.ApiResponse;
-import com.miracle.memberservice.dto.response.CompanyFaqResponseDto;
-import com.miracle.memberservice.dto.response.CompanyLoginResponseDto;
-import com.miracle.memberservice.dto.response.PostCommonDataResponseDto;
+import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.util.ApiResponseToList;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import com.miracle.memberservice.util.ServiceCall;
@@ -66,22 +63,15 @@ public class CompanyService {
     //공고관리 목록
     public PageMoveWithMessage postList(HttpSession session) {
 
-        String id = (String) session.getAttribute("companyId");
+        Long id = (Long) session.getAttribute("id");
 
-        ApiResponse response = ServiceCall.get(session, "company", "/postList/" + id);
+        ApiResponse response = ServiceCall.get(session, "company", "/company/" + id + "/posts/latest");
 
-        if (response.getHttpStatus() != 200)
-            return null;
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("index", response.getMessage());
 
-        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        List<ManagePostsResponseDto> postList = ApiResponseToList.postList(response.getData());
 
-        //TODO
-        // 공고 id만 담음
-        List<Long> postId = (List<Long>) data.get("id");
-        PostIdListDto postIdListDto = new PostIdListDto();
-        postIdListDto.getId().addAll(postId);
-
-        return null;
+        return new PageMoveWithMessage("company/post-list", postList);
     }
 
     // MZ 공고 등록
