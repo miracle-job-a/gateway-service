@@ -85,7 +85,7 @@
                 </div>
                 <div class="row justify-content-center">
                     <div class="card bg-outline-light text-dark ">
-                        <form action="" method="post" class="post-form" role="form">
+                        <form action="/v1/company/post/create" method="post" class="post-form" role="form">
                             <div class="card-body">
 
                                 <div class="col-8">
@@ -121,7 +121,7 @@
                                         <label for="jobId">직무</label>
                                     </div>
                                     <div th:each="job, jobStat : ${jobs}" style="display: inline-block;">
-                                        <input class="form-check-input" type="checkbox" id="job1" name="jobIdSet[]"
+                                        <input class="form-check-input" type="checkbox" id="job" name="jobIdSet"
                                                th:value="${job.id}"/>
                                         <label class="form-check-label" th:text="${job.name}"></label>
                                     </div>
@@ -133,7 +133,7 @@
                                         <label for="stackId">요구스택</label>
                                     </div>
                                     <div th:each="stack, stackStat : ${stacks}" style="display: inline-block;">
-                                        <input class="form-check-input" type="checkbox" id="stack1" name="stackIdSet[]"
+                                        <input class="form-check-input" type="checkbox" id="stack" name="stackIdSet"
                                                th:value="${stack.id}"/>
                                         <label class="form-check-label" th:text="${stack.name}"></label>
                                     </div>
@@ -276,7 +276,7 @@
                                 <br>
 
                                 <div class="col-12 mb-4" id="pre_set">
-                                    <input type="text" class="form-control" name="question" value="">
+                                    <input type="text" class="form-control" name="questionList" value="">
                                     <input type="button" class="form-control" value="삭제" onclick="remove_item(this)">
                                 </div>
 
