@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,8 +35,8 @@ public class PostRequestDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'00:00:00")
     private final LocalDateTime testEndDate;
 
-    public PostRequestDto(Long companyId, String postType, String title, int career, LocalDateTime endDate, String mainTask, String workCondition, String qualification, String tool, String benefit, String process, String notice, String specialSkill, String workAddress, List<String> questionList, List<Integer> jobIdSet, List<Integer> stackIdSet, LocalDateTime testStartDate, LocalDateTime testEndDate) {
-        this.companyId = companyId;
+    public PostRequestDto(HttpSession session, String postType, String title, int career, LocalDateTime endDate, String mainTask, String workCondition, String qualification, String tool, String benefit, String process, String notice, String specialSkill, String workAddress, List<String> questionList, List<Integer> jobIdSet, List<Integer> stackIdSet, LocalDateTime testStartDate, LocalDateTime testEndDate) {
+        this.companyId = (Long) session.getAttribute("id");
         this.postType = postType;
         this.title = title;
         this.career = career;

@@ -119,6 +119,13 @@ public class CompanyService {
         return new PageMoveWithMessage("company/normal-post", info);
     }
 
+    public PageMoveWithMessage createPost(HttpSession session, PostRequestDto postRequestDto){
+        Long companyId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.post(session, postRequestDto, "company", "/company/" + companyId + "/post");
+
+        return new PageMoveWithMessage("company/post-list", response.getMessage());
+    }
+
 
     public PageMoveWithMessage faqList(HttpSession session) {
         Long companyId = (Long) session.getAttribute("id");

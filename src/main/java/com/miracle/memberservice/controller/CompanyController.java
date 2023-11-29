@@ -2,7 +2,8 @@ package com.miracle.memberservice.controller;
 
 import com.miracle.memberservice.dto.request.CompanyFaqRequestDto;
 import com.miracle.memberservice.dto.request.MzPostDto;
-import com.miracle.memberservice.dto.response.PostCommonDataResponseDto;
+import com.miracle.memberservice.dto.request.PostRequestDto;
+import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
-import java.util.Objects;
+import java.util.*;
 
 @Controller
 @RequestMapping("/v1/company")
@@ -20,6 +21,7 @@ import java.util.Objects;
 public class CompanyController {
 
     private final CompanyService companyService;
+    private final AdminService adminService;
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
@@ -32,17 +34,34 @@ public class CompanyController {
         return "company/post-list";
     }
 
-    // 공고 생성 폼 이동 (구현 X, 프로트 페이지만 이동)
+    // 공고 생성 폼 이동
     @GetMapping("/post/form")
     public String detail(HttpSession session, Model model) {
         PageMoveWithMessage pmwm = companyService.formPost(session);
-        model.addAttribute("info", (PostCommonDataResponseDto)pmwm.getData());
+        Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
+        model.addAttribute("info", pmwm.getData());
+        model.addAttribute("jobs", allJobsAndStacks.get("jobs"));
+        model.addAttribute("stacks", allJobsAndStacks.get("stacks"));
         return pmwm.getPageName();
     }
 
     @GetMapping("/post/mz/form")
     public String postForm() {
         return "company/mz-post";
+    }
+
+    @PostMapping("/post/create")
+    public String createPost(@ModelAttribute PostRequestDto postRequestDto, HttpSession session) {
+        PageMoveWithMessage pmwm = companyService.createPost(session, postRequestDto);
+
+        return pmwm.getPageName();
+    }
+
+    @PostMapping("/post/mz/create")
+    public String createMZ(@ModelAttribute MzPostDto mzPostDto, Model model, HttpSession session) {
+        PageMoveWithMessage pmwm = companyService.createMZ(mzPostDto, session);
+        model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        return pmwm.getPageName();
     }
 
     // 기업 자주하는 질문페이지 이동
@@ -70,14 +89,6 @@ public class CompanyController {
     public String deleteFaq(RedirectAttributes redirectAttributes, @PathVariable String faqId, HttpSession session) {
         PageMoveWithMessage pmwm = companyService.deleteFaq(session, faqId);
         redirectAttributes.addAttribute("errorMessage", pmwm.getErrorMessage());
-        return pmwm.getPageName();
-    }
-
-    // TODO MZ 공고 등록요청
-    @PostMapping("/post/mz/create")
-    public String createMZ(@ModelAttribute MzPostDto mzPostDto, Model model, HttpSession session) {
-        PageMoveWithMessage pmwm = companyService.createMZ(mzPostDto, session);
-        model.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
 
