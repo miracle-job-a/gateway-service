@@ -2,9 +2,8 @@ package com.miracle.memberservice.service;
 
 import com.miracle.memberservice.dto.request.LoginDto;
 import com.miracle.memberservice.dto.request.UserJoinDto;
-import com.miracle.memberservice.dto.response.ApiResponse;
-import com.miracle.memberservice.dto.response.UserBaseInfoResponseDto;
-import com.miracle.memberservice.dto.response.UserLoginResponseDto;
+import com.miracle.memberservice.dto.response.*;
+import com.miracle.memberservice.util.ApiResponseToList;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import com.miracle.memberservice.util.ServiceCall;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -65,11 +65,18 @@ public class UserService {
     public PageMoveWithMessage formResume(HttpSession session){
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.get(session, "user", "/user/" + userId + "/base-info");
+        ApiResponse stackList = ServiceCall.get(session, "admin","/admin/stacks");
+        ApiResponse jobList = ServiceCall.get(session, "admin","/admin/jobs");
 
         if(response.getHttpStatus() != 200)
             return new PageMoveWithMessage("/user/resumes", response.getMessage());
 
         LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        LinkedHashMap<String, Object> stackData = (LinkedHashMap<String, Object>) stackList.getData();
+        LinkedHashMap<String, Object> jobData = (LinkedHashMap<String, Object>) jobList.getData();
+
+        List<StackResponseDto> stack = ApiResponseToList.stackList(stackData.get("stackList"));
+        List<JobResponseDto> job = ApiResponseToList.jobList(jobData.get("jobList"));
 
         UserBaseInfoResponseDto info = UserBaseInfoResponseDto.builder()
                 .email(data.get("email"))
@@ -77,6 +84,8 @@ public class UserService {
                 .phone(data.get("phone"))
                 .birth(data.get("birth"))
                 .address(data.get("address"))
+                .stackList(stack)
+                .jobList(job)
                 .build();
 
         return new PageMoveWithMessage("user/resumeForm", info);
