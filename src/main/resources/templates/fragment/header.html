@@ -30,29 +30,36 @@
        </li>
 
        <li class="nav-item">
-        <a class="nav-link" href="about.html">공고검색</a>
+        <a class="nav-link" href="/v1/user/resumes">이력서</a>
+       </li>
+
+       <li class="nav-item">
+        <a class="nav-link" href="about.html">자기소개서</a>
        </li>
 
        <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarLightDropdownMenuLink" role="button"
-           data-bs-toggle="dropdown" aria-expanded="false">이력서</a>
+           data-bs-toggle="dropdown" aria-expanded="false">마이페이지</a>
 
         <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink">
-         <li><a class="dropdown-item" href="listing-page.html">Listing Page</a></li>
-
-         <li><a class="dropdown-item" href="detail-page.html">Detail Page</a></li>
+         <li><a class="dropdown-item" href="listing-page.html">My 홈</a></li>
+         <li><a class="dropdown-item" href="/v1/user/resumes">이력서 관리</a></li>
+         <li><a class="dropdown-item" href="/v1/user/cover-letter">자기소개서 관리</a></li>
+         <li><a class="dropdown-item" href="detail-page.html">면접관리</a></li>
+         <li><a class="dropdown-item" href="detail-page.html">입사지원 현황</a></li>
+         <li><a class="dropdown-item" href="detail-page.html">내가 한 질문</a></li>
+         <li><a class="dropdown-item" href="detail-page.html">관심 공고</a></li>
+         <li><a class="dropdown-item" href="detail-page.html">개인정보수정</a></li>
         </ul>
        </li>
 
-       <li class="nav-item">
-        <a class="nav-link" href="contact.html">자기소개서</a>
-       </li>
+       <div class="ms-4">
+        <a th:if="${session.id!=null}" href="/v1/user/logout" class="btn custom-btn custom-border-btn smoothscroll">로그아웃</a>
+        <a th:if="${session.id==null}" href="/v1/user/login-form" class="btn custom-btn custom-border-btn smoothscroll">로그인/회원가입</a>
+       </div>
       </ul>
 
-      <div class="ms-4">
-       <a th:if="${session.id!=null}" href="/v1/user/logout" class="btn custom-btn custom-border-btn smoothscroll">로그아웃</a>
-       <a th:if="${session.id==null}" href="/v1/user/login-form" class="btn custom-btn custom-border-btn smoothscroll">로그인/회원가입</a>
-      </div>
+
      </div>
     </div>
    </nav>

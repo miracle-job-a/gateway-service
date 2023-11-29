@@ -5,6 +5,14 @@
 
 <div layout:fragment="content">
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var resumeButton = document.getElementById('resume');
+
+            resumeButton.addEventListener('click', function () {
+                window.location.href = '/v1/user/resume/form';
+            });
+        });
+
         // Thymeleaf를 사용하여 데이터 속성을 통해 id 값을 가져오는 함수
         function confirmDelete(button) {
             // Thymeleaf로 설정한 data-id 속성을 통해 id 값을 가져옴
@@ -37,11 +45,11 @@
 
 
                     <div class="row col-lg-10 col-12">
-                        <!--<div class="col-auto">
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-secondary" id="resume">이력서 생성</button>
                             <div class="btn-group">
-                                <button type="button" class="btn btn-outline-secondary">최근</button>
-                                <button type="button" class="btn btn-outline-secondary">진행중</button>
-                                <button type="button" class="btn btn-outline-secondary">마감임박</button>
+                                <button type="button" class="btn btn-outline-secondary">최근 작성일</button>
+                                <button type="button" class="btn btn-outline-secondary">오래된 작성일</button>
                             </div>
                         </div>
 
@@ -50,7 +58,7 @@
                                 <input type="text" class="form-control" placeholder="Search">
                                 <button class="btn btn-outline-secondary" type="submit">Go</button>
                             </div>
-                        </div>-->
+                        </div>
                     </div>
 
                     <!-- 목록 페이지 시작 -->

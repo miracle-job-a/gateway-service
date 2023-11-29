@@ -93,31 +93,19 @@
                                             <div class="mb-1">
                                                 <label for="job">개발 가능한 직무를 골라주세요.</label>
                                             </div>
-                                            <input class="form-check-input" type="checkbox"  name="job" value="1" />
-                                            <label class="form-check-label">프론트</label>
-                                            <input class="form-check-input" type="checkbox"  name="job" value="2" />
-                                            <label class="form-check-label">백엔드</label>
-                                            <input class="form-check-input" type="checkbox"  name="job" value="3" />
-                                            <label class="form-check-label">빅데이터</label>
-                                            <input class="form-check-input" type="checkbox"  name="job" value="4" />
-                                            <label class="form-check-label">풀스택</label>
-                                            <input class="form-check-input" type="checkbox"  name="job" value="5" />
-                                            <label class="form-check-label">몰라요</label>
+                                            <div th:each="job : ${jobList}">
+                                                <input class="form-check-input" type="checkbox" name="job" th:value="${job.id}" />
+                                                <label class="form-check-label" th:text="${job.name}"></label>
+                                            </div>
                                         </div>
                                         <div class="col-12 mt-2">
                                             <div class="mb-1">
                                                 <label for="stack">보유한 기술 스택</label>
                                             </div>
-                                            <input class="form-check-input" type="checkbox"  name="stack" value="1" />
-                                            <label class="form-check-label">Java</label>
-                                            <input class="form-check-input" type="checkbox"  name="stack" value="2" />
-                                            <label class="form-check-label">Python</label>
-                                            <input class="form-check-input" type="checkbox"  name="stack" value="3" />
-                                            <label class="form-check-label">HTML</label>
-                                            <input class="form-check-input" type="checkbox"  name="stack" value="4" />
-                                            <label class="form-check-label">JavaScript</label>
-                                            <input class="form-check-input" type="checkbox"  name="stack" value="5" />
-                                            <label class="form-check-label">AWS</label>
+                                            <div th:each="stack : ${stackList}">
+                                                <input class="form-check-input" type="checkbox" name="stack" th:value="${stack.id}" />
+                                                <label class="form-check-label" th:text="${stack.name}"></label>
+                                            </div>
                                         </div>
                                         <div class="col-12 mt-2">
                                             <h6></h6>
