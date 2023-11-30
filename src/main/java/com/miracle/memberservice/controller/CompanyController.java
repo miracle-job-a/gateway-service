@@ -74,14 +74,21 @@ public class CompanyController {
         return pmwm.getPageName();
     }
 
-    @GetMapping ("/post/delete/{postId}")
+    @GetMapping("/post/update")
+    public String updatePost(HttpSession session, @ModelAttribute PostRequestDto postRequestDto, @RequestParam Long postId) {
+        PageMoveWithMessage pmwm = companyService.updatePost(session, postRequestDto, postId);
+
+        return pmwm.getPageName();
+    }
+
+    @GetMapping("/post/delete/{postId}")
     public String deletePost(HttpSession session, @PathVariable Long postId) {
         PageMoveWithMessage pmwm = companyService.deletePost(session, postId);
 
         return pmwm.getPageName();
     }
 
-    @GetMapping ("/post/close/{postId}")
+    @GetMapping("/post/close/{postId}")
     public String closePost(RedirectAttributes redirectAttributes, HttpSession session, @PathVariable Long postId) {
         PageMoveWithMessage pmwm = companyService.closePost(session, postId);
         redirectAttributes.addAttribute("id", postId);

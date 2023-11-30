@@ -8,15 +8,64 @@
     <script>
         /* 자소서 질문 추가 (임시) */
         function add_item() {
-            // pre_set 에 있는 내용을 읽어와서 처리..
-            var div = document.createElement('div');
-            div.innerHTML = document.getElementById('pre_set').innerHTML;
-            document.getElementById('field').appendChild(div);
+            var preSetElement = document.getElementById('pre_set');
+            if (preSetElement) {
+                var clone = preSetElement.cloneNode(true);
+                var newId = 'new_' + Date.now();
+                clone.id = newId;
+                // 새로운 엘리먼트를 추가하면서 삭제 기능 연결
+                clone.querySelector('input[type="button"]').onclick = function() {
+                    remove_item(this);
+                };
+                // 추가된 엘리먼트를 초기에 숨겨진 상태로 만듦
+                clone.style.display = 'none';
+                document.getElementById('field').appendChild(clone);
+                // 추가된 엘리먼트를 나타나도록 변경
+                clone.style.display = 'block';
+            }
         }
 
         function remove_item(obj) {
-            // obj.parentNode 를 이용하여 삭제
-            document.getElementById('field').removeChild(obj.parentNode);
+            // obj.parentNode를 이용하여 삭제
+            var parent = obj.parentNode;
+            parent.parentNode.removeChild(parent);
+        }
+
+
+        function enableEditing() {
+
+            $('#submitEdit').css('display', 'block');
+            $('#addressInputBtn').css('display', 'block');
+            $('#title').prop('readonly', false);
+            $('#endDate').prop('readonly', false);
+            $('#career').prop('readonly', false);
+            $('#mainTask').prop('readonly', false);
+            $('#workCondition').prop('readonly', false);
+            $('#qualification').prop('readonly', false);
+            $('#tool').prop('readonly', false);
+            $('#benefit').prop('readonly', false);
+            $('#specialSkill').prop('readonly', false);
+            $('#process').prop('readonly', false);
+            $('#notice').prop('readonly', false);
+            $('#address').prop('readonly', false);
+            $('#addQuestion').prop('disabled', false);
+            $('[id^="question"]').prop('readonly', false);
+            $('[id^="remove"]').css('display', 'block');
+            $('.editStacks').css('display', 'inline-block');
+            $('.editJobs').css('display', 'inline-block');
+            $('#jobs').each(function() {
+                $(this).css('display', 'none');
+            });
+            $('#stacks').css('display','none');
+            $('#closedBtn').css('display','none');
+            $('#removeBtn').css('display','none');
+            $('#editBtn').css('display','none');
+            $('#cancelBtn').css('display','block');
+        }
+
+        function cancelEditing() {
+            var postId = [[${postId}]];
+            window.location.href = '/v1/company/post/detail?id=' + postId;
         }
 
         /* 주소 변경하기 */
@@ -109,7 +158,7 @@
                 </div>
                 <div class="row justify-content-center">
                     <div class="card bg-outline-light text-dark ">
-                        <form action="/v1/company/post/create" method="post" class="post-form" role="form">
+                        <form th:action="@{/v1/company/post/update/(postId=${postId})}" method="get" class="post-form" role="form">
                             <div class="card-body">
 
                                 <div class="col-8">
@@ -124,7 +173,7 @@
                                         <div class="mb-1">
                                             <label for="endDate">마감일</label>
                                         </div>
-                                        <input type="text" name="endDate" id="endDate"
+                                        <input type="date" name="endDate" id="endDate"
                                                class="form-control" placeholder="마감일" th:value="${detail.endDate}"
                                                readonly/>
                                     </div>
@@ -143,26 +192,37 @@
                                     <div class="mb-1">
                                         <label for="jobId">직무</label>
                                     </div>
-                                    <div th:each="job : ${totalJobs}" style="display: inline-block;">
+                                    <div th:each="job : ${totalJobs}" class="editJobs" style="display: none;">
                                         <input class="form-check-input" type="radio" th:id="'job'+${job.id}"
                                                name="jobIdSet"
-                                               th:value="${job.id}" th:checked="${jobs.contains(job)}" disabled/>
+                                               th:value="${job.id}" th:checked="${jobs.contains(job)}" />
                                         <label class="form-check-label" th:text="${job.name}"></label>
                                         <br/>
                                     </div>
+                                    <div th:each="job : ${jobs}" id="jobs" style="display: inline-block;">
+                                        <label class="form-check-label bi-person-workspace" th:text="'  '+${job.name}"></label>
+                                        <br/>
+                                    </div>
                                 </div>
+
 
 
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
                                         <label for="stackId">요구스택</label>
                                     </div>
-                                    <div th:each="stack : ${totalStacks}" style="display: inline-block;">
+                                    <div th:each="stack : ${totalStacks}" class="editStacks" style="display: none;">
                                         <input class="form-check-input" type="checkbox" th:id="'stack'+${stack.id}"
                                                name="stackIdSet"
-                                               th:value="${stack.id}" th:checked="${stacks.contains(stack)}" disabled/>
+                                               th:value="${stack.id}" th:checked="${stacks.contains(stack)}"/>
                                         <label class="form-check-label" th:text="${stack.name}"></label>
                                         <br/>
+                                    </div>
+                                    <div id="stacks">
+                                        <div th:each="stack : ${stacks}"  style="display: inline-block;">
+                                            <label class="form-check-label bi-view-stacked" th:text="'  '+${stack.name}"></label>
+                                            <br/>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -275,7 +335,7 @@
                                     <div class="mb-1">
                                         <label for="special_skill">우대 기술사항</label>
                                     </div>
-                                    <textarea class="form-control" rows="3" id="special_skill"
+                                    <textarea class="form-control" rows="3" id="specialSkill"
                                               name="specialSkill" th:text="${detail.specialSkill}" readonly></textarea>
                                 </div>
                                 <div class="col-8 mt-2">
@@ -309,14 +369,14 @@
                                 </div>
 
                                 <h5 class="mb-4 mt-4" style="display: inline-block;">자기소개서 질문</h5>
-                                <button class="btn m-lg-3" type="button" onclick="add_item()" disabled>+</button>
+                                <button class="btn m-lg-3" type="button" id="addQuestion" onclick="add_item()" disabled>+</button>
                                 <br>
 
                                 <div class="col-12 mb-4" id="pre_set"
                                      th:each="questionId, questionIdStat : ${detail.questionList}">
-                                    <input type="text" class="form-control" name="questionList"
+                                    <input type="text" class="form-control" th:id="'question'+${questionId.id}" name="questionList"
                                            th:value="${questionId.question}" readonly/>
-                                    <input type="button" class="form-control" value="삭제" onclick="remove_item(this)"
+                                    <input type="button" th:id="'remove'+${questionId.id}" class="form-control" value="삭제" onclick="remove_item(this)"
                                            style="display: none">
                                 </div>
 
@@ -350,21 +410,27 @@
 
                                 <div class="row">
                                     <div class="col-3 pt-4 m-auto">
-                                        <button type="button" class="form-control">수정하기</button>
+                                        <button type="button" th:unless="${detail.closed}" class="form-control" id="editBtn" onclick="enableEditing()">수정하기</button>
                                     </div>
                                     <div class="col-3 pt-4 m-auto">
                                         <input type="hidden" name="postType" th:value="${detail.postType}"/>
-                                        <button type="button" class="form-control" onclick="confirmAndDelete()">삭제하기</button>
+                                        <input type="hidden" name="postId" th:value="${postId}"/>
+                                        <button type="button" id="removeBtn" class="form-control" onclick="confirmAndDelete()">삭제하기</button>
                                     </div>
                                     <div class="col-3 pt-4 m-auto">
-                                        <button type="button" class="form-control" onclick="confirmAndClose()">마감하기</button>
+                                        <button type="button" id="closedBtn" th:unless="${detail.closed}" class="form-control" onclick="confirmAndClose()">마감하기</button>
                                     </div>
                                 </div>
 
-
-                                <div class="col-3 pt-4 m-auto">
-                                    <button type="submit" class="form-control" style="display:none;">수정완료</button>
+                                <div class="row">
+                                    <div class="col-3 pt-4 m-auto">
+                                        <button type="submit" class="form-control" id="submitEdit" style="display:none;">수정완료</button>
+                                    </div>
+                                    <div class="col-3 pt-4 m-auto">
+                                        <button type="button" class="form-control" id="cancelBtn" onclick="cancelEditing()" style="display:none;">취소</button>
+                                    </div>
                                 </div>
+
 
 
                             </div>

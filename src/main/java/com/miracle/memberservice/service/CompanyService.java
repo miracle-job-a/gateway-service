@@ -160,16 +160,23 @@ public class CompanyService {
         return new PageMoveWithMessage("company/post-detail", dto);
     }
 
-    public PageMoveWithMessage deletePost(HttpSession session, Long postId){
+    public PageMoveWithMessage deletePost(HttpSession session, Long postId) {
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/" + postId);
 
         return new PageMoveWithMessage("redirect:/v1/company/post/list", response.getMessage());
     }
 
-    public PageMoveWithMessage closePost(HttpSession session, Long postId){
+    public PageMoveWithMessage closePost(HttpSession session, Long postId) {
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/" + postId + "/close");
+
+        return new PageMoveWithMessage("redirect:/v1/company/post/detail", response.getMessage());
+    }
+
+    public PageMoveWithMessage updatePost(HttpSession session, PostRequestDto postRequestDto, Long postId) {
+        Long companyId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.put(session, postRequestDto, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/" + postId);
 
         return new PageMoveWithMessage("redirect:/v1/company/post/detail", response.getMessage());
     }
