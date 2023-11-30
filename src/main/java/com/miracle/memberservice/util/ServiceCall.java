@@ -63,7 +63,6 @@ public class ServiceCall {
         } else if (memberType.equals(Const.RequestHeader.ADMIN)){
             return 60003;
         }
-        return 0;
     }
 
     private static String capitalizeFirstLetter(String input) {
