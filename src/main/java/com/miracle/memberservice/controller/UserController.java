@@ -1,7 +1,6 @@
 package com.miracle.memberservice.controller;
 
 import com.miracle.memberservice.dto.request.ResumeRequestDto;
-import com.miracle.memberservice.dto.response.UserBaseInfoResponseDto;
 import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
@@ -11,11 +10,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/v1/user")
@@ -56,7 +57,17 @@ public class UserController {
 
     // [임시] 이력서 목록으로 이동
     @GetMapping("/resumes")
-    public String resumeList(){ return "user/resume-list"; }
+    public String resumeList(@RequestParam(value = "errorMessage", required = false) String errorMessage, HttpSession session, Model model){
+        PageMoveWithMessage pmwm = userService.resumeList(session);
+
+        if (Objects.nonNull(pmwm.getErrorMessage())) {
+            model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        } else {
+            model.addAttribute("errorMessage", errorMessage);
+        }
+        model.addAttribute("resumeList", pmwm.getData());
+        return pmwm.getPageName();
+    }
 
     // [임시] 자소서 목록으로 이동
     @GetMapping("/cover-letter")

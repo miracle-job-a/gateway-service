@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
 import java.util.LinkedHashMap;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -79,7 +80,7 @@ public class UserService {
                 .address(data.get("address"))
                 .build();
 
-        return new PageMoveWithMessage("user/resumeForm", info);
+        return new PageMoveWithMessage("user/resume-form", info);
     }
 
     public PageMoveWithMessage addResume(HttpSession session, ResumeRequestDto resumeRequestDto) {
@@ -90,11 +91,20 @@ public class UserService {
         return new PageMoveWithMessage("redirect:/v1/user/resumes");
     }
 
-    /*
-    * toolchain {
-		languageVersion.set(JavaLanguageVersion.of(17))
-	}
-	*
-	* DB_password=5002;DB_url=jdbc:mysql://localhost:3306/miracle_user;DB_username=root
-    * */
+    public PageMoveWithMessage resumeList(HttpSession session){
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.get(session, "user", "/user/"+userId+"/resume");
+        if (response.getHttpStatus() != 200)
+            return new PageMoveWithMessage("/v1/user", response.getMessage());
+        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+
+        ResumeListResponseDto info = ResumeListResponseDto.builder()
+                .id(data.get("id"))
+                .title(data.get("title"))
+                .modifiedAt(data.get("modifiedAt"))
+                .open(data.get("open"))
+                .build();
+
+        return new PageMoveWithMessage("user/resumes", info);
+    }
 }
