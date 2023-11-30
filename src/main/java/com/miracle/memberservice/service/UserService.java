@@ -1,9 +1,9 @@
 package com.miracle.memberservice.service;
 
 import com.miracle.memberservice.dto.request.LoginDto;
+import com.miracle.memberservice.dto.request.ResumeRequestDto;
 import com.miracle.memberservice.dto.request.UserJoinDto;
 import com.miracle.memberservice.dto.response.*;
-import com.miracle.memberservice.util.ApiResponseToList;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import com.miracle.memberservice.util.ServiceCall;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 @Service
 @Slf4j
@@ -72,7 +71,6 @@ public class UserService {
 
         LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
-
         UserBaseInfoResponseDto info = UserBaseInfoResponseDto.builder()
                 .email(data.get("email"))
                 .name(data.get("name"))
@@ -83,4 +81,20 @@ public class UserService {
 
         return new PageMoveWithMessage("user/resumeForm", info);
     }
+
+    public PageMoveWithMessage addResume(HttpSession session, ResumeRequestDto resumeRequestDto) {
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.post(session, resumeRequestDto, "user", "/user/"+userId+"/resume");
+        if (response.getHttpStatus() != 200)
+            return new PageMoveWithMessage("redirect:/v1/user/resume/form", response.getMessage());
+        return new PageMoveWithMessage("redirect:/v1/user/resumes");
+    }
+
+    /*
+    * toolchain {
+		languageVersion.set(JavaLanguageVersion.of(17))
+	}
+	*
+	* DB_password=5002;DB_url=jdbc:mysql://localhost:3306/miracle_user;DB_username=root
+    * */
 }

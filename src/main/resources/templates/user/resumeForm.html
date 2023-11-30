@@ -4,6 +4,77 @@
         layout:decorate="~{layout/default_layout}" lang="ko">
 
 <div layout:fragment="content">
+    <script>
+
+        /* 프로젝트 필드 추가 */
+        let itemCount = 1;
+
+        function addItem(preSetId, fieldId) {
+            var div = document.createElement('div');
+            /*div.classList.add('careerCal');*/
+            div.innerHTML = document.getElementById(preSetId).innerHTML.replace(/1/g, itemCount);
+            document.getElementById(fieldId).appendChild(div);
+
+            // 추가된 입력 필드를 보이게 함
+            document.getElementById(`pre_set${itemCount}`).style.display = 'block';
+
+            itemCount++;
+        }
+
+        function removeItem(button) {
+            var parentDiv = button.parentNode.parentNode;
+            var itemDiv = parentDiv.parentNode;
+
+            // Check if it's the last item before removing
+            if (itemDiv.querySelectorAll('.field > div').length > 0) {
+                parentDiv.parentNode.removeChild(parentDiv);
+            } else {
+                alert("마지막 항목은 삭제할 수 없습니다.");
+            }
+
+            // 기간 계산 및 careerInput에 설정
+            calculateAndSetCareer();
+        }
+
+        function calculateAndSetCareer() {
+            let totalMonths = 0;
+
+            // 모든 입력 필드의 날짜 합산 계산
+            document.querySelectorAll('.career').forEach((item, index) => {
+                const startElement = item.querySelector('#start_date');
+                const endElement = item.querySelector('#end_date');
+
+                if (!startElement || !endElement) {
+                    return;
+                }
+
+                const startDate = new Date(startElement.value);
+                const endDate = new Date(endElement.value);
+
+                // 두 날짜가 같은 경우 0년 0개월로 처리
+                if (startDate.getTime() === endDate.getTime()) {
+                    return;
+                }
+
+                // 각 입력 필드의 년수 및 개월 수 계산
+                const years = endDate.getFullYear() - startDate.getFullYear();
+                const months = endDate.getMonth() - startDate.getMonth();
+
+                // 전체 년수 및 개월 수에 더함
+                totalMonths += years * 12 + months;
+            });
+
+            // 전체 년수 및 개월 수를 년(Y)과 개월(M)로 변환하여 표시
+            const totalYears = Math.floor(totalMonths / 12);
+            const remainingMonths = totalMonths % 12;
+
+            // 계산된 값을 입력 필드에 설정
+            document.getElementById("careerInput").value = totalYears + "년 " + remainingMonths + "개월";
+            document.getElementById("careerCal").value = totalMonths;
+        }
+
+
+    </script>
 
     <main>
         <header class="site-header d-flex flex-column justify-content-center align-items-center">
@@ -74,6 +145,15 @@
                                                 </div>
                                             </div>
 
+                                            <div class="mb-3 row">
+                                                <label for="address" class="col-sm-3 col-form-label">주소</label>
+                                                <div class="col-sm-9">
+                                                    <input type="tel" readonly class="form-control-plaintext text-center"
+                                                           style="font-size: 18px;"
+                                                           id="address" th:value="${info.address}">
+                                                </div>
+                                            </div>
+
                                         </div>
                                     </div>
 
@@ -81,7 +161,7 @@
 
                                 <!-- 이력서 생성 폼 시작 -->
                                 <div class="card mt-4 mb-4 p-4 col-11 post-form align-self-center">
-                                    <form action="#" method="post" role="form" class="row align-self-center col-12">
+                                    <form action="/v1/user/resume" method="post" role="form" class="row align-self-center col-12">
                                         <div class="col-12 mt-2">
                                             <div class="mb-1">
                                                 <label for="title">이력서 제목</label>
@@ -89,22 +169,30 @@
                                             <input type="text" name="title" id="title"
                                                    class="form-control" placeholder="이력서 제목" required="" />
                                         </div>
-                                        <div class="col-12 mt-2">
+                                        <div class="card mt-3 p-3 col-12 post-form align-self-center">
                                             <div class="mb-1">
                                                 <label for="job">개발 가능한 직무를 골라주세요.</label>
                                             </div>
-                                            <div th:each="job : ${jobList}">
-                                                <input class="form-check-input" type="checkbox" name="job" th:value="${job.id}" />
-                                                <label class="form-check-label" th:text="${job.name}"></label>
+                                            <div class="card mt-2 mb-4 p-4 col-11 post-form align-self-center">
+                                                <div class="scrollable-checkboxes" style="max-height: 150px; overflow-y: auto;">
+                                                    <div th:each="job, jobStat : ${jobs}">
+                                                        <input class="form-check-input" type="checkbox" id="job" name="jobIdSet" th:value="${job.id}" />
+                                                        <label class="form-check-label" th:text="${job.name}"></label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-12 mt-2">
+                                        <div class="card mt-3 p-3 col-12 post-form align-self-center">
                                             <div class="mb-1">
                                                 <label for="stack">보유한 기술 스택</label>
                                             </div>
-                                            <div th:each="stack : ${stackList}">
-                                                <input class="form-check-input" type="checkbox" name="stack" th:value="${stack.id}" />
-                                                <label class="form-check-label" th:text="${stack.name}"></label>
+                                            <div class="card mt-2 mb-4 p-4 col-11 post-form align-self-center">
+                                                <div class="scrollable-checkboxes" style="max-height: 150px; overflow-y: auto;">
+                                                    <div th:each="stack, stackStat : ${stacks}">
+                                                        <input class="form-check-input" type="checkbox" id="stack" name="stackIdSet" th:value="${stack.id}" />
+                                                        <label class="form-check-label" th:text="${stack.name}"></label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-12 mt-2">
@@ -119,31 +207,59 @@
                                         </div>
                                         <div class="col-12 mt-2">
                                             <div class="mb-1">
-                                                <label for="title">GitHub 주소</label>
+                                                <label for="gitLink">GitHub 주소</label>
                                             </div>
-                                            <input type="url" class="form-control" id="website" name="website" placeholder="http://www.github.com" pattern="https://github.com/.*" size="30" required>
+                                            <input type="url" class="form-control" id="gitLink" name="gitLink" placeholder="http://www.github.com" value="https://github.com/" size="30" required>
                                         </div>
-                                        <div class="col-12 mt-2">
+
+                                        <div class="card mt-3 p-3 col-12 post-form align-self-center" id="item1">
                                             <div class="mb-1">
                                                 <label for="careerDetail">경력사항</label>
+                                                <button class="btn m-2" type="button" onclick="addItem('pre_set1', 'field1')">+</button>
+                                                <button class="btn m-2" type="button" onclick="calculateAndSetCareer()">경력기간 계산</button>
+                                                <input type="text" readonly class="form-control" name="careerNum" id="careerInput" />
+                                                <input type="hidden" name="career" id="careerCal" />
                                             </div>
-                                            <input type="text" name="careerDetail" id="careerDetail"
-                                                   class="form-control" placeholder="경력사항" required="" />
+                                            <div class="pre_set" id="pre_set1">
+                                                <div class="input-group m-1 career">
+                                                    <input type="date" class="form-control" name="careerDetailList" id="start_date" value="" />
+                                                    <input type="date" class="form-control" name="careerDetailList" id="end_date" value="" />
+                                                    <input type="text" class="form-control" name="careerDetailList" id="career_title" value="" />
+                                                    <button class="btn" type="button" value="삭제" onclick="removeItem(this)">-</button>
+                                                </div>
+                                            </div>
+                                            <div class="field" id="field1"></div>
                                         </div>
-                                        <div class="col-12 mt-2">
+
+                                        <div class="card mt-3 p-3 col-12 post-form align-self-center" id="item2">
                                             <div class="mb-1">
-                                                <label for="project">프로젝트</label>
+                                                <label for="projectList">프로젝트</label>
+                                                <button class="btn m-2" type="button" onclick="addItem('pre_set2', 'field2')">+</button>
                                             </div>
-                                            <input type="text" name="project" id="project"
-                                                   class="form-control" placeholder="프로젝트" required="" />
+                                            <div class="pre_set" id="pre_set2">
+                                                <div class="input-group m-1">
+                                                    <input type="text" class="form-control" name="projectList" value="">
+                                                    <button class="btn" type="button" value="삭제" onclick="removeItem(this)">-</button>
+                                                </div>
+                                            </div>
+                                            <div class="field" id="field2"></div>
                                         </div>
-                                        <div class="col-12 mt-2">
+
+                                        <div class="card mt-3 mb-3 p-3 col-12 post-form align-self-center" id="item3">
                                             <div class="mb-1">
-                                                <label for="etc">기타사항</label>
+                                                <label for="etcList">기타사항</label>
+                                                <button class="btn m-2" type="button" onclick="addItem('pre_set3', 'field3')">+</button>
                                             </div>
-                                            <input type="text" name="etc" id="etc"
-                                                   class="form-control" placeholder="프로젝트" required="" />
+                                            <div class="pre_set" id="pre_set3">
+                                                <div class="input-group m-1">
+                                                    <input type="text" class="form-control" name="etcList" value="">
+                                                    <button class="btn" type="button" value="삭제" onclick="removeItem(this)">-</button>
+                                                </div>
+                                            </div>
+                                            <div class="field" id="field3"></div>
                                         </div>
+
+
                                         <div class="col-12 mt-2 mb-4">
                                             <div class="mb-1">
                                                 <label for="open">이력서 공개여부</label>

@@ -62,8 +62,6 @@ public class ServiceCall {
 
         } else if (memberType.equals(Const.RequestHeader.ADMIN)){
             return 60003;
-        }else {
-            return 60000;
         }
         return 0;
     }
