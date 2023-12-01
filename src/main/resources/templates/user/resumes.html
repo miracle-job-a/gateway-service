@@ -61,83 +61,42 @@
                         </div>
                     </div>
 
+                    <div class="col-12 m-2"></div>
+
                     <!-- 목록 페이지 시작 -->
 
                     <!-- 목록 1칸 -->
-                    <div class="col-lg-10 col-12 mb-4 mb-lg-2">
-                        <div th:each="resume : ${resumeList}">
-                            <div class="custom-block d-flex">
-                                <div class="custom-block-info">
-                                    <h5 class="mb-2">
-                                        <a th:href="@{/user/resume/{id}(id=${resume.id})}" th:text="${resume.title}"></a>
-                                    </h5>
+                    <div th:each="resume : ${resumeList}" class="col-lg-10 col-12 mb-4 mb-lg-2">
+                        <div class="custom-block d-flex">
+                            <div class="custom-block-info">
+                                <h5 class="mb-2">
+                                    <a th:href="@{/user/resume/{id}(id=${resume.id})}" th:text="${resume.title}"></a>
+                                </h5>
 
-                                    <div class="custom-block-bottom d-flex mt-3">
-                                        <div class="col-auto d-flex m-2"><span>스택</span></div>
-                                        <div class="col-auto d-flex m-2"><span th:text="'작성일 : ' + ${resume.modifiedAt}"></span></div>
-                                        <div class="col-auto d-flex m-2"><span th:text="'작성일 : ' + ${resume.open}"></span></div>
+                                <div class="custom-block-bottom d-flex mt-3">
+                                    <div class="col-auto d-flex m-2">
+                                        <span>지원직무 :</span>
+                                        <div th:each="jobId : ${resume.jobIdSet}" style="display: inline-block;">
+                                            <div th:each="job : ${jobs}" th:if="${job.id eq jobId}">
+                                                <span th:text="'['+${job.name}+']'"></span>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-
-                                <!-- 버튼 부 -->
-                                <div class="d-flex flex-column ms-auto">
-                                    <!-- 데이터 속성을 추가하여 resume.id를 저장 -->
-                                    <button type="button" class="btn" th:attr="data-resume-id=${resume.id}" onclick="confirmDelete(this)">삭제하기</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <!-- 목록 1칸 -->
-                    <div class="col-lg-10 col-12 mb-4 mb-lg-2">
-                        <div class="custom-block d-flex">
-                            <div class="custom-block-info">
-                                <h5 class="mb-2">
-                                    <a href="detail-page.html">
-                                        이력서 제목 입니다.
-                                    </a>
-                                </h5>
-
-                                <div class="custom-block-bottom d-flex  mt-3">
-                                    <div class="col-auto d-flex m-2"><span>지원 직무 : 백엔드</span></div>
-                                    <div class="col-auto d-flex m-2"><span>작성일:2023.11.23</span></div>
-                                    <div class="col-auto d-flex m-2"><span>상태 : 공개</span></div>
+                                    <div class="col-auto d-flex m-2"><span th:text="'작성일 : ' + ${resume.modifiedAt}"></span></div>
+                                    <div class="col-auto d-flex m-2">
+                                        <span th:if="${not resume.open}" class="badge rounded-pill btn-primary">공개</span>
+                                        <span th:if="${resume.open}" class="badge rounded-pill bg-secondary">비공개</span></div>
                                 </div>
                             </div>
 
                             <!-- 버튼 부 -->
                             <div class="d-flex flex-column ms-auto">
-                                <!-- 추후 th:attr="data-id=${resume.id}" button 내 추가하기 -->
-                                <button type="button" class="btn"  onclick="confirmDelete(this)">삭제하기</button>
+                                <!-- 데이터 속성을 추가하여 resume.id를 저장 -->
+                                <button type="button" class="btn btn-outline-secondary" th:attr="data-resume-id=${resume.id}" onclick="confirmDelete(this)">삭제하기</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 목록 1칸 -->
-                    <div class="col-lg-10 col-12 mb-4 mb-lg-2">
-                        <div class="custom-block d-flex">
-                            <div class="custom-block-info">
-                                <h5 class="mb-2">
-                                    <a href="detail-page.html">
-                                        이력서 제목 입니다.
-                                    </a>
-                                </h5>
-
-                                <div class="custom-block-bottom d-flex  mt-3">
-                                    <div class="col-auto d-flex m-2"><span>지원 직무 : 백엔드</span></div>
-                                    <div class="col-auto d-flex m-2"><span>작성일:2023.11.23</span></div>
-                                    <div class="col-auto d-flex m-2"><span>상태 : 공개</span></div>
-                                </div>
-                            </div>
-
-                            <!-- 버튼 부 -->
-                            <div class="d-flex flex-column ms-auto">
-                                <!-- 추후 th:attr="data-id=${resume.id}" button 내 추가하기 -->
-                                <button type="button" class="btn"  onclick="confirmDelete(this)">삭제하기</button>
-                            </div>
-                        </div>
-                    </div>
 
                     <div class="col-lg-4 col-12 mx-auto">
                         <nav aria-label="Page navigation example">

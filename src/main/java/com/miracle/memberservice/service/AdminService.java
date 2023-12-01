@@ -44,4 +44,10 @@ public class AdminService {
 
         return ApiResponseToList.stacks(response.getData());
     }
+
+    public List<JobResponseDto> getAllJobs(HttpSession session){
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.ADMIN, "/admin/jobs");
+        return ApiResponseToList.jobs(response.getData());
+    }
+
 }

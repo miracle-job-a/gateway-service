@@ -54,6 +54,11 @@ public class ServiceCall {
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()), httpSession, serviceType).block();
     }
 
+    public static ApiResponse put(HttpSession httpSession, Object dto, String serviceType, String url) {
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().put()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()).bodyValue(dto), httpSession, serviceType).block();
+    }
+
     private static int port(String memberType) {
         if (memberType.equals(Const.RequestHeader.USER)) {
             return 60001;
@@ -62,6 +67,8 @@ public class ServiceCall {
 
         } else if (memberType.equals(Const.RequestHeader.ADMIN)){
             return 60003;
+        }else {
+            return 60000;
         }
     }
 
@@ -85,4 +92,3 @@ public class ServiceCall {
         };
     }
 }
-

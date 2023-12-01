@@ -4,6 +4,7 @@ import com.miracle.memberservice.dto.request.LoginDto;
 import com.miracle.memberservice.dto.request.ResumeRequestDto;
 import com.miracle.memberservice.dto.request.UserJoinDto;
 import com.miracle.memberservice.dto.response.*;
+import com.miracle.memberservice.util.ApiResponseToList;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import com.miracle.memberservice.util.ServiceCall;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -96,15 +98,11 @@ public class UserService {
         ApiResponse response = ServiceCall.get(session, "user", "/user/"+userId+"/resume");
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("/v1/user", response.getMessage());
-        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
-        ResumeListResponseDto info = ResumeListResponseDto.builder()
-                .id(data.get("id"))
-                .title(data.get("title"))
-                .modifiedAt(data.get("modifiedAt"))
-                .open(data.get("open"))
-                .build();
+        List<ResumeListResponseDto> resumeList = ApiResponseToList.resumeList(response.getData());
 
-        return new PageMoveWithMessage("user/resumes", info);
+        return new PageMoveWithMessage("user/resumes", resumeList);
     }
+
+
 }

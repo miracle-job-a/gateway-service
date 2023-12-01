@@ -2,9 +2,11 @@ package com.miracle.memberservice.util;
 
 import com.miracle.memberservice.dto.response.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+
 
 public class ApiResponseToList {
     public static List<CompanyFaqResponseDto> faqList(Object object){
@@ -81,6 +83,24 @@ public class ApiResponseToList {
             dtos.add(QuestionResponseDto.builder()
                     .id(id.longValue())
                     .question((String)lhm.get("question"))
+                    .build());
+        }
+        return dtos;
+    }
+
+    public static List<ResumeListResponseDto> resumeList(Object object){
+        ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+
+        List<ResumeListResponseDto> dtos = new ArrayList<>();
+        for (LinkedHashMap<String, Object> lhm : data){
+
+            Integer id = (Integer) lhm.get("id");
+            dtos.add(ResumeListResponseDto.builder()
+                    .id(id.longValue())
+                    .title((String) lhm.get("title"))
+                    .jobIdSet((ArrayList<Integer>) lhm.get("jobIdSet"))
+                    .modifiedAt((String) lhm.get("modifiedAt"))
+                    .open((Boolean) lhm.get("open"))
                     .build());
         }
         return dtos;
