@@ -51,13 +51,13 @@
                         <div class="custom-block d-flex">
                             <div class="custom-block-info">
                                 <h5 class="mb-2">
-                                    <a th:href="@{/v1/company/post/detail(id=${post.id})}" th:text="${post.title}"></a>
+                                    <a th:href="@{/v1/company/post/detail(id=${post.id})}" th:text="'['+${post.postType}+'] '+${post.title}"></a>
                                 </h5>
 
                                 <div class="custom-block-bottom d-flex  mt-3">
                                     <div class="col-auto d-flex m-2"><span>게시날짜:<span th:text="${post.createdAt}"></span></span></div>
                                     <div class="col-auto d-flex m-2"><span>마감일:<span th:text="${post.endDate}"></span></span></div>
-                                    <div class="col-auto d-flex m-2"><span>지원현황: n 명</span></div>
+                                    <div class="col-auto d-flex m-2"><span>지원현황: <span th:text="${post.applicant}"></span>명</span></div>
                                 </div>
                             </div>
 

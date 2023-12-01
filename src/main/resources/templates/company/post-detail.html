@@ -6,31 +6,6 @@
 <div layout:fragment="content">
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script>
-        /* 자소서 질문 추가 (임시) */
-        function add_item() {
-            var preSetElement = document.getElementById('pre_set');
-            if (preSetElement) {
-                var clone = preSetElement.cloneNode(true);
-                var newId = 'new_' + Date.now();
-                clone.id = newId;
-                // 새로운 엘리먼트를 추가하면서 삭제 기능 연결
-                clone.querySelector('input[type="button"]').onclick = function() {
-                    remove_item(this);
-                };
-                // 추가된 엘리먼트를 초기에 숨겨진 상태로 만듦
-                clone.style.display = 'none';
-                document.getElementById('field').appendChild(clone);
-                // 추가된 엘리먼트를 나타나도록 변경
-                clone.style.display = 'block';
-            }
-        }
-
-        function remove_item(obj) {
-            // obj.parentNode를 이용하여 삭제
-            var parent = obj.parentNode;
-            parent.parentNode.removeChild(parent);
-        }
-
 
         function enableEditing() {
 
@@ -49,7 +24,7 @@
             $('#notice').prop('readonly', false);
             $('#address').prop('readonly', false);
             $('#addQuestion').prop('disabled', false);
-            $('[id^="question"]').prop('readonly', false);
+            $('[id^="question"]').prop('disabled', false);
             $('[id^="remove"]').css('display', 'block');
             $('.editStacks').css('display', 'inline-block');
             $('.editJobs').css('display', 'inline-block');
@@ -158,7 +133,7 @@
                 </div>
                 <div class="row justify-content-center">
                     <div class="card bg-outline-light text-dark ">
-                        <form th:action="@{/v1/company/post/update/(postId=${postId})}" method="get" class="post-form" role="form">
+                        <form th:action="@{/v1/company/post/update}" method="post" class="post-form" role="form">
                             <div class="card-body">
 
                                 <div class="col-8">
@@ -173,9 +148,9 @@
                                         <div class="mb-1">
                                             <label for="endDate">마감일</label>
                                         </div>
-                                        <input type="date" name="endDate" id="endDate"
+                                        <input type="datetime-local" name="endDate" id="endDate"
                                                class="form-control" placeholder="마감일" th:value="${detail.endDate}"
-                                               readonly/>
+                                               readonly required/>
                                     </div>
                                     <div class="col-4 mt-2">
                                         <div class="mb-1">
@@ -369,18 +344,15 @@
                                 </div>
 
                                 <h5 class="mb-4 mt-4" style="display: inline-block;">자기소개서 질문</h5>
-                                <button class="btn m-lg-3" type="button" id="addQuestion" onclick="add_item()" disabled>+</button>
                                 <br>
 
-                                <div class="col-12 mb-4" id="pre_set"
-                                     th:each="questionId, questionIdStat : ${detail.questionList}">
-                                    <input type="text" class="form-control" th:id="'question'+${questionId.id}" name="questionList"
-                                           th:value="${questionId.question}" readonly/>
-                                    <input type="button" th:id="'remove'+${questionId.id}" class="form-control" value="삭제" onclick="remove_item(this)"
-                                           style="display: none">
+                                <div class="col-12 mb-4"
+                                     th:each="question : ${detail.questionList}">
+                                    <div>
+                                        <input type="hidden" class="form-control" name="idList" th:value="${question.id}" />
+                                        <input type="text" th:id="'question' + ${question.id}" name="questionList" class="form-control" th:value="${question.question}" disabled/>
+                                    </div>
                                 </div>
-
-                                <div id="field"></div>
 
 
                                 최대 5개 등록 가능합니다.

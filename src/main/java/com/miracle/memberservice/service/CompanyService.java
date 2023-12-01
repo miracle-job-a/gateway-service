@@ -6,16 +6,18 @@ import com.miracle.memberservice.util.ApiResponseToList;
 import com.miracle.memberservice.util.Const;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import com.miracle.memberservice.util.ServiceCall;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -72,7 +74,7 @@ public class CompanyService {
 
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("index", response.getMessage());
 
-        List<ManagePostsResponseDto> postList = ApiResponseToList.postList(response.getData());
+        List<ManagePostsResponseDto> postList = ApiResponseToList.postList(response.getData(), session);
 
         return new PageMoveWithMessage("company/post-list", postList);
     }
@@ -123,9 +125,8 @@ public class CompanyService {
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/" + postId);
 
-        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String postType = (String) data.get("postType");
         PostResponseDto dto;
 
@@ -142,7 +143,7 @@ public class CompanyService {
                 .tool((String) data.get("tool"))
                 .workCondition((String) data.get("workCondition"))
                 .workAddress((String) data.get("workAddress"))
-                .endDate(LocalDate.parse((String) data.get("endDate"), formatter))
+                .endDate(truncatedTo(data.get("endDate")))
                 .questionList(ApiResponseToList.questionList(data.get("questionList")))
                 .stackIdSet((ArrayList<Integer>) data.get("stackIdSet"))
                 .jobIdSet((ArrayList<Integer>) data.get("jobIdSet"))
@@ -152,8 +153,8 @@ public class CompanyService {
             dto = builder.build();
         } else {
             dto = builder
-                    .testStartDate(LocalDate.parse((String) data.get("testStartDate"), formatter))
-                    .testEndDate(LocalDate.parse((String) data.get("testEndDate"), formatter))
+                    .testStartDate(truncatedTo(data.get("testStartDate")))
+                    .testEndDate(truncatedTo(data.get("testEndDate")))
                     .build();
         }
 
@@ -174,11 +175,15 @@ public class CompanyService {
         return new PageMoveWithMessage("redirect:/v1/company/post/detail", response.getMessage());
     }
 
-    public PageMoveWithMessage updatePost(HttpSession session, PostRequestDto postRequestDto, Long postId) {
+    public PageMoveWithMessage updatePost(HttpSession session, PostRequestDto postEditRequestDto, IdEditDto idList, QuestionEditDto questionList) {
         Long companyId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.put(session, postRequestDto, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/" + postId);
+        Long postId = postEditRequestDto.getPostId();
 
-        return new PageMoveWithMessage("redirect:/v1/company/post/detail", response.getMessage());
+        postEditRequestDto.addAllQuestion(questionRequestDtos(idList, questionList));
+
+        ApiResponse response = ServiceCall.put(session, postEditRequestDto, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/" + postId);
+
+        return new PageMoveWithMessage("redirect:/v1/company/post/detail?id=" + postId, response.getMessage());
     }
 
     public PageMoveWithMessage faqList(HttpSession session) {
@@ -207,6 +212,26 @@ public class CompanyService {
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("redirect:/v1/company/faq", response.getMessage());
         return new PageMoveWithMessage("redirect:/v1/company/faq");
+    }
+
+    private LocalDateTime truncatedTo(Object time) {
+        LocalDateTime localDateTime = LocalDateTime.parse((String) time);
+        return localDateTime.truncatedTo(ChronoUnit.MINUTES);
+    }
+
+    private List<QuestionRequestDto> questionRequestDtos(IdEditDto idEditDto, QuestionEditDto questionEditDto) {
+        List<Integer> idList = idEditDto.getIdList();
+        List<String> questionList = questionEditDto.getQuestionList();
+        List<QuestionRequestDto> questionRequestDtos = new ArrayList<>();
+        int size = idList.size();
+        for (int i = 0; i < size; i++) {
+            QuestionRequestDto build = QuestionRequestDto.builder()
+                    .id(idList.get(i).longValue())
+                    .question(questionList.get(i))
+                    .build();
+            questionRequestDtos.add(build);
+        }
+        return questionRequestDtos;
     }
 
 }

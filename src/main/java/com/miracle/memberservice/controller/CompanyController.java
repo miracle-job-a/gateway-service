@@ -1,8 +1,6 @@
 package com.miracle.memberservice.controller;
 
-import com.miracle.memberservice.dto.request.CompanyFaqRequestDto;
-import com.miracle.memberservice.dto.request.MzPostDto;
-import com.miracle.memberservice.dto.request.PostRequestDto;
+import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.JobResponseDto;
 import com.miracle.memberservice.dto.response.PostResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;
@@ -74,9 +72,9 @@ public class CompanyController {
         return pmwm.getPageName();
     }
 
-    @GetMapping("/post/update")
-    public String updatePost(HttpSession session, @ModelAttribute PostRequestDto postRequestDto, @RequestParam Long postId) {
-        PageMoveWithMessage pmwm = companyService.updatePost(session, postRequestDto, postId);
+    @PostMapping("/post/update")
+    public String updatePost(HttpSession session, @ModelAttribute PostRequestDto postEditRequestDto, @ModelAttribute IdEditDto idList, @ModelAttribute QuestionEditDto questionList) {
+        PageMoveWithMessage pmwm = companyService.updatePost(session, postEditRequestDto, idList, questionList);
 
         return pmwm.getPageName();
     }
