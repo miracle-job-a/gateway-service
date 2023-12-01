@@ -64,7 +64,6 @@ public class ApiResponseToList {
             Integer applicant = (Integer) response.getData();
 
             String postType = (String) lhm.get("postType");
-            if (postType.equals("NORMAL")) postType = "일반";
             dtos.add(ManagePostsResponseDto.builder()
                     .id(id.longValue())
                     .postType(postType)

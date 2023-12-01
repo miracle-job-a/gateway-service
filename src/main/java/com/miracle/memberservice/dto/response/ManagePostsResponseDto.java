@@ -3,10 +3,6 @@ package com.miracle.memberservice.dto.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Getter
 @ToString
