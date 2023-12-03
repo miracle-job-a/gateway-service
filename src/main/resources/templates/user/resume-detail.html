@@ -4,7 +4,7 @@
         layout:decorate="~{layout/default_layout}" lang="ko">
 
 <div layout:fragment="content">
-    <script>
+    <script th:inline="javascript">
         // 경력사항에 대한 새로운 입력 필드 추가
         function addCareerItem(preSetId, fieldId, type) {
             var preSet = document.getElementById(preSetId);
@@ -91,8 +91,6 @@
             document.getElementById("careerCal").value = totalMonths;
         }
 
-
-
         // 프로젝트나 기타사항에 대한 새로운 입력 필드 추가
         function addItem(preSetId, fieldId) {
             var preSet = document.getElementById(preSetId);
@@ -121,6 +119,84 @@
                 alert("마지막 항목은 삭제할 수 없습니다.");
             }
         }
+
+        // 정수값을 년과 개월로 변환하는 함수
+        function convertYearsMonths(value) {
+            var years = Math.floor(value / 12);
+            var months = value % 12;
+
+            var result = "";
+            if (years > 0) {
+                result += years + "년";
+            }
+            if (months > 0) {
+                result += " " + months + "개월";
+            }
+
+            return result.trim();
+        }
+
+        // 처음 가져온 경력(career) 값을 계산
+        document.addEventListener("DOMContentLoaded", function () {
+            // 이 부분에서 resume.career 값을 가져와서 변환하여 출력
+            var careerValue = 24; // 예시로 24라는 값을 가져왔다고 가정
+            var convertedValue = convertYearsMonths(careerValue);
+
+            // 변환된 값을 careerInput 엘리먼트에 설정
+            document.getElementById('careerInput').value = '총 경력 : ' + convertedValue;
+        });
+
+        // 경력사항(careerDetailList) 문자열을 parsing
+        document.addEventListener("DOMContentLoaded", function () {
+        /*<![CDATA[*/
+        var careerDetailList = /*[[${resume.careerDetailList}]]*/ '';
+
+        // 문자열 배열을 날짜와 제목으로 분할
+        var details = careerDetailList.map(detail => detail.split(' '));
+
+        // 각 부분에 대한 처리
+            details.forEach(function (dateTitle) {
+                var startDate = dateTitle[0];
+                var endDate = dateTitle[1];
+                var title = dateTitle.slice(2).join(' '); // index 1 이 아니라 index 2부터 조인
+
+                // 동적으로 HTML 생성 또는 추가 작업 수행
+                var html = '<div class="input-group m-1 career">';
+                html += '<input type="date" readonly class="form-control" name="career_start_date" value="' + startDate + '" />';
+                html += '<input type="date" readonly class="form-control" name="career_end_date" value="' + endDate + '" />';
+                html += '<input type="text" readonly class="form-control" name="career_title" value="' + title + '" />';
+                html += '<input type="hidden" name="careerDetailList" value="' + dateTitle.join(' ') + '" />';
+                html += '<button class="btn visually-hidden" type="button" value="삭제" onclick="removeItem(this)">-</button>';
+                html += '</div>';
+
+                document.getElementById('field1').insertAdjacentHTML('beforeend', html);
+            });
+
+        });
+
+        // 수정취소 (상세보기로 돌아가기)
+        function cancelEditing(){
+            var resumeId = [[${resume.id}]];
+
+            window.location.href = '/v1/user/resume'
+        }
+        /*]]>*/
+
+
+        // 삭제기능
+        function confirmDelete(button) {
+            var resumeId = button.getAttribute('data-resume-id');
+            var confirmResult = confirm("삭제하시겠습니까?");
+
+            if (confirmResult) {
+                // 사용자가 확인을 선택한 경우
+                window.location.href = '/v1/user/resume/delete/' + resumeId;
+            } else {
+                // 사용자가 취소를 선택한 경우
+                // 아무 동작을 하지 않거나 필요한 작업 수행
+            }
+        }
+
 
     </script>
 
@@ -213,7 +289,7 @@
                                             <input type="text" readonly name="title" id="title"
                                                    class="form-control-plaintext" placeholder="이력서 제목" th:value="${resume.title}" required="" />
                                         </div>
-                                        <!--<div class="card mt-3 p-3 col-12 post-form align-self-center">
+                                        <div class="card mt-3 p-3 col-12 post-form align-self-center">
                                             <div class="mb-1">
                                                 <label for="job">개발 가능한 직무</label>
                                             </div>
@@ -246,7 +322,7 @@
                                                     <br/>
                                                 </div>
                                             </div>
-                                        </div>-->
+                                        </div>
                                         <div class="col-12 mt-2">
                                             <h6></h6>
                                         </div>
@@ -264,38 +340,30 @@
                                             <input type="url" class="form-control" id="gitLink" name="gitLink" placeholder="http://www.github.com" th:value="${resume.gitLink}" size="30" required>
                                         </div>
 
-                                        <!-- 경력사항 -->
                                         <div class="card mt-3 p-3 col-12 post-form align-self-center" id="item1">
                                             <div class="mb-1">
                                                 <label for="careerDetail">경력사항</label>
-                                                <button class="btn m-2" type="button" onclick="addCareerItem('pre_set1', 'field1', 'career')">+</button>
-                                                <button class="btn m-2" type="button" onclick="calculateAndSetCareer()">경력기간 계산</button>
-                                                <input type="text" readonly class="form-control" name="careerNum" id="careerInput" />
+                                                <button class="btn m-2 visually-hidden" type="button" onclick="addCareerItem('pre_set1', 'field1', 'career')">+</button>
+                                                <button class="btn m-2 visually-hidden" type="button" onclick="calculateAndSetCareer()">경력기간 계산</button>
+                                                <input type="text" readonly class="form-control mt-2" name="careerNum" id="careerInput" th:value="'총 경력 : '+${resume.career}" />
                                                 <input type="hidden" name="career" id="careerCal" />
                                             </div>
                                             <div class="pre_set" id="pre_set1">
-                                                <div class="input-group m-1 career">
-                                                    <input type="date" class="form-control" name="career_start_date" id="start_date" value="" />
-                                                    <input type="date" class="form-control" name="career_end_date" id="end_date" value="" />
-                                                    <input type="text" class="form-control" name="career_title" id="career_title" value="" />
-                                                    <input type="hidden" name="careerDetailList" id="careerDetailList" />
-                                                    <button class="btn" type="button" value="삭제" onclick="removeItem(this)">-</button>
-                                                </div>
+                                                <div class="field" id="field1"></div>
                                             </div>
-                                            <div class="field" id="field1"></div>
                                         </div>
 
                                         <!-- 프로젝트 -->
                                         <div class="card mt-3 p-3 col-12 post-form align-self-center" id="item2">
                                             <div class="mb-1">
                                                 <label for="projectList">프로젝트</label>
-                                                <button class="btn m-2" type="button" onclick="addItem('pre_set2', 'field2', 'project')" style="display: inline-block">+</button>
+                                                <button class="btn m-2 visually-hidden" type="button" onclick="addItem('pre_set2', 'field2', 'project')" style="display: inline-block">+</button>
                                             </div>
                                             <div class="pre_set" id="pre_set2">
                                                 <div th:each="project : ${resume.projectList}">
                                                     <div class="input-group m-1">
                                                         <input type="text" class="form-control" name="projectList" th:value="${project}">
-                                                        <button class="btn" type="button" value="삭제" onclick="removeItem(this)" style="display: inline-block">-</button>
+                                                        <button class="btn visually-hidden" type="button" value="삭제" onclick="removeItem(this)" style="display: inline-block">-</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -306,13 +374,13 @@
                                         <div class="card mt-3 mb-3 p-3 col-12 post-form align-self-center" id="item3">
                                             <div class="mb-1">
                                                 <label for="etcList">기타사항</label>
-                                                <button class="btn m-2" type="button" onclick="addItem('pre_set3', 'field3', 'etc')">+</button>
+                                                <button class="btn m-2 visually-hidden" type="button" onclick="addItem('pre_set3', 'field3', 'etc')">+</button>
                                             </div>
                                             <div class="pre_set" id="pre_set3">
                                                 <div th:each="etc : ${resume.etcList}">
                                                     <div class="input-group m-1">
                                                         <input type="text" class="form-control" name="etcList" th:value="${etc}">
-                                                        <button class="btn" type="button" value="삭제" onclick="removeItem(this)">-</button>
+                                                        <button class="btn visually-hidden" type="button" value="삭제" onclick="removeItem(this)">-</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -332,6 +400,32 @@
 
                                         <div class="col-12 mt-2">
                                             <button type="submit" class="form-control" >등록하기</button>
+                                        </div>
+                                        <div class="col-3 pt-4 m-auto">
+
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-3 pt-4 m-auto">
+                                                <button type="button"  class="form-control" id="editBtn" onclick="enableEditing()">수정하기</button>
+                                            </div>
+                                            <div class="col-3 pt-4 m-auto">
+                                                <button type="button" class="btn btn-outline-secondary" th:attr="data-resume-id=${resume.id}" onclick="confirmDelete(this)">삭제하기</button>
+                                            </div>
+                                            <!--
+                                            추후 이력서 공개 상태 변경으로 만들기
+                                            <div class="col-3 pt-4 m-auto">
+                                                <button type="button" id="closedBtn" th:unless="${detail.closed}" class="form-control" onclick="confirmAndClose()">마감하기</button>
+                                            </div>-->
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-3 pt-4 m-auto">
+                                                <button type="submit" class="form-control" id="submitEdit" style="display:none;">수정완료</button>
+                                            </div>
+                                            <div class="col-3 pt-4 m-auto">
+                                                <button type="button" class="form-control" id="cancelBtn" onclick="cancelEditing()" style="display:none;">취소</button>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>

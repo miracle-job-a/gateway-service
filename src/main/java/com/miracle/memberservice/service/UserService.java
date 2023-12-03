@@ -121,7 +121,7 @@ public class UserService {
                 .phone((String) data.get("phone"))
                 .education((String) data.get("education"))
                 .gitLink((String) data.get("gitLink"))
-                .jobIdSet((ArrayList<Integer>) data.get("jogIdSet"))
+                .jobIdSet((ArrayList<Integer>) data.get("jobIdSet"))
                 .stackIdSet((ArrayList<Integer>) data.get("stackIdSet"))
                 .careerDetailList((List<String>) data.get("careerDetailList"))
                 .projectList((List<String>) data.get("projectList"))

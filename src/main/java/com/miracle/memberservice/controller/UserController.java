@@ -76,13 +76,13 @@ public class UserController {
         ResumeResponseDto data = (ResumeResponseDto) pmwm.getData();
 
         Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
-        /*ArrayList<JobResponseDto> jobs = (ArrayList<JobResponseDto>) adminService.getJobs(session, data.getJobIdSet());
-        ArrayList<StackResponseDto> stacks = (ArrayList<StackResponseDto>) adminService.getStacks(session, data.getStackIdSet());*/
+        ArrayList<JobResponseDto> jobs = (ArrayList<JobResponseDto>) adminService.getJobs(session, data.getJobIdSet());
+        ArrayList<StackResponseDto> stacks = (ArrayList<StackResponseDto>) adminService.getStacks(session, data.getStackIdSet());
 
         model.addAttribute("resume",data);
         model.addAttribute("info", pmwm2.getData());
-      /*  model.addAttribute("jobs", jobs);
-        model.addAttribute("stacks", stacks);*/
+        model.addAttribute("jobs", jobs);
+        model.addAttribute("stacks", stacks);
         model.addAttribute("totalJobs", allJobsAndStacks.get("jobs"));
         model.addAttribute("totalStacks", allJobsAndStacks.get("stacks"));
 
