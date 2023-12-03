@@ -14,19 +14,22 @@
         });
 
         // Thymeleaf를 사용하여 데이터 속성을 통해 id 값을 가져오는 함수
+
+
         function confirmDelete(button) {
-            // Thymeleaf로 설정한 data-id 속성을 통해 id 값을 가져옴
-            var id = button.getAttribute("data-id");
+            var resumeId = button.getAttribute('data-resume-id');
+            var confirmResult = confirm("삭제하시겠습니까?");
 
-            // 확인 창 띄우기
-            var isConfirmed = confirm("정말로 삭제하시겠습니까? ID: " + id);
-
-            // 사용자가 확인을 선택한 경우
-            if (isConfirmed) {
-                // 여기에 실제 삭제 작업을 수행하는 코드 추가
-                alert("삭제되었습니다. ID: " + id);
+            if (confirmResult) {
+                // 사용자가 확인을 선택한 경우
+                window.location.href = '/v1/user/resume/delete/' + resumeId;
+            } else {
+                // 사용자가 취소를 선택한 경우
+                // 아무 동작을 하지 않거나 필요한 작업 수행
             }
         }
+
+
     </script>
 
     <main>
@@ -45,6 +48,9 @@
 
 
                     <div class="row col-lg-10 col-12">
+                        <div class="col-auto justify-content-start">
+                            이력서 생성은 최대 5개까지 가능합니다.
+                        </div>
                         <div class="col-auto">
                             <button type="button" class="btn btn-secondary" id="resume">이력서 생성</button>
                             <div class="btn-group">
@@ -53,7 +59,7 @@
                             </div>
                         </div>
 
-                        <div class="col-auto">
+                        <div class="col-3">
                             <div class="input-group mb-3 ">
                                 <input type="text" class="form-control" placeholder="Search">
                                 <button class="btn btn-outline-secondary" type="submit">Go</button>
@@ -70,35 +76,39 @@
                         <div class="custom-block d-flex">
                             <div class="custom-block-info">
                                 <h5 class="mb-2">
-                                    <a th:href="@{/user/resume/{id}(id=${resume.id})}" th:text="${resume.title}"></a>
+                                    <a th:href="@{/v1/user/resume/detail(id=${resume.id})}" th:text="${resume.title}"></a>
                                 </h5>
 
                                 <div class="custom-block-bottom d-flex mt-3">
                                     <div class="col-auto d-flex m-2">
+                                        <span th:if="${not resume.open}" class="badge rounded-pill btn-primary">공개</span>
+                                        <span th:if="${resume.open}" class="badge rounded-pill bg-secondary">비공개</span>
+                                    </div>
+                                    <div class="col-auto d-flex m-2">
+                                        <span th:text="'작성일 : ' + ${resume.modifiedAt.substring(0, 10)}"></span>
+                                    </div>
+                                    <div class="col-auto d-flex m-2">
                                         <span>지원직무 :</span>
-                                        <div th:each="jobId : ${resume.jobIdSet}" style="display: inline-block;">
+                                        <div th:each="jobId, iterStat : ${resume.jobIdSet}" style="display: inline-block;">
                                             <div th:each="job : ${jobs}" th:if="${job.id eq jobId}">
-                                                <span th:text="'['+${job.name}+']'"></span>
+                                                <span th:if="${iterStat.index < 5}" th:text="'[' + ${job.name} + ']'"></span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-auto d-flex m-2"><span th:text="'작성일 : ' + ${resume.modifiedAt}"></span></div>
-                                    <div class="col-auto d-flex m-2">
-                                        <span th:if="${not resume.open}" class="badge rounded-pill btn-primary">공개</span>
-                                        <span th:if="${resume.open}" class="badge rounded-pill bg-secondary">비공개</span></div>
                                 </div>
                             </div>
 
                             <!-- 버튼 부 -->
                             <div class="d-flex flex-column ms-auto">
                                 <!-- 데이터 속성을 추가하여 resume.id를 저장 -->
+                                <!--<input type="hidden" name="resumeId" th:value="${resume.id}"/>-->
                                 <button type="button" class="btn btn-outline-secondary" th:attr="data-resume-id=${resume.id}" onclick="confirmDelete(this)">삭제하기</button>
                             </div>
                         </div>
                     </div>
 
 
-                    <div class="col-lg-4 col-12 mx-auto">
+                    <!--<div class="col-lg-4 col-12 mx-auto">
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-lg justify-content-center mt-5">
                                 <li class="page-item">
@@ -120,7 +130,7 @@
                                 </li>
                             </ul>
                         </nav>
-                    </div>
+                    </div>-->
 
                 </div>
             </div>

@@ -59,6 +59,11 @@ public class ServiceCall {
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()).bodyValue(dto), httpSession, serviceType).block();
     }
 
+    public static ApiResponse getParam(HttpSession httpSession, String serviceType, String url, String name, String value) {
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam(name, value).build()), httpSession, serviceType).block();
+    }
+
     private static int port(String memberType) {
         if (memberType.equals(Const.RequestHeader.USER)) {
             return 60001;

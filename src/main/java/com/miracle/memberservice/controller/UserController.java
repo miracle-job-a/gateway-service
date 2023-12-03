@@ -3,19 +3,20 @@ package com.miracle.memberservice.controller;
 import com.miracle.memberservice.dto.request.ResumeRequestDto;
 import com.miracle.memberservice.dto.response.JobResponseDto;
 import com.miracle.memberservice.dto.response.ResumeListResponseDto;
+import com.miracle.memberservice.dto.response.ResumeResponseDto;
+import com.miracle.memberservice.dto.response.StackResponseDto;
 import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,6 @@ public class UserController {
     @GetMapping("/normalPost")
     public String mzPostDatail(){ return "user/normal-post"; }
 
-    // [임시] 이력서 생성 폼으로 이동
     @GetMapping("/resume/form")
     public String createResume(HttpSession session, Model model){
         PageMoveWithMessage pmwm = userService.formResume(session);
@@ -49,7 +49,6 @@ public class UserController {
         return pmwm.getPageName();
     }
 
-    // 이력서 생성
     @PostMapping("/resume")
     public String addResume(RedirectAttributes redirectAttributes, HttpSession session, ResumeRequestDto resumeRequestDto){
         PageMoveWithMessage pmwm = userService.addResume(session, resumeRequestDto);
@@ -57,7 +56,6 @@ public class UserController {
         return pmwm.getPageName();
     }
 
-    // [임시] 이력서 목록으로 이동
     @GetMapping("/resumes")
     public String resumeList(HttpSession session, Model model){
         PageMoveWithMessage pmwm = userService.resumeList(session);
@@ -67,6 +65,33 @@ public class UserController {
         model.addAttribute("jobs",jobs);
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
 
+        return pmwm.getPageName();
+    }
+
+    @GetMapping("/resume/detail")
+    public String resumeDetail(HttpSession session, Model model, @RequestParam(name = "id") Long resumeId ){
+        PageMoveWithMessage pmwm = userService.getResumeDetail(session, resumeId);
+        PageMoveWithMessage pmwm2 = userService.formResume(session);
+
+        ResumeResponseDto data = (ResumeResponseDto) pmwm.getData();
+
+        Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
+        /*ArrayList<JobResponseDto> jobs = (ArrayList<JobResponseDto>) adminService.getJobs(session, data.getJobIdSet());
+        ArrayList<StackResponseDto> stacks = (ArrayList<StackResponseDto>) adminService.getStacks(session, data.getStackIdSet());*/
+
+        model.addAttribute("resume",data);
+        model.addAttribute("info", pmwm2.getData());
+      /*  model.addAttribute("jobs", jobs);
+        model.addAttribute("stacks", stacks);*/
+        model.addAttribute("totalJobs", allJobsAndStacks.get("jobs"));
+        model.addAttribute("totalStacks", allJobsAndStacks.get("stacks"));
+
+        return pmwm.getPageName();
+    }
+
+    @GetMapping("/resume/delete/{resumeId}")
+    public String deleteResume(HttpSession session, @PathVariable Long resumeId) {
+        PageMoveWithMessage pmwm = userService.deleteResume(session, resumeId);
         return pmwm.getPageName();
     }
 
