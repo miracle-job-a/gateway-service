@@ -53,28 +53,34 @@ public class ApiResponseToList {
         return dtos;
     }
 
-    public static List<ManagePostsResponseDto> postList(Object object, HttpSession session) {
+    public static List<List<ManagePostsResponseDto>> postList(Object object, HttpSession session) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+        List<List<ManagePostsResponseDto>> pageList = new ArrayList<>();
 
-        List<ManagePostsResponseDto> dtos = new ArrayList<>();
         for (LinkedHashMap<String, Object> lhm : data) {
+            List<ManagePostsResponseDto> dtos = new ArrayList<>();
+            Integer numberOfElements = (Integer) lhm.get("numberOfElements");
+            if (numberOfElements > 0) {
+                ArrayList<LinkedHashMap<String, Object>> content = (ArrayList<LinkedHashMap<String, Object>>) lhm.get("content");
+                for (LinkedHashMap<String, Object> dto : content) {
+                    Integer id = (Integer) dto.get("id");
+                    ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/post/" + id + "/applicant/num");
+                    Integer applicant = (Integer) response.getData();
 
-            Integer id = (Integer) lhm.get("id");
-            ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/post/" + id + "/applicant/num");
-            Integer applicant = (Integer) response.getData();
-
-            String postType = (String) lhm.get("postType");
-            dtos.add(ManagePostsResponseDto.builder()
-                    .id(id.longValue())
-                    .postType(postType)
-                    .closed((Boolean) lhm.get("closed"))
-                    .createdAt(divideTime((String) lhm.get("createdAt")))
-                    .title((String) lhm.get("title"))
-                    .endDate(divideTime((String) lhm.get("endDate")))
-                    .applicant(applicant)
-                    .build());
+                    dtos.add(ManagePostsResponseDto.builder()
+                            .id(id.longValue())
+                            .postType((String) dto.get("postType"))
+                            .closed((Boolean) dto.get("closed"))
+                            .createdAt(divideTime((String) dto.get("createdAt")))
+                            .title((String) dto.get("title"))
+                            .endDate(divideTime((String) dto.get("endDate")))
+                            .applicant(applicant)
+                            .build());
+                }
+                pageList.add(dtos);
+            }
         }
-        return dtos;
+        return pageList;
     }
 
     public static List<QuestionResponseDto> questionList(Object object) {

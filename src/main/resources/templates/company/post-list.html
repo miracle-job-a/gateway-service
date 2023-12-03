@@ -4,7 +4,37 @@
         layout:decorate="~{layout/default_layout}" lang="ko">
 
 <div layout:fragment="content">
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 페이지 로딩 시 초기 상태 설정
+            initializePage();
+        });
 
+        function initializePage() {
+            var posts = document.querySelectorAll('[id^="postPage"]');
+            posts.forEach(function (post, index) {
+                if (index === 0) {
+                    // 초기에는 첫 번째 post만 보이도록 설정
+                    post.style.display = 'block';
+                } else {
+                    // 나머지 post는 숨김
+                    post.style.display = 'none';
+                }
+            });
+        }
+        function showOnlySelected(selectedIndex) {
+            var posts = document.querySelectorAll('[id^="postPage"]');
+            posts.forEach(function (post) {
+                var index = parseInt(post.id.replace('postPage', ''), 10);
+                if (index === selectedIndex) {
+                    post.style.display = 'block';
+                } else {
+                    post.style.display = 'none';
+                }
+            });
+        }
+    </script>
     <main>
         <header class="site-header d-flex flex-column justify-content-center align-items-center">
         </header>
@@ -47,29 +77,31 @@
                     <!-- 목록 페이지 시작 -->
 
                     <!-- 목록 1칸 -->
-                    <div class="col-lg-10 col-12 mb-4 mb-lg-2 post-form" th:each="post, postStat : ${postList}">
-                        <div class="custom-block d-flex">
-                            <div class="custom-block-info">
-                                <div class="mb-2" th:if="${post.postType=='NORMAL'}">
-                                    <button class="badge" style="background-color: #717275" th:text="일반공고"></button>
-                                </div>
-                                <div class="mb-2" th:if="${post.postType=='MZ'}">
-                                    <button class="badge" style="background-color: #0a53be" th:text="MZ공고"></button>
-                                </div>
-                                <h6>
-                                    <a th:href="@{/v1/company/post/detail(id=${post.id}, postType=${post.postType})}" th:text="${post.title}"></a>
-                                </h6>
+                    <div class="col-lg-10 col-12 mb-4 mb-lg-2 post-form" th:each="postList, postListStat : ${postPage}" th:id="'postPage'+${postListStat.index}">
+                        <div th:each="post, postStat : ${postList}" >
+                            <div class="custom-block d-flex">
+                                <div class="custom-block-info">
+                                    <div class="mb-2" th:if="${post.postType=='NORMAL'}">
+                                        <button class="badge" style="background-color: #717275" th:text="일반공고"></button>
+                                    </div>
+                                    <div class="mb-2" th:if="${post.postType=='MZ'}">
+                                        <button class="badge" style="background-color: #0a53be" th:text="MZ공고"></button>
+                                    </div>
+                                    <h6>
+                                        <a th:href="@{/v1/company/post/detail(id=${post.id}, postType=${post.postType})}" th:text="${post.title}"></a>
+                                    </h6>
 
-                                <div class="custom-block-bottom d-flex mt-1">
-                                    <div class="col-auto d-flex m-2"><span>게시날짜:<span th:text="${post.createdAt}"></span></span></div>
-                                    <div class="col-auto d-flex m-2"><span>마감일:<span th:text="${post.endDate}"></span></span></div>
-                                    <div class="col-auto d-flex m-2"><span>지원현황: <span th:text="${post.applicant}"></span>명</span></div>
+                                    <div class="custom-block-bottom d-flex mt-1">
+                                        <div class="col-auto d-flex m-2"><span>게시날짜:<span th:text="${post.createdAt}"></span></span></div>
+                                        <div class="col-auto d-flex m-2"><span>마감일:<span th:text="${post.endDate}"></span></span></div>
+                                        <div class="col-auto d-flex m-2"><span>지원현황: <span th:text="${post.applicant}"></span>명</span></div>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- 버튼 부 -->
-                            <div class="d-flex flex-column ms-auto">
-                                <button type="button" class="btn-light">채용관리</button>
+                                <!-- 버튼 부 -->
+                                <div class="d-flex flex-column ms-auto">
+                                    <button type="button" class="btn-light">채용관리</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -82,13 +114,9 @@
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
-
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-
+                                <div th:each="post, postStat:${postPage}">
+                                    <li class="page-item"><a class="page-link" th:onclick="showOnlySelected([[${postStat.index}]])" th:text="${postStat.index+1}"></a></li>
+                                </div>
                                 <li class="page-item">
                                     <a class="page-link" href="#" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>

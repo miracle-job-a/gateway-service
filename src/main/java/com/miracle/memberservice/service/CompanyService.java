@@ -9,8 +9,12 @@ import com.miracle.memberservice.util.ServiceCall;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriBuilder;
+import org.springframework.web.util.UriBuilderFactory;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpSession;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -62,15 +66,15 @@ public class CompanyService {
     }
 
     //공고관리 목록
-    public PageMoveWithMessage postList(HttpSession session) {
+    public PageMoveWithMessage postList(HttpSession session, int strNum, int endNum) {
 
-        Long id = (Long) session.getAttribute("id");
+        Long companyId = (Long) session.getAttribute("id");
 
-        ApiResponse response = ServiceCall.get(session, "company", "/company/" + id + "/posts/latest");
+        ApiResponse response = ServiceCall.getParam(session, "company", "/company/" + companyId + "/posts/latest", strNum, endNum);
 
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("index", response.getMessage());
 
-        List<ManagePostsResponseDto> postList = ApiResponseToList.postList(response.getData(), session);
+        List<List<ManagePostsResponseDto>> postList = ApiResponseToList.postList(response.getData(), session);
 
         return new PageMoveWithMessage("company/post-list", postList);
     }
@@ -168,7 +172,8 @@ public class CompanyService {
         Long companyId = (Long) session.getAttribute("id");
         Long postId = postEditRequestDto.getPostId();
 
-        if(!Objects.isNull(idList.getIdList())) postEditRequestDto.addAllQuestion(questionRequestDtos(idList, questionList));
+        if (!Objects.isNull(idList.getIdList()))
+            postEditRequestDto.addAllQuestion(questionRequestDtos(idList, questionList));
 
         ApiResponse response = ServiceCall.put(session, postEditRequestDto, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/" + postId);
 

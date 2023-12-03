@@ -34,8 +34,8 @@ public class CompanyController {
 
     @GetMapping("/post/list")
     public String postList(HttpSession session, Model model) {
-        PageMoveWithMessage pmwm = companyService.postList(session);
-        model.addAttribute("postList", pmwm.getData());
+        PageMoveWithMessage pmwm = companyService.postList(session, 1, 5);
+        model.addAttribute("postPage", pmwm.getData());
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
