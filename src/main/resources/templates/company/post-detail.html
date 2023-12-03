@@ -169,16 +169,18 @@
                                     <div class="mb-1">
                                         <label for="jobId">직무</label>
                                     </div>
-                                    <div th:each="job : ${totalJobs}" class="editJobs" style="display: none;">
+                                    <div th:each="job : ${totalJobs}" class="editJobs" style="display: none;" >
                                         <input class="form-check-input" type="radio" th:id="'job'+${job.id}"
                                                name="jobIdSet"
-                                               th:value="${job.id}" th:checked="${jobs.contains(job)}" />
+                                               th:value="${job.id}" th:checked="${jobs != null and jobs.contains(job)}" />
                                         <label class="form-check-label" th:text="${job.name}"></label>
                                         <br/>
                                     </div>
-                                    <div th:each="job : ${jobs}" id="jobs" style="display: inline-block;">
-                                        <label class="form-check-label bi-person-workspace" th:text="'  '+${job.name}"></label>
-                                        <br/>
+                                    <div th:if="${jobs != null}">
+                                        <div th:each="job : ${jobs}" id="jobs" style="display: inline-block;" >
+                                            <label class="form-check-label bi-person-workspace" th:text="'  '+${job.name}"></label>
+                                            <br/>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -188,15 +190,15 @@
                                     <div class="mb-1">
                                         <label for="stackId">요구스택</label>
                                     </div>
-                                    <div th:each="stack : ${totalStacks}" class="editStacks" style="display: none;">
+                                    <div th:each="stack : ${totalStacks}" class="editStacks" style="display: none;" >
                                         <input class="form-check-input" type="checkbox" th:id="'stack'+${stack.id}"
                                                name="stackIdSet"
-                                               th:value="${stack.id}" th:checked="${stacks.contains(stack)}"/>
+                                               th:value="${stack.id}" th:checked="${stacks != null and stacks.contains(stack)}"/>
                                         <label class="form-check-label" th:text="${stack.name}"></label>
                                         <br/>
                                     </div>
-                                    <div id="stacks">
-                                        <div th:each="stack : ${stacks}"  style="display: inline-block;">
+                                    <div th:if="${stacks != null}">
+                                        <div th:each="stack : ${stacks}" id="stacks" style="display: inline-block;">
                                             <label class="form-check-label bi-view-stacked" th:text="'  '+${stack.name}"></label>
                                             <br/>
                                         </div>

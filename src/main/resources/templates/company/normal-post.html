@@ -122,7 +122,7 @@
                                     </div>
                                     <div th:each="job, jobStat : ${jobs}" style="display: inline-block;">
                                         <input class="form-check-input" type="radio" id="job" name="jobIdSet"
-                                               th:value="${job.id}"/>
+                                               th:value="${job.id}" required/>
                                         <label class="form-check-label" th:text="${job.name}"></label>
                                     </div>
                                 </div>
@@ -134,7 +134,7 @@
                                     </div>
                                     <div th:each="stack, stackStat : ${stacks}" style="display: inline-block;">
                                         <input class="form-check-input" type="checkbox" id="stack" name="stackIdSet"
-                                               th:value="${stack.id}"/>
+                                               th:value="${stack.id}" />
                                         <label class="form-check-label" th:text="${stack.name}"></label>
                                     </div>
 
