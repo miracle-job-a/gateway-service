@@ -2,6 +2,7 @@ package com.miracle.memberservice.service;
 
 import com.miracle.memberservice.dto.request.LoginDto;
 import com.miracle.memberservice.dto.request.ResumeRequestDto;
+import com.miracle.memberservice.dto.request.ResumeUpdateRequestDto;
 import com.miracle.memberservice.dto.request.UserJoinDto;
 import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.util.ApiResponseToList;
@@ -136,6 +137,14 @@ public class UserService {
         ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.USER, "/user/" + userId + "/resume/" + resumeId);
 
         return new PageMoveWithMessage("redirect:/v1/user/resumes", response.getMessage());
+    }
+
+    public PageMoveWithMessage updateResume(HttpSession session, ResumeUpdateRequestDto requestDto, Long resumeId) {
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.put(session, requestDto, "user", "/user/"+userId+"/resume/"+resumeId);
+        if (response.getHttpStatus() != 200)
+            return new PageMoveWithMessage("redirect:/v1/user/resume//detail/"+resumeId, response.getMessage());
+        return new PageMoveWithMessage("redirect:/v1/user/resume/detail/"+resumeId);
     }
 
 }
