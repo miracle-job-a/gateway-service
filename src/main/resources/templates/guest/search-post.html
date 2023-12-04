@@ -1,0 +1,313 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+    <style>
+        .selected-locations {
+            list-style: none;
+            padding: 0;
+        }
+
+        .selected-locations li {
+            display: inline-block;
+            margin-right: 10px;
+            background-color: #ddd;
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script>
+        var selectedLocations = new Set();
+
+        function addLocation() {
+            var inputElement = document.getElementById('addressSet');
+            var locationValue = inputElement.value.trim();
+
+            if (locationValue !== '') {
+                // 새로운 지역을 추가
+                var selectedLocationsElement = document.getElementById('selectedLocations');
+                var liElement = document.createElement('li');
+                liElement.textContent = locationValue;
+                liElement.setAttribute('onclick', 'removeLocation(this)');
+                selectedLocationsElement.appendChild(liElement);
+
+                selectedLocations.add(locationValue);
+                // 입력 필드 초기화
+                inputElement.value = '';
+
+                updateHiddenInput();
+            }
+        }
+
+        function removeLocation(element) {
+            // 선택된 지역을 제거
+            var selectedLocationsElement = document.getElementById('selectedLocations');
+            selectedLocationsElement.removeChild(element);
+
+            var locationValue = element.textContent;
+            selectedLocations.delete(locationValue);
+
+            updateHiddenInput();
+        }
+
+        function updateHiddenInput() {
+            var locationsArray = Array.from(selectedLocations);
+            var hiddenInput = document.getElementById('selectedLocationsInput');
+            hiddenInput.value = locationsArray.join(','); // 배열을 쉼표로 구분된 문자열로 변환
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // 페이지 로딩 시 초기 상태 설정
+            initializePage();
+        });
+
+        function initializePage() {
+            var posts = document.querySelectorAll('[id^="postPage"]');
+
+            posts.forEach(function (post, index) {
+                if (index === 0) {
+                    var page = document.getElementById("page" + index);
+                    // 초기에는 첫 번째 post만 보이도록 설정
+                    post.style.display = 'flex';
+                    console.log(page);
+                    page.classList.add("active");
+                } else {
+                    // 나머지 post는 숨김
+                    post.style.display = 'none';
+                }
+            });
+        }
+
+        function showOnlySelected(selectedIndex) {
+            var posts = document.querySelectorAll('[id^="postPage"]');
+            posts.forEach(function (post) {
+                var index = parseInt(post.id.replace('postPage', ''), 10);
+                var page = document.getElementById("page" + index);
+                if (index === selectedIndex) {
+
+                    page.classList.add("active");
+                    post.style.display = 'flex';
+                } else {
+                    page.classList.remove("active");
+                    post.style.display = 'none';
+                }
+            });
+        }
+
+        /* 주소 변경하기 */
+        /* 주소 API */
+        window.onload = function () {
+            document.getElementById("addressInputBtn").addEventListener("click", function () {
+                new daum.Postcode({
+                    oncomplete: function (data) {
+                        var address = '';
+
+                        address = data.sido + ' ' + data.sigungu; // 시/도와 시/군/구를 조합하여 address에 저장
+
+                        // 우편번호, 주소 정보를 해당 필드에 넣는다.
+                        document.getElementById('addressSet').value = data.zonecode;
+                        document.getElementById("addressSet").value = address;
+                    }
+                }).open();
+            });
+        }
+
+    </script>
+
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
+
+        <section class="trending-podcast-section mb-0" id="section_2">
+            <div class="container">
+                <div class="section-title-wrap mb-5">
+                    <h4 class="section-title">공고 검색</h4>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="card bg-outline-light text-dark ">
+                        <form action="/v1/search/posts/1" method="get" class="post-form" role="form">
+                            <div class="card-body">
+
+
+                                <div class="col-8 mt-2">
+                                    <div class="mb-1">
+                                        <label for="jobId">직무</label>
+                                    </div>
+                                    <div th:each="job, jobStat : ${jobs}" style="display: inline-block;">
+                                        <input class="form-check-input" type="checkbox" id="job" name="jobIdSet"
+                                               th:value="${job.id}"/>
+                                        <label class="form-check-label" th:text="${job.name}"></label>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-8 mt-2">
+                                    <div class="mb-1">
+                                        <label for="stackId">요구스택</label>
+                                    </div>
+                                    <div th:each="stack, stackStat : ${stacks}" style="display: inline-block;">
+                                        <input class="form-check-input" type="checkbox" id="stack" name="stackIdSet"
+                                               th:value="${stack.id}"/>
+                                        <label class="form-check-label" th:text="${stack.name}"></label>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-8 mt-2">
+                                    <div class="mb-1">
+                                        <label for="careerId">경력</label>
+                                    </div>
+
+                                    <div style="display: inline-block;">
+                                        <input class="form-check-label" type="number" id="career" name="career"
+                                               placeholder="경력(년) 이상"/>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-12 mt-2">
+                                    <div class="mb-1">
+                                        <label for="careerId">지역</label>
+                                    </div>
+                                    <div class="mb-2" style="display: inline-block;">
+                                        <div class="form-floating" style="display: inline-block;">
+                                            <button type="button" class="custom-btn" id="addressInputBtn">주소 찾기</button>
+                                        </div>
+                                        <input class="form-check-label" type="text" id="addressSet" placeholder="지역 입력"
+                                               disabled/>
+                                        <button type="button" onclick="addLocation()">추가</button>
+                                    </div>
+                                    <ul id="selectedLocations" class="selected-locations">
+                                        <!-- 선택된 지역을 여기에 표시할 예정 -->
+                                    </ul>
+                                </div>
+
+                                <div class="col-8 mt-2">
+                                    <div style="display: inline-block;">
+                                        <label for="careerId">마감 포함 여부</label>
+                                        <input class="form-check-label" type="checkbox" id="includeEnded"
+                                               name="includeEnded"/>
+                                    </div>
+                                </div>
+
+                                <div class="col-6 pt-4 m-auto">
+                                    <input type="hidden" id="selectedLocationsInput" name="addressSet" value="">
+                                    <button type="submit" class="form-control">검색하기</button>
+                                </div>
+
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="trending-podcast-section pt-5">
+            <div class="container">
+                <div class="col-lg-12 col-12">
+                    <div class="section-title-wrap mb-5">
+                        <h4 class="section-title">검색 결과</h4>
+                    </div>
+                </div>
+
+                <div class="row" th:each="postList, postListStat : ${postPage}"
+                     th:id="'postPage'+${postListStat.index}">
+
+
+                    <div class="col-lg-4 col-12 mb-4 mb-lg-0" th:each="post, postStat : ${postList}">
+                        <div class="custom-block custom-block-full mb-2">
+                            <div class="custom-block-image-wrap">
+                                <a href="company/detail-page.html">
+                                    <img src="/images/podcast/27670664_7369753.jpg" class="custom-block-image img-fluid"
+                                         alt="">
+                                </a>
+                            </div>
+
+                            <div class="custom-block-info">
+                                <div class="d-flex justify-content-between">
+                                    <div class="mb-2 d-inline-flex" th:if="${post.postType=='NORMAL'}">
+                                        <button class="badge" style="background-color: #717275" th:text="일반공고"></button>
+                                        <button class="badge" style="background-color: #b02a37" th:text="마감"
+                                                th:if="${post.closed==true}"></button>
+                                    </div>
+                                    <div class="mb-2 d-inline-flex" th:if="${post.postType=='MZ'}">
+                                        <button class="badge" style="background-color: #0a53be" th:text="MZ공고"></button>
+                                        <button class="badge" style="background-color: #b02a37" th:text="마감"
+                                                th:if="${post.closed==true}"></button>
+                                    </div>
+                                    <a href="company/detail-page.html" class="text-black " th:text="${post.name}">
+                                    </a>
+                                </div>
+                                <a class="bi-balloon me-1">
+                                    <span class="text-black" th:text="${post.workAddress}"></span>
+                                </a>
+                                <a class="d-flex justify-content-between me-1">
+                                    <span class="bi-calendar text-black" th:text="'    ~'+${post.endDate}"></span>
+                                </a>
+
+                                <hr>
+                                <h5 class="mb-0" th:text="${post.title}"></h5>
+
+                                <div class="custom-block-bottom d-flex justify-content-between mt-2">
+                                    <a class="bi-person me-1">
+                                        <span class="text-black" th:text="'경력 '+${post.career}+'년'"></span>
+                                    </a>
+
+                                    <span th:text="${post.job}"></span>
+
+                                </div>
+                            </div>
+
+                            <div class="social-share d-flex flex-column ms-auto">
+                                <a href="#" class="badge ms-auto">
+                                    <i class="bi-heart"></i>
+                                </a>
+
+                                <a href="#" class="badge ms-auto">
+                                    <i class="bi-bookmark"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="trending-podcast-section pt-5">
+            <div class="col-lg-4 col-12 mx-auto">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination pagination-lg justify-content-center mt-5">
+                        <li class="page-item" th:if="${strNum>=5}">
+                            <!--/v1/search/posts/1-->
+                            <a class="page-link" th:href="@{/v1/search/posts/{strNum}(strNum=${strNum}-5, stackIdSet=${dto.stackIdSet}, career=${dto.career}, jobIdSet=${dto.jobIdSet}, addressSet=${dto.addressSet}, includeEnded=${dto.includeEnded})}ºª"
+                               aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <div th:each="post, postStat:${postPage}">
+                            <li class="page-item" th:id="'page'+${postStat.index}"><a class="page-link"
+                                                                                      th:onclick="showOnlySelected([[${postStat.index}]])"
+                                                                                      th:text="${postStat.index+strNum}"></a>
+                            </li>
+                        </div>
+                        <li class="page-item" th:if="${#lists.size(postPage)>=5 and #lists.size(postPage[4])==9}">
+                            <a class="page-link" th:href="@{/v1/search/posts/{strNum}(strNum=${strNum}+5, stackIdSet=${dto.stackIdSet}, career=${dto.career}, jobIdSet=${dto.jobIdSet}, addressSet=${dto.addressSet}, includeEnded=${dto.includeEnded})}"
+                               aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</html>
