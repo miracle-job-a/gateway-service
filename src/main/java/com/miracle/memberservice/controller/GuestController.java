@@ -1,9 +1,7 @@
 package com.miracle.memberservice.controller;
 
-import com.miracle.memberservice.dto.request.CompanyCheckBnoRequestDto;
-import com.miracle.memberservice.dto.request.CompanyJoinDto;
-import com.miracle.memberservice.dto.request.LoginDto;
-import com.miracle.memberservice.dto.request.UserJoinDto;
+import com.miracle.memberservice.dto.request.*;
+import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.service.EmailService;
 import com.miracle.memberservice.service.UserService;
@@ -18,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpSession;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Controller
@@ -30,6 +28,7 @@ public class GuestController {
     private final UserService userService;
     private final CompanyService companyService;
     private final EmailService emailService;
+    private final AdminService adminService;
 
     @GetMapping
     public String index() {
@@ -149,5 +148,43 @@ public class GuestController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("인증 번호가 맞지 않습니다");
     }
 
+    @GetMapping("/search/posts/{strNum}")
+    public String searchPosts(HttpSession session, @ModelAttribute("dto") ConditionalSearchPostRequestDto dto, @PathVariable int strNum, Model model) {
+        PageMoveWithMessage pmwm = companyService.searchPosts(session, dto, strNum, strNum + 4);
+        Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
+        model.addAttribute("dto", dto);
+        model.addAttribute("postPage", pmwm.getData());
+        model.addAttribute("jobs", allJobsAndStacks.get("jobs"));
+        model.addAttribute("stacks", allJobsAndStacks.get("stacks"));
+        return pmwm.getPageName();
+    }
+
+    @ModelAttribute("dto")
+    public ConditionalSearchPostRequestDto setupModel(@RequestParam(name = "jobIdSet", required = false) Set<Long> jobIdSet,
+                                                      @RequestParam(name = "stackIdSet", required = false) Set<Long> stackIdSet,
+                                                      @RequestParam(name = "career", required = false, defaultValue = "0") Integer career,
+                                                      @RequestParam(name = "includeEnded", required = false, defaultValue = "false") Boolean includeEnded,
+                                                      @RequestParam(name = "addressSet", required = false) Set<String> addressSet
+    ) {
+        if (Objects.isNull(jobIdSet)) {
+            jobIdSet = new HashSet<>();
+        }
+
+        if (Objects.isNull(stackIdSet)) {
+            stackIdSet = new HashSet<>();
+        }
+
+        if (Objects.isNull(addressSet)) {
+            addressSet = new HashSet<>();
+        }
+
+        return ConditionalSearchPostRequestDto.builder()
+                .jobIdSet(jobIdSet)
+                .addressSet(addressSet)
+                .career(career)
+                .stackIdSet(stackIdSet)
+                .includeEnded(includeEnded)
+                .build();
+    }
 
 }

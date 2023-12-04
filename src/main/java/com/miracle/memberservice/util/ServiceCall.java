@@ -49,6 +49,11 @@ public class ServiceCall {
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()).bodyValue(dto), httpSession, serviceType).block();
     }
 
+    public static ApiResponse postParam(HttpSession httpSession, Object dto, String serviceType, String url, int strNum, int endNum) {
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().post()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).build()).bodyValue(dto), httpSession, serviceType).block();
+    }
+
     public static ApiResponse delete(HttpSession httpSession, String serviceType, String url) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().delete()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()), httpSession, serviceType).block();
@@ -58,26 +63,28 @@ public class ServiceCall {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().put()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()).bodyValue(dto), httpSession, serviceType).block();
     }
-  
+
     public static ApiResponse getParam(HttpSession httpSession, String serviceType, String url, String name, String value) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam(name, value).build()), httpSession, serviceType).block();
     }
+
     public static ApiResponse getParamList(HttpSession httpSession, String serviceType, String url, int strNum, int endNum) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
-                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).build()), httpSession, serviceType).block();
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).queryParam("sort", "latest").build()), httpSession, serviceType).block();
     }
 
     private static int port(String memberType) {
-        if (memberType.equals(Const.RequestHeader.USER)) {
-            return 60001;
-        } else if (memberType.equals(Const.RequestHeader.COMPANY)) {
-            return 60002;
+        switch (memberType) {
+            case Const.RequestHeader.USER:
+                return 60001;
+            case Const.RequestHeader.COMPANY:
+                return 60002;
 
-        } else if (memberType.equals(Const.RequestHeader.ADMIN)){
-            return 60003;
-        }else {
-            return 60000;
+            case Const.RequestHeader.ADMIN:
+                return 60003;
+            default:
+                return 60000;
         }
     }
 

@@ -1,5 +1,6 @@
 package com.miracle.memberservice.util;
 
+import com.miracle.memberservice.dto.request.JobRequestDto;
 import com.miracle.memberservice.dto.response.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -82,6 +83,46 @@ public class ApiResponseToList {
                             .title((String) dto.get("title"))
                             .endDate(divideTime((String) dto.get("endDate")))
                             .applicant(applicant)
+                            .build());
+                }
+                pageList.add(dtos);
+            }
+        }
+        return pageList;
+    }
+
+    public static List<List<ConditionalSearchPostResponseDto>> searchPosts(Object object, HttpSession session) {
+        ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+        List<List<ConditionalSearchPostResponseDto>> pageList = new ArrayList<>();
+
+        for (LinkedHashMap<String, Object> lhm : data) {
+            List<ConditionalSearchPostResponseDto> dtos = new ArrayList<>();
+            Integer numberOfElements = (Integer) lhm.get("numberOfElements");
+            if (numberOfElements > 0) {
+                ArrayList<LinkedHashMap<String, Object>> content = (ArrayList<LinkedHashMap<String, Object>>) lhm.get("content");
+                for (LinkedHashMap<String, Object> dto : content) {
+                    Integer id = (Integer) dto.get("id");
+                    ArrayList<Integer> jobs = (ArrayList<Integer>) dto.get("jobIdSet");
+
+                    ApiResponse response = ServiceCall.post(session, new JobRequestDto(jobs), Const.RequestHeader.ADMIN, "/admin/jobs");
+                    String jobDetail;
+                    if (response.getData() instanceof Boolean) {
+                        jobDetail = null;
+                    } else {
+                        List<JobResponseDto> job = ApiResponseToList.jobs(response.getData());
+                        jobDetail = job.get(0).getName();
+                    }
+
+                    dtos.add(ConditionalSearchPostResponseDto.builder()
+                            .id(id.longValue())
+                            .postType((String) dto.get("postType"))
+                            .closed((Boolean) dto.get("closed"))
+                            .title((String) dto.get("title"))
+                            .endDate(divideTime((String) dto.get("endDate")))
+                            .workAddress((String) dto.get("workAddress"))
+                            .career((Integer) dto.get("career"))
+                            .job(jobDetail)
+                            .name((String) dto.get("name"))
                             .build());
                 }
                 pageList.add(dtos);

@@ -16,8 +16,10 @@
 
             posts.forEach(function (post, index) {
                 if (index === 0) {
+                    var page = document.getElementById("page" + index);
                     // 초기에는 첫 번째 post만 보이도록 설정
                     post.style.display = 'block';
+                    page.classList.add("active");
                 } else {
                     // 나머지 post는 숨김
                     post.style.display = 'none';
@@ -28,9 +30,12 @@
             var posts = document.querySelectorAll('[id^="postPage"]');
             posts.forEach(function (post) {
                 var index = parseInt(post.id.replace('postPage', ''), 10);
+                var page = document.getElementById("page" + index);
                 if (index === selectedIndex) {
+                    page.classList.add("active");
                     post.style.display = 'block';
                 } else {
+                    page.classList.remove("active");
                     post.style.display = 'none';
                 }
             });
@@ -119,7 +124,7 @@
                                     </a>
                                 </li>
                                 <div th:each="post, postStat:${postPage}">
-                                    <li class="page-item"><a class="page-link" th:onclick="showOnlySelected([[${postStat.index}]])" th:text="${postStat.index+strNum}"></a></li>
+                                    <li class="page-item" th:id="'page'+${postStat.index}"><a class="page-link" th:onclick="showOnlySelected([[${postStat.index}]])" th:text="${postStat.index+strNum}"></a></li>
                                 </div>
                                 <li class="page-item" th:if="${#lists.size(postPage)>=5 and #lists.size(postPage[4])==9}">
                                     <a class="page-link" th:href="@{/v1/company/post/list/{strNum}(strNum=${strNum}+5)}" aria-label="Next">
