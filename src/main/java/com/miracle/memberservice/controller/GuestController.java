@@ -47,6 +47,11 @@ public class GuestController {
         return "guest/company-login";
     }
 
+    @GetMapping("/admin/login-form")
+    public String adminLoginForm() {
+        return "admin/login";
+    }
+
     //회원가입 폼 이동
     @GetMapping("/user/join")
     public String userJoinPage() {
