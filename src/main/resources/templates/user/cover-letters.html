@@ -1,0 +1,120 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+    <script>
+        // 생성
+        document.addEventListener("DOMContentLoaded", function () {
+            var letterBtn = document.getElementById('cover-letter');
+
+            letterBtn.addEventListener('click', function () {
+                window.location.href = '/v1/user/cover-letter/form';
+            });
+        });
+
+        // 삭제
+        function confirmDelete(button) {
+            var letterId = button.getAttribute('data-letter-id');
+            var confirmResult = confirm("삭제하시겠습니까?");
+
+            if (confirmResult) {
+                // 사용자가 확인을 선택한 경우
+                window.location.href = '/v1/user/cover-letter/delete/' + letterId;
+            } else {
+                // 사용자가 취소를 선택한 경우
+                // 아무 동작을 하지 않거나 필요한 작업 수행
+            }
+        }
+    </script>
+
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
+
+        <section class="latest-podcast-section" id="section_2">
+            <div class="container">
+                <div class="row justify-content-center">
+
+                    <div class="col-lg-10 col-12">
+                        <div class="section-title-wrap mb-5">
+                            <h4 class="section-title">나의 자기소개서</h4>
+                        </div>
+                    </div>
+
+
+                    <div class="row col-lg-10 col-12">
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-secondary" id="cover-letter">자기소개서 생성</button>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-outline-secondary">최근 작성일</button>
+                                <button type="button" class="btn btn-outline-secondary">오래된 작성일</button>
+                            </div>
+                        </div>
+
+                        <div class="col-auto">
+                            <div class="input-group mb-3 ">
+                                <input type="text" class="form-control" placeholder="Search">
+                                <button class="btn btn-outline-secondary" type="submit">Go</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 목록 페이지 시작 -->
+
+                    <!-- 목록 1칸 -->
+                    <div th:each="letter : ${letterList}" class="col-lg-10 col-12 mb-4 mb-lg-2">
+                        <div class="custom-block d-flex">
+                            <div class="custom-block-info">
+                                <h5 class="mb-2">
+                                    <a th:href="@{'/v1/user/cover-letter/detail/' + ${letter.id}}" th:text="${letter.title}"></a>
+                                </h5>
+
+                                <div class="col-auto d-flex m-2">
+                                    <span th:text="'작성일 : ' + ${letter.modifiedAt.substring(0, 10)}"></span>
+                                </div>
+                            </div>
+
+                            <!-- 버튼 부 -->
+                            <div class="d-flex flex-column ms-auto">
+                                <!-- 추후 th:attr="data-id=${resume.id}" button 내 추가하기 -->
+                                <button type="button" class="btn btn-outline-secondary" th:attr="data-letter-id=${letter.id}" onclick="confirmDelete(this)">삭제하기</button>                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-lg-4 col-12 mx-auto">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination pagination-lg justify-content-center mt-5">
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+
+    </main>
+</div>
+
+</html>

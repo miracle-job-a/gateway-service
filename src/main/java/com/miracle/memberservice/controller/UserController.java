@@ -107,11 +107,16 @@ public class UserController {
     }
 
     // [임시] 자소서 목록으로 이동
-    @GetMapping("/cover-letter")
-    public String covetLetterList(){ return "user/cover-letter"; }
+    @GetMapping("/cover-letters")
+    public String coverLetterList(HttpSession session, Model model){
+        PageMoveWithMessage pmwm = userService.coverLetterList(session);
+        model.addAttribute("letterList", pmwm.getData());
+        model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        return pmwm.getPageName();
+    }
 
-    @GetMapping("/coverLetterForm")
-    public String createCoverLetter(){ return "user/coverLetter-form"; }
+    @GetMapping("/cover-letter/form")
+    public String coverLetterForm(){ return "user/coverLetter-form"; }
 
     @PostMapping("/cover-letter/create")
     public String createCoverLetter(String title, @ModelAttribute QnaListDto qnaListDto, HttpSession session){
@@ -123,6 +128,32 @@ public class UserController {
         }
 
         PageMoveWithMessage pmwm = userService.createCoverLetter(session, new CoverLetterPostRequestDto(title, qnaDtoList));
+        return pmwm.getPageName();
+    }
+
+    @GetMapping("/cover-letter/delete/{coverLetterId}")
+    public String deleteCoverLetter(HttpSession session, @PathVariable Long coverLetterId) {
+        PageMoveWithMessage pmwm = userService.deleteCoverLetter(session, coverLetterId);
+        return pmwm.getPageName();
+    }
+
+    @GetMapping("/cover-letter/detail/{id}")
+    public String coverLetterDetail(HttpSession session, @PathVariable Long id, Model model){
+        PageMoveWithMessage pmwm = userService.coverLetterDetail(session, id);
+        model.addAttribute("coverLetter", pmwm.getData());
+        return pmwm.getPageName();
+    }
+
+    @PostMapping("/cover-letter/update")
+    public String updateCoverLetter(String title, Long id, @ModelAttribute QnaListDto qnaListDto, HttpSession session){
+        System.out.println(id);
+        List<QnaDto> qnaDtoList = new ArrayList<>();
+        for (int i = 0; i < qnaListDto.getAnswer().size(); i++) {
+            String question = qnaListDto.getQuestion().get(i);
+            String answer = qnaListDto.getAnswer().get(i);
+            qnaDtoList.add(new QnaDto(question, answer));
+        }
+        PageMoveWithMessage pmwm = userService.updateCoverLetter(session, new CoverLetterPostRequestDto(title, qnaDtoList), id);
         return pmwm.getPageName();
     }
 }
