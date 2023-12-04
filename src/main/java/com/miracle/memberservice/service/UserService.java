@@ -1,8 +1,8 @@
 package com.miracle.memberservice.service;
 
+import com.miracle.memberservice.dto.request.CoverLetterPostRequestDto;
 import com.miracle.memberservice.dto.request.LoginDto;
 import com.miracle.memberservice.dto.request.ResumeRequestDto;
-import com.miracle.memberservice.dto.request.ResumeUpdateRequestDto;
 import com.miracle.memberservice.dto.request.UserJoinDto;
 import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.util.ApiResponseToList;
@@ -18,7 +18,6 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Slf4j
@@ -139,12 +138,21 @@ public class UserService {
         return new PageMoveWithMessage("redirect:/v1/user/resumes", response.getMessage());
     }
 
-    public PageMoveWithMessage updateResume(HttpSession session, ResumeUpdateRequestDto requestDto, Long resumeId) {
+    public PageMoveWithMessage updateResume(HttpSession session, ResumeRequestDto requestDto, Long resumeId) {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.put(session, requestDto, "user", "/user/"+userId+"/resume/"+resumeId);
         if (response.getHttpStatus() != 200)
-            return new PageMoveWithMessage("redirect:/v1/user/resume//detail/"+resumeId, response.getMessage());
+            return new PageMoveWithMessage("redirect:/v1/user/resume/detail/"+resumeId, response.getMessage());
         return new PageMoveWithMessage("redirect:/v1/user/resume/detail/"+resumeId);
     }
+
+    public PageMoveWithMessage createCoverLetter(HttpSession session, CoverLetterPostRequestDto requestDto){
+        Long userId = (Long) session.getAttribute("id");
+        System.out.println(userId);
+        ApiResponse respons = ServiceCall.post(session, requestDto, Const.RequestHeader.USER, "/user/"+userId+"/cover-letter");
+
+        return new PageMoveWithMessage("/redirect:/v1/user/cover-letter", respons.getMessage());
+    }
+
 
 }

@@ -1,9 +1,10 @@
 package com.miracle.memberservice.controller;
 
+import com.miracle.memberservice.dto.request.CoverLetterPostRequestDto;
+import com.miracle.memberservice.dto.request.QnaDto;
+import com.miracle.memberservice.dto.request.QnaListDto;
 import com.miracle.memberservice.dto.request.ResumeRequestDto;
-import com.miracle.memberservice.dto.request.ResumeUpdateRequestDto;
 import com.miracle.memberservice.dto.response.JobResponseDto;
-import com.miracle.memberservice.dto.response.ResumeListResponseDto;
 import com.miracle.memberservice.dto.response.ResumeResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;
 import com.miracle.memberservice.service.AdminService;
@@ -16,11 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.SimpleTimeZone;
 
 
 @Controller
@@ -70,8 +69,8 @@ public class UserController {
         return pmwm.getPageName();
     }
 
-    @GetMapping("/resume/detail")
-    public String resumeDetail(HttpSession session, Model model, @RequestParam(name = "id") Long resumeId ){
+    @GetMapping("/resume/detail/{resumeId}")
+    public String resumeDetail(HttpSession session, Model model, @PathVariable Long resumeId){
         PageMoveWithMessage pmwm = userService.getResumeDetail(session, resumeId);
         PageMoveWithMessage pmwm2 = userService.formResume(session);
 
@@ -100,7 +99,7 @@ public class UserController {
     @PostMapping("/resume/update/{resumeId}")
     public String updateResume(HttpSession session,
                                @PathVariable Long resumeId,
-                               ResumeUpdateRequestDto requestDto,
+                               @ModelAttribute ResumeRequestDto requestDto,
                                RedirectAttributes redirectAttributes){
         PageMoveWithMessage pmwm = userService.updateResume(session, requestDto, resumeId);
         redirectAttributes.addAttribute("errorMessage", pmwm.getErrorMessage());
@@ -112,5 +111,18 @@ public class UserController {
     public String covetLetterList(){ return "user/cover-letter"; }
 
     @GetMapping("/coverLetterForm")
-    public String createCoverLetter(){ return "user/coverLetterForm"; }
+    public String createCoverLetter(){ return "user/coverLetter-form"; }
+
+    @PostMapping("/cover-letter/create")
+    public String createCoverLetter(String title, @ModelAttribute QnaListDto qnaListDto, HttpSession session){
+        List<QnaDto> qnaDtoList = new ArrayList<>();
+        for (int i = 0; i < qnaListDto.getAnswer().size(); i++) {
+            String question = qnaListDto.getQuestion().get(i);
+            String answer = qnaListDto.getAnswer().get(i);
+            qnaDtoList.add(new QnaDto(question, answer));
+        }
+
+        PageMoveWithMessage pmwm = userService.createCoverLetter(session, new CoverLetterPostRequestDto(title, qnaDtoList));
+        return pmwm.getPageName();
+    }
 }

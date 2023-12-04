@@ -76,7 +76,7 @@
                         <div class="custom-block d-flex">
                             <div class="custom-block-info">
                                 <h5 class="mb-2">
-                                    <a th:href="@{/v1/user/resume/detail(id=${resume.id})}" th:text="${resume.title}"></a>
+                                    <a th:href="@{'/v1/user/resume/detail/' + ${resume.id}}" th:text="${resume.title}"></a>
                                 </h5>
 
                                 <div class="custom-block-bottom d-flex mt-3">
