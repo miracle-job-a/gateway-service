@@ -1,15 +1,15 @@
 package com.miracle.memberservice.util;
 
 import com.miracle.memberservice.dto.response.*;
-
 import java.time.LocalDate;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 
 public class ApiResponseToList {
-    public static List<CompanyFaqResponseDto> faqList(Object object){
+    public static List<CompanyFaqResponseDto> faqList(Object object) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
 
         List<CompanyFaqResponseDto> dtos = new ArrayList<>();
@@ -24,7 +24,7 @@ public class ApiResponseToList {
         return dtos;
     }
 
-    public static List<StackResponseDto> stacks(Object object){
+    public static List<StackResponseDto> stacks(Object object) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
 
         List<StackResponseDto> dtos = new ArrayList<>();
@@ -39,7 +39,7 @@ public class ApiResponseToList {
         return dtos;
     }
 
-    public static List<JobResponseDto> jobs(Object object){
+    public static List<JobResponseDto> jobs(Object object) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
 
         List<JobResponseDto> dtos = new ArrayList<>();
@@ -54,26 +54,37 @@ public class ApiResponseToList {
         return dtos;
     }
 
-    public static List<ManagePostsResponseDto> postList(Object object){
+    public static List<List<ManagePostsResponseDto>> postList(Object object, HttpSession session) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+        List<List<ManagePostsResponseDto>> pageList = new ArrayList<>();
 
-        List<ManagePostsResponseDto> dtos = new ArrayList<>();
         for (LinkedHashMap<String, Object> lhm : data) {
+            List<ManagePostsResponseDto> dtos = new ArrayList<>();
+            Integer numberOfElements = (Integer) lhm.get("numberOfElements");
+            if (numberOfElements > 0) {
+                ArrayList<LinkedHashMap<String, Object>> content = (ArrayList<LinkedHashMap<String, Object>>) lhm.get("content");
+                for (LinkedHashMap<String, Object> dto : content) {
+                    Integer id = (Integer) dto.get("id");
+                    ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/post/" + id + "/applicant/num");
+                    Integer applicant = (Integer) response.getData();
 
-            Integer id = (Integer) lhm.get("id");
-            dtos.add(ManagePostsResponseDto.builder()
-                    .id(id.longValue())
-                    .postType((String) lhm.get("postType"))
-                    .closed((Boolean)lhm.get("closed"))
-                    .createdAt((String)lhm.get("createdAt"))
-                    .title((String)lhm.get("title"))
-                    .endDate((String)lhm.get("endDate"))
-                    .build());
+                    dtos.add(ManagePostsResponseDto.builder()
+                            .id(id.longValue())
+                            .postType((String) dto.get("postType"))
+                            .closed((Boolean) dto.get("closed"))
+                            .createdAt(divideTime((String) dto.get("createdAt")))
+                            .title((String) dto.get("title"))
+                            .endDate(divideTime((String) dto.get("endDate")))
+                            .applicant(applicant)
+                            .build());
+                }
+                pageList.add(dtos);
+            }
         }
-        return dtos;
+        return pageList;
     }
 
-    public static List<QuestionResponseDto> questionList(Object object){
+    public static List<QuestionResponseDto> questionList(Object object) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
 
         List<QuestionResponseDto> dtos = new ArrayList<>();
@@ -82,12 +93,12 @@ public class ApiResponseToList {
             Integer id = (Integer) lhm.get("id");
             dtos.add(QuestionResponseDto.builder()
                     .id(id.longValue())
-                    .question((String)lhm.get("question"))
+                    .question((String) lhm.get("question"))
                     .build());
         }
         return dtos;
     }
-
+  
     public static List<ResumeListResponseDto> resumeList(Object object){
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
 
@@ -104,5 +115,9 @@ public class ApiResponseToList {
                     .build());
         }
         return dtos;
-    }
+
+    private static String divideTime(String time) {
+        String[] ts = time.split("T");
+        return ts[0] + " " + ts[1];
+      }
 }

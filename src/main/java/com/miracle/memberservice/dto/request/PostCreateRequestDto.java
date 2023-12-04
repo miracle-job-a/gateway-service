@@ -7,14 +7,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 @Getter
 @ToString
 @RequiredArgsConstructor
-public class PostRequestDto {
+public class PostCreateRequestDto {
     private final Long postId;
     private final String postType;
     private final String title;
@@ -30,15 +29,11 @@ public class PostRequestDto {
     private final String notice;
     private final String specialSkill;
     private final String workAddress;
-    private final List<QuestionRequestDto> questionList = new ArrayList<>();
+    private final List<QuestionCreateRequestDto> questionList;
     private final Set<Long> jobIdSet;
     private final Set<Long> stackIdSet;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private final LocalDateTime testStartDate;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private final LocalDateTime testEndDate;
-
-    public void addAllQuestion(Collection<QuestionRequestDto> dto) {
-        questionList.addAll(dto);
-    }
 }

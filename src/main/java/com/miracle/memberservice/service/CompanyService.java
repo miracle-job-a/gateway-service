@@ -9,13 +9,15 @@ import com.miracle.memberservice.util.ServiceCall;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriBuilder;
+import org.springframework.web.util.UriBuilderFactory;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpSession;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -64,37 +66,29 @@ public class CompanyService {
     }
 
     //공고관리 목록
-    public PageMoveWithMessage postList(HttpSession session) {
+    public PageMoveWithMessage postList(HttpSession session, int strNum, int endNum) {
 
-        Long id = (Long) session.getAttribute("id");
+        Long companyId = (Long) session.getAttribute("id");
 
-        ApiResponse response = ServiceCall.get(session, "company", "/company/" + id + "/posts/latest");
+        ApiResponse response = ServiceCall.getParam(session, "company", "/company/" + companyId + "/posts/latest", strNum, endNum);
 
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("index", response.getMessage());
 
-        List<ManagePostsResponseDto> postList = ApiResponseToList.postList(response.getData());
+        List<List<ManagePostsResponseDto>> postList = ApiResponseToList.postList(response.getData(), session);
 
         return new PageMoveWithMessage("company/post-list", postList);
     }
 
     // MZ 공고 등록
-    public PageMoveWithMessage createMZ(MzPostDto mzPostDto, HttpSession session) {
-        ApiResponse response = ServiceCall.post(session, mzPostDto, "company", "/mzPost");
 
-        if (response.getHttpStatus() != 200)
-            return new PageMoveWithMessage("/company/post/mzPost", response.getMessage());
-
-        return new PageMoveWithMessage("/company/postlist");
-    }
-
-    public PageMoveWithMessage formPost(HttpSession session) {
+    public PageMoveWithMessage formPost(HttpSession session, String postType) {
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.get(session, "company", "/company/" + companyId + "/info");
 
         if (response.getHttpStatus() != 200)
-            return new PageMoveWithMessage("/company/post/list", response.getMessage());
+            return new PageMoveWithMessage("redirect:/v1/company/post/list", response.getMessage());
 
-        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
         List<CompanyFaqResponseDto> dtos = ApiResponseToList.faqList(data.get("faqList"));
 
@@ -108,25 +102,24 @@ public class CompanyService {
                 .faqList(dtos)
                 .build();
 
-
+        if (!Objects.isNull(postType)) {
+            return new PageMoveWithMessage("company/mz-post", info);
+        }
         return new PageMoveWithMessage("company/normal-post", info);
     }
 
-    public PageMoveWithMessage createPost(HttpSession session, PostRequestDto postRequestDto) {
+    public PageMoveWithMessage createPost(HttpSession session, PostCreateRequestDto postRequestDto) {
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.post(session, postRequestDto, Const.RequestHeader.COMPANY, "/company/" + companyId + "/post");
 
         return new PageMoveWithMessage("redirect:/v1/company/post/list", response.getMessage());
     }
 
-    public PageMoveWithMessage getPostDetail(HttpSession session, Long postId) {
+    public PageMoveWithMessage getPostDetail(HttpSession session, Long postId, String postType) {
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/" + postId);
 
-        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String postType = (String) data.get("postType");
+        Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
         PostResponseDto dto;
 
         PostResponseDto.PostResponseDtoBuilder builder = PostResponseDto.builder()
@@ -142,7 +135,7 @@ public class CompanyService {
                 .tool((String) data.get("tool"))
                 .workCondition((String) data.get("workCondition"))
                 .workAddress((String) data.get("workAddress"))
-                .endDate(LocalDate.parse((String) data.get("endDate"), formatter))
+                .endDate(truncatedTo(data.get("endDate")))
                 .questionList(ApiResponseToList.questionList(data.get("questionList")))
                 .stackIdSet((ArrayList<Integer>) data.get("stackIdSet"))
                 .jobIdSet((ArrayList<Integer>) data.get("jobIdSet"))
@@ -152,26 +145,39 @@ public class CompanyService {
             dto = builder.build();
         } else {
             dto = builder
-                    .testStartDate(LocalDate.parse((String) data.get("testStartDate"), formatter))
-                    .testEndDate(LocalDate.parse((String) data.get("testEndDate"), formatter))
+                    .testStartDate(truncatedTo(data.get("testStartDate")))
+                    .testEndDate(truncatedTo(data.get("testEndDate")))
                     .build();
+            return new PageMoveWithMessage("company/mzPost-detail", dto);
         }
 
         return new PageMoveWithMessage("company/post-detail", dto);
     }
 
-    public PageMoveWithMessage deletePost(HttpSession session, Long postId){
+    public PageMoveWithMessage deletePost(HttpSession session, Long postId) {
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/" + postId);
 
         return new PageMoveWithMessage("redirect:/v1/company/post/list", response.getMessage());
     }
 
-    public PageMoveWithMessage closePost(HttpSession session, Long postId){
+    public PageMoveWithMessage closePost(HttpSession session, Long postId, String postType) {
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/" + postId + "/close");
 
-        return new PageMoveWithMessage("redirect:/v1/company/post/detail", response.getMessage());
+        return new PageMoveWithMessage("redirect:/v1/company/post/detail?id=" + postId + "&postType=" + postType, response.getMessage());
+    }
+
+    public PageMoveWithMessage updatePost(HttpSession session, PostRequestDto postEditRequestDto, IdEditDto idList, QuestionEditDto questionList) {
+        Long companyId = (Long) session.getAttribute("id");
+        Long postId = postEditRequestDto.getPostId();
+
+        if (!Objects.isNull(idList.getIdList()))
+            postEditRequestDto.addAllQuestion(questionRequestDtos(idList, questionList));
+
+        ApiResponse response = ServiceCall.put(session, postEditRequestDto, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/" + postId);
+
+        return new PageMoveWithMessage("redirect:/v1/company/post/detail?id=" + postId + "&postType=" + postEditRequestDto.getPostType(), response.getMessage());
     }
 
     public PageMoveWithMessage faqList(HttpSession session) {
@@ -200,6 +206,26 @@ public class CompanyService {
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("redirect:/v1/company/faq", response.getMessage());
         return new PageMoveWithMessage("redirect:/v1/company/faq");
+    }
+
+    private LocalDateTime truncatedTo(Object time) {
+        LocalDateTime localDateTime = LocalDateTime.parse((String) time);
+        return localDateTime.truncatedTo(ChronoUnit.MINUTES);
+    }
+
+    private List<QuestionRequestDto> questionRequestDtos(IdEditDto idEditDto, QuestionEditDto questionEditDto) {
+        List<Integer> idList = idEditDto.getIdList();
+        List<String> questionList = questionEditDto.getQuestionList();
+        List<QuestionRequestDto> questionRequestDtos = new ArrayList<>();
+        int size = idList.size();
+        for (int i = 0; i < size; i++) {
+            QuestionRequestDto build = QuestionRequestDto.builder()
+                    .id(idList.get(i).longValue())
+                    .question(questionList.get(i))
+                    .build();
+            questionRequestDtos.add(build);
+        }
+        return questionRequestDtos;
     }
 
 }

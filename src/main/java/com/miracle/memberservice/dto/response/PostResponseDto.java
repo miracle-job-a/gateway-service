@@ -1,11 +1,11 @@
 package com.miracle.memberservice.dto.response;
 
+import com.miracle.memberservice.dto.request.QuestionRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -16,7 +16,7 @@ public class PostResponseDto {
     private final String postType;
     private final String title;
     private final Integer career;
-    private final LocalDate endDate;
+    private final LocalDateTime endDate;
     private final String mainTask;
     private final String workCondition;
     private final String qualification;
@@ -30,31 +30,8 @@ public class PostResponseDto {
     private final List<QuestionResponseDto> questionList;
     private final List<Integer> jobIdSet;
     private final List<Integer> stackIdSet;
-    private final LocalDate testStartDate;
-    private final LocalDate testEndDate;
-
-    @Builder
-    public PostResponseDto(String postType, String title, Integer career, LocalDate endDate, String mainTask, String workCondition, String qualification, String tool, String benefit, String process, String notice, String specialSkill, String workAddress, Boolean closed, List<QuestionResponseDto> questionList, List<Integer> jobIdSet, List<Integer> stackIdSet) {
-        this.postType = postType;
-        this.title = title;
-        this.career = career;
-        this.endDate = endDate;
-        this.mainTask = mainTask;
-        this.workCondition = workCondition;
-        this.qualification = qualification;
-        this.tool = tool;
-        this.benefit = benefit;
-        this.process = process;
-        this.notice = notice;
-        this.specialSkill = specialSkill;
-        this.workAddress = workAddress;
-        this.closed = closed;
-        this.questionList = questionList;
-        this.jobIdSet = jobIdSet;
-        this.stackIdSet = stackIdSet;
-        this.testStartDate = null;
-        this.testEndDate = null;
-    }
+    private final LocalDateTime testStartDate;
+    private final LocalDateTime testEndDate;
 
     public PostResponseDto() {
         this.closed = null;

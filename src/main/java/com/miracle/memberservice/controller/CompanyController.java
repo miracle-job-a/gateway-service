@@ -1,8 +1,6 @@
 package com.miracle.memberservice.controller;
 
-import com.miracle.memberservice.dto.request.CompanyFaqRequestDto;
-import com.miracle.memberservice.dto.request.MzPostDto;
-import com.miracle.memberservice.dto.request.PostRequestDto;
+import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.JobResponseDto;
 import com.miracle.memberservice.dto.response.PostResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;
@@ -36,8 +34,8 @@ public class CompanyController {
 
     @GetMapping("/post/list")
     public String postList(HttpSession session, Model model) {
-        PageMoveWithMessage pmwm = companyService.postList(session);
-        model.addAttribute("postList", pmwm.getData());
+        PageMoveWithMessage pmwm = companyService.postList(session, 1, 5);
+        model.addAttribute("postPage", pmwm.getData());
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
@@ -45,7 +43,7 @@ public class CompanyController {
     // 공고 생성 폼 이동
     @GetMapping("/post/form")
     public String postFormPage(HttpSession session, Model model) {
-        PageMoveWithMessage pmwm = companyService.formPost(session);
+        PageMoveWithMessage pmwm = companyService.formPost(session, null);
         Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
         model.addAttribute("info", pmwm.getData());
         model.addAttribute("jobs", allJobsAndStacks.get("jobs"));
@@ -54,9 +52,9 @@ public class CompanyController {
     }
 
     @GetMapping("/post/detail")
-    public String postDetail(HttpSession session, Model model, @RequestParam(name = "id") Long postId) {
-        PageMoveWithMessage pmwm = companyService.getPostDetail(session, postId);
-        PageMoveWithMessage pmwm2 = companyService.formPost(session);
+    public String postDetail(HttpSession session, Model model, @RequestParam(name = "id") Long postId, @RequestParam String postType) {
+        PageMoveWithMessage pmwm = companyService.getPostDetail(session, postId, postType);
+        PageMoveWithMessage pmwm2 = companyService.formPost(session, null);
 
         PostResponseDto data = (PostResponseDto) pmwm.getData();
 
@@ -64,6 +62,7 @@ public class CompanyController {
         List<JobResponseDto> jobs = adminService.getJobs(session, data.getJobIdSet());
         List<StackResponseDto> stacks = adminService.getStacks(session, data.getStackIdSet());
 
+        model.addAttribute("postType", postType);
         model.addAttribute("postId", postId);
         model.addAttribute("info", pmwm2.getData());
         model.addAttribute("detail", data);
@@ -74,36 +73,39 @@ public class CompanyController {
         return pmwm.getPageName();
     }
 
-    @GetMapping ("/post/delete/{postId}")
+    @PostMapping("/post/update")
+    public String updatePost(HttpSession session, @ModelAttribute PostRequestDto postEditRequestDto, @ModelAttribute(binding = false) IdEditDto idList, @ModelAttribute(binding = false) QuestionEditDto questionList) {
+        PageMoveWithMessage pmwm = companyService.updatePost(session, postEditRequestDto, idList, questionList);
+
+        return pmwm.getPageName();
+    }
+
+    @GetMapping("/post/delete/{postId}")
     public String deletePost(HttpSession session, @PathVariable Long postId) {
         PageMoveWithMessage pmwm = companyService.deletePost(session, postId);
-
         return pmwm.getPageName();
     }
 
-    @GetMapping ("/post/close/{postId}")
-    public String closePost(RedirectAttributes redirectAttributes, HttpSession session, @PathVariable Long postId) {
-        PageMoveWithMessage pmwm = companyService.closePost(session, postId);
-        redirectAttributes.addAttribute("id", postId);
+    @GetMapping("/post/close/{postId}/{postType}")
+    public String closePost(HttpSession session, @PathVariable Long postId, @PathVariable String postType) {
+        PageMoveWithMessage pmwm = companyService.closePost(session, postId, postType);
         return pmwm.getPageName();
     }
 
-    @GetMapping("/post/mz/form")
-    public String postForm() {
-        return "company/mz-post";
+    @GetMapping("/post/{postType}/form")
+    public String postForm(HttpSession session, Model model, @PathVariable String postType) {
+        PageMoveWithMessage pmwm = companyService.formPost(session, postType);
+        Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
+        model.addAttribute("info", pmwm.getData());
+        model.addAttribute("jobs", allJobsAndStacks.get("jobs"));
+        model.addAttribute("stacks", allJobsAndStacks.get("stacks"));
+        return pmwm.getPageName();
     }
 
     @PostMapping("/post/create")
-    public String createPost(@ModelAttribute PostRequestDto postRequestDto, HttpSession session) {
+    public String createPost(@ModelAttribute PostCreateRequestDto postRequestDto, HttpSession session) {
         PageMoveWithMessage pmwm = companyService.createPost(session, postRequestDto);
 
-        return pmwm.getPageName();
-    }
-
-    @PostMapping("/post/mz/create")
-    public String createMZ(@ModelAttribute MzPostDto mzPostDto, Model model, HttpSession session) {
-        PageMoveWithMessage pmwm = companyService.createMZ(mzPostDto, session);
-        model.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
 

@@ -58,10 +58,14 @@ public class ServiceCall {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().put()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()).bodyValue(dto), httpSession, serviceType).block();
     }
-
+  
     public static ApiResponse getParam(HttpSession httpSession, String serviceType, String url, String name, String value) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam(name, value).build()), httpSession, serviceType).block();
+
+    public static ApiResponse getParamList(HttpSession httpSession, String serviceType, String url, int strNum, int endNum) {
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).build()), httpSession, serviceType).block();
     }
 
     private static int port(String memberType) {
