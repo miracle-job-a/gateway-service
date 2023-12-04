@@ -1,5 +1,9 @@
 server:
   port: 60000
+  error:
+    include-exception: true
+    include-stacktrace: always
+    path: /error
 
 spring:
   devtools:

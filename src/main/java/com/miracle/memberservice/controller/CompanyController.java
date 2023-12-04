@@ -32,9 +32,10 @@ public class CompanyController {
         return "index";
     }
 
-    @GetMapping("/post/list")
-    public String postList(HttpSession session, Model model) {
-        PageMoveWithMessage pmwm = companyService.postList(session, 1, 5);
+    @GetMapping("/post/list/{strNum}")
+    public String postList(HttpSession session, Model model, @PathVariable int strNum) {
+        PageMoveWithMessage pmwm = companyService.postList(session, strNum, strNum+4);
+        model.addAttribute("strNum", strNum);
         model.addAttribute("postPage", pmwm.getData());
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();

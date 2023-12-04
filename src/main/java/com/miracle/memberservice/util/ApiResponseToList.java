@@ -1,14 +1,14 @@
 package com.miracle.memberservice.util;
 
 import com.miracle.memberservice.dto.response.*;
+import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDate;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-
+@Slf4j
 public class ApiResponseToList {
     public static List<CompanyFaqResponseDto> faqList(Object object) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
@@ -66,8 +66,13 @@ public class ApiResponseToList {
                 ArrayList<LinkedHashMap<String, Object>> content = (ArrayList<LinkedHashMap<String, Object>>) lhm.get("content");
                 for (LinkedHashMap<String, Object> dto : content) {
                     Integer id = (Integer) dto.get("id");
-                    ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/post/" + id + "/applicant/num");
-                    Integer applicant = (Integer) response.getData();
+                    Integer applicant = 0;
+                    try {
+                        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/post/" + id + "/applicant/num");
+                        applicant = (Integer) response.getData();
+                    } catch (ClassCastException e) {
+                        log.error(e.getMessage());
+                    }
 
                     dtos.add(ManagePostsResponseDto.builder()
                             .id(id.longValue())
