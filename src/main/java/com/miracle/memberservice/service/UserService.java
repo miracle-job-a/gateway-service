@@ -1,9 +1,6 @@
 package com.miracle.memberservice.service;
 
-import com.miracle.memberservice.dto.request.LoginDto;
-import com.miracle.memberservice.dto.request.ResumeRequestDto;
-import com.miracle.memberservice.dto.request.ResumeUpdateRequestDto;
-import com.miracle.memberservice.dto.request.UserJoinDto;
+import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.util.ApiResponseToList;
 import com.miracle.memberservice.util.Const;
@@ -18,7 +15,6 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Slf4j
@@ -109,7 +105,7 @@ public class UserService {
 
     public PageMoveWithMessage getResumeDetail(HttpSession session, Long resumeId) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.getParam(session, Const.RequestHeader.USER, "/user/" + userId + "/resume/" + resumeId , "requester","USER");
+        ApiResponse response = ServiceCall.getParam(session, Const.RequestHeader.USER, "/user/" + userId + "/resume/" + resumeId, "requester","USER");
 
         LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
@@ -139,12 +135,58 @@ public class UserService {
         return new PageMoveWithMessage("redirect:/v1/user/resumes", response.getMessage());
     }
 
-    public PageMoveWithMessage updateResume(HttpSession session, ResumeUpdateRequestDto requestDto, Long resumeId) {
+    public PageMoveWithMessage updateResume(HttpSession session, ResumeRequestDto requestDto, Long resumeId) {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.put(session, requestDto, "user", "/user/"+userId+"/resume/"+resumeId);
         if (response.getHttpStatus() != 200)
-            return new PageMoveWithMessage("redirect:/v1/user/resume//detail/"+resumeId, response.getMessage());
+            return new PageMoveWithMessage("redirect:/v1/user/resume/detail/"+resumeId, response.getMessage());
         return new PageMoveWithMessage("redirect:/v1/user/resume/detail/"+resumeId);
+    }
+
+    public PageMoveWithMessage createCoverLetter(HttpSession session, CoverLetterPostRequestDto requestDto){
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.post(session, requestDto, Const.RequestHeader.USER, "/user/"+userId+"/cover-letter");
+
+        return new PageMoveWithMessage("redirect:/v1/user/cover-letters", response.getMessage());
+    }
+
+    public PageMoveWithMessage coverLetterList(HttpSession session){
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.getParam(session, "user", "/user/"+userId+"/cover-letter","userId", String.valueOf(userId));
+        if (response.getHttpStatus() != 200 )
+            return new PageMoveWithMessage("/v1/user/cover-letters", response.getMessage());
+
+        List<CoverLetterListResponseDto> letterList = ApiResponseToList.coverLetterList(response.getData());
+
+        return new PageMoveWithMessage("/user/cover-letters", letterList);
+    }
+
+    public PageMoveWithMessage deleteCoverLetter(HttpSession session, Long coverLetterId) {
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.USER, "/user/"+userId+"/cover-letter/"+coverLetterId);
+
+        return new PageMoveWithMessage("redirect:/v1/user/cover-letters", response.getMessage());
+    }
+
+    public PageMoveWithMessage coverLetterDetail(HttpSession session, Long coverLetterId){
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/"+userId+"/cover-letter/"+coverLetterId);
+
+        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+
+        CoverLetterResponseDto letter = CoverLetterResponseDto.builder()
+                .id(Long.valueOf((Integer) data.get("id")))
+                .title((String) data.get("title"))
+                .modifiedAt((String) data.get("modifiedAt"))
+                .qnaList((List<QnaDto>) data.get("qnaList")).build();
+
+        return new PageMoveWithMessage("/user/coverLetter-detail", letter);
+    }
+
+    public PageMoveWithMessage updateCoverLetter(HttpSession session, CoverLetterPostRequestDto requestDto, Long coverLetterId){
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.USER, "/user/"+userId+"/cover-letter/"+coverLetterId);
+        return new PageMoveWithMessage("redirect:/v1/user/cover-letters", response.getMessage());
     }
 
 }
