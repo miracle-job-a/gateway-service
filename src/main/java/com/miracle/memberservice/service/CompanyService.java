@@ -82,7 +82,7 @@ public class CompanyService {
         ApiResponse response = ServiceCall.get(session, "company", "/company/" + companyId + "/info");
 
         if (response.getHttpStatus() != 200)
-            return new PageMoveWithMessage("redirect:/v1/company/post/list", response.getMessage());
+            return new PageMoveWithMessage("redirect:/v1/company/post/list/1", response.getMessage());
 
         Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
@@ -108,7 +108,7 @@ public class CompanyService {
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.post(session, postRequestDto, Const.RequestHeader.COMPANY, "/company/" + companyId + "/post");
 
-        return new PageMoveWithMessage("redirect:/v1/company/post/list", response.getMessage());
+        return new PageMoveWithMessage("redirect:/v1/company/post/list/1", response.getMessage());
     }
 
     public PageMoveWithMessage getPostDetail(HttpSession session, Long postId, String postType) {
@@ -154,7 +154,7 @@ public class CompanyService {
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/" + postId);
 
-        return new PageMoveWithMessage("redirect:/v1/company/post/list", response.getMessage());
+        return new PageMoveWithMessage("redirect:/v1/company/post/list/1", response.getMessage());
     }
 
     public PageMoveWithMessage closePost(HttpSession session, Long postId, String postType) {
