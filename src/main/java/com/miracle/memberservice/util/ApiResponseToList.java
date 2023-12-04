@@ -1,6 +1,7 @@
 package com.miracle.memberservice.util;
 
 import com.miracle.memberservice.dto.response.*;
+
 import java.time.LocalDate;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
@@ -98,12 +99,12 @@ public class ApiResponseToList {
         }
         return dtos;
     }
-  
-    public static List<ResumeListResponseDto> resumeList(Object object){
+
+    public static List<ResumeListResponseDto> resumeList(Object object) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
 
         List<ResumeListResponseDto> dtos = new ArrayList<>();
-        for (LinkedHashMap<String, Object> lhm : data){
+        for (LinkedHashMap<String, Object> lhm : data) {
 
             Integer id = (Integer) lhm.get("id");
             dtos.add(ResumeListResponseDto.builder()
@@ -115,9 +116,11 @@ public class ApiResponseToList {
                     .build());
         }
         return dtos;
+    }
 
     private static String divideTime(String time) {
         String[] ts = time.split("T");
         return ts[0] + " " + ts[1];
-      }
+    }
 }
+

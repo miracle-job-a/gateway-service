@@ -9,12 +9,8 @@ import com.miracle.memberservice.util.ServiceCall;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriBuilder;
-import org.springframework.web.util.UriBuilderFactory;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpSession;
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -70,7 +66,7 @@ public class CompanyService {
 
         Long companyId = (Long) session.getAttribute("id");
 
-        ApiResponse response = ServiceCall.getParam(session, "company", "/company/" + companyId + "/posts/latest", strNum, endNum);
+        ApiResponse response = ServiceCall.getParamList(session, "company", "/company/" + companyId + "/posts/latest", strNum, endNum);
 
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("index", response.getMessage());
 
