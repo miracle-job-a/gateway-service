@@ -68,6 +68,11 @@ public class ServiceCall {
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).build()), httpSession, serviceType).block();
     }
 
+    public static ApiResponse getParamListWithToday(HttpSession httpSession, String serviceType, String url, int strNum, int endNum, boolean today) {
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).queryParam("today", today).build()), httpSession, serviceType).block();
+    }
+
     private static int port(String memberType) {
         if (memberType.equals(Const.RequestHeader.USER)) {
             return 60001;
