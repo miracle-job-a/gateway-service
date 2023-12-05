@@ -220,9 +220,9 @@
 
 
                     <div class="col-lg-4 col-12 mb-4 mb-lg-0" th:each="post, postStat : ${postList}">
-                        <div class="custom-block custom-block-full mb-2">
+                        <div class="custom-block custom-block-full mb-2" >
                             <div class="custom-block-image-wrap">
-                                <a href="company/detail-page.html">
+                                <a th:href="@{/v1/click/post/detail/{postId}(postId=${post.id})}">
                                     <img src="/images/podcast/27670664_7369753.jpg" class="custom-block-image img-fluid"
                                          alt="">
                                 </a>
