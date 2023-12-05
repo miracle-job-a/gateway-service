@@ -9,20 +9,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             // 페이지 로딩 시 초기 상태 설정
             initializePage();
-            activateButton([[${sort}]]);
         });
-
-        function activateButton(id) {
-            // 모든 버튼에서 active 클래스 제거
-            let elementsByTagName = document.getElementsByTagName('button');
-            for (let i = 0; i < elementsByTagName.length; i++) {
-                elementsByTagName[i].classList.remove('active');
-            }
-
-            // 클릭된 버튼에 active 클래스 추가
-            let clickedButton = document.getElementById(id);
-            clickedButton.classList.add('active');
-        }
 
         function initializePage() {
             var posts = document.querySelectorAll('[id^="postPage"]');
@@ -78,16 +65,16 @@
                     <div class="row col-lg-10 col-12 d-flex justify-content-between">
                         <div class="col-4">
                             <div class="btn-group">
-                                <button id="latest" type="button" class="btn btn-outline-secondary"
+                                <button id="latest" type="button" th:class="${sort == 'latest' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}"
                                         onclick="sort(this)">최신순
                                 </button>
-                                <button id="open" type="button" class="btn btn-outline-secondary" onclick="sort(this)">
+                                <button id="open" type="button" th:class="${sort == 'open' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}" onclick="sort(this)">
                                     진행중
                                 </button>
-                                <button id="deadline" type="button" class="btn btn-outline-secondary"
+                                <button id="deadline" type="button" th:class="${sort == 'deadline' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}"
                                         onclick="sort(this)">마감임박
                                 </button>
-                                <button id="close" type="button" class="btn btn-outline-secondary" onclick="sort(this)">
+                                <button id="close" type="button" th:class="${sort == 'close' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}" onclick="sort(this)">
                                     마감만
                                 </button>
                             </div>

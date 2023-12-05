@@ -8,6 +8,7 @@ import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -34,10 +35,11 @@ public class CompanyController {
 
     @GetMapping("/post/list/{strNum}")
     public String postList(HttpSession session, Model model, @PathVariable int strNum, @RequestParam(required = false, defaultValue = "") String sort) {
-        PageMoveWithMessage pmwm = companyService.postList(session, strNum, strNum+4, sort);
+        PageMoveWithMessage pmwm = companyService.postList(session, strNum, strNum + 4, sort);
         model.addAttribute("strNum", strNum);
         model.addAttribute("postPage", pmwm.getData());
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        if (Strings.isBlank(sort)) sort = "latest";
         model.addAttribute("sort", sort);
         return pmwm.getPageName();
     }
