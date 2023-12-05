@@ -9,8 +9,8 @@ public class AdminLoginResponseDto {
     private final String email;
 
     @Builder
-    public AdminLoginResponseDto(Object id, Object email, Object name) {
-        this.id = Long.parseLong(id.toString());
+    public AdminLoginResponseDto(Object id, Object email) {
+        this.id = (Long) id;
         this.email = String.valueOf(email);
     }
 }
