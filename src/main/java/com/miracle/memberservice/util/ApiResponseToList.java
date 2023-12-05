@@ -123,6 +123,7 @@ public class ApiResponseToList {
                             .career((Integer) dto.get("career"))
                             .job(jobDetail)
                             .name((String) dto.get("name"))
+                            .photo((String) dto.get("photo"))
                             .build());
                 }
                 pageList.add(dtos);
@@ -162,6 +163,32 @@ public class ApiResponseToList {
                     .build());
         }
         return dtos;
+    }
+
+    public static List<ResumeTitleResponseDto> resumeTitleList(Object object) {
+        List<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+        List<ResumeTitleResponseDto> dto = new ArrayList<>();
+        for (LinkedHashMap<String, Object> lhm : data) {
+            Integer id = (Integer) lhm.get("id");
+            dto.add(ResumeTitleResponseDto.builder()
+                    .id(id.longValue())
+                    .title((String) lhm.get("title"))
+                    .build());
+        }
+        return dto;
+    }
+
+    public static List<CoverLetterTitleResponseDto> coverLetterTitleList(Object object) {
+        List<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+        List<CoverLetterTitleResponseDto> dto = new ArrayList<>();
+        for (LinkedHashMap<String, Object> lhm : data) {
+            Integer id = (Integer) lhm.get("id");
+            dto.add(CoverLetterTitleResponseDto.builder()
+                    .id(id.longValue())
+                    .title((String) lhm.get("title"))
+                    .build());
+        }
+        return dto;
     }
 
     private static String divideTime(String time) {

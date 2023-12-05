@@ -3,7 +3,6 @@ package com.miracle.memberservice.controller;
 import com.miracle.memberservice.dto.request.ResumeRequestDto;
 import com.miracle.memberservice.dto.request.ResumeUpdateRequestDto;
 import com.miracle.memberservice.dto.response.JobResponseDto;
-import com.miracle.memberservice.dto.response.ResumeListResponseDto;
 import com.miracle.memberservice.dto.response.ResumeResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;
 import com.miracle.memberservice.service.AdminService;
@@ -16,11 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.SimpleTimeZone;
 
 
 @Controller

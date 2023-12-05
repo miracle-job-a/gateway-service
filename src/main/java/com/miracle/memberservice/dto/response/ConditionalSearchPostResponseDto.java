@@ -17,6 +17,7 @@ public class ConditionalSearchPostResponseDto {
     private final String workAddress;
     private final Integer career;
     private final String job;
+    private final String photo;
 
     public ConditionalSearchPostResponseDto() {
         this.id = null;
@@ -28,10 +29,11 @@ public class ConditionalSearchPostResponseDto {
         this.workAddress = null;
         this.career = null;
         this.job = null;
+        this.photo = null;
     }
 
     @Builder
-    public ConditionalSearchPostResponseDto(Long id, String name, String title, String postType, String endDate, Boolean closed, String workAddress, Integer career, String job) {
+    public ConditionalSearchPostResponseDto(Long id, String name, String title, String postType, String endDate, Boolean closed, String workAddress, Integer career, String job, String photo) {
         this.id = id;
         this.name = name;
         this.title = title;
@@ -41,5 +43,6 @@ public class ConditionalSearchPostResponseDto {
         this.workAddress = workAddress;
         this.career = career;
         this.job = job;
+        this.photo = photo;
     }
 }
