@@ -126,6 +126,134 @@
             }
         }
 
+        function validateForm() {
+            // 체크박스 중에서 최소한 하나는 체크되어야 함
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            var isChecked = Array.from(checkboxes).some(function (checkbox) {
+                return checkbox.checked;
+            });
+
+            if (!isChecked) {
+                alert('스택 최소 하나 이상은 체크해주세요.');
+                return false; // 폼 제출을 막음
+            }
+
+            var requiredInputs = document.querySelectorAll('[required]');
+
+            for (var i = 0; i < requiredInputs.length; i++) {
+                var input = requiredInputs[i];
+
+                if (!input.value.trim()) {
+                    alert(input.id + ' 입력 필드를 작성해주세요.');
+                    return false; // 폼 제출을 막음
+                }
+            }
+
+            var eventDateTimeInput = document.getElementById('endDate');
+            var testStartDateInput = document.getElementById('testStartDate');
+            var testEndDateInput = document.getElementById('testEndDate');
+            var enteredDateTime = new Date(eventDateTimeInput.value);
+
+            var testStartDate = new Date(testStartDateInput.value);
+            var testEndDate = new Date(testEndDateInput.value);
+            var currentDateTime = new Date();
+
+            if (enteredDateTime < currentDateTime) {
+                alert('마감일은 현재 시간 이후여야 합니다.');
+                return false; // 폼 제출을 막음
+            }
+
+            if (testStartDate < currentDateTime) {
+                alert('테스트 시작일은 현재 시간 이후여야 합니다.');
+                return false; // 폼 제출을 막음
+            }
+
+            if (testEndDate < currentDateTime) {
+                alert('테스트 마감일은 현재 시간 이후여야 합니다.');
+                return false; // 폼 제출을 막음
+            }
+
+            if (testEndDate < testStartDate) {
+                alert('테스트 마감일은 테스트 시작일 이후여야 합니다.');
+                return false; // 폼 제출을 막음
+            }
+
+            if (testStartDate < enteredDateTime) {
+                alert('테스트 시작일은 마감일 이후여야 합니다.');
+                return false; // 폼 제출을 막음
+            }
+
+            var title = document.getElementById('title').value;
+            var mainTask = document.getElementById('mainTask').value;
+            var workCondition = document.getElementById('workCondition').value;
+            var qualification = document.getElementById('qualification').value;
+            var tool = document.getElementById('tool').value;
+            var benefit = document.getElementById('benefit').value;
+            var special_skill = document.getElementById('special_skill').value;
+            var process = document.getElementById('process').value;
+            var notice = document.getElementById('notice').value;
+            var address = document.getElementById('address').value;
+            let questionGit = document.getElementById('questionGit');
+
+            if (title.includes('<') || title.includes('>')) {
+                alert('제목에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (mainTask.includes('<') || mainTask.includes('>')) {
+                alert('주요업무에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (workCondition.includes('<') || workCondition.includes('>')) {
+                alert('근무조건에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (qualification.includes('<') || qualification.includes('>')) {
+                alert('자격요건에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (tool.includes('<') || tool.includes('>')) {
+                alert('개발툴에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (benefit.includes('<') || benefit.includes('>')) {
+                alert('복지 및 혜택에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (special_skill.includes('<') || special_skill.includes('>')) {
+                alert('우대 기술사항에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (process.includes('<') || process.includes('>')) {
+                alert('채용절차에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (notice.includes('<') || notice.includes('>')) {
+                alert('유의사항에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (address.includes('<') || address.includes('>')) {
+                alert('근무주소에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (questionGit.includes('<') || questionGit.includes('>')) {
+                alert('깃주소에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            // 폼 제출을 허용
+            return true;
+        }
+
     </script>
     <main>
         <header class="site-header d-flex flex-column justify-content-center align-items-center">
@@ -143,15 +271,15 @@
 
                                 <div class="col-8">
                                     <div class="mb-1">
-                                        <label for="title">공고 제목</label>
+                                        <label for="title">공고 제목</label><label class="text-danger"> *필수</label>
                                     </div>
                                     <input type="text" name="title" id="title"
-                                           class="form-control" placeholder="공고제목" th:value="${detail.title}" readonly/>
+                                           class="form-control" placeholder="공고제목" th:value="${detail.title}" readonly required/>
                                 </div>
                                 <div class="row">
                                     <div class="col-4 mt-2 ">
                                         <div class="mb-1">
-                                            <label for="endDate">마감일</label>
+                                            <label for="endDate">마감일</label><label class="text-danger"> *필수</label>
                                         </div>
                                         <input type="datetime-local" name="endDate" id="endDate"
                                                class="form-control" placeholder="마감일" th:value="${detail.endDate}"
@@ -159,10 +287,10 @@
                                     </div>
                                     <div class="col-4 mt-2">
                                         <div class="mb-1">
-                                            <label for="career">경력</label>
+                                            <label for="career">경력</label><label class="text-danger"> *필수</label>
                                         </div>
                                         <input type="number" name="career" id="career" class="form-control"
-                                               placeholder="경력(년)" th:value="${detail.career}" readonly
+                                               placeholder="경력(년)" th:value="${detail.career}" readonly required
                                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"/>
                                     </div>
                                 </div>
@@ -170,11 +298,11 @@
 
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
-                                        <label for="jobId">직무</label>
+                                        <label for="jobId">직무</label><label class="text-danger"> *필수</label>
                                     </div>
                                     <div th:each="job : ${totalJobs}" class="editJobs" style="display: none;">
                                         <input class="form-check-input" type="radio" th:id="'job'+${job.id}"
-                                               name="jobIdSet"
+                                               name="jobIdSet" required
                                                th:value="${job.id}" th:checked="${jobs != null and jobs.contains(job)}"/>
                                         <label class="form-check-label" th:text="${job.name}"></label>
                                         <br/>
@@ -192,7 +320,7 @@
 
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
-                                        <label for="stackId">요구스택</label>
+                                        <label for="stackId">요구스택</label><label class="text-danger"> *하나 이상 필수</label>
                                     </div>
                                     <div th:each="stack : ${totalStacks}" class="editStacks" style="display: none;">
                                         <input class="form-check-input" type="checkbox" th:id="'stack'+${stack.id}"
@@ -213,7 +341,7 @@
 
 
                                 <div class="col-8 mt-4">
-                                    <h4 class="mb-2">회사 정보</h4>
+                                    <h4 class="mb-2">회사 정보</h4><label class="text-warning">*회사 정보 수정 필요 시 기업페이지에서 해주세요</label>
                                     <!--
                                      회사명 : name
                                      대표자 : ceoName
@@ -280,18 +408,18 @@
                                 </div>
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
-                                        <label for="mainTask">주요업무</label>
+                                        <label for="mainTask">주요업무</label><label class="text-danger"> *필수</label>
                                     </div>
                                     <textarea class="form-control" rows="3" id="mainTask" name="mainTask"
-                                              th:text="${detail.mainTask}" readonly></textarea>
+                                              th:text="${detail.mainTask}" readonly required></textarea>
                                 </div>
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
-                                        <label for="workCondition">근무조건</label>
+                                        <label for="workCondition">근무조건</label><label class="text-danger"> *필수</label>
                                     </div>
                                     <textarea class="form-control" rows="3" id="workCondition"
                                               name="workCondition" th:text="${detail.workCondition}"
-                                              readonly></textarea>
+                                              readonly required></textarea>
                                 </div>
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
@@ -303,9 +431,9 @@
                                 </div>
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
-                                        <label for="tool">개발 툴</label>
+                                        <label for="tool">개발 툴</label><label class="text-danger"> *필수</label>
                                         <input type="text" name="tool" id="tool"
-                                               class="form-control" th:value="${detail.tool}" readonly/>
+                                               class="form-control" th:value="${detail.tool}" readonly required/>
                                     </div>
                                 </div>
                                 <div class="col-8 mt-2">
@@ -324,10 +452,10 @@
                                 </div>
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
-                                        <label for="process">채용절차</label>
+                                        <label for="process">채용절차</label><label class="text-danger"> *필수</label>
                                     </div>
                                     <textarea class="form-control" rows="3" id="process" name="process"
-                                              th:text="${detail.process}" readonly></textarea>
+                                              th:text="${detail.process}" readonly required></textarea>
                                 </div>
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
@@ -338,11 +466,11 @@
                                 </div>
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
-                                        <label for="address">근무주소(세부주소 포함)</label>
+                                        <label for="address">근무주소(세부주소 포함)</label><label class="text-danger"> *필수</label>
                                     </div>
                                     <input type="text" name="workAddress" id="address"
                                            class="form-control mb-2" placeholder="근무주소" th:value="${detail.workAddress}"
-                                           readonly/>
+                                           readonly required/>
                                 </div>
                                 <div class="col-8 mt-2">
                                     <div class="form-floating">
@@ -356,15 +484,15 @@
 
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
-                                        <label for="testStartDate">테스트 시작일</label>
+                                        <label for="testStartDate">테스트 시작일</label><label class="text-danger"> *필수</label>
                                     </div>
                                     <input type="datetime-local" name="testStartDate" id="testStartDate"
                                            class="form-control" placeholder="test_start"
-                                           th:value="${detail.testStartDate}" disabled equired=""/>
+                                           th:value="${detail.testStartDate}" disabled required=""/>
                                 </div>
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
-                                        <label for="testEndDate">테스트 종료일</label>
+                                        <label for="testEndDate">테스트 종료일</label><label class="text-danger"> *필수</label>
                                     </div>
                                     <input type="datetime-local" name="testEndDate" id="testEndDate"
                                            class="form-control" placeholder="test_end" th:value="${detail.testEndDate}"
@@ -374,7 +502,7 @@
                                 <!-- param 값 question 으로 동일하니 주의 ! -->
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
-                                        <label for="questionGit">테스트 링크</label>
+                                        <label for="questionGit">테스트 링크</label><label class="text-danger"> *필수</label>
                                     </div>
                                     <input type="hidden" name="idList" th:value="${detail.questionList[0].id}"/>
                                     <input type="text" name="questionList" id="questionGit"
@@ -384,7 +512,7 @@
 
 
                                 <!-- Company_FAQ 의 질문(question) 컬럼명이 겹침 주의 ! -->
-                                <h5 class="mb-4 mt-4">자주하는 질문</h5>
+                                <h5 class="mb-4 mt-4">자주하는 질문</h5><label class="text-warning">*FAQ 수정 필요 시 상단 faq바를 이용해주세요.</label>
                                 <div class="accordion" th:each="faq, faqStat : ${info.faqList}" id="accordionExample">
                                     <div class="accordion-item mb-3">
                                         <h2 class="accordion-header" th:id="'heading' + ${faqStat.index}">

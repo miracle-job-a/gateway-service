@@ -71,7 +71,6 @@
                 }).open();
             });
         }
-
         function validateForm() {
             // 체크박스 중에서 최소한 하나는 체크되어야 함
             var checkboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -104,6 +103,72 @@
                 return false; // 폼 제출을 막음
             }
 
+            var title = document.getElementById('title').value;
+            var mainTask = document.getElementById('mainTask').value;
+            var workCondition = document.getElementById('workCondition').value;
+            var qualification = document.getElementById('qualification').value;
+            var tool = document.getElementById('tool').value;
+            var benefit = document.getElementById('benefit').value;
+            var special_skill = document.getElementById('special_skill').value;
+            var process = document.getElementById('process').value;
+            var notice = document.getElementById('notice').value;
+            var address = document.getElementById('address').value;
+            let questionList = document.getElementById('questionList');
+
+            if (title.includes('<') || title.includes('>')) {
+                alert('제목에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (mainTask.includes('<') || mainTask.includes('>')) {
+                alert('주요업무에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (workCondition.includes('<') || workCondition.includes('>')) {
+                alert('근무조건에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (qualification.includes('<') || qualification.includes('>')) {
+                alert('자격요건에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (tool.includes('<') || tool.includes('>')) {
+                alert('개발툴에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (benefit.includes('<') || benefit.includes('>')) {
+                alert('복지 및 혜택에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (special_skill.includes('<') || special_skill.includes('>')) {
+                alert('우대 기술사항에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (process.includes('<') || process.includes('>')) {
+                alert('채용절차에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (notice.includes('<') || notice.includes('>')) {
+                alert('유의사항에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (address.includes('<') || address.includes('>')) {
+                alert('근무주소에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (questionList.includes('<') || questionList.includes('>')) {
+                alert('자소서 질문에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
             // 폼 제출을 허용
             return true;
         }
@@ -311,7 +376,7 @@
                                 <br>
 
                                 <div class="col-12 mb-4" id="pre_set">
-                                    <input type="text" class="form-control" name="questionList" value="">
+                                    <input type="text" class="form-control" id="questionList" name="questionList" value="">
                                     <input type="button" class="form-control" value="삭제" onclick="remove_item(this)">
                                 </div>
 
@@ -322,7 +387,7 @@
 
 
                                 <!-- Company_FAQ 의 질문(question) 컬럼명이 겹침 주의 ! -->
-                                <h5 class="mb-4 mt-4">자주하는 질문</h5>
+                                <h5 class="mb-4 mt-4">자주하는 질문</h5><label class="text-warning">*FAQ 수정 필요 시 상단 faq바를 이용해주세요.</label>
                                 <div class="accordion" th:each="faq, faqStat : ${info.faqList}" id="accordionExample">
                                     <div class="accordion-item mb-3">
                                         <h2 class="accordion-header" th:id="'heading' + ${faqStat.index}">
