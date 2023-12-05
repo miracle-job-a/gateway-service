@@ -246,5 +246,19 @@ public class ApiResponseToList {
         }
         return pageList;
     }
+
+    public static List<StackAndJobResponseDto> stackList(Object object) {
+        ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+
+        List<StackAndJobResponseDto> dtos = new ArrayList<>();
+        for (LinkedHashMap<String, Object> lhm : data) {
+
+            dtos.add(StackAndJobResponseDto.builder()
+                    .id(lhm.get("id"))
+                    .name(lhm.get("name"))
+                    .build());
+        }
+        return dtos;
+    }
 }
 
