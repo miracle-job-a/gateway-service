@@ -14,4 +14,5 @@ public class LoginDto {
     private final String email;
     private final String password;
     private final String memberType;
+    private final String page;
 }

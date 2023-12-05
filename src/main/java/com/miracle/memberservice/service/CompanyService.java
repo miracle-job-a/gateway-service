@@ -66,7 +66,7 @@ public class CompanyService {
 
         Long companyId = (Long) session.getAttribute("id");
 
-        ApiResponse response = ServiceCall.getParamList(session, "company", "/company/" + companyId + "/posts/latest", strNum, endNum);
+        ApiResponse response = ServiceCall.getParamList(session, "company", "/company/" + companyId + "/posts", strNum, endNum);
 
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("index", response.getMessage());
 
@@ -202,6 +202,16 @@ public class CompanyService {
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("redirect:/v1/company/faq", response.getMessage());
         return new PageMoveWithMessage("redirect:/v1/company/faq");
+    }
+
+    public PageMoveWithMessage searchPosts(HttpSession session, ConditionalSearchPostRequestDto dto, int strNum, int endNum) {
+
+        ApiResponse response = ServiceCall.postParam(session, dto, Const.RequestHeader.COMPANY,"/company/posts/search", strNum, endNum);
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("index", response.getMessage());
+
+        List<List<ConditionalSearchPostResponseDto>> searchPosts = ApiResponseToList.searchPosts(response.getData(), session);
+
+        return new PageMoveWithMessage("guest/search-post", searchPosts);
     }
 
     private LocalDateTime truncatedTo(Object time) {

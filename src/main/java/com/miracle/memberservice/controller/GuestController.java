@@ -1,9 +1,7 @@
 package com.miracle.memberservice.controller;
 
-import com.miracle.memberservice.dto.request.CompanyCheckBnoRequestDto;
-import com.miracle.memberservice.dto.request.CompanyJoinDto;
-import com.miracle.memberservice.dto.request.LoginDto;
-import com.miracle.memberservice.dto.request.UserJoinDto;
+import com.miracle.memberservice.dto.request.*;
+import com.miracle.memberservice.dto.response.ApplicationLetterResponseDto;
 import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.service.EmailService;
@@ -11,6 +9,7 @@ import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,9 +17,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpSession;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Controller
@@ -41,7 +39,8 @@ public class GuestController {
 
     //회원가입 로그인 폼
     @GetMapping("/user/login-form")
-    public String userLoginForm() {
+    public String userLoginForm(@RequestParam(required = false) String page, Model model) {
+        model.addAttribute("page", page);
         return "guest/user-login";
     }
 
@@ -113,8 +112,11 @@ public class GuestController {
             session.setAttribute("email", pmwm.getEmail());
             session.setAttribute("name", pmwm.getNameOrBno());
         }
+        String errorMessage = pmwm.getErrorMessage();
 
-        model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        if (Objects.isNull(errorMessage) && Strings.isNotBlank(loginDto.getPage()))
+            return "redirect:/v1/click/post/detail/1";
+        model.addAttribute("errorMessage", errorMessage);
         return pageName;
     }
 
@@ -171,5 +173,55 @@ public class GuestController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("인증 번호가 맞지 않습니다");
     }
 
+    @GetMapping("/search/posts/{strNum}")
+    public String searchPosts(HttpSession session, @ModelAttribute("dto") ConditionalSearchPostRequestDto dto, @PathVariable int strNum, Model model) {
+        PageMoveWithMessage pmwm = companyService.searchPosts(session, dto, strNum, strNum + 4);
+        Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
+        model.addAttribute("dto", dto);
+        model.addAttribute("postPage", pmwm.getData());
+        model.addAttribute("jobs", allJobsAndStacks.get("jobs"));
+        model.addAttribute("stacks", allJobsAndStacks.get("stacks"));
+        return pmwm.getPageName();
+    }
 
+    @ModelAttribute("dto")
+    public ConditionalSearchPostRequestDto setupModel(@RequestParam(name = "jobIdSet", required = false) Set<Long> jobIdSet,
+                                                      @RequestParam(name = "stackIdSet", required = false) Set<Long> stackIdSet,
+                                                      @RequestParam(name = "career", required = false, defaultValue = "0") Integer career,
+                                                      @RequestParam(name = "includeEnded", required = false, defaultValue = "false") Boolean includeEnded,
+                                                      @RequestParam(name = "addressSet", required = false) Set<String> addressSet
+    ) {
+        if (Objects.isNull(jobIdSet)) {
+            jobIdSet = new HashSet<>();
+        }
+
+        if (Objects.isNull(stackIdSet)) {
+            stackIdSet = new HashSet<>();
+        }
+
+        if (Objects.isNull(addressSet)) {
+            addressSet = new HashSet<>();
+        }
+
+        return ConditionalSearchPostRequestDto.builder()
+                .jobIdSet(jobIdSet)
+                .addressSet(addressSet)
+                .career(career)
+                .stackIdSet(stackIdSet)
+                .includeEnded(includeEnded)
+                .build();
+    }
+
+    @GetMapping("/click/post/detail/{postId}")
+    public String clickPostDetail(HttpSession session, @PathVariable Long postId, @RequestParam(required = false) String postType, Model model) {
+        /*PageMoveWithMessage postInfo = companyService.formPost(session, postType);
+        PageMoveWithMessage postDetail = companyService.getPostDetail(session, postId, postType);*/
+        Long userId = (Long) session.getAttribute("id");
+        if (Objects.nonNull(userId)) {
+            ApplicationLetterResponseDto apply = userService.apply(session, userId);
+            model.addAttribute("resumeList", apply.getResumeList());
+            model.addAttribute("coverLetterList", apply.getCoverLetterList());
+        }
+        return "guest/post-detail";
+    }
 }
