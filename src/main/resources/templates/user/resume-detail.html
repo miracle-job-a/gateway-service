@@ -5,40 +5,6 @@
 
 <div layout:fragment="content">
     <script th:inline="javascript">
-        // 경력사항에 대한 새로운 입력 필드 추가
-        function addCareerItem(preSetId, fieldId, type) {
-            var preSet = document.getElementById(preSetId);
-            var field = document.getElementById(fieldId);
-
-            // 새로운 입력 필드 추가 로직
-            var newField = document.createElement("div");
-            newField.className = "input-group m-1 career";
-            newField.innerHTML = `
-        <input type="date" class="form-control" name="${type}_start_date" value="">
-        <input type="date" class="form-control" name="${type}_end_date" value="">
-        <input type="text" class="form-control" name="${type}_title" value="">
-        <input type="hidden" name="${type}DetailList" />
-        <button class="btn" type="button" value="삭제" onclick="removeCareerItem(this, '${preSetId}', '${fieldId}', '${type}')">-</button>
-    `;
-            preSet.appendChild(newField);
-        }
-
-        // 경력사항에서 입력 필드 삭제
-        function removeCareerItem(button, preSetId, fieldId, type) {
-            var parentDiv = button.parentNode;
-            var preSet = document.getElementById(preSetId);
-
-            // Check if it's the last item before removing
-            if (preSet.querySelectorAll('.career').length > 1) {
-                preSet.removeChild(parentDiv);
-            } else {
-                alert("마지막 항목은 삭제할 수 없습니다.");
-            }
-
-            // 기간 계산 및 careerInput에 설정
-            calculateAndSetCareer();
-        }
-
         // 경력사항에서 기간 계산
         function calculateAndSetCareer() {
             let totalMonths = 0;
@@ -47,7 +13,7 @@
             let detailStringArray = [];
 
             // 모든 입력 필드의 날짜 합산 계산
-            document.querySelectorAll('.career').forEach((item, index) => {
+            document.querySelectorAll('.career').forEach((item) => {
                 const startElement = item.querySelector('input[name$="_start_date"]');
                 const endElement = item.querySelector('input[name$="_end_date"]');
                 const careerTitleElement = item.querySelector('input[name$="_title"]');
@@ -91,34 +57,6 @@
             document.getElementById("careerCal").value = totalMonths;
         }
 
-        // 프로젝트나 기타사항에 대한 새로운 입력 필드 추가
-        function addItem(preSetId, fieldId) {
-            var preSet = document.getElementById(preSetId);
-            var field = document.getElementById(fieldId);
-
-            // 새로운 입력 필드 추가 로직
-            var newField = document.createElement("div");
-            newField.className = "input-group m-1";
-            newField.innerHTML = `
-            <input type="text" class="form-control" name="${fieldId}" value="">
-            <button class="btn" type="button" value="삭제" onclick="removeItem(this, '${preSetId}', '${fieldId}')">-</button>
-        `;
-            preSet.appendChild(newField);
-        }
-
-        // 프로젝트나 기타사항에서 입력 필드 삭제
-        function removeItem(button, preSetId, fieldId) {
-            var parentDiv = button.parentNode;
-            var preSet = document.getElementById(preSetId);
-            var field = document.getElementById(fieldId);
-
-            // Check if it's the last item before removing
-            if (preSet.querySelectorAll('.input-group').length > 1) {
-                preSet.removeChild(parentDiv);
-            } else {
-                alert("마지막 항목은 삭제할 수 없습니다.");
-            }
-        }
 
         // 정수값을 년과 개월로 변환하는 함수
         function convertYearsMonths(value) {
@@ -178,7 +116,7 @@
         function cancelEditing(){
             var resumeId = [[${resume.id}]];
 
-            window.location.href = '/v1/user/resume/detail?id=' + resumeId;
+            window.location.href = '/v1/user/resume/detail/' + resumeId;
             /*]]>*/
         }
 
@@ -215,6 +153,10 @@
                 $(this).css('display', 'none');
             });
             $('.bi-person-workspace').prev('input[type="checkbox"]').prop('checked', true);
+            $('.pre_set input[type="date"], .pre_set input[type="text"]').removeAttr('readonly');
+            $('#item2 input[type="text"]').removeAttr('readonly');
+            $('#item3 input[type="text"]').removeAttr('readonly');
+            $('input[name="career_title"]').removeAttr('readonly');
 
         }
 
@@ -237,18 +179,8 @@
                         <div class="row justify-content-center">
                             <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
 
-                                <div class="card mt-4 mb-4 p-4 col-11 post-form align-self-center">
-                                    <div class="col-12 mt-1">
-                                        <div class="mb-1">
-                                            <label for="title" >제목</label>
-                                        </div>
-                                        <input type="text" readonly name="title" id="title"
-                                               class="form-control" placeholder="이력서 제목" th:value="${resume.title}" required="" />
-                                    </div>
-                                </div>
-
                                 <!-- 유저의 기본 정보 -->
-                                <div class="card p-4 col-11 post-form align-self-center">
+                                <div class="card mt-4 p-4 col-11 post-form align-self-center">
                                     <div class="row">
                                         <div class="col-lg-4 col-12 ps-5 pe-5 align-self-auto">
                                             <img src="/images/niniz.png" class="rounded float-start" alt="templatemo pod talk">
@@ -313,6 +245,14 @@
 
 
                                     <div class="card mt-3 p-3 col-12 post-form align-self-center">
+                                        <div class="col-12 mt-1">
+                                            <div class="mb-1">
+                                                <label for="title" >제목</label>
+                                            </div>
+                                            <input type="text" readonly name="title" id="title"
+                                                   class="form-control" placeholder="이력서 제목" th:value="${resume.title}" required="" />
+                                        </div>
+
                                             <div class="mb-1">
                                                 <label for="job">개발 가능한 직무</label>
                                             </div>
@@ -366,7 +306,6 @@
                                         <div class="card mt-3 p-3 col-12 post-form align-self-center" id="item1">
                                             <div class="mb-1">
                                                 <label for="careerDetail">경력사항</label>
-                                                <button class="btn m-2 visually-hidden" type="button" onclick="addCareerItem('pre_set1', 'field1', 'career')">+</button>
                                                 <button class="btn m-2 visually-hidden" type="button" onclick="calculateAndSetCareer()">경력기간 계산</button>
                                                 <input type="text" readonly class="form-control mt-2" name="careerNum" id="careerInput" th:value="'총 경력 : '+${resume.career}" />
                                                 <input type="hidden" name="career" id="careerCal" />
@@ -380,34 +319,28 @@
                                         <div class="card mt-3 p-3 col-12 post-form align-self-center" id="item2">
                                             <div class="mb-1">
                                                 <label for="projectList">프로젝트</label>
-                                                <button class="btn m-2 visually-hidden" type="button" onclick="addItem('pre_set2', 'field2', 'project')" style="display: inline-block">+</button>
                                             </div>
                                             <div class="pre_set" id="pre_set2">
                                                 <div th:each="project : ${resume.projectList}">
                                                     <div class="input-group m-1">
                                                         <input type="text" readonly class="form-control" name="projectList" th:value="${project}">
-                                                        <button class="btn visually-hidden" type="button" value="삭제" onclick="removeItem(this)" >-</button>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="field" id="field2"></div>
                                         </div>
 
                                         <!-- 기타사항 -->
                                         <div class="card mt-3 mb-3 p-3 col-12 post-form align-self-center" id="item3">
                                             <div class="mb-1">
                                                 <label for="etcList">기타사항</label>
-                                                <button class="btn m-2 visually-hidden" type="button"  onclick="addItem('pre_set3', 'field3', 'etc')" >+</button>
                                             </div>
                                             <div class="pre_set" id="pre_set3">
                                                 <div th:each="etc : ${resume.etcList}">
                                                     <div class="input-group m-1">
                                                         <input type="text" readonly class="form-control" name="etcList" th:value="${etc}">
-                                                        <button class="btn visually-hidden" type="button"  value="삭제" onclick="removeItem(this)" >-</button>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="field" id="field3"></div>
                                         </div>
 
                                         <!-- 추후 이력서 공개 여부 추가 필요 -->

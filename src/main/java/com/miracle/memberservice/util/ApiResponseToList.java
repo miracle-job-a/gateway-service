@@ -165,6 +165,22 @@ public class ApiResponseToList {
         return dtos;
     }
 
+    public static List<CoverLetterListResponseDto> coverLetterList(Object object) {
+        ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+
+        List<CoverLetterListResponseDto> dto = new ArrayList<>();
+        for (LinkedHashMap<String, Object> letter : data) {
+
+            Integer id = (Integer) letter.get("id");
+            dto.add(CoverLetterListResponseDto.builder()
+                            .id(id.longValue())
+                            .title((String) letter.get("title"))
+                            .modifiedAt((String) letter.get("modifiedAt"))
+                    .build());
+        }
+        return dto;
+    }
+
     public static List<ResumeTitleResponseDto> resumeTitleList(Object object) {
         List<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
         List<ResumeTitleResponseDto> dto = new ArrayList<>();

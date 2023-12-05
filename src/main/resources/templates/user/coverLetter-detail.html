@@ -1,0 +1,178 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+    <script>
+        function removeQna(button) {
+            // 부모 노드를 찾아서 삭제
+            var qnaDiv = button.closest('.qna');
+            qnaDiv.parentNode.removeChild(qnaDiv);
+            qnaCount--;
+        }
+
+        $(document).ready(function () {
+            var addButton = document.getElementById('addButton');
+            var qnaContainer = document.getElementById('QNA');
+            var maxQnaCount = 5;
+            var qnaCount = 1;
+
+            $('#addButton').on('click', function () {
+                if (qnaCount < maxQnaCount) {
+                    // 새로운 HTML 생성
+                    var newQnaHTML = `
+                    <div class="col-12 mt-3 mb-3 qna" id="QNA">
+                        <div class="mb-1">
+                            <label for="question">문항</label>
+                        </div>
+                        <input type="text" name="question" class="form-control" placeholder="문항을 입력해주세요." required="" />
+                        <div class="mt-3 mb-1">
+                            <label for="answer">내용</label>
+                        </div>
+                        <textarea class="form-control" rows="5" name="answer" placeholder="내용을 입력해주세요."></textarea>
+                        <button type="button" class="btn btn-danger mt-2" onclick="removeQna(this)">삭제</button>
+                    </div>
+                `;
+
+                    // 새로운 HTML을 마지막 위치에 삽입
+                    qnaContainer.insertAdjacentHTML('beforeend', newQnaHTML);
+
+                    qnaCount++;
+                } else {
+                    alert('최대 5개까지만 추가할 수 있습니다.');
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            // 텍스트 영역에 입력 이벤트를 바인딩합니다.
+            $('#answer').on('input', function () {
+                // 현재 입력된 글자 수를 가져옵니다.
+                var charCount = $(this).val().length;
+
+                // 글자 수 표시 부분을 업데이트합니다.
+                $('#charCount').text('글자 수 : '+charCount+' 자');
+            });
+        });
+
+        // 수정취소 (상세보기로 돌아가기)
+        function cancelEditing(){
+            var id = [[${coverLetter.id}]];
+
+            window.location.href = '/v1/user/cover-letter/detail/' + id;
+            /*]]>*/
+        }
+
+        // 삭제기능
+        function confirmDelete(button) {
+            var id = button.getAttribute('data-letter-id');
+            var confirmResult = confirm("삭제하시겠습니까?");
+
+            if (confirmResult) {
+                // 사용자가 확인을 선택한 경우
+                window.location.href = '/v1/user/cover-letter/delete/' + id;
+            } else {
+                // 사용자가 취소를 선택한 경우
+                // 아무 동작을 하지 않거나 필요한 작업 수행
+            }
+        }
+
+        function enableEditing(){
+            // 버튼 보이게 하기
+           /* $('#addButton').show();*/
+            $('#cancelBtn').show();
+            $('#submitEdit').show();
+
+            // input과 textarea의 readonly 속성 제거
+            $('#title').removeAttr('readonly');
+            $('#QNA input, #QNA textarea').removeAttr('readonly');
+
+        }
+
+    </script>
+
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
+
+        <section class="latest-podcast-section" id="section_2">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <!-- 전체 박스 크기 -->
+                    <div class="col-lg-9 col-12">
+                        <div class="section-title-wrap mb-5">
+                            <h4 class="section-title">자기소개서</h4>
+                        </div>
+
+                        <div class="row justify-content-center">
+                            <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
+
+                                <!-- 자기소개서 생성 폼 시작 -->
+                                <div class="card mt-5 mb-4 p-4 col-11 post-form align-self-center">
+                                    <form th:action="@{/v1/user/cover-letter/update}" method="post" role="form" class="row align-self-center col-12">
+
+                                        <div class="col-12 mt-2">
+                                            <div class="mb-1">
+                                                <label for="title">자기소개서 제목</label>
+                                            </div>
+                                            <input type="text" readonly name="title" id="title"
+                                                   class="form-control" placeholder="자기소개서 제목" required="" th:value="${coverLetter.title}"/>
+                                        </div>
+
+                                        <div class="col-12 mt-2">
+                                            <h6></h6>
+                                        </div>
+                                        <div class="col-12 mt-2 ">
+                                            <div class="justify-content-end">
+                                                <button type="button" class="btn" id="addButton" style="display:none">추가</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 mt-3 mb-3" id="QNA" th:each="qna : ${coverLetter.qnaList}">
+                                            <div class="mb-1">
+                                                <label for="question">문항</label>
+                                            </div>
+                                            <input type="text" name="question" id="question" class="form-control"
+                                                   th:value="${qna.question}" readonly />
+
+                                            <div class="mt-3 mb-1">
+                                                <label for="answer">내용</label>
+                                            </div>
+                                            <span id="charCount" class="text-secondary"></span>
+                                            <textarea class="form-control" rows="5" name="answer" id="answer"
+                                                      readonly th:text="${qna.answer}"></textarea>
+
+                                        </div>
+
+
+                                        <input type="hidden" name="id" th:value="${coverLetter.id}">
+                                        <div class="row col-12 mt-2">
+                                            <div class="col-3">
+                                                <button type="button" class="form-control" id="editBtn" onclick="enableEditing()">수정</button>
+                                            </div>
+                                            <div class="col-3">
+                                                <button type="button" class="form-control" th:attr="data-letter-id=${coverLetter.id}" onclick="confirmDelete(this)">삭제</button>
+                                            </div>
+                                            <div class="col-3">
+                                                <button type="button" class="form-control" id="cancelBtn" onclick="cancelEditing()" style="display:none">취소</button>
+                                            </div>
+                                            <div class="col-3">
+                                                <button type="submit" class="form-control" id="submitEdit" style="display:none">수정완료</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+</html>
