@@ -222,7 +222,7 @@
                     <div class="col-lg-4 col-12 mb-4 mb-lg-0" th:each="post, postStat : ${postList}">
                         <div class="custom-block custom-block-full mb-2" >
                             <div class="custom-block-image-wrap">
-                                <a th:href="@{/v1/click/post/detail/{postId}(postId=${post.id})}">
+                                <a th:href="@{/v1/click/post/{postId}/detail(companyId=${post.companyId}, postId=${post.id}, postType=${post.postType})}">
                                     <img src="/images/podcast/27670664_7369753.jpg" class="custom-block-image img-fluid"
                                          alt="">
                                 </a>
@@ -262,19 +262,8 @@
 
                                 </div>
                             </div>
-
-                            <div class="social-share d-flex flex-column ms-auto">
-                                <a href="#" class="badge ms-auto">
-                                    <i class="bi-heart"></i>
-                                </a>
-
-                                <a href="#" class="badge ms-auto">
-                                    <i class="bi-bookmark"></i>
-                                </a>
-                            </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>

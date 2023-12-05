@@ -72,6 +72,42 @@
             });
         }
 
+        function validateForm() {
+            // 체크박스 중에서 최소한 하나는 체크되어야 함
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            var isChecked = Array.from(checkboxes).some(function (checkbox) {
+                return checkbox.checked;
+            });
+
+            if (!isChecked) {
+                alert('스택 최소 하나 이상은 체크해주세요.');
+                return false; // 폼 제출을 막음
+            }
+
+            var requiredInputs = document.querySelectorAll('[required]');
+
+            for (var i = 0; i < requiredInputs.length; i++) {
+                var input = requiredInputs[i];
+
+                if (!input.value.trim()) {
+                    alert(input.id+' 입력 필드를 작성해주세요.');
+                    return false; // 폼 제출을 막음
+                }
+            }
+
+            var eventDateTimeInput = document.getElementById('endDate');
+            var enteredDateTime = new Date(eventDateTimeInput.value);
+            var currentDateTime = new Date();
+
+            if (enteredDateTime < currentDateTime) {
+                alert('마감일은 현재 시간 이후여야 합니다.');
+                return false; // 폼 제출을 막음
+            }
+
+            // 폼 제출을 허용
+            return true;
+        }
+
     </script>
 
     <main>
@@ -85,40 +121,38 @@
                 </div>
                 <div class="row justify-content-center">
                     <div class="card bg-outline-light text-dark ">
-                        <form action="/v1/company/post/create" method="post" class="post-form" role="form">
+                        <form action="/v1/company/post/create" method="post" class="post-form" role="form" onsubmit="return validateForm()">
                             <div class="card-body">
 
                                 <div class="col-8">
                                     <div class="mb-1">
-                                        <label for="title">공고 제목</label>
+                                        <label for="title">공고 제목</label><label class="text-danger">     *필수</label>
                                     </div>
                                     <input type="text" name="title" id="title"
-                                           class="form-control" placeholder="공고제목" required=""/>
+                                           class="form-control" placeholder="공고제목" required/>
                                 </div>
-                                    <div class="row">
-                                        <div class="col-4 mt-2 ">
-                                            <div class="mb-1">
-                                                <label for="endDate">마감일</label>
-                                            </div>
-                                            <input type="datetime-local" name="endDate" id="endDate"
-                                                   class="form-control" placeholder="마감일" required=""/>
+                                <div class="row">
+                                    <div class="col-4 mt-2 ">
+                                        <div class="mb-1">
+                                            <label for="endDate">마감일</label><label class="text-danger">     *필수</label>
                                         </div>
-                                        <div class="col-4 mt-2">
-                                            <div class="mb-1">
-                                                <label for="career">경력</label>
-                                            </div>
-                                            <input type="number" name="career" id="career" class="form-control"
-                                                   placeholder="경력(년)" required=""
-                                                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"/>
-                                        </div>
+                                        <input type="datetime-local" name="endDate" id="endDate"
+                                               class="form-control" placeholder="마감일" required=""/>
                                     </div>
-
-
+                                    <div class="col-4 mt-2">
+                                        <div class="mb-1">
+                                            <label for="career">경력</label><label class="text-danger">     *필수</label>
+                                        </div>
+                                        <input type="number" name="career" id="career" class="form-control"
+                                               placeholder="경력(년)" required=""
+                                               oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"/>
+                                    </div>
+                                </div>
 
 
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
-                                        <label for="jobId">직무</label>
+                                        <label for="jobId">직무</label><label class="text-danger">     *필수</label>
                                     </div>
                                     <div th:each="job, jobStat : ${jobs}" style="display: inline-block;">
                                         <input class="form-check-input" type="radio" id="job" name="jobIdSet"
@@ -130,11 +164,11 @@
 
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
-                                        <label for="stackId">요구스택</label>
+                                        <label for="stackId">요구스택</label><label class="text-danger">     *하나 이상 필수</label>
                                     </div>
                                     <div th:each="stack, stackStat : ${stacks}" style="display: inline-block;">
                                         <input class="form-check-input" type="checkbox" id="stack" name="stackIdSet"
-                                               th:value="${stack.id}" />
+                                               th:value="${stack.id}"/>
                                         <label class="form-check-label" th:text="${stack.name}"></label>
                                     </div>
 
@@ -142,7 +176,7 @@
 
 
                                 <div class="col-8 mt-4">
-                                    <h4 class="mb-2">회사 정보</h4>
+                                    <h4 class="mb-2">회사 정보</h4><label class="text-warning">*회사 정보 수정 필요 시 기업페이지에서 해주세요</label>
                                     <!--
                                      회사명 : name
                                      대표자 : ceoName
@@ -204,20 +238,21 @@
                                         <label for="introduction">기업소개</label>
                                     </div>
                                     <textarea class="form-control" rows="3" id="introduction" name="introduction"
-                                              th:value="${info.introduction}" th:text="${info.introduction}" readonly></textarea>
+                                              th:value="${info.introduction}" th:text="${info.introduction}"
+                                              readonly></textarea>
                                 </div>
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
-                                        <label for="mainTask">주요업무</label>
+                                        <label for="mainTask">주요업무</label><label class="text-danger">     *필수</label>
                                     </div>
-                                    <textarea class="form-control" rows="3" id="mainTask" name="mainTask"></textarea>
+                                    <textarea class="form-control" rows="3" id="mainTask" name="mainTask" required></textarea>
                                 </div>
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
-                                        <label for="workCondition">근무조건</label>
+                                        <label for="workCondition">근무조건</label><label class="text-danger">     *필수</label>
                                     </div>
                                     <textarea class="form-control" rows="3" id="workCondition"
-                                              name="workCondition"></textarea>
+                                              name="workCondition" required></textarea>
                                 </div>
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
@@ -228,9 +263,9 @@
                                 </div>
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
-                                        <label for="tool">개발 툴</label>
+                                        <label for="tool">개발 툴</label><label class="text-danger">     *필수</label>
                                         <input type="text" name="tool" id="tool"
-                                               class="form-control" required="">
+                                               class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="col-8 mt-2">
@@ -248,9 +283,9 @@
                                 </div>
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
-                                        <label for="process">채용절차</label>
+                                        <label for="process">채용절차</label><label class="text-danger">     *필수</label>
                                     </div>
-                                    <textarea class="form-control" rows="3" id="process" name="process"></textarea>
+                                    <textarea class="form-control" rows="3" id="process" name="process" required></textarea>
                                 </div>
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
@@ -260,10 +295,10 @@
                                 </div>
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
-                                        <label for="address">근무주소(세부주소 포함)</label>
+                                        <label for="address">근무주소(세부주소 포함)</label><label class="text-danger">     *필수</label>
                                     </div>
                                     <input type="text" name="workAddress" id="address"
-                                           class="form-control mb-2" placeholder="근무주소" th:value="${info.address}"/>
+                                           class="form-control mb-2" placeholder="근무주소" th:value="${info.address}" required/>
                                 </div>
                                 <div class="col-8 mt-2">
                                     <div class="form-floating">

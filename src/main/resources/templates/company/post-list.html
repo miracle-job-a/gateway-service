@@ -6,10 +6,23 @@
 <div layout:fragment="content">
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             // 페이지 로딩 시 초기 상태 설정
             initializePage();
+            activateButton([[${sort}]]);
         });
+
+        function activateButton(id) {
+            // 모든 버튼에서 active 클래스 제거
+            let elementsByTagName = document.getElementsByTagName('button');
+            for (let i = 0; i < elementsByTagName.length; i++) {
+                elementsByTagName[i].classList.remove('active');
+            }
+
+            // 클릭된 버튼에 active 클래스 추가
+            let clickedButton = document.getElementById(id);
+            clickedButton.classList.add('active');
+        }
 
         function initializePage() {
             var posts = document.querySelectorAll('[id^="postPage"]');
@@ -26,6 +39,7 @@
                 }
             });
         }
+
         function showOnlySelected(selectedIndex) {
             var posts = document.querySelectorAll('[id^="postPage"]');
             posts.forEach(function (post) {
@@ -39,6 +53,11 @@
                     post.style.display = 'none';
                 }
             });
+        }
+
+        function sort(button) {
+            let id = button.id;
+            location.href = "/v1/company/post/list/1?sort=" + id;
         }
     </script>
     <main>
@@ -56,26 +75,32 @@
                     </div>
 
 
-                    <div class="row col-lg-10 col-12">
+                    <div class="row col-lg-10 col-12 d-flex justify-content-between">
                         <div class="col-4">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-outline-secondary">최신순</button>
-                                <button type="button" class="btn btn-outline-secondary">진행중</button>
-                                <button type="button" class="btn btn-outline-secondary">마감임박</button>
+                                <button id="latest" type="button" class="btn btn-outline-secondary"
+                                        onclick="sort(this)">최신순
+                                </button>
+                                <button id="open" type="button" class="btn btn-outline-secondary" onclick="sort(this)">
+                                    진행중
+                                </button>
+                                <button id="deadline" type="button" class="btn btn-outline-secondary"
+                                        onclick="sort(this)">마감임박
+                                </button>
+                                <button id="close" type="button" class="btn btn-outline-secondary" onclick="sort(this)">
+                                    마감만
+                                </button>
                             </div>
                         </div>
 
-                        <div class="col-4">
-                            <div class="input-group mb-3 ">
-                                <input type="text" class="form-control" placeholder="Search">
-                                <button class="btn btn-outline-secondary" type="submit">Go</button>
-                            </div>
-                        </div>
-
-                        <div class="col-4 d-flex justify-content-end mb-3">
+                        <div class="col-3 mb-3">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-outline-success" onclick="location.href='/v1/company/post/form'">일반공고 생성</button>
-                                <button type="button" class="btn btn-outline-primary" onclick="location.href='/v1/company/post/mz/form'">MZ공고 생성</button>
+                                <button type="button" class="btn btn-outline-success"
+                                        onclick="location.href='/v1/company/post/form'">일반공고 생성
+                                </button>
+                                <button type="button" class="btn btn-outline-primary"
+                                        onclick="location.href='/v1/company/post/mz/form'">MZ공고 생성
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -83,8 +108,9 @@
                     <!-- 목록 페이지 시작 -->
 
                     <!-- 목록 1칸 -->
-                    <div class="col-lg-10 col-12 mb-4 mb-lg-2 post-form" th:each="postList, postListStat : ${postPage}" th:id="'postPage'+${postListStat.index}">
-                        <div th:each="post, postStat : ${postList}" >
+                    <div class="col-lg-10 col-12 mb-4 mb-lg-2 post-form" th:each="postList, postListStat : ${postPage}"
+                         th:id="'postPage'+${postListStat.index}">
+                        <div th:each="post, postStat : ${postList}">
                             <div class="custom-block d-flex">
                                 <div class="custom-block-info">
                                     <div class="mb-2 d-inline-flex" th:if="${post.postType=='NORMAL'}">
@@ -97,13 +123,17 @@
                                         <button class="badge" style="background-color: #b02a37" th:text="마감"></button>
                                     </div>
                                     <h6>
-                                        <a th:href="@{/v1/company/post/detail(id=${post.id}, postType=${post.postType})}" th:text="${post.title}"></a>
+                                        <a th:href="@{/v1/company/post/detail(id=${post.id}, postType=${post.postType})}"
+                                           th:text="${post.title}"></a>
                                     </h6>
 
                                     <div class="custom-block-bottom d-flex mt-1">
-                                        <div class="col-auto d-flex m-2"><span>게시날짜:<span th:text="${post.createdAt}"></span></span></div>
-                                        <div class="col-auto d-flex m-2"><span>마감일:<span th:text="${post.endDate}"></span></span></div>
-                                        <div class="col-auto d-flex m-2"><span>지원현황: <span th:text="${post.applicant}"></span>명</span></div>
+                                        <div class="col-auto d-flex m-2"><span>게시날짜:<span
+                                                th:text="${post.createdAt}"></span></span></div>
+                                        <div class="col-auto d-flex m-2"><span>마감일:<span
+                                                th:text="${post.endDate}"></span></span></div>
+                                        <div class="col-auto d-flex m-2"><span>지원현황: <span
+                                                th:text="${post.applicant}"></span>명</span></div>
                                     </div>
                                 </div>
 
@@ -119,15 +149,21 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-lg justify-content-center mt-5">
                                 <li class="page-item" th:if="${strNum>=5}">
-                                    <a class="page-link" th:href="@{/v1/company/post/list/{strNum}(strNum=${strNum}-5)}" aria-label="Previous">
+                                    <a class="page-link" th:href="@{/v1/company/post/list/{strNum}(strNum=${strNum}-5)}"
+                                       aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <div th:each="post, postStat:${postPage}">
-                                    <li class="page-item" th:id="'page'+${postStat.index}"><a class="page-link" th:onclick="showOnlySelected([[${postStat.index}]])" th:text="${postStat.index+strNum}"></a></li>
+                                    <li class="page-item" th:id="'page'+${postStat.index}"><a class="page-link"
+                                                                                              th:onclick="showOnlySelected([[${postStat.index}]])"
+                                                                                              th:text="${postStat.index+strNum}"></a>
+                                    </li>
                                 </div>
-                                <li class="page-item" th:if="${#lists.size(postPage)>=5 and #lists.size(postPage[4])==9}">
-                                    <a class="page-link" th:href="@{/v1/company/post/list/{strNum}(strNum=${strNum}+5)}" aria-label="Next">
+                                <li class="page-item"
+                                    th:if="${#lists.size(postPage)>=5 and #lists.size(postPage[4])==9}">
+                                    <a class="page-link" th:href="@{/v1/company/post/list/{strNum}(strNum=${strNum}+5)}"
+                                       aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -138,7 +174,6 @@
                 </div>
             </div>
         </section>
-
 
 
     </main>
