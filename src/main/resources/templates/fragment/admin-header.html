@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+  <header class="header" th:fragment="commonHeader">
+   <nav class="navbar navbar-expand-lg">
+    <div class="container">
+     <a class="navbar-brand me-lg-5 me-0" href="/v1">
+      <img src="/images/pod-talk-logo.png" class="logo-image img-fluid" alt="templatemo pod talk">
+     </a>
+
+     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+     </button>
+
+     <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-lg-auto">
+
+       <li class="nav-item">
+        <a class="nav-link" href="/v1/company/post/list/1">인사이트</a>
+       </li>
+
+       <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarLightDropdownMenuLink" role="button"
+           data-bs-toggle="dropdown" aria-expanded="false">유저관리</a>
+        <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink">
+         <li><a class="dropdown-item" href="#">일반회원 전체목록</a></li>
+         <li><a class="dropdown-item" href="#">기업회원 전체목록</a></li>
+         <li><a class="dropdown-item" href="/v1/company/faq">오늘 회원가입한 일반 회원</a></li>
+         <li><a class="dropdown-item" href="/v1/company/faq">오늘 회원가입한 기업 회원</a></li>
+        </ul>
+       </li>
+
+       <li class="nav-item">
+        <a class="nav-link" href="/v1/company/post/list/1">문의관리</a>
+       </li>
+
+       <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarLightDropdownMenuLink2" role="button"
+           data-bs-toggle="dropdown" aria-expanded="false">스택/직무관리</a>
+        <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink">
+         <li><a class="dropdown-item" href="#">스택 관리</a></li>
+         <li><a class="dropdown-item" href="#">직무 관리</a></li>
+        </ul>
+       </li>
+      </ul>
+
+      <div class="ms-4">
+       <a th:if="${session.id!=null}" href="/v1/admin/logout" class="btn custom-btn custom-border-btn smoothscroll">로그아웃</a>
+       <a th:if="${session.id==null}" href="/v1/admin/login-form" class="btn custom-btn custom-border-btn smoothscroll">로그인/회원가입</a>
+      </div>
+     </div>
+    </div>
+   </nav>
+  </header>
+</html>
