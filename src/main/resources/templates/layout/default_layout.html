@@ -11,11 +11,20 @@
 
 <body>
 <!-- header fragment -->
-<div th:if="${session.bno == null}">
+<div th:if="${session.bno == null and session.name == null and session.id == null}">
     <th:block th:replace="/fragment/header :: commonHeader"></th:block>
 </div>
+
+<div th:if="${session.bno == null and session.name != null}">
+    <th:block th:replace="/fragment/header :: commonHeader"></th:block>
+</div>
+
 <div th:if="${session.bno != null}">
     <th:block th:replace="/fragment/company-header :: commonHeader"></th:block>
+</div>
+
+<div th:if="${session.bno == null and session.name == null and session.id != null}">
+    <th:block th:replace="/fragment/admin-header :: commonHeader"></th:block>
 </div>
 
 <!-- Body content -->
