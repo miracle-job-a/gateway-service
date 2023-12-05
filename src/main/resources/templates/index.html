@@ -23,7 +23,8 @@
 
                             <p class="text-black">For Developers. For Job Seekers.</p>
 
-                            <a th:if="${session.id==null}" href="/v1/user/join" class="btn custom-btn smoothscroll mt-3"> 지금 바로 회원가입하기 </a>
+                            <a th:if="${session.id==null}" href="/v1/user/join" class="btn custom-btn smoothscroll mt-3"> 유저 회원가입하기 </a>
+                            <a th:if="${session.id==null}" href="/v1/company/join" class="btn custom-btn smoothscroll mt-3"> 기업 회원가입하기 </a>
                         </div>
                     </div>
                 </div>

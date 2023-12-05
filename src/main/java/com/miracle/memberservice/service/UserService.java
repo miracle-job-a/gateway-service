@@ -32,7 +32,7 @@ public class UserService {
 
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("guest/user-join", response.getMessage());
 
-        return new PageMoveWithMessage("index");
+        return new PageMoveWithMessage("guest/user-login");
     }
 
     public PageMoveWithMessage login(LoginDto loginDto, HttpSession session) {

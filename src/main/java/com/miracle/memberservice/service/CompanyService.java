@@ -33,7 +33,7 @@ public class CompanyService {
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("guest/company-join", response.getMessage());
 
-        return new PageMoveWithMessage("index");
+        return new PageMoveWithMessage("guest/company-login");
     }
 
     public PageMoveWithMessage login(LoginDto loginDto, HttpSession session) {
