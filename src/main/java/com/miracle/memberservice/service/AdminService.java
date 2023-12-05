@@ -9,6 +9,7 @@ import com.miracle.memberservice.util.Const;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import com.miracle.memberservice.util.ServiceCall;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
 import java.util.*;
@@ -68,4 +69,16 @@ public class AdminService {
         return ApiResponseToList.jobs(response.getData());
     }
 
+    public PageMoveWithMessage getAllStack(HttpSession session){
+//        Long adminId = (Long) session.getAttribute("id");
+
+         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.ADMIN, "/admin/stacks");
+
+        if (response.getHttpStatus() != 200)
+            return new PageMoveWithMessage("admin/main", response.getMessage());
+
+        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackList(response.getData());
+        System.out.println(dtos);
+        return new PageMoveWithMessage("admin/stackList", dtos);
+    }
 }
