@@ -1,12 +1,12 @@
 package com.miracle.memberservice.service;
 
 import com.miracle.memberservice.dto.request.JobRequestDto;
+import com.miracle.memberservice.dto.request.LoginDto;
 import com.miracle.memberservice.dto.request.StackRequestDto;
-import com.miracle.memberservice.dto.response.ApiResponse;
-import com.miracle.memberservice.dto.response.JobResponseDto;
-import com.miracle.memberservice.dto.response.StackResponseDto;
+import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.util.ApiResponseToList;
 import com.miracle.memberservice.util.Const;
+import com.miracle.memberservice.util.PageMoveWithMessage;
 import com.miracle.memberservice.util.ServiceCall;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +15,22 @@ import java.util.*;
 
 @Service
 public class AdminService {
+    public PageMoveWithMessage login(LoginDto loginDto, HttpSession session) {
+        ApiResponse response = ServiceCall.post(session, loginDto, loginDto.getMemberType(), "/admin/login");
+        if (response.getHttpStatus() != 200)
+            return new PageMoveWithMessage("guest/admin-login", response.getMessage());
+
+        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        Long id = data.get("id") instanceof Integer ? ((Integer) data.get("id")).longValue() : (Long) data.get("id");
+
+        AdminLoginResponseDto dto = AdminLoginResponseDto.builder()
+                .id(id)
+                .email((String) data.get("email"))
+                .build();
+
+        return new PageMoveWithMessage("admin/main", dto);
+    }
+
     public Map<String, List<?>> getAllJobsAndStacks(HttpSession session) {
         ApiResponse response = ServiceCall.get(session, "admin", "/admin/jobstacks");
 
