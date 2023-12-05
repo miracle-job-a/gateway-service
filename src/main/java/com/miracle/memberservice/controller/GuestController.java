@@ -4,6 +4,7 @@ import com.miracle.memberservice.dto.request.CompanyCheckBnoRequestDto;
 import com.miracle.memberservice.dto.request.CompanyJoinDto;
 import com.miracle.memberservice.dto.request.LoginDto;
 import com.miracle.memberservice.dto.request.UserJoinDto;
+import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.service.EmailService;
 import com.miracle.memberservice.service.UserService;
@@ -17,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpSession;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +32,7 @@ public class GuestController {
     private final UserService userService;
     private final CompanyService companyService;
     private final EmailService emailService;
+    private final AdminService adminService;
 
     @GetMapping
     public String index() {
@@ -49,7 +52,7 @@ public class GuestController {
 
     @GetMapping("/admin/login-form")
     public String adminLoginForm() {
-        return "admin/login";
+        return "guest/admin-login";
     }
 
     //회원가입 폼 이동
@@ -109,6 +112,20 @@ public class GuestController {
             session.setAttribute("id", pmwm.getId());
             session.setAttribute("email", pmwm.getEmail());
             session.setAttribute("name", pmwm.getNameOrBno());
+        }
+
+        model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        return pageName;
+    }
+
+    @PostMapping("/admin/login")
+    public String adminLogin(@ModelAttribute LoginDto loginDto, Model model, HttpSession session) {
+        PageMoveWithMessage pmwm = adminService.login(loginDto, session);
+        String pageName = pmwm.getPageName();
+
+        if (pmwm.getId() != null) {
+            session.setAttribute("id", pmwm.getId());
+            session.setAttribute("email", pmwm.getEmail());
         }
 
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
