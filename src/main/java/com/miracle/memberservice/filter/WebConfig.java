@@ -31,4 +31,15 @@ public class WebConfig {
         return filterRegistrationBean;
 
     }
+
+    @Bean
+    public FilterRegistrationBean adminLogFilter() {
+        FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<Filter>();
+
+        filterRegistrationBean.setFilter(new CompanyLoginCheckFilter()); // LogFilter 등록
+        filterRegistrationBean.setOrder(3);
+        filterRegistrationBean.addUrlPatterns("/v1/admin/*");
+        return filterRegistrationBean;
+
+    }
 }
