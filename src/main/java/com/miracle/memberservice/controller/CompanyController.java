@@ -138,4 +138,13 @@ public class CompanyController {
         return pmwm.getPageName();
     }
 
+    @GetMapping("/today/signUp/list")
+    public String getCompanyList(Model model, @RequestParam int strNum, @RequestParam boolean today, HttpSession session) {
+        PageMoveWithMessage pmwm = companyService.getCompanyListToday(session, strNum, strNum+4, today);
+        model.addAttribute("strNum", strNum);
+        model.addAttribute("today", today);
+        model.addAttribute("companyListPage", pmwm.getData());
+        model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        return pmwm.getPageName();
+    }
 }
