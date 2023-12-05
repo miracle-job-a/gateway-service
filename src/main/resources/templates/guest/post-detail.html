@@ -21,6 +21,12 @@
             var page = [[${postId}]]
             location.href = "/v1/user/login-form?page=" + page;
         }
+
+        function validateForm() {
+            //TODO 이력서, 자소서 번호 넘기는 거를 해야 함
+            return confirm(`지원하시겠습니까? 한번 지원하면 더 지원이 불가능합니다.
+올바른 이력서와 자소서를 입력하셨는지 확인바랍니다.`);
+        }
     </script>
     <main>
         <header class="site-header d-flex flex-column justify-content-center align-items-center">
@@ -271,7 +277,8 @@
                                         지원하기
                                     </button>
                                     <!-- Modal -->
-                                    <form th:action="/v1/user/apply" method="post">
+                                    <form action="/v1/user/apply" id="modal" method="post"
+                                          onsubmit="return validateForm()">
                                         <div class="modal modal-backdrop-dark" id="exampleModal" tabindex="-1"
                                              aria-labelledby="exampleModalLabel" aria-hidden="true"
                                              data-bs-backdrop="false">
@@ -285,28 +292,32 @@
                                                             <div class="col-10 m-2 align-self-center"
                                                                  th:if="${resumeList!=null}">
                                                                 <label for="resume">이력서를 선택해 주세요.</label>
-                                                                <input type="text" disabled
-                                                                       th:if="${#lists.size(resumeList)==0}"
-                                                                       value="이력서가 존재하지 않습니다."/>
-                                                                <select class="form-select" name="resume"
+                                                                <select class="form-select" name="resumeId" id="resume"
                                                                         aria-label="Default select example"
-                                                                        th:each="resume : ${resumeList}">
+                                                                        th:each="resume : ${resumeList}" required>
                                                                     <option th:value="${resume.id}"
                                                                             th:text="${resume.title}"></option>
                                                                 </select>
+                                                                <p th:if="${#lists.size(resumeList)==0}">
+                                                                    이력서가 존재하지 않습니다.
+                                                                </p>
                                                             </div>
                                                             <div class="col-10 m-2 align-self-center"
                                                                  th:if="${coverLetterList!=null}">
                                                                 <label for="coverLetter">지원서를 선택해 주세요.</label>
-                                                                <input type="text" disabled
-                                                                       th:if="${#lists.size(coverLetterList)==0}"
-                                                                       value="자소서가 존재하지 않습니다."/>
-                                                                <select class="form-select" name="coverLetter"
+
+                                                                <select class="form-select" name="coverLetterId"
+                                                                        id="coverLetter"
                                                                         aria-label="Default select example"
-                                                                        th:each="coverLetter : ${coverLetterList}">
+                                                                        th:each="coverLetter : ${coverLetterList}"
+                                                                        required>
                                                                     <option th:value="${coverLetter.id}"
                                                                             th:text="${coverLetter.title}"></option>
                                                                 </select>
+                                                                <p th:if="${#lists.size(coverLetterList)==0}">
+                                                                    자소서가 존재하지 않습니다.
+                                                                </p>
+
                                                             </div>
                                                             <div class="col-10 m-2 align-self-center">
                                                                 <a class="text-secondary">이 공고의 이력서, 자소서가 없다면 새로
@@ -322,9 +333,10 @@
                                                         <button type="button" class="btn btn-secondary"
                                                                 data-bs-dismiss="modal">취소
                                                         </button>
-                                                        <input type="hidden" name="postType" th:value="${detail.postType}" />
-                                                        <input type="hidden" name="userJob" th:value="${jobs[0].name}" />
-                                                        <input type="hidden" name="postId" th:value="${postId}" />
+                                                        <input type="hidden" name="postType"
+                                                               th:value="${detail.postType}"/>
+                                                        <input type="hidden" name="userJob" th:value="${jobs[0].name}"/>
+                                                        <input type="hidden" name="postId" th:value="${postId}"/>
                                                         <button type="submit" class="btn btn-primary">지원하기</button>
                                                     </div>
                                                 </div>
