@@ -86,41 +86,53 @@
 
         // 경력사항(careerDetailList) 문자열을 parsing
         document.addEventListener("DOMContentLoaded", function () {
-        /*<![CDATA[*/
-        var careerDetailList = /*[[${resume.careerDetailList}]]*/ '';
+            /*<![CDATA[*/
+            var careerDetailList = /*[[${resume.careerDetailList}]]*/ '';
 
-        // 문자열 배열을 날짜와 제목으로 분할
-        var details = careerDetailList.map(detail => detail.split(' '));
+            // 문자열 배열을 객체 배열로 변환
+            var details = careerDetailList.map(detail => {
+                // 정규 표현식을 사용하여 content를 date와 title로 분리
+                var regex = /^(\d{4}-\d{2}-\d{2} \d{4}-\d{2}-\d{2}) (.+)$/;
+                var matches = detail.content.match(regex);
 
-        // 각 부분에 대한 처리
-            details.forEach(function (dateTitle) {
-                var startDate = dateTitle[0];
-                var endDate = dateTitle[1];
-                var title = dateTitle.slice(2).join(' '); // index 1 이 아니라 index 2부터 조인
+                // matches[1]은 date, matches[2]는 title
+                var [startDateStr, endDateStr] = matches[1].split(' ');
+                var startDate = new Date(startDateStr);
+                var endDate = new Date(endDateStr);
+                var title = matches[2];
 
+                return {
+                    startDate: startDate,
+                    endDate: endDate,
+                    title: title
+                };
+            });
+
+            // 각 부분에 대한 처리
+            details.forEach(function (careerDetail) {
                 // 동적으로 HTML 생성 또는 추가 작업 수행
                 var html = '<div class="input-group m-1 career">';
-                html += '<input type="date" readonly class="form-control" name="career_start_date" value="' + startDate + '" />';
-                html += '<input type="date" readonly class="form-control" name="career_end_date" value="' + endDate + '" />';
-                html += '<input type="text" readonly class="form-control" name="career_title" value="' + title + '" />';
-                html += '<input type="hidden" name="careerDetailList" value="' + dateTitle.join(' ') + '" />';
-                html += '<button class="btn visually-hidden" type="button" value="삭제" onclick="removeItem(this)">-</button>';
+                html += '<input type="date" readonly class="form-control" name="career_start_date" value="' + careerDetail.startDate.toISOString().split('T')[0] + '" />';
+                html += '<input type="date" readonly class="form-control" name="career_end_date" value="' + careerDetail.endDate.toISOString().split('T')[0] + '" />';
+                html += '<input type="text" readonly class="form-control" name="career_title" value="' + careerDetail.title + '" />';
+                html += '<input type="hidden" name="careerDetailList" value="' + careerDetail.startDate.toISOString() + ' ' + careerDetail.endDate.toISOString() + ' ' + careerDetail.title + '" />';
+               /* html += '<button class="btn visually-hidden" type="button" value="삭제" onclick="removeItem(this)">-</button>';*/
                 html += '</div>';
 
                 document.getElementById('field1').insertAdjacentHTML('beforeend', html);
             });
 
         });
-
         // 수정취소 (상세보기로 돌아가기)
-        function cancelEditing(){
-            var resumeId = [[${resume.id}]];
+            function cancelEditing() {
+                var resumeId = /*[[${resume.id}]]*/ '';
 
-            window.location.href = '/v1/user/resume/detail/' + resumeId;
-            /*]]>*/
-        }
+                window.location.href = /*[[@{/v1/user/resume/detail/}]]*/ + resumeId;
+            }
 
-        // 삭제기능
+
+
+            // 삭제기능
         function confirmDelete(button) {
             var resumeId = button.getAttribute('data-resume-id');
             var confirmResult = confirm("삭제하시겠습니까?");
@@ -132,12 +144,21 @@
                 // 사용자가 취소를 선택한 경우
                 // 아무 동작을 하지 않거나 필요한 작업 수행
             }
+            /*]]>*/
+        }
+
+
+
+        // 뒤로가기
+        function goBack() {
+            window.history.back();
         }
 
         function enableEditing(){
             $('.btn').removeClass('visually-hidden');
             $('#submitEdit').css('display', 'block');
             $('#cancelBtn').css('display', 'block');
+            $('#back').css('display', 'none');
             $('#editBtn').css('display', 'none');
             $('.editJobs input[type="checkbox"]').prop('disabled', false);
             $('.editStacks input[type="checkbox"]').prop('disabled', false);
@@ -321,9 +342,10 @@
                                                 <label for="projectList">프로젝트</label>
                                             </div>
                                             <div class="pre_set" id="pre_set2">
-                                                <div th:each="project : ${resume.projectList}">
+                                                <div th:each="project, iterStat : ${resume.projectList}">
+                                                    <input type="hidden" th:id="'projectList_index_' + ${iterStat.index}" name="projectList_index" th:value="${iterStat.index}">
                                                     <div class="input-group m-1">
-                                                        <input type="text" readonly class="form-control" name="projectList" th:value="${project}">
+                                                        <input type="text" readonly class="form-control" name="projectList" th:value="${project.content}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -335,35 +357,39 @@
                                                 <label for="etcList">기타사항</label>
                                             </div>
                                             <div class="pre_set" id="pre_set3">
-                                                <div th:each="etc : ${resume.etcList}">
+                                                <div th:each="etc, iterStat : ${resume.etcList}">
+                                                    <input type="hidden" th:id="'etcList_index_' + ${iterStat.index}" name="etcList_index" th:value="${iterStat.index}">
                                                     <div class="input-group m-1">
-                                                        <input type="text" readonly class="form-control" name="etcList" th:value="${etc}">
+                                                        <input type="text" readonly class="form-control" name="etctList" th:value="${etc.content}">
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <!-- 추후 이력서 공개 여부 추가 필요 -->
-                                        <!--<div class="col-12 mt-2 mb-4">
+
+                                        <div class="col-12 mt-2 mb-4">
                                             <div class="mb-1">
                                                 <label for="open">이력서 공개여부</label>
                                             </div>
-                                            <select class="form-select" aria-label="Default select example" id="open" name="open">
-                                                <option value="true" selected>공개</option>
-                                                <option value="false">비공개</option>
+                                            <select class="form-select" aria-label="Default select example" id="open" name="open" th:field="${resume.open}" disabled>
+                                                <option th:value="true" th:selected="${resume.open} == true">공개</option>
+                                                <option th:value="false" th:selected="${resume.open} == false">비공개</option>
                                             </select>
-                                        </div>-->
+                                        </div>
+
 
 
                                         <div class="row">
                                             <div class="col-3 pt-4 m-auto justify-content-center">
-                                                <button type="button"  class="btn" id="editBtn" onclick="enableEditing()">수정하기</button>
+                                                <button type="button"  class="form-control" id="editBtn" onclick="enableEditing()">수정하기</button>
+                                                <button type="submit" class="form-control" id="submitEdit" style="display:none;">수정완료</button>
                                             </div>
                                             <div class="col-3 pt-4 m-auto justify-content-center">
-                                                <button type="button" class="btn" th:attr="data-resume-id=${resume.id}" onclick="confirmDelete(this)">삭제하기</button>
+                                                <button type="button" class="form-control" th:attr="data-resume-id=${resume.id}" onclick="confirmDelete(this)">삭제하기</button>
                                             </div>
                                             <div class="col-3 pt-4 m-auto justify-content-center">
-                                                <button type="button" class="btn align-self-center" id="cancelBtn" onclick="cancelEditing()" style="display:none;">취소</button>
+                                                <button type="button" class="form-control align-self-center" id="cancelBtn" onclick="cancelEditing()" style="display:none;">취소</button>
+                                                <button type="button" class="form-control align-self-center" id="back" onclick="goBack()">돌아가기</button>
                                             </div>
                                             <!--
                                             추후 이력서 공개 상태 변경으로 만들기
@@ -372,12 +398,6 @@
                                             </div>-->
                                         </div>
 
-                                        <div class="row">
-                                            <div class="col-3 pt-4 m-auto justify-content-center">
-                                                <button type="submit" class="form-control" id="submitEdit" style="display:none;">수정완료</button>
-                                            </div>
-
-                                        </div>
                                     </form>
                                 </div>
 
