@@ -188,7 +188,7 @@ public class UserService {
         return new PageMoveWithMessage("redirect:/v1/user/cover-letters", response.getMessage());
     }
 
-    public ApplicationLetterResponseDto apply(HttpSession session, Long userId) {
+    public ApplicationLetterResponseDto applyPopup(HttpSession session, Long userId) {
         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/popup");
 
         Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
@@ -198,4 +198,12 @@ public class UserService {
                 .build();
     }
 
+    public PageMoveWithMessage apply(HttpSession session, ApplicationLetterPostRequestDto dto) {
+        Long userId = (Long) session.getAttribute("id");
+
+        ApiResponse response = ServiceCall.post(session, dto, Const.RequestHeader.USER, "/user/" + userId + "/application-letter");
+        if(response.getHttpStatus()!=200) return new PageMoveWithMessage("index", response.getMessage());
+
+        return new PageMoveWithMessage("redirect:/v1/user/adsf", dto);
+    }
 }

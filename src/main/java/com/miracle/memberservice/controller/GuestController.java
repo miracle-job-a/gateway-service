@@ -2,6 +2,9 @@ package com.miracle.memberservice.controller;
 
 import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.ApplicationLetterResponseDto;
+import com.miracle.memberservice.dto.response.JobResponseDto;
+import com.miracle.memberservice.dto.response.PostResponseDto;
+import com.miracle.memberservice.dto.response.StackResponseDto;
 import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.service.EmailService;
@@ -9,7 +12,6 @@ import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -108,9 +110,6 @@ public class GuestController {
             session.setAttribute("name", pmwm.getNameOrBno());
         }
         String errorMessage = pmwm.getErrorMessage();
-
-        if (Objects.isNull(errorMessage) && Strings.isNotBlank(loginDto.getPage()))
-            return "redirect:/v1/click/post/detail/1";
         model.addAttribute("errorMessage", errorMessage);
         return pageName;
     }
@@ -193,16 +192,28 @@ public class GuestController {
                 .build();
     }
 
-    @GetMapping("/click/post/detail/{postId}")
-    public String clickPostDetail(HttpSession session, @PathVariable Long postId, @RequestParam(required = false) String postType, Model model) {
-        /*PageMoveWithMessage postInfo = companyService.formPost(session, postType);
-        PageMoveWithMessage postDetail = companyService.getPostDetail(session, postId, postType);*/
+    @GetMapping("/click/post/{postId}/detail")
+    public String clickPostDetail(HttpSession session, @PathVariable Long postId, @RequestParam(required = false) Long companyId, @RequestParam(required = false) String postType, Model model) {
+        PageMoveWithMessage postInfo = companyService.formPost(session, postType, companyId);
+        PageMoveWithMessage postDetail = companyService.getPostDetail(session, postId, postType, companyId);
+
+        PostResponseDto data = (PostResponseDto) postDetail.getData();
+
+        List<JobResponseDto> jobs = adminService.getJobs(session, data.getJobIdSet());
+        List<StackResponseDto> stacks = adminService.getStacks(session, data.getStackIdSet());
+
         Long userId = (Long) session.getAttribute("id");
         if (Objects.nonNull(userId)) {
-            ApplicationLetterResponseDto apply = userService.apply(session, userId);
+            ApplicationLetterResponseDto apply = userService.applyPopup(session, userId);
             model.addAttribute("resumeList", apply.getResumeList());
             model.addAttribute("coverLetterList", apply.getCoverLetterList());
         }
+
+        model.addAttribute("postId", postId);
+        model.addAttribute("info", postInfo.getData());
+        model.addAttribute("detail", postDetail.getData());
+        model.addAttribute("jobs", jobs);
+        model.addAttribute("stacks", stacks);
         return "guest/post-detail";
     }
 
