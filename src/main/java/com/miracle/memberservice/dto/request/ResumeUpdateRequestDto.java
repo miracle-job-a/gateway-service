@@ -18,6 +18,7 @@ public class ResumeUpdateRequestDto {
     private final int career;
     private final String education;
     private final String gitLink;
+    private final String open;
     private final Set<Long> jobIdSet;
     private final Set<Long> stackIdSet;
     private final List<String> careerDetailList;

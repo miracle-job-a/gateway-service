@@ -99,7 +99,7 @@ public class UserController {
     @PostMapping("/resume/update/{resumeId}")
     public String updateResume(HttpSession session,
                                @PathVariable Long resumeId,
-                               @ModelAttribute ResumeRequestDto requestDto,
+                               ResumeRequestDto requestDto,
                                RedirectAttributes redirectAttributes){
         PageMoveWithMessage pmwm = userService.updateResume(session, requestDto, resumeId);
         redirectAttributes.addAttribute("errorMessage", pmwm.getErrorMessage());
