@@ -1,7 +1,9 @@
 package com.miracle.memberservice.service;
 
 import com.miracle.memberservice.dto.response.ApiResponse;
+import com.miracle.memberservice.dto.response.ApplicationLetterListResponseDto;
 import com.miracle.memberservice.dto.response.ResumeInApplicationLetterResponseDto;
+import com.miracle.memberservice.util.ApiResponseToList;
 import com.miracle.memberservice.util.Const;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import com.miracle.memberservice.util.ServiceCall;
@@ -9,15 +11,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Slf4j
 public class MyPageService {
 
+    // 지원 이력서 조회하기
     public PageMoveWithMessage resumeInApplicationLetterDetail(HttpSession session, Long applicationLetterId){
         Long userId = (Long) session.getAttribute("id");
 
@@ -45,13 +45,14 @@ public class MyPageService {
         return new PageMoveWithMessage("user/submitted-resume", dto);
     }
 
-    /*
-    *
-    * toolchain {
-		languageVersion.set(JavaLanguageVersion.of(17))
-	}
-	*
-	* DB_password=5002;DB_url=jdbc:mysql://localhost:3306/miracle_user;DB_username=root
-	*
-	* */
+    // 지원현황 목록 불러오기
+    public PageMoveWithMessage applicationLetterList(HttpSession session, int startPage, int endPage, String pageSize){
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.getParamList(session, "user", "/user/"+userId+"/application-letter", startPage, endPage, pageSize);
+
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("/v1", response.getMessage());
+
+        List<List<ApplicationLetterListResponseDto>> letter = ApiResponseToList.applicationLetterList(response.getData());
+        return new PageMoveWithMessage("user/apply-list", letter);
+    }
 }

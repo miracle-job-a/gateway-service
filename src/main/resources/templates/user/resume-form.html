@@ -120,7 +120,20 @@
             }
         }
 
+        // 뒤로가기
+        function goBack() {
+            window.history.back();
+        }
 
+        function enableSubmit(){
+            var careerInput = document.getElementById('careerCal');
+            if (careerInput.value.trim() === '') {
+                alert('경력기간 계산이 필요합니다.');
+                event.preventDefault();
+                /*return false; // 더 이상 진행하지 않음*/
+            }
+
+        }
 
 
         /*
@@ -319,6 +332,7 @@
                                             <input type="text" name="title" id="title"
                                                    class="form-control" placeholder="이력서 제목" required="" />
                                         </div>
+
                                         <div class="card mt-3 p-3 col-12 post-form align-self-center">
                                             <div class="mb-1">
                                                 <label for="job">개발 가능한 직무를 골라주세요.</label>
@@ -369,7 +383,7 @@
                                                 <button class="btn m-2" type="button" onclick="addCareerItem('pre_set1', 'field1', 'career')">+</button>
                                                 <button class="btn m-2" type="button" onclick="calculateAndSetCareer()">경력기간 계산</button>
                                                 <input type="text" readonly class="form-control" name="careerNum" id="careerInput" />
-                                                <input type="hidden" name="career" id="careerCal" />
+                                                <input type="hidden" name="career" id="careerCal" value="" />
                                             </div>
                                             <div class="pre_set" id="pre_set1">
                                                 <div class="input-group m-1 career">
@@ -423,8 +437,15 @@
                                             </select>
                                         </div>
 
-                                        <div class="col-12 mt-2">
-                                            <button type="submit" class="form-control" >등록하기</button>
+                                        <div class="row col-12">
+                                            <div class="col-4 pt-4 m-auto justify-content-center">
+                                                <button type="submit" class="form-control" onclick="enableSubmit()" >등록하기</button>
+                                            </div>
+                                            <div class="col-4 pt-4 m-auto justify-content-center">
+                                            </div>
+                                            <div class="col-4 pt-4 m-auto justify-content-center">
+                                                <button type="button" class="form-control" id="back" onclick="goBack()">돌아가기</button>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>

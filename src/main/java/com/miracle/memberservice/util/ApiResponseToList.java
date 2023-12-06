@@ -183,6 +183,38 @@ public class ApiResponseToList {
         return dto;
     }
 
+    public static List<List<ApplicationLetterListResponseDto>> applicationLetterList(Object object) {
+        ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+        List<List<ApplicationLetterListResponseDto>> pageList = new ArrayList<>();
+
+
+        for (LinkedHashMap<String, Object> list : data) {
+            List<ApplicationLetterListResponseDto> dtos = new ArrayList<>();
+            Integer numberOfElements = (Integer) list.get("numberOfElements");
+            if(numberOfElements > 0) {
+                List<LinkedHashMap<String,Object>> content = (List<LinkedHashMap<String, Object>>) list.get("content");
+                for (LinkedHashMap<String, Object> dto : content) {
+                    Integer applicationLetterId = (Integer) dto.get("applicationLetterId");
+                    Integer postId = (Integer) list.get("postId");
+                    Integer interviewId = (Integer) list.get("interviewId");
+
+                    dtos.add(ApplicationLetterListResponseDto.builder()
+                            .applicationLetterId(applicationLetterId.longValue())
+                            .postId(postId.longValue())
+                            .interviewId(interviewId.longValue())
+                            .postType((String) dto.get("postType"))
+                            .submitDate((String) dto.get("submitDate"))
+                            .job((String) dto.get("job"))
+                            .build());
+                }
+                pageList.add(dtos);
+            }
+
+        }
+
+        return pageList;
+    }
+
     public static List<ResumeTitleResponseDto> resumeTitleList(Object object) {
         List<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
         List<ResumeTitleResponseDto> dto = new ArrayList<>();
