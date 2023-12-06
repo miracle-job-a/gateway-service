@@ -29,11 +29,10 @@ public class AdminController {
     @GetMapping("/users")
     private String userList(){ return "admin/userList"; }
 
-/*  로직 수정
     @GetMapping("/stacks")
-    private String stackList(){ return "admin/stackList"; }*/
+    private String stackList(){ return "admin/stackList"; }
 
-    @GetMapping("/stacks")
+    @GetMapping("/stackList")
     private String stackList(HttpSession session, Model model){
         PageMoveWithMessage pmwm = adminService.getAllStack(session);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
