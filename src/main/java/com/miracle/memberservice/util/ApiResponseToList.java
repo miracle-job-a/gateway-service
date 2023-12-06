@@ -72,7 +72,7 @@ public class ApiResponseToList {
                         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/post/" + id + "/applicant/num");
                         applicant = (Integer) response.getData();
                     } catch (ClassCastException e) {
-                        log.error(e.getMessage());
+                        log.error("지원 현황 없음");
                     }
 
                     dtos.add(ManagePostsResponseDto.builder()
@@ -102,6 +102,7 @@ public class ApiResponseToList {
                 ArrayList<LinkedHashMap<String, Object>> content = (ArrayList<LinkedHashMap<String, Object>>) lhm.get("content");
                 for (LinkedHashMap<String, Object> dto : content) {
                     Integer id = (Integer) dto.get("id");
+                    Integer companyId = (Integer) dto.get("companyId");
                     ArrayList<Integer> jobs = (ArrayList<Integer>) dto.get("jobIdSet");
 
                     ApiResponse response = ServiceCall.post(session, new JobRequestDto(jobs), Const.RequestHeader.ADMIN, "/admin/jobs");
@@ -115,6 +116,7 @@ public class ApiResponseToList {
 
                     dtos.add(ConditionalSearchPostResponseDto.builder()
                             .id(id.longValue())
+                            .companyId(companyId.longValue())
                             .postType((String) dto.get("postType"))
                             .closed((Boolean) dto.get("closed"))
                             .title((String) dto.get("title"))
@@ -123,6 +125,7 @@ public class ApiResponseToList {
                             .career((Integer) dto.get("career"))
                             .job(jobDetail)
                             .name((String) dto.get("name"))
+                            .photo((String) dto.get("photo"))
                             .build());
                 }
                 pageList.add(dtos);
@@ -172,9 +175,35 @@ public class ApiResponseToList {
 
             Integer id = (Integer) letter.get("id");
             dto.add(CoverLetterListResponseDto.builder()
-                            .id(id.longValue())
-                            .title((String) letter.get("title"))
-                            .modifiedAt((String) letter.get("modifiedAt"))
+                    .id(id.longValue())
+                    .title((String) letter.get("title"))
+                    .modifiedAt((String) letter.get("modifiedAt"))
+                    .build());
+        }
+        return dto;
+    }
+
+    public static List<ResumeTitleResponseDto> resumeTitleList(Object object) {
+        List<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+        List<ResumeTitleResponseDto> dto = new ArrayList<>();
+        for (LinkedHashMap<String, Object> lhm : data) {
+            Integer id = (Integer) lhm.get("id");
+            dto.add(ResumeTitleResponseDto.builder()
+                    .id(id.longValue())
+                    .title((String) lhm.get("title"))
+                    .build());
+        }
+        return dto;
+    }
+
+    public static List<CoverLetterTitleResponseDto> coverLetterTitleList(Object object) {
+        List<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+        List<CoverLetterTitleResponseDto> dto = new ArrayList<>();
+        for (LinkedHashMap<String, Object> lhm : data) {
+            Integer id = (Integer) lhm.get("id");
+            dto.add(CoverLetterTitleResponseDto.builder()
+                    .id(id.longValue())
+                    .title((String) lhm.get("title"))
                     .build());
         }
         return dto;

@@ -11,6 +11,25 @@
             alert(errorMessage);
             // 이후 로직 추가 가능
         }
+
+        function validateForm() {
+
+            var question = document.getElementById('question').value;
+            var answer = document.getElementById('answer').value;
+
+            if (question.includes('<') || question.includes('>')) {
+                alert('질문에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (answer.includes('<') || answer.includes('>')) {
+                alert('답에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            // 폼 제출을 허용
+            return true;
+        }
     </script>
     <main>
         <header class="site-header d-flex flex-column justify-content-center align-items-center">
@@ -22,15 +41,17 @@
 
                     <div class="col-lg-10 col-12">
                         <div class="section-title-wrap mb-5">
-                            <h4 class="section-title">자주하는 질문 관리</h4>
+                            <h4 class="section-title">FAQ 목록</h4>
                         </div>
-                        <form action="/v1/company/faq/add" method="get" >
+                        <form action="/v1/company/faq/add" method="get" onsubmit="return validateForm()">
 
                         <div class="row justify-content-center">
                             <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
-                                <div class="col-12 mt-5"></div>
+                                <div class="card p-2 col-11 mt-5 align-self-center text-center">
+                                    <h6 class="text-danger">Faq 추가 시 하단으로 이동 / 삭제하려면 X버튼을 눌러주세요.</h6>
+                                </div>
 
-                                <div class="card p-4 col-11 mt-2 align-self-center post-form " th:each="faq : ${faqList}">
+                                <div class="card p-4 col-11 mt-2 align-self-center post-form " th:each="faq, faqStat : ${faqList}">
                                     <div class="col-12 mt-2 align-self-center">
                                         <div class="d-flex justify-content-between ">
                                             <div class="col-11 mb-2">

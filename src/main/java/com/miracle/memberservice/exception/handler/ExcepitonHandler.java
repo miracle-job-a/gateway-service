@@ -2,6 +2,7 @@ package com.miracle.memberservice.exception.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -14,4 +15,9 @@ public class ExcepitonHandler {
         return "error/500";
     }
 
+    @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
+    public String notSupportedPostOrGet(Model model){
+        model.addAttribute("errorMessage", "비정상적인 접근입니다.");
+        return "error/500";
+    }
 }

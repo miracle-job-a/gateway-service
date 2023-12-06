@@ -24,11 +24,12 @@ public class CustomErrorController implements ErrorController {
                 model.addAttribute("errorMessage", "해당 url이 존재하지 않습니다.");
                 return VIEW_PATH + "404";
             }
-            if (statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
-                model.addAttribute("errorMessage", "서버가 작동하지 않습니다.");
+
+            if (statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()){
+                model.addAttribute("errorMessage", "해당 url이 존재하지 않습니다.");
                 return VIEW_PATH + "500";
             }
         }
-        return "error/500";
+        return null;
     }
 }

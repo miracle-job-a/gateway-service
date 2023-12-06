@@ -36,12 +36,8 @@ public class UserController {
         return "index";
     }
 
-    // [임시] 일반공고 상세페이지 이동
-    @GetMapping("/normalPost")
-    public String mzPostDatail(){ return "user/normal-post"; }
-
     @GetMapping("/resume/form")
-    public String createResume(HttpSession session, Model model){
+    public String createResume(HttpSession session, Model model) {
         PageMoveWithMessage pmwm = userService.formResume(session);
         Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
         model.addAttribute("info", pmwm.getData());
@@ -51,26 +47,26 @@ public class UserController {
     }
 
     @PostMapping("/resume")
-    public String addResume(RedirectAttributes redirectAttributes, HttpSession session, ResumeRequestDto resumeRequestDto){
+    public String addResume(RedirectAttributes redirectAttributes, HttpSession session, ResumeRequestDto resumeRequestDto) {
         PageMoveWithMessage pmwm = userService.addResume(session, resumeRequestDto);
         redirectAttributes.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
 
     @GetMapping("/resumes")
-    public String resumeList(HttpSession session, Model model){
+    public String resumeList(HttpSession session, Model model) {
         PageMoveWithMessage pmwm = userService.resumeList(session);
 
         List<JobResponseDto> jobs = adminService.getAllJobs(session);
         model.addAttribute("resumeList", pmwm.getData());
-        model.addAttribute("jobs",jobs);
+        model.addAttribute("jobs", jobs);
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
 
         return pmwm.getPageName();
     }
 
     @GetMapping("/resume/detail/{resumeId}")
-    public String resumeDetail(HttpSession session, Model model, @PathVariable Long resumeId){
+    public String resumeDetail(HttpSession session, Model model, @PathVariable Long resumeId) {
         PageMoveWithMessage pmwm = userService.getResumeDetail(session, resumeId);
         PageMoveWithMessage pmwm2 = userService.formResume(session);
 
@@ -80,7 +76,7 @@ public class UserController {
         ArrayList<JobResponseDto> jobs = (ArrayList<JobResponseDto>) adminService.getJobs(session, data.getJobIdSet());
         ArrayList<StackResponseDto> stacks = (ArrayList<StackResponseDto>) adminService.getStacks(session, data.getStackIdSet());
 
-        model.addAttribute("resume",data);
+        model.addAttribute("resume", data);
         model.addAttribute("info", pmwm2.getData());
         model.addAttribute("jobs", jobs);
         model.addAttribute("stacks", stacks);
@@ -108,7 +104,7 @@ public class UserController {
 
     // [임시] 자소서 목록으로 이동
     @GetMapping("/cover-letters")
-    public String coverLetterList(HttpSession session, Model model){
+    public String coverLetterList(HttpSession session, Model model) {
         PageMoveWithMessage pmwm = userService.coverLetterList(session);
         model.addAttribute("letterList", pmwm.getData());
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
@@ -116,10 +112,12 @@ public class UserController {
     }
 
     @GetMapping("/cover-letter/form")
-    public String coverLetterForm(){ return "user/coverLetter-form"; }
+    public String coverLetterForm() {
+        return "user/coverLetter-form";
+    }
 
     @PostMapping("/cover-letter/create")
-    public String createCoverLetter(String title, @ModelAttribute QnaListDto qnaListDto, HttpSession session){
+    public String createCoverLetter(String title, @ModelAttribute QnaListDto qnaListDto, HttpSession session) {
         List<QnaDto> qnaDtoList = new ArrayList<>();
         for (int i = 0; i < qnaListDto.getAnswer().size(); i++) {
             String question = qnaListDto.getQuestion().get(i);
@@ -138,14 +136,14 @@ public class UserController {
     }
 
     @GetMapping("/cover-letter/detail/{id}")
-    public String coverLetterDetail(HttpSession session, @PathVariable Long id, Model model){
+    public String coverLetterDetail(HttpSession session, @PathVariable Long id, Model model) {
         PageMoveWithMessage pmwm = userService.coverLetterDetail(session, id);
         model.addAttribute("coverLetter", pmwm.getData());
         return pmwm.getPageName();
     }
 
     @PostMapping("/cover-letter/update")
-    public String updateCoverLetter(String title, Long id, @ModelAttribute QnaListDto qnaListDto, HttpSession session){
+    public String updateCoverLetter(String title, Long id, @ModelAttribute QnaListDto qnaListDto, HttpSession session) {
         System.out.println(id);
         List<QnaDto> qnaDtoList = new ArrayList<>();
         for (int i = 0; i < qnaListDto.getAnswer().size(); i++) {
@@ -157,7 +155,10 @@ public class UserController {
         return pmwm.getPageName();
     }
 
-
-
-
+    @PostMapping("/apply")
+    public String apply(HttpSession session, @ModelAttribute ApplicationLetterPostRequestDto dto, Model model) {
+        PageMoveWithMessage pmwm = userService.apply(session, dto);
+        model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        return pmwm.getPageName();
+    }
 }

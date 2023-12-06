@@ -12,9 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -33,7 +32,7 @@ public class UserService {
 
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("guest/user-join", response.getMessage());
 
-        return new PageMoveWithMessage("index");
+        return new PageMoveWithMessage("guest/user-login");
     }
 
     public PageMoveWithMessage login(LoginDto loginDto, HttpSession session) {
@@ -42,7 +41,7 @@ public class UserService {
 
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("guest/user-login", response.getMessage());
 
-        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
         UserLoginResponseDto dto = UserLoginResponseDto.builder()
                 .id(data.get("id"))
@@ -63,15 +62,15 @@ public class UserService {
         return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
     }
 
-    public PageMoveWithMessage formResume(HttpSession session){
+    public PageMoveWithMessage formResume(HttpSession session) {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.get(session, "user", "/user/" + userId + "/base-info");
 
 
-        if(response.getHttpStatus() != 200)
+        if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("/user/resumes", response.getMessage());
 
-        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
         UserBaseInfoResponseDto info = UserBaseInfoResponseDto.builder()
                 .email(data.get("email"))
@@ -86,15 +85,15 @@ public class UserService {
 
     public PageMoveWithMessage addResume(HttpSession session, ResumeRequestDto resumeRequestDto) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.post(session, resumeRequestDto, "user", "/user/"+userId+"/resume");
+        ApiResponse response = ServiceCall.post(session, resumeRequestDto, "user", "/user/" + userId + "/resume");
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("redirect:/v1/user/resumes", response.getMessage());
         return new PageMoveWithMessage("redirect:/v1/user/resumes");
     }
 
-    public PageMoveWithMessage resumeList(HttpSession session){
+    public PageMoveWithMessage resumeList(HttpSession session) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.get(session, "user", "/user/"+userId+"/resume");
+        ApiResponse response = ServiceCall.get(session, "user", "/user/" + userId + "/resume");
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("/v1/user", response.getMessage());
 
@@ -105,9 +104,9 @@ public class UserService {
 
     public PageMoveWithMessage getResumeDetail(HttpSession session, Long resumeId) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.getParam(session, Const.RequestHeader.USER, "/user/" + userId + "/resume/" + resumeId, "requester","USER");
+        ApiResponse response = ServiceCall.getParam(session, Const.RequestHeader.USER, "/user/" + userId + "/resume/" + resumeId, "requester", "USER");
 
-        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
         ResumeResponseDto info = ResumeResponseDto.builder()
                 .id(Long.valueOf((Integer) data.get("id")))
@@ -138,10 +137,10 @@ public class UserService {
 
     public PageMoveWithMessage updateResume(HttpSession session, ResumeRequestDto requestDto, Long resumeId) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.put(session, requestDto, "user", "/user/"+userId+"/resume/"+resumeId);
+        ApiResponse response = ServiceCall.put(session, requestDto, "user", "/user/" + userId + "/resume/" + resumeId);
         if (response.getHttpStatus() != 200)
-            return new PageMoveWithMessage("redirect:/v1/user/resume/detail/"+resumeId, response.getMessage());
-        return new PageMoveWithMessage("redirect:/v1/user/resume/detail/"+resumeId);
+            return new PageMoveWithMessage("redirect:/v1/user/resume//detail/" + resumeId, response.getMessage());
+        return new PageMoveWithMessage("redirect:/v1/user/resume/detail/" + resumeId);
     }
 
     public PageMoveWithMessage createCoverLetter(HttpSession session, CoverLetterPostRequestDto requestDto){
@@ -190,4 +189,22 @@ public class UserService {
         return new PageMoveWithMessage("redirect:/v1/user/cover-letters", response.getMessage());
     }
 
+    public ApplicationLetterResponseDto applyPopup(HttpSession session, Long userId) {
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/popup");
+
+        Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        return ApplicationLetterResponseDto.builder()
+                .resumeList(ApiResponseToList.resumeTitleList(data.get("resumeList")))
+                .coverLetterList(ApiResponseToList.coverLetterTitleList(data.get("coverLetterList")))
+                .build();
+    }
+
+    public PageMoveWithMessage apply(HttpSession session, ApplicationLetterPostRequestDto dto) {
+        Long userId = (Long) session.getAttribute("id");
+
+        ApiResponse response = ServiceCall.post(session, dto, Const.RequestHeader.USER, "/user/" + userId + "/application-letter");
+        if(response.getHttpStatus()!=200) return new PageMoveWithMessage("index", response.getMessage());
+
+        return new PageMoveWithMessage("redirect:/v1/user/adsf", dto);
+    }
 }
