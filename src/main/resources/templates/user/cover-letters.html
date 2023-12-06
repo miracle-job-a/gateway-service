@@ -27,6 +27,21 @@
                 // 아무 동작을 하지 않거나 필요한 작업 수행
             }
         }
+
+        function showOnlySelected(selectedIndex) {
+            var posts = document.querySelectorAll('[id^="postPage"]');
+            posts.forEach(function (post) {
+                var index = parseInt(post.id.replace('postPage', ''), 10);
+                var page = document.getElementById("page" + index);
+                if (index === selectedIndex) {
+                    page.classList.add("active");
+                    post.style.display = 'block';
+                } else {
+                    page.classList.remove("active");
+                    post.style.display = 'none';
+                }
+            });
+        }
     </script>
 
     <main>
@@ -44,7 +59,7 @@
                     </div>
 
 
-                    <div class="row col-lg-10 col-12">
+                    <div class="row col-lg-10 col-12 mb-4">
                         <div class="col-auto">
                             <button type="button" class="btn btn-secondary" id="cover-letter">자기소개서 생성</button>
                             <div class="btn-group">
@@ -55,10 +70,12 @@
                     </div>
 
                     <!-- 목록 페이지 시작 -->
-
+                    <h5 class="col-lg-10 col-12 mt-4 mb-4 mb-lg-2 text-center" th:if="${#lists.size(letterList)==0}">
+                        자소서가 없습니다.
+                    </h5>
                     <!-- 목록 1칸 -->
-                    <div th:each="letter : ${letterList}" class="col-lg-10 col-12 mb-4 mb-lg-2">
-                        <div class="custom-block d-flex">
+                    <div th:each="letterPage, letterPageStat : ${letterList}" th:id="'postPage'+${letterPageStat.index}" class="col-lg-10 col-12 mb-4 mb-lg-2">
+                        <div class="custom-block d-flex" th:each="letter, letterStat : ${letterPage}">
                             <div class="custom-block-info">
                                 <h5 class="mb-2">
                                     <a th:href="@{'/v1/user/cover-letter/detail/' + ${letter.id}}" th:text="${letter.title}"></a>
@@ -76,24 +93,25 @@
                         </div>
                     </div>
 
-
                     <div class="col-lg-4 col-12 mx-auto">
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-lg justify-content-center mt-5">
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Previous">
+                                <li class="page-item" th:if="${strNum>=5}">
+                                    <a class="page-link" th:href="@{/v1/user/cover-letters/{strNum}(strNum=${strNum}-5)}"
+                                       aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
-
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Next">
+                                <div th:each="letterPage, letterPageStat :${letterList}">
+                                    <li class="page-item" th:id="'page'+${letterPageStat.index}"><a class="page-link"
+                                                                                                    th:onclick="showOnlySelected([[${letterPageStat.index}]])"
+                                                                                                    th:text="${letterPageStat.index+strNum}"></a>
+                                    </li>
+                                </div>
+                                <li class="page-item"
+                                    th:if="${#lists.size(letterList)>=5 and #lists.size(letterList[4])==9}">
+                                    <a class="page-link" th:href="@{/v1/user/cover-letters/{strNum}(strNum=${strNum}+5)}"
+                                       aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>

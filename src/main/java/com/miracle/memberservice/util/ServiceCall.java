@@ -74,6 +74,11 @@ public class ServiceCall {
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).queryParam("sort", sort).build()), httpSession, serviceType).block();
     }
 
+    public static ApiResponse getUserParamList(HttpSession httpSession, String serviceType, String url, int strNum, int endNum) {
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("startPage", strNum).queryParam("endPage", endNum).queryParam("pageSize", 5).build()), httpSession, serviceType).block();
+    }
+
     private static int port(String memberType) {
         switch (memberType) {
             case Const.RequestHeader.USER:

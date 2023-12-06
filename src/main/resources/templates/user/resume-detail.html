@@ -152,6 +152,9 @@
             $('#jobs').each(function () {
                 $(this).css('display', 'none');
             });
+            $('#stacks').each(function () {
+                $(this).css('display', 'none');
+            });
             $('.bi-person-workspace').prev('input[type="checkbox"]').prop('checked', true);
             $('.pre_set input[type="date"], .pre_set input[type="text"]').removeAttr('readonly');
             $('#item2 input[type="text"]').removeAttr('readonly');
@@ -307,8 +310,8 @@
                                             <div class="mb-1">
                                                 <label for="careerDetail">경력사항</label>
                                                 <button class="btn m-2 visually-hidden" type="button" onclick="calculateAndSetCareer()">경력기간 계산</button>
-                                                <input type="text" readonly class="form-control mt-2" name="careerNum" id="careerInput" th:value="'총 경력 : '+${resume.career}" />
-                                                <input type="hidden" name="career" id="careerCal" />
+                                                <input type="text" readonly class="form-control mt-2" name="careerNum" id="careerInput" th:value="'총 경력 : '+${resume.career}" required/>
+                                                <input type="hidden" name="career" id="careerCal" th:value="${resume.career}"/>
                                             </div>
                                             <div class="pre_set" id="pre_set1">
                                                 <div class="field" id="field1"></div>

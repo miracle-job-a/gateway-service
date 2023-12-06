@@ -16,7 +16,16 @@
             z-index: 1040; /* 모달보다 앞에 위치하도록 z-index 설정 */
         }
     </style>
+    <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+
+        if (errorMessage != null) {
+            alert(errorMessage);
+            // 이후 로직 추가 가능
+        }
+    </script>
     <script>
+
         function loginform() {
             var page = [[${postId}]]
             location.href = "/v1/user/login-form?page=" + page;
@@ -38,7 +47,7 @@
 
             // 나머지 코드...
             return confirm(`지원하시겠습니까? 한번 지원하면 더 지원이 불가능합니다.
-        올바른 이력서와 자소서를 입력하셨는지 확인바랍니다.`);
+올바른 이력서와 자소서를 입력하셨는지 확인바랍니다.`);
         }
 
     </script>
@@ -291,7 +300,8 @@
                                         지원하기
                                     </button>
                                     <!-- Modal -->
-                                    <form action="/v1/user/apply" id="modal" method="post" onsubmit="return validateForm()">
+                                    <form th:action="@{/v1/user/apply/{companyId}(companyId=${companyId})}" id="modal" method="post"
+                                          onsubmit="return validateForm()">
                                         <div class="modal modal-backdrop-dark" id="exampleModal" tabindex="-1"
                                              aria-labelledby="exampleModalLabel" aria-hidden="true"
                                              data-bs-backdrop="false">
@@ -302,7 +312,8 @@
                                                     </div>
                                                     <div class="modal-body container-fluid">
                                                         <div class="row align-self-center">
-                                                            <div class="col-10 m-2 align-self-center" th:if="${resumeList!=null}">
+                                                            <div class="col-10 m-2 align-self-center"
+                                                                 th:if="${resumeList!=null}">
                                                                 <label for="resume">이력서를 선택해 주세요.</label>
                                                                 <select class="form-select" name="resumeId" id="resume"
                                                                         aria-label="Default select example"

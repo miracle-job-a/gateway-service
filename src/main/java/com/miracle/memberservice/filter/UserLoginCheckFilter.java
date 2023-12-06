@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class UserLoginCheckFilter implements Filter {
 
-    private static final String[] whitelist = {"/v1/user/resumes", "/v1/user/resume/*", "/v1/user/resume", "/v1/user/cover-letters", "/v1/user/cover-letter/*", "/v1/user/apply"};
+    private static final String[] whitelist = {"/v1/user/resumes", "/v1/user/resume/*", "/v1/user/resume", "/v1/user/cover-letters/*", "/v1/user/cover-letter/*", "/v1/user/apply"};
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

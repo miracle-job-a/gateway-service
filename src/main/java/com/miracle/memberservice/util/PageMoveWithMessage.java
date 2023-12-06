@@ -23,6 +23,15 @@ public class PageMoveWithMessage {
         this.data = null;
     }
 
+    public PageMoveWithMessage(String pageName, String errorMessage, Object data) {
+        this.pageName = pageName;
+        this.errorMessage = errorMessage;
+        this.id = null;
+        this.email = null;
+        this.nameOrBno = null;
+        this.data = data;
+    }
+
     //id만 전달
 
     public PageMoveWithMessage(String pageName, Long id) {

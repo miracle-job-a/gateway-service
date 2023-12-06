@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpSession;
@@ -193,7 +194,7 @@ public class GuestController {
     }
 
     @GetMapping("/click/post/{postId}/detail")
-    public String clickPostDetail(HttpSession session, @PathVariable Long postId, @RequestParam(required = false) Long companyId, @RequestParam(required = false) String postType, Model model) {
+    public String clickPostDetail(HttpSession session, @PathVariable Long postId, @RequestParam(required = false) Long companyId, @RequestParam(required = false) String postType, @RequestParam(required = false) String errorMessage, Model model) {
         PageMoveWithMessage postInfo = companyService.formPost(session, postType, companyId);
         PageMoveWithMessage postDetail = companyService.getPostDetail(session, postId, postType, companyId);
 
@@ -209,7 +210,9 @@ public class GuestController {
             model.addAttribute("coverLetterList", apply.getCoverLetterList());
         }
 
+        model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("postId", postId);
+        model.addAttribute("companyId", companyId);
         model.addAttribute("info", postInfo.getData());
         model.addAttribute("detail", postDetail.getData());
         model.addAttribute("jobs", jobs);
