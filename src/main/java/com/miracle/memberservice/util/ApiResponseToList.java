@@ -3,11 +3,14 @@ package com.miracle.memberservice.util;
 import com.miracle.memberservice.dto.request.JobRequestDto;
 import com.miracle.memberservice.dto.response.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.http11.filters.SavedRequestInputFilter;
 
 import javax.servlet.http.HttpSession;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class ApiResponseToList {
@@ -184,34 +187,32 @@ public class ApiResponseToList {
     }
 
     public static List<List<ApplicationLetterListResponseDto>> applicationLetterList(Object object) {
-        ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+        List<ArrayList<LinkedHashMap<String, Object>>> data = (ArrayList<ArrayList<LinkedHashMap<String, Object>>>) object;
         List<List<ApplicationLetterListResponseDto>> pageList = new ArrayList<>();
 
-
-        for (LinkedHashMap<String, Object> list : data) {
+        for (ArrayList<LinkedHashMap<String, Object>> page : data) {
             List<ApplicationLetterListResponseDto> dtos = new ArrayList<>();
-            Integer numberOfElements = (Integer) list.get("numberOfElements");
-            if(numberOfElements > 0) {
-                List<LinkedHashMap<String,Object>> content = (List<LinkedHashMap<String, Object>>) list.get("content");
-                for (LinkedHashMap<String, Object> dto : content) {
-                    Integer applicationLetterId = (Integer) dto.get("applicationLetterId");
-                    Integer postId = (Integer) list.get("postId");
-                    Integer interviewId = (Integer) list.get("interviewId");
+            if (!page.isEmpty()) {
+                for (Map<String, Object> letter : page) {
+                    Integer applicationLetterId = (Integer) letter.get("applicationLetterId");
+                    Integer postId = (Integer) letter.get("postId");
+                    Integer interviewId = (Integer) letter.get("interviewId");
+                    Long interviewIdValue = (interviewId != null) ? interviewId.longValue() : null;
 
                     dtos.add(ApplicationLetterListResponseDto.builder()
                             .applicationLetterId(applicationLetterId.longValue())
                             .postId(postId.longValue())
-                            .interviewId(interviewId.longValue())
-                            .postType((String) dto.get("postType"))
-                            .submitDate((String) dto.get("submitDate"))
-                            .job((String) dto.get("job"))
+                            .interviewId(interviewIdValue)
+                            .postType(String.valueOf(letter.get("postType")))
+                            .submitDate(String.valueOf(letter.get("submitDate")))
+                            .applicationStatus(String.valueOf(letter.get("applicationStatus")))
+                            .job(String.valueOf(letter.get("job")))
                             .build());
                 }
                 pageList.add(dtos);
             }
 
         }
-
         return pageList;
     }
 

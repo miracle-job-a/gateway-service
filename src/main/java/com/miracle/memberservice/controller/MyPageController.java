@@ -37,13 +37,11 @@ public class MyPageController {
     public String myPageList(){return "user/apply-list"; }
     // TODO 마이페이지 목록 (추후 url 정리하기)
     @GetMapping("/apply-list/{startPage}")
-    public String applyList(HttpSession session, Model model, @PathVariable int startPage, @RequestParam(required = false, defaultValue = "") String sort){
-        PageMoveWithMessage pmwm = myPageService.applicationLetterList(session, startPage, startPage + 4, sort);
+    public String applyList(HttpSession session, Model model, @PathVariable(required = false) int startPage){
+        PageMoveWithMessage pmwm = myPageService.applicationLetterList(session, startPage);
         model.addAttribute("startPage", startPage);
         model.addAttribute("letter", pmwm.getData());
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
-        if (Strings.isBlank(sort)) sort = "latest";
-        model.addAttribute("sort", sort);
         return pmwm.getPageName();
     }
 
