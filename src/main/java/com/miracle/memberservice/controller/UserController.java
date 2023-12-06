@@ -1,9 +1,6 @@
 package com.miracle.memberservice.controller;
 
-import com.miracle.memberservice.dto.request.CoverLetterPostRequestDto;
-import com.miracle.memberservice.dto.request.QnaDto;
-import com.miracle.memberservice.dto.request.QnaListDto;
-import com.miracle.memberservice.dto.request.ResumeRequestDto;
+import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.JobResponseDto;
 import com.miracle.memberservice.dto.response.ResumeResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;

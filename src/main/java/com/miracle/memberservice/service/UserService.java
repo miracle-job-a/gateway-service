@@ -139,7 +139,7 @@ public class UserService {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.put(session, requestDto, "user", "/user/" + userId + "/resume/" + resumeId);
         if (response.getHttpStatus() != 200)
-            return new PageMoveWithMessage("redirect:/v1/user/resume//detail/" + resumeId, response.getMessage());
+            return new PageMoveWithMessage("redirect:/v1/user/resume/detail/" + resumeId, response.getMessage());
         return new PageMoveWithMessage("redirect:/v1/user/resume/detail/" + resumeId);
     }
 
