@@ -8,6 +8,7 @@ import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,18 +34,20 @@ public class CompanyController {
     }
 
     @GetMapping("/post/list/{strNum}")
-    public String postList(HttpSession session, Model model, @PathVariable int strNum) {
-        PageMoveWithMessage pmwm = companyService.postList(session, strNum, strNum+4);
+    public String postList(HttpSession session, Model model, @PathVariable int strNum, @RequestParam(required = false, defaultValue = "") String sort) {
+        PageMoveWithMessage pmwm = companyService.postList(session, strNum, strNum + 4, sort);
         model.addAttribute("strNum", strNum);
         model.addAttribute("postPage", pmwm.getData());
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        if (Strings.isBlank(sort)) sort = "latest";
+        model.addAttribute("sort", sort);
         return pmwm.getPageName();
     }
 
     // 공고 생성 폼 이동
     @GetMapping("/post/form")
     public String postFormPage(HttpSession session, Model model) {
-        PageMoveWithMessage pmwm = companyService.formPost(session, null);
+        PageMoveWithMessage pmwm = companyService.formPost(session, null, null);
         Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
         model.addAttribute("info", pmwm.getData());
         model.addAttribute("jobs", allJobsAndStacks.get("jobs"));
@@ -54,8 +57,8 @@ public class CompanyController {
 
     @GetMapping("/post/detail")
     public String postDetail(HttpSession session, Model model, @RequestParam(name = "id") Long postId, @RequestParam String postType) {
-        PageMoveWithMessage pmwm = companyService.getPostDetail(session, postId, postType);
-        PageMoveWithMessage pmwm2 = companyService.formPost(session, null);
+        PageMoveWithMessage pmwm = companyService.getPostDetail(session, postId, postType, null);
+        PageMoveWithMessage pmwm2 = companyService.formPost(session, null, null);
 
         PostResponseDto data = (PostResponseDto) pmwm.getData();
 
@@ -95,7 +98,7 @@ public class CompanyController {
 
     @GetMapping("/post/{postType}/form")
     public String postForm(HttpSession session, Model model, @PathVariable String postType) {
-        PageMoveWithMessage pmwm = companyService.formPost(session, postType);
+        PageMoveWithMessage pmwm = companyService.formPost(session, postType, null);
         Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
         model.addAttribute("info", pmwm.getData());
         model.addAttribute("jobs", allJobsAndStacks.get("jobs"));

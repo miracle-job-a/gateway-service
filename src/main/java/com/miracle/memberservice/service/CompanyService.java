@@ -33,7 +33,7 @@ public class CompanyService {
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("guest/company-join", response.getMessage());
 
-        return new PageMoveWithMessage("index");
+        return new PageMoveWithMessage("guest/company-login");
     }
 
     public PageMoveWithMessage login(LoginDto loginDto, HttpSession session) {
@@ -62,11 +62,11 @@ public class CompanyService {
     }
 
     //공고관리 목록
-    public PageMoveWithMessage postList(HttpSession session, int strNum, int endNum) {
+    public PageMoveWithMessage postList(HttpSession session, int strNum, int endNum, String sort) {
 
         Long companyId = (Long) session.getAttribute("id");
 
-        ApiResponse response = ServiceCall.getParamList(session, "company", "/company/" + companyId + "/posts", strNum, endNum);
+        ApiResponse response = ServiceCall.getParamList(session, "company", "/company/" + companyId + "/posts", strNum, endNum, sort);
 
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("index", response.getMessage());
 
@@ -77,8 +77,9 @@ public class CompanyService {
 
     // MZ 공고 등록
 
-    public PageMoveWithMessage formPost(HttpSession session, String postType) {
-        Long companyId = (Long) session.getAttribute("id");
+    public PageMoveWithMessage formPost(HttpSession session, String postType, Long companyId) {
+        if(Objects.isNull(companyId)) companyId = (Long) session.getAttribute("id");
+
         ApiResponse response = ServiceCall.get(session, "company", "/company/" + companyId + "/info");
 
         if (response.getHttpStatus() != 200)
@@ -111,8 +112,8 @@ public class CompanyService {
         return new PageMoveWithMessage("redirect:/v1/company/post/list/1", response.getMessage());
     }
 
-    public PageMoveWithMessage getPostDetail(HttpSession session, Long postId, String postType) {
-        Long companyId = (Long) session.getAttribute("id");
+    public PageMoveWithMessage getPostDetail(HttpSession session, Long postId, String postType, Long companyId) {
+        if(Objects.isNull(companyId)) companyId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/" + postId);
 
         Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();

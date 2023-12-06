@@ -15,9 +15,8 @@ public class WebConfig {
 
         filterRegistrationBean.setFilter(new UserLoginCheckFilter()); // LogFilter 등록
         filterRegistrationBean.setOrder(1);
-        filterRegistrationBean.addUrlPatterns("/your-url-pattern");
+        filterRegistrationBean.addUrlPatterns("/v1/user/resumes", "/v1/user/resume/*", "/v1/user/resume", "/v1/user/cover-letters", "/v1/user/cover-letter/*", "/v1/user/apply");
         return filterRegistrationBean;
-
     }
 
     @Bean
@@ -26,8 +25,7 @@ public class WebConfig {
 
         filterRegistrationBean.setFilter(new CompanyLoginCheckFilter()); // LogFilter 등록
         filterRegistrationBean.setOrder(2);
-        filterRegistrationBean.addUrlPatterns("/v1/company/faq/*");
-        filterRegistrationBean.addUrlPatterns("/v1/company/post/*");
+        filterRegistrationBean.addUrlPatterns("/v1/company/faq/*", "/v1/company/post/*");
         return filterRegistrationBean;
 
     }
