@@ -70,15 +70,24 @@ public class AdminService {
     }
 
     public PageMoveWithMessage getAllStack(HttpSession session){
-//        Long adminId = (Long) session.getAttribute("id");
-
          ApiResponse response = ServiceCall.get(session, Const.RequestHeader.ADMIN, "/admin/stacks");
 
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("admin/main", response.getMessage());
 
         List<StackAndJobResponseDto> dtos = ApiResponseToList.stackList(response.getData());
-        System.out.println(dtos);
+        return new PageMoveWithMessage("admin/stackList", dtos);
+    }
+
+    public PageMoveWithMessage modifyStack(HttpSession session, Long stackId, String modifiedName){
+        String id = String.valueOf(stackId);
+
+        ApiResponse response = ServiceCall.putModifyParam(session, Const.RequestHeader.ADMIN, "/admin/edit/", id, modifiedName);
+
+        if (response.getHttpStatus() != 200)
+            return new PageMoveWithMessage("admin/main", response.getMessage());
+
+        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackList(response.getData());
         return new PageMoveWithMessage("admin/stackList", dtos);
     }
 }
