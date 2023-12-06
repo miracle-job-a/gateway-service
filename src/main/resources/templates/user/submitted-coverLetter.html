@@ -1,0 +1,79 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+    <script th:inline="javascript">
+        // 뒤로가기
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+
+
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
+
+        <section class="latest-podcast-section" id="section_2">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <!-- 전체 박스 크기 -->
+                    <div class="col-lg-9 col-12">
+                        <div class="section-title-wrap mb-4">
+                            <h4 class="section-title">지원 이력서</h4>
+                        </div>
+
+                        <div class="row justify-content-center">
+                            <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-11 align-self-center">
+
+                                <div class="col-11 mt-5 mx-3 mx-auto">
+                                    <h4 >지원 자기소개서 제목입니다.</h4>
+                                </div>
+
+                                <!-- 자기소개서 생성 폼 시작 -->
+                                <div class="card my-3 px-3 col-11 align-self-center">
+
+                                    <div class="row">
+                                        <div class="col-12 my-1 mx-auto">
+                                            <input type="text" readonly name="userCareerDetailList" id="userCareerDetailList" class="form-control-plaintext mb-1" value="문항 제목이 들어갑니다."/>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12 my-1 mx-auto">
+                                            <textarea class="form-control" id="content" rows="5">컨텐츠 내용이 들어갑니다.</textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12 my-1 mx-auto">
+                                            <div class="col-auto mb-1">
+                                                <label for="userGitLink">Git 주소</label>
+                                            </div>
+                                            <input type="text" readonly name="userGitLink" id="userGitLink" class="form-control" th:value="${resume.userGitLink}" />
+                                        </div>
+                                    </div>
+
+
+                                    <input type="hidden" name="id" >
+                                    <div class="row col-12 m-4 mx-auto post-form">
+                                        <div class="col-4">
+                                            <button type="button" class="btn" id="back" onclick="goBack()">돌아가기</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+</html>

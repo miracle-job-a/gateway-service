@@ -139,12 +139,4 @@ public class CompanyController {
         return pmwm.getPageName();
     }
 
-
-    /*
-    * toolchain {
-		languageVersion.set(JavaLanguageVersion.of(17))
-	}
-	*
-	* DB_password=5002;DB_url=jdbc:mysql://localhost:3306/miracle_user;DB_username=root
-    * */
 }
