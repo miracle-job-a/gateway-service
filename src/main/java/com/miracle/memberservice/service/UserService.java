@@ -48,6 +48,7 @@ public class UserService {
                 .name(data.get("name"))
                 .build();
 
+        if(Objects.nonNull(loginDto.getPostId())) return new PageMoveWithMessage("redirect:/v1/click/post/"+loginDto.getPostId()+"/detail", dto);
         return new PageMoveWithMessage("redirect:/v1", dto);
     }
 
@@ -87,6 +88,7 @@ public class UserService {
         ApiResponse response = ServiceCall.post(session, resumeRequestDto, Const.RequestHeader.USER, "/user/" + userId + "/resume");
         if (response.getHttpStatus() != 201)
             return new PageMoveWithMessage("redirect:/v1/user/resume/form", response.getMessage());
+        if(Objects.nonNull(resumeRequestDto.getPostId())) return new PageMoveWithMessage("redirect:/v1/click/post/"+resumeRequestDto.getPostId()+"/detail", resumeRequestDto);
         return new PageMoveWithMessage("redirect:/v1/user/resumes");
     }
 
@@ -141,12 +143,10 @@ public class UserService {
         return new PageMoveWithMessage("redirect:/v1/user/resume/detail/" + resumeId);
     }
 
-
-
-    public PageMoveWithMessage createCoverLetter(HttpSession session, CoverLetterPostRequestDto requestDto) {
+    public PageMoveWithMessage createCoverLetter(HttpSession session, CoverLetterPostRequestDto requestDto, QnaListDto qnaListDto) {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.post(session, requestDto, Const.RequestHeader.USER, "/user/" + userId + "/cover-letter");
-
+        if(Objects.nonNull(qnaListDto.getPostId())) return new PageMoveWithMessage("redirect:/v1/click/post/"+qnaListDto.getPostId()+"/detail", qnaListDto);
         return new PageMoveWithMessage("redirect:/v1/user/cover-letters/1", response.getMessage());
     }
 

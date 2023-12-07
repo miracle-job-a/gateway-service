@@ -59,7 +59,9 @@
                     <div class="col-12 m-2"></div>
 
                     <!-- 목록 페이지 시작 -->
-
+                    <h5 class="col-lg-10 col-12 mt-4 mb-4 mb-lg-2 text-center" th:if="${#lists.size(resumeList)==0}">
+                        이력서가 없습니다.
+                    </h5>
                     <!-- 목록 1칸 -->
                     <div th:each="resume : ${resumeList}" class="col-lg-10 col-12 mb-4 mb-lg-2">
                         <div class="custom-block d-flex">

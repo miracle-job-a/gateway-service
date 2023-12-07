@@ -11,4 +11,7 @@ import java.util.List;
 public class QnaListDto {
     private final List<String> question;
     private final List<String> answer;
+    private final Long postId;
+    private final Long companyId;
+    private final String postType;
 }
