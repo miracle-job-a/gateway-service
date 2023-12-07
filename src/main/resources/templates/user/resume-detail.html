@@ -179,6 +179,9 @@
             $('#jobs').each(function () {
                 $(this).css('display', 'none');
             });
+            $('#stacks').each(function () {
+                $(this).css('display', 'none');
+            });
             $('.bi-person-workspace').prev('input[type="checkbox"]').prop('checked', true);
             $('.pre_set input[type="date"], .pre_set input[type="text"]').removeAttr('readonly');
             $('#item2 input[type="text"]').removeAttr('readonly');
@@ -294,7 +297,6 @@
                                                    class="form-control" placeholder="이력서 제목" th:value="${resume.title}" required="" />
                                         </div>
 
-                                        <div class="card mt-3 p-3 col-12 post-form align-self-center">
                                             <div class="mb-1">
                                                 <label for="job">개발 가능한 직무</label>
                                             </div>

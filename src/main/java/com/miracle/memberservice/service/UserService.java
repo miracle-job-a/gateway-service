@@ -12,8 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -28,7 +30,7 @@ public class UserService {
      */
     public PageMoveWithMessage join(UserJoinDto userJoinDto, HttpSession session) {
 
-        ApiResponse response = ServiceCall.post(session, userJoinDto, "user", "/user/join");
+        ApiResponse response = ServiceCall.post(session, userJoinDto, Const.RequestHeader.USER, "/user/join");
 
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("guest/user-join", response.getMessage());
 
@@ -37,7 +39,7 @@ public class UserService {
 
     public PageMoveWithMessage login(LoginDto loginDto, HttpSession session) {
 
-        ApiResponse response = ServiceCall.post(session, loginDto, "user", "/user/login");
+        ApiResponse response = ServiceCall.post(session, loginDto, Const.RequestHeader.USER, "/user/login");
 
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("guest/user-login", response.getMessage());
 
@@ -54,7 +56,7 @@ public class UserService {
 
     public ResponseEntity<String> duplicateEmail(HttpSession session, String email) {
 
-        ApiResponse response = ServiceCall.get(session, "user", "/user/check-email/" + email);
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/check-email/" + email);
 
         if (Boolean.TRUE.equals(response.getData()))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage());
@@ -64,7 +66,7 @@ public class UserService {
 
     public PageMoveWithMessage formResume(HttpSession session) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.get(session, "user", "/user/" + userId + "/base-info");
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/base-info");
 
 
         if (response.getHttpStatus() != 200)
@@ -85,15 +87,15 @@ public class UserService {
 
     public PageMoveWithMessage addResume(HttpSession session, ResumeRequestDto resumeRequestDto) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.post(session, resumeRequestDto, "user", "/user/" + userId + "/resume");
-        if (response.getHttpStatus() != 200)
-            return new PageMoveWithMessage("redirect:/v1/user/resumes", response.getMessage());
+        ApiResponse response = ServiceCall.post(session, resumeRequestDto, Const.RequestHeader.USER, "/user/" + userId + "/resume");
+        if (response.getHttpStatus() != 201)
+            return new PageMoveWithMessage("redirect:/v1/user/resume/form", response.getMessage());
         return new PageMoveWithMessage("redirect:/v1/user/resumes");
     }
 
     public PageMoveWithMessage resumeList(HttpSession session) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.get(session, "user", "/user/" + userId + "/resume");
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/resume");
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("/v1/user", response.getMessage());
 
@@ -117,7 +119,6 @@ public class UserService {
                 .phone((String) data.get("phone"))
                 .education((String) data.get("education"))
                 .gitLink((String) data.get("gitLink"))
-                .open((Boolean) data.get("open"))
                 .jobIdSet((ArrayList<Integer>) data.get("jobIdSet"))
                 .stackIdSet((ArrayList<Integer>) data.get("stackIdSet"))
                 .careerDetailList((List<String>) data.get("careerDetailList"))
@@ -137,40 +138,40 @@ public class UserService {
 
     public PageMoveWithMessage updateResume(HttpSession session, ResumeRequestDto requestDto, Long resumeId) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.put(session, requestDto, "user", "/user/" + userId + "/resume/" + resumeId);
+        ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.USER, "/user/" + userId + "/resume/" + resumeId);
         if (response.getHttpStatus() != 200)
-            return new PageMoveWithMessage("redirect:/v1/user/resume/detail/" + resumeId, response.getMessage());
+            return new PageMoveWithMessage("redirect:/v1/user/resume//detail/" + resumeId, response.getMessage());
         return new PageMoveWithMessage("redirect:/v1/user/resume/detail/" + resumeId);
     }
 
-    public PageMoveWithMessage createCoverLetter(HttpSession session, CoverLetterPostRequestDto requestDto){
+    public PageMoveWithMessage createCoverLetter(HttpSession session, CoverLetterPostRequestDto requestDto) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.post(session, requestDto, Const.RequestHeader.USER, "/user/"+userId+"/cover-letter");
+        ApiResponse response = ServiceCall.post(session, requestDto, Const.RequestHeader.USER, "/user/" + userId + "/cover-letter");
 
-        return new PageMoveWithMessage("redirect:/v1/user/cover-letters", response.getMessage());
+        return new PageMoveWithMessage("redirect:/v1/user/cover-letters/1", response.getMessage());
     }
 
-    public PageMoveWithMessage coverLetterList(HttpSession session){
+    public PageMoveWithMessage coverLetterList(HttpSession session, int strNum) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.getParam(session, "user", "/user/"+userId+"/cover-letter","userId", String.valueOf(userId));
-        if (response.getHttpStatus() != 200 )
-            return new PageMoveWithMessage("/v1/user/cover-letters", response.getMessage());
+        ApiResponse response = ServiceCall.getUserParamList(session, Const.RequestHeader.USER, "/user/" + userId + "/cover-letter", strNum, strNum + 4);
+        if (response.getHttpStatus() != 200)
+            return new PageMoveWithMessage("index", response.getMessage());
 
-        List<CoverLetterListResponseDto> letterList = ApiResponseToList.coverLetterList(response.getData());
+        List<List<CoverLetterListResponseDto>> letterList = ApiResponseToList.coverLetterList(response.getData());
 
-        return new PageMoveWithMessage("/user/cover-letters", letterList);
+        return new PageMoveWithMessage("user/cover-letters", letterList);
     }
 
     public PageMoveWithMessage deleteCoverLetter(HttpSession session, Long coverLetterId) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.USER, "/user/"+userId+"/cover-letter/"+coverLetterId);
+        ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.USER, "/user/" + userId + "/cover-letter/" + coverLetterId);
 
-        return new PageMoveWithMessage("redirect:/v1/user/cover-letters", response.getMessage());
+        return new PageMoveWithMessage("redirect:/v1/user/cover-letters/1", response.getMessage());
     }
 
-    public PageMoveWithMessage coverLetterDetail(HttpSession session, Long coverLetterId){
+    public PageMoveWithMessage coverLetterDetail(HttpSession session, Long coverLetterId) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/"+userId+"/cover-letter/"+coverLetterId);
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/cover-letter/" + coverLetterId);
 
         LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
@@ -183,10 +184,10 @@ public class UserService {
         return new PageMoveWithMessage("/user/coverLetter-detail", letter);
     }
 
-    public PageMoveWithMessage updateCoverLetter(HttpSession session, CoverLetterPostRequestDto requestDto, Long coverLetterId){
+    public PageMoveWithMessage updateCoverLetter(HttpSession session, CoverLetterPostRequestDto requestDto, Long coverLetterId) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.USER, "/user/"+userId+"/cover-letter/"+coverLetterId);
-        return new PageMoveWithMessage("redirect:/v1/user/cover-letters", response.getMessage());
+        ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.USER, "/user/" + userId + "/cover-letter/" + coverLetterId);
+        return new PageMoveWithMessage("redirect:/v1/user/cover-letter/detail/" + coverLetterId, response.getMessage());
     }
 
     public ApplicationLetterResponseDto applyPopup(HttpSession session, Long userId) {
@@ -199,12 +200,11 @@ public class UserService {
                 .build();
     }
 
-    public PageMoveWithMessage apply(HttpSession session, ApplicationLetterPostRequestDto dto) {
+    public PageMoveWithMessage apply(HttpSession session, ApplicationLetterPostRequestDto dto, Long companyId) {
         Long userId = (Long) session.getAttribute("id");
 
         ApiResponse response = ServiceCall.post(session, dto, Const.RequestHeader.USER, "/user/" + userId + "/application-letter");
-        if(response.getHttpStatus()!=200) return new PageMoveWithMessage("index", response.getMessage());
 
-        return new PageMoveWithMessage("redirect:/v1/user/adsf", dto);
+        return new PageMoveWithMessage("redirect:/v1/click/post/" + dto.getPostId() + "/detail?companyId=" + companyId + "&postType=" + dto.getPostType(), response.getMessage(), dto);
     }
 }

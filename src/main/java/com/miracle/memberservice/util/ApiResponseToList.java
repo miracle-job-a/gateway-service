@@ -170,20 +170,25 @@ public class ApiResponseToList {
         return dtos;
     }
 
-    public static List<CoverLetterListResponseDto> coverLetterList(Object object) {
-        ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+    public static List<List<CoverLetterListResponseDto>> coverLetterList(Object object) {
+        List<ArrayList<LinkedHashMap<String, Object>>> data = (ArrayList<ArrayList<LinkedHashMap<String, Object>>>) object;
+        List<List<CoverLetterListResponseDto>> pageList = new ArrayList<>();
 
-        List<CoverLetterListResponseDto> dto = new ArrayList<>();
-        for (LinkedHashMap<String, Object> letter : data) {
-
-            Integer id = (Integer) letter.get("id");
-            dto.add(CoverLetterListResponseDto.builder()
-                    .id(id.longValue())
-                    .title((String) letter.get("title"))
-                    .modifiedAt((String) letter.get("modifiedAt"))
-                    .build());
+        for (ArrayList<LinkedHashMap<String, Object>> page : data) {
+            List<CoverLetterListResponseDto> dtos = new ArrayList<>();
+            if (!page.isEmpty()) {
+                for (Map<String, Object> coverLetter : page) {
+                    Integer id = (Integer) coverLetter.get("id");
+                    dtos.add(CoverLetterListResponseDto.builder()
+                            .id(id.longValue())
+                            .title(String.valueOf(coverLetter.get("title")))
+                            .modifiedAt(String.valueOf(coverLetter.get("modifiedAt")))
+                            .build());
+                }
+                pageList.add(dtos);
+            }
         }
-        return dto;
+        return pageList;
     }
 
     public static List<List<ApplicationLetterListResponseDto>> applicationLetterList(Object object) {

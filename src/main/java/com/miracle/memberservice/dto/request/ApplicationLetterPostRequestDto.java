@@ -22,7 +22,7 @@ public class ApplicationLetterPostRequestDto {
         this.postType = postType;
         this.postId = postId;
         this.submitDate = LocalDateTime.now();
-        this.applicationStatus = "PASS";
+        this.applicationStatus = "IN_PROGRESS";
         this.userJob = userJob;
     }
 }

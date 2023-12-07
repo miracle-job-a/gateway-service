@@ -92,18 +92,19 @@ public class UserController {
     @PostMapping("/resume/update/{resumeId}")
     public String updateResume(HttpSession session,
                                @PathVariable Long resumeId,
-                               ResumeRequestDto requestDto,
-                               RedirectAttributes redirectAttributes){
+                               @ModelAttribute ResumeRequestDto requestDto,
+                               RedirectAttributes redirectAttributes) {
         PageMoveWithMessage pmwm = userService.updateResume(session, requestDto, resumeId);
         redirectAttributes.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
 
     // [임시] 자소서 목록으로 이동
-    @GetMapping("/cover-letters")
-    public String coverLetterList(HttpSession session, Model model) {
-        PageMoveWithMessage pmwm = userService.coverLetterList(session);
+    @GetMapping("/cover-letters/{strNum}")
+    public String coverLetterList(HttpSession session, Model model, @PathVariable(required = false) int strNum) {
+        PageMoveWithMessage pmwm = userService.coverLetterList(session, strNum);
         model.addAttribute("letterList", pmwm.getData());
+        model.addAttribute("strNum", strNum);
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
@@ -152,10 +153,10 @@ public class UserController {
         return pmwm.getPageName();
     }
 
-    @PostMapping("/apply")
-    public String apply(HttpSession session, @ModelAttribute ApplicationLetterPostRequestDto dto, Model model) {
-        PageMoveWithMessage pmwm = userService.apply(session, dto);
-        model.addAttribute("errorMessage", pmwm.getErrorMessage());
+    @PostMapping("/apply/{companyId}")
+    public String apply(RedirectAttributes redirectAttributes, HttpSession session, @ModelAttribute ApplicationLetterPostRequestDto dto, @PathVariable Long companyId) {
+        PageMoveWithMessage pmwm = userService.apply(session, dto, companyId);
+        redirectAttributes.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
 }
