@@ -32,9 +32,6 @@ public class MyPageController {
     @GetMapping("apply-list/submitted-coverLetter")
     public String submittedLetter(){ return "user/submitted-coverLetter"; }
 
-    // 임시 마이페이지 이동
-    @GetMapping("/apply-list")
-    public String myPageList(){return "user/apply-list"; }
     // TODO 마이페이지 목록 (추후 url 정리하기)
     @GetMapping("/apply-list/{startPage}")
     public String applyList(HttpSession session, Model model, @PathVariable(required = false) int startPage){
@@ -45,13 +42,8 @@ public class MyPageController {
         return pmwm.getPageName();
     }
 
-    //TODO 임시 지원이력서 폼 이동 (추후 목록에서 이동 완성 시 수정하기)
-    @GetMapping("/apply-list/submitted-resume")
-    public String submittedResume(){return "user/submitted-resume"; }
-    // 지원이력서 보기
-    @GetMapping("/apply-list/resume")
-    public String applyResume(HttpSession session, Model model){
-        Long applicationLetterId = 1L;
+    @GetMapping("/apply-list/submitted-resume/{applicationLetterId}")
+    public String applyResume(HttpSession session, Model model, @PathVariable(required = false) Long applicationLetterId){
         PageMoveWithMessage pmwm = myPageService.resumeInApplicationLetterDetail(session, applicationLetterId);
 
         ResumeInApplicationLetterResponseDto responseDto = (ResumeInApplicationLetterResponseDto) pmwm.getData();

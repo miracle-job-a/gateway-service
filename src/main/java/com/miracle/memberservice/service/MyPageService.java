@@ -1,7 +1,9 @@
 package com.miracle.memberservice.service;
 
+import com.miracle.memberservice.dto.request.QnaDto;
 import com.miracle.memberservice.dto.response.ApiResponse;
 import com.miracle.memberservice.dto.response.ApplicationLetterListResponseDto;
+import com.miracle.memberservice.dto.response.CoverLetterInApplicationLetterResponseDto;
 import com.miracle.memberservice.dto.response.ResumeInApplicationLetterResponseDto;
 import com.miracle.memberservice.util.ApiResponseToList;
 import com.miracle.memberservice.util.Const;
@@ -16,6 +18,18 @@ import java.util.*;
 @Service
 @Slf4j
 public class MyPageService {
+
+    // 지원현황 목록 불러오기
+    public PageMoveWithMessage applicationLetterList(HttpSession session, int startPage){
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.getUserParamList(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter", startPage, startPage + 4);
+
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("/v1", response.getMessage());
+
+        List<List<ApplicationLetterListResponseDto>> letter = ApiResponseToList.applicationLetterList(response.getData());
+        return new PageMoveWithMessage("user/apply-list", letter);
+    }
+
 
     // 지원 이력서 조회하기
     public PageMoveWithMessage resumeInApplicationLetterDetail(HttpSession session, Long applicationLetterId){
@@ -45,14 +59,19 @@ public class MyPageService {
         return new PageMoveWithMessage("user/submitted-resume", dto);
     }
 
-    // 지원현황 목록 불러오기
-    public PageMoveWithMessage applicationLetterList(HttpSession session, int startPage){
+    // 지원 자소서 조회하기
+    public PageMoveWithMessage coverLetterInApplicationLetterDetail(HttpSession session, Long applicationLetterId){
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.getUserParamList(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter", startPage, startPage + 4);
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user" + userId + "/application-letter/" + applicationLetterId + "/cover-letter");
 
-        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("/v1", response.getMessage());
+        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
-        List<List<ApplicationLetterListResponseDto>> letter = ApiResponseToList.applicationLetterList(response.getData());
-        return new PageMoveWithMessage("user/apply-list", letter);
+        CoverLetterInApplicationLetterResponseDto letter = CoverLetterInApplicationLetterResponseDto.builder()
+                .coverLetterTitle((String) data.get("title"))
+                .qnaList((List<QnaDto>) data.get("qnaList"))
+                .build();
+
+        return new PageMoveWithMessage("/user/submitted-coverLetter", letter);
     }
+
 }

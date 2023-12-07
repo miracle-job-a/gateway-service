@@ -157,31 +157,31 @@
             /*<![CDATA[*/
 
             /*공고이동*/
-            document.getElementById('post').forEach(function (button){
-                button.addEventListener('click', function (){
+            document.querySelectorAll('[name="post"]').forEach(function(button) {
+                button.addEventListener('click', function() {
                     var postId = button.id;
                     window.location.href = '/v1/click/post/' + postId + 'detail';
                 });
             });
 
             /*지원이력서이동*/
-            document.getElementsByName('resume').forEach(function(button) {
+            document.querySelectorAll('[name="resume"]').forEach(function(button) {
                 button.addEventListener('click', function() {
                     var applicationLetterId = button.id;
-                    window.location.href = '/v1/user/my-page/apply-list/' + applicationLetterId;
+                    window.location.href = '/v1/user/my-page/apply-list/submitted-resume/' + applicationLetterId;
                 });
             });
 
             /*지원자소서이동*/
-            document.getElementsByName('coverLetter').forEach(function(button) {
+            document.querySelectorAll('[name="coverLetter"]').forEach(function(button) {
                 button.addEventListener('click', function() {
-                    var applicationLetterId = button.id;
-                    window.location.href = '/v1/user/my-page/apply-list/resume?applicationLetterId=' + applicationLetterId;
+                    /*var applicationLetterId = button.id;*/
+                    window.location.href = '/v1/user/my-page/apply-list/submitted-coverLetter';
                 });
             });
 
             /*면접이동*/
-            document.getElementsByName('interview').forEach(function(button) {
+            document.querySelectorAll('[name="interview"]').forEach(function(button) {
                 button.addEventListener('click', function() {
                     var applicationLetterId = button.id;
 
