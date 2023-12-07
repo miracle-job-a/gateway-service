@@ -93,7 +93,7 @@ public class AdminService {
 
     public PageMoveWithMessage searchStack(HttpSession session, String stackName) {
         System.out.println(stackName);
-        ApiResponse response = ServiceCall.getParamName(session, Const.RequestHeader.ADMIN, "/admin/search", stackName);
+        ApiResponse response = ServiceCall.getParamStackName(session, Const.RequestHeader.ADMIN, "/admin/search", stackName);
         System.out.println(response.getData());
         if (response.getHttpStatus() != 200)
         return new PageMoveWithMessage("admin/main", response.getMessage());
