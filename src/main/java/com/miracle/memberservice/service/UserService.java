@@ -51,7 +51,7 @@ public class UserService {
                 .name(data.get("name"))
                 .build();
 
-        return new PageMoveWithMessage("index", dto);
+        return new PageMoveWithMessage("redirect:/v1", dto);
     }
 
     public ResponseEntity<String> duplicateEmail(HttpSession session, String email) {
@@ -155,7 +155,7 @@ public class UserService {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.getUserParamList(session, Const.RequestHeader.USER, "/user/" + userId + "/cover-letter", strNum, strNum + 4);
         if (response.getHttpStatus() != 200)
-            return new PageMoveWithMessage("index", response.getMessage());
+            return new PageMoveWithMessage("redirect:/v1", response.getMessage());
 
         List<List<CoverLetterListResponseDto>> letterList = ApiResponseToList.coverLetterList(response.getData());
 

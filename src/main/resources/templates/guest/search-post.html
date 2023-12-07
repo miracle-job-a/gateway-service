@@ -244,14 +244,14 @@
                                         <button class="badge" style="background-color: #b02a37" th:text="마감"
                                                 th:if="${post.closed==true}"></button>
                                     </div>
-                                    <a href="company/detail-page.html" class="text-black " th:text="${post.name}">
+                                    <a class="text-black " th:text="${post.name}">
                                     </a>
                                 </div>
                                 <a class="bi-balloon me-1">
                                     <span class="text-black" th:text="${post.workAddress}"></span>
                                 </a>
                                 <a class="d-flex justify-content-between me-1">
-                                    <span class="bi-calendar text-black" th:text="'    ~'+${post.endDate}"></span>
+                                    <span class="bi-clock-fill text-black" th:text="'    ~'+${post.endDate}"></span>
                                 </a>
 
                                 <hr>

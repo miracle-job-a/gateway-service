@@ -36,7 +36,13 @@ public class GuestController {
     private final AdminService adminService;
 
     @GetMapping
-    public String index() {
+    public String index(HttpSession session, Model model) {
+        PageMoveWithMessage pmwm = companyService.mainPage(session);
+        if (Objects.nonNull(session.getAttribute("bno"))) {
+            Long id = (Long) session.getAttribute("id");
+            model.addAttribute("count", companyService.mainPageCompany(session, id));
+        }
+        model.addAttribute("map", pmwm.getData());
         return "index";
     }
 

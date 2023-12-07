@@ -30,7 +30,7 @@ public class UserController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "index";
+        return "redirect:/v1";
     }
 
     @GetMapping("/resume/form")
