@@ -24,7 +24,7 @@ public class AdminController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "index";
+        return "redirect:/v1";
     }
     @GetMapping("/users")
     private String userList(){ return "admin/userList"; }
