@@ -42,6 +42,11 @@
                 }
             });
         }
+
+        function sort(button) {
+            let id = button.id;
+            location.href = "/v1/user/cover-letters/1?sort=" + id;
+        }
     </script>
 
     <main>
@@ -61,11 +66,24 @@
 
                     <div class="row col-lg-10 col-12 mb-4">
                         <div class="col-auto">
-                            <button type="button" class="btn btn-secondary" id="cover-letter">자기소개서 생성</button>
+                            <button type="button" class="btn btn-primary" id="cover-letter">자기소개서 생성</button>
                             <div class="btn-group">
-                                <button type="button" class="btn btn-outline-secondary">최근 작성일</button>
-                                <button type="button" class="btn btn-outline-secondary">오래된 작성일</button>
+                                <button id="MODIFIED_AT_DESC" type="button" th:class="${sort == 'MODIFIED_AT_DESC' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}"
+                                        onclick="sort(this)">최근 작성일
+                                </button>
+                                <button id="MODIFIED_AT_ASC" type="button" th:class="${sort == 'MODIFIED_AT_ASC' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}" onclick="sort(this)">
+                                    오래된 작성
+                                </button>
                             </div>
+                        </div>
+                        <div class="col-auto">
+                            <form action="/v1/user/cover-letters/1" method="get">
+                                <div class="input-group mb-3 ">
+                                    <input type="text" name="word" class="form-control" placeholder="Search">
+                                    <button class="btn btn-outline-secondary" type="submit">Go</button>
+                                </div>
+                            </form>
+
                         </div>
                     </div>
 

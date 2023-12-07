@@ -146,13 +146,25 @@ public class UserService {
     public PageMoveWithMessage createCoverLetter(HttpSession session, CoverLetterPostRequestDto requestDto, QnaListDto qnaListDto) {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.post(session, requestDto, Const.RequestHeader.USER, "/user/" + userId + "/cover-letter");
+        if(response.getHttpStatus()!=201) return new PageMoveWithMessage("redirect:/v1/user/cover-letter/form", "같은 문항이 들어갈 수 없습니다.");
         if(Objects.nonNull(qnaListDto.getPostId())) return new PageMoveWithMessage("redirect:/v1/click/post/"+qnaListDto.getPostId()+"/detail", qnaListDto);
         return new PageMoveWithMessage("redirect:/v1/user/cover-letters/1", response.getMessage());
     }
 
-    public PageMoveWithMessage coverLetterList(HttpSession session, int strNum) {
+    public PageMoveWithMessage coverLetterList(HttpSession session, int strNum, String sort) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.getUserParamList(session, Const.RequestHeader.USER, "/user/" + userId + "/cover-letter", strNum, strNum + 4);
+        ApiResponse response = ServiceCall.getUserParamListSort(session, Const.RequestHeader.USER, "/user/" + userId + "/cover-letter", strNum, strNum + 4, sort);
+        if (response.getHttpStatus() != 200)
+            return new PageMoveWithMessage("redirect:/v1", response.getMessage());
+
+        List<List<CoverLetterListResponseDto>> letterList = ApiResponseToList.coverLetterList(response.getData());
+
+        return new PageMoveWithMessage("user/cover-letters", letterList);
+    }
+
+    public PageMoveWithMessage coverLetterListSearch(HttpSession session, int strNum, String word) {
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.getUserParamListSearch(session, Const.RequestHeader.USER, "/user/" + userId + "/cover-letter/search", strNum, strNum + 4, word);
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("redirect:/v1", response.getMessage());
 

@@ -109,19 +109,26 @@ public class UserController {
 
     // 자소서 목록으로 이동
     @GetMapping("/cover-letters/{strNum}")
-    public String coverLetterList(HttpSession session, Model model, @PathVariable(required = false) int strNum) {
-        PageMoveWithMessage pmwm = userService.coverLetterList(session, strNum);
+    public String coverLetterList(HttpSession session, Model model, @PathVariable(required = false) int strNum, @RequestParam(required = false, defaultValue = "MODIFIED_AT_DESC") String sort, @RequestParam(required = false, defaultValue = "") String word) {
+        PageMoveWithMessage pmwm;
+        if (word.isEmpty()) {
+            pmwm = userService.coverLetterList(session, strNum, sort);
+        } else {
+            pmwm = userService.coverLetterListSearch(session, strNum, word);
+        }
         model.addAttribute("letterList", pmwm.getData());
         model.addAttribute("strNum", strNum);
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        model.addAttribute("sort", sort);
         return pmwm.getPageName();
     }
 
     @GetMapping("/cover-letter/form")
-    public String coverLetterForm(@RequestParam(required = false) String postId, @RequestParam(required = false) String companyId, @RequestParam(required = false) String postType, Model model) {
+    public String coverLetterForm(@RequestParam(required = false) String postId, @RequestParam(required = false) String companyId, @RequestParam(required = false) String postType, @RequestParam(required = false) String errorMessage, Model model) {
         model.addAttribute("postId", postId);
         model.addAttribute("companyId", companyId);
         model.addAttribute("postType", postType);
+        model.addAttribute("errorMessage", errorMessage);
         return "user/coverLetter-form";
     }
 
@@ -139,6 +146,7 @@ public class UserController {
             redirectAttributes.addAttribute("postType", qnaListDto.getPostType());
         }
         PageMoveWithMessage pmwm = userService.createCoverLetter(session, new CoverLetterPostRequestDto(title, qnaDtoList), qnaListDto);
+        redirectAttributes.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
 

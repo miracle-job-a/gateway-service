@@ -177,6 +177,79 @@ public class ApiResponseToList {
         return pageList;
     }
 
+    public static List<List<TotalSearchPostResponseDto>> searchTotalPost(List<LinkedHashMap<String, Object>> data, HttpSession session) {
+        List<List<TotalSearchPostResponseDto>> pageList = new ArrayList<>();
+
+        for (LinkedHashMap<String, Object> lhm : data) {
+            List<TotalSearchPostResponseDto> dtos = new ArrayList<>();
+            Integer numberOfElements = (Integer) lhm.get("numberOfElements");
+            if (numberOfElements > 0) {
+                ArrayList<LinkedHashMap<String, Object>> content = (ArrayList<LinkedHashMap<String, Object>>) lhm.get("content");
+                for (LinkedHashMap<String, Object> dto : content) {
+                    Integer id = (Integer) dto.get("id");
+                    List<Integer> jobs = (ArrayList<Integer>) dto.get("jobIdSet");
+
+                    ApiResponse response = ServiceCall.post(session, new JobRequestDto(jobs), Const.RequestHeader.ADMIN, "/admin/jobs");
+                    String jobDetail;
+                    if (response.getData() instanceof Boolean) {
+                        jobDetail = null;
+                    } else {
+                        List<JobResponseDto> job = ApiResponseToList.jobs(response.getData());
+                        jobDetail = job.get(0).getName();
+                    }
+
+                    dtos.add(TotalSearchPostResponseDto.builder()
+                            .id(id.longValue())
+                            .title((String) dto.get("title"))
+                            .endDate((String) dto.get("endDate"))
+                            .workAddress((String) dto.get("workAddress"))
+                            .career((Integer) dto.get("career"))
+                            .job(jobDetail)
+                            .build());
+                }
+                pageList.add(dtos);
+            }
+        }
+        return pageList;
+    }
+
+    public static List<List<TotalSearchPostResponseDto>> searchTotalCompany(List<LinkedHashMap<String, Object>> data, HttpSession session) {
+        List<List<TotalSearchPostResponseDto>> pageList = new ArrayList<>();
+
+        for (LinkedHashMap<String, Object> lhm : data) {
+            List<TotalSearchPostResponseDto> dtos = new ArrayList<>();
+            Integer numberOfElements = (Integer) lhm.get("numberOfElements");
+            if (numberOfElements > 0) {
+                ArrayList<LinkedHashMap<String, Object>> content = (ArrayList<LinkedHashMap<String, Object>>) lhm.get("content");
+                for (LinkedHashMap<String, Object> dto : content) {
+                    Integer id = (Integer) dto.get("id");
+                    Integer companyId = (Integer) dto.get("companyId");
+                    ArrayList<Integer> jobs = (ArrayList<Integer>) dto.get("jobIdSet");
+
+                    ApiResponse response = ServiceCall.post(session, new JobRequestDto(jobs), Const.RequestHeader.ADMIN, "/admin/jobs");
+                    String jobDetail;
+                    if (response.getData() instanceof Boolean) {
+                        jobDetail = null;
+                    } else {
+                        List<JobResponseDto> job = ApiResponseToList.jobs(response.getData());
+                        jobDetail = job.get(0).getName();
+                    }
+
+                    dtos.add(TotalSearchPostResponseDto.builder()
+                            .id(id.longValue())
+                            .title((String) dto.get("title"))
+                            .endDate(divideTime((String) dto.get("endDate")))
+                            .workAddress((String) dto.get("workAddress"))
+                            .career((Integer) dto.get("career"))
+                            .job(jobDetail)
+                            .build());
+                }
+                pageList.add(dtos);
+            }
+        }
+        return pageList;
+    }
+
     public static List<QuestionResponseDto> questionList(Object object) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
 

@@ -185,7 +185,6 @@ public class GuestController {
 
     @GetMapping("/search/posts/{strNum}")
     public String searchPosts(HttpSession session, @ModelAttribute("dto") ConditionalSearchPostRequestDto dto, @PathVariable int strNum, Model model) {
-        //TODO 이거 해야함
         PageMoveWithMessage pmwm = companyService.searchPosts(session, dto, strNum, strNum + 4);
         Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
         model.addAttribute("dto", dto);
@@ -195,13 +194,11 @@ public class GuestController {
         return pmwm.getPageName();
     }
 
-    @GetMapping("/search/posts/total/{strNum}")
-    public String searchTotalPosts(HttpSession session, @RequestParam String search, @PathVariable int strNum, Model model) {
+    @GetMapping("/search/total/{strNum}")
+    public String searchTotalPosts(HttpSession session, @RequestParam(required = false) String search, @PathVariable int strNum, Model model) {
         PageMoveWithMessage pmwm = companyService.searchTotalPosts(session, search, strNum, strNum + 4);
-        Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
-        model.addAttribute("postPage", pmwm.getData());
-        model.addAttribute("jobs", allJobsAndStacks.get("jobs"));
-        model.addAttribute("stacks", allJobsAndStacks.get("stacks"));
+        model.addAttribute("postAndCompany", pmwm.getData());
+        model.addAttribute("strNum", strNum);
         return pmwm.getPageName();
     }
 
