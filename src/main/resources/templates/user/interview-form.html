@@ -1,0 +1,117 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+    <script th:inline="javascript">
+        // 뒤로가기
+        function goBack() {
+            window.history.back();
+        }
+
+        // 항목 추가
+        function addInputFields() {
+            var container = document.getElementById("inputFieldsContainer");
+
+            // 새로운 입력 필드 추가
+            var newInputDiv = document.createElement("div");
+            newInputDiv.className = "col-11 mt-5 mb-2 mx-auto";
+
+            var inputGroupDiv = document.createElement("div");
+            inputGroupDiv.className = "input-group";
+
+            var inputField = document.createElement("input");
+            inputField.type = "text";
+            inputField.name = "question";
+            inputField.className = "form-control";
+            inputField.required = true;
+            inputField.placeholder = "면접 질문을 입력";
+
+            var deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.className = "btn btn-secondary";
+            deleteButton.innerText = "-";
+            deleteButton.addEventListener("click", function() {
+                // 삭제 버튼 클릭 시 부모 노드인 newInputDiv 삭제
+                container.removeChild(newInputDiv);
+                container.removeChild(newTextAreaDiv);
+            });
+
+            inputGroupDiv.appendChild(inputField);
+            inputGroupDiv.appendChild(deleteButton);
+            newInputDiv.appendChild(inputGroupDiv);
+
+            // 새로운 텍스트 영역 추가
+            var newTextAreaDiv = document.createElement("div");
+            newTextAreaDiv.className = "col-11 mt-1 mb-3 mx-auto";
+
+            var textAreaField = document.createElement("textarea");
+            textAreaField.className = "form-control";
+            textAreaField.name = "answer";
+            textAreaField.rows = "8";
+            textAreaField.placeholder = "대응 내용";
+            textAreaField.required = true;
+            textAreaField.style.resize = "auto";
+
+            newTextAreaDiv.appendChild(textAreaField);
+
+            // 새로운 입력 필드와 텍스트 영역을 컨테이너에 추가
+            container.appendChild(newInputDiv);
+            container.appendChild(newTextAreaDiv);
+        }
+
+
+    </script>
+
+
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
+
+        <section class="latest-podcast-section" id="section_2">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <!-- 전체 박스 크기 -->
+                    <div class="col-lg-9 col-12">
+                        <div class="section-title-wrap mb-4">
+                            <h4 class="section-title">면접 등록</h4>
+                        </div>
+
+                        <form action="/v1/user/my-page/interview" method="post">
+                        <div class="row justify-content-center">
+                            <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-11 align-self-center">
+
+                                <div id="inputFieldsContainer">
+                                    <div class="col-11 mt-5 mb-2 mx-auto">
+                                        <input type="text" name="question" class="form-control mb-1 mx-4 mx-auto"
+                                               placeholder="면접 질문을 입력" required/>
+                                    </div>
+
+                                    <div class="col-11 mt-1 mb-3 mx-auto">
+                                        <textarea class="form-control" rows="8" name="answer" placeholder="대응 내용" style="resize: none"></textarea>
+                                    </div>
+                                </div>
+
+
+                                <input type="hidden" name="applicationLetterId" th:value="${applicationLetterId}">
+                                <div class="row col-11 m-4 mx-auto">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-outline-secondary" id="back" onclick="goBack()">돌아가기</button>
+                                        <button type="button" class="btn btn-outline-secondary" onclick="addInputFields()">항목 추가</button>
+                                        <button type="submit" class="btn btn-secondary">저장</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+</html>

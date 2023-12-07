@@ -1,8 +1,8 @@
 package com.miracle.memberservice.service;
 
-import com.miracle.memberservice.dto.response.ApiResponse;
-import com.miracle.memberservice.dto.response.ApplicationLetterListResponseDto;
-import com.miracle.memberservice.dto.response.ResumeInApplicationLetterResponseDto;
+import com.miracle.memberservice.dto.request.InterviewRequestDto;
+import com.miracle.memberservice.dto.request.QnaDto;
+import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.util.ApiResponseToList;
 import com.miracle.memberservice.util.Const;
 import com.miracle.memberservice.util.PageMoveWithMessage;
@@ -16,6 +16,18 @@ import java.util.*;
 @Service
 @Slf4j
 public class MyPageService {
+
+    // 지원현황 목록 불러오기
+    public PageMoveWithMessage applicationLetterList(HttpSession session, int startPage){
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.getUserParamList(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter", startPage, startPage + 4);
+
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("/v1", response.getMessage());
+
+        List<List<ApplicationLetterListResponseDto>> letter = ApiResponseToList.applicationLetterList(response.getData());
+        return new PageMoveWithMessage("user/apply-list", letter);
+    }
+
 
     // 지원 이력서 조회하기
     public PageMoveWithMessage resumeInApplicationLetterDetail(HttpSession session, Long applicationLetterId){
@@ -45,14 +57,56 @@ public class MyPageService {
         return new PageMoveWithMessage("user/submitted-resume", dto);
     }
 
-    // 지원현황 목록 불러오기
-    public PageMoveWithMessage applicationLetterList(HttpSession session, int startPage){
+    // 지원 자소서 조회하기
+    public PageMoveWithMessage coverLetterInApplicationLetterDetail(HttpSession session, Long applicationLetterId){
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.getUserParamList(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter", startPage, startPage + 4);
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId + "/cover-letter");
 
-        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("/v1", response.getMessage());
+        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
-        List<List<ApplicationLetterListResponseDto>> letter = ApiResponseToList.applicationLetterList(response.getData());
-        return new PageMoveWithMessage("user/apply-list", letter);
+        CoverLetterInApplicationLetterResponseDto letter = CoverLetterInApplicationLetterResponseDto.builder()
+                .coverLetterTitle((String) data.get("coverLetterTitle"))
+                .qnaList((List<QnaDto>) data.get("qnaList"))
+                .build();
+
+        return new PageMoveWithMessage("/user/submitted-coverLetter", letter);
     }
+
+    // 면접 생성
+    public PageMoveWithMessage createInterview(HttpSession session, InterviewRequestDto requestDto) {
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.post(session, requestDto, Const.RequestHeader.USER, "/user/" + userId + "/interview");
+
+        return new PageMoveWithMessage("redirect:/v1/user/my-page/apply-list/1", response.getMessage());
+    }
+
+    // 면접 수정
+    public PageMoveWithMessage updateInterview(HttpSession session, InterviewRequestDto requestDto, Long interviewId, Long applicationLetterId) {
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.USER, "/user/" + userId + "/interview/" + interviewId);
+
+        return new PageMoveWithMessage("redirect:/v1/user/my-page/interview/" + applicationLetterId + "/" + interviewId, response.getMessage());
+    }
+
+    // 면접 조회
+    public PageMoveWithMessage interviewDetail(HttpSession session, Long interviewId){
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/interview/" + interviewId);
+
+        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+
+        InterviewResponseDto interview = InterviewResponseDto.builder()
+                .qnaList((List<QnaDto>) data.get("qnaList")).build();
+
+        return new PageMoveWithMessage("/user/interview-detail", interview);
+    }
+
+    // 면접 삭제
+    public PageMoveWithMessage deleteInterview(HttpSession session, Long interviewId){
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.USER, "/user/" + userId + "/interview/" + interviewId);
+
+        return new PageMoveWithMessage("redirect:/v1/user/my-page/apply-list/1");
+    }
+
 }

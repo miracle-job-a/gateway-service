@@ -61,13 +61,13 @@
                         </div>
                     </div>
 
-
                     <div class="row col-lg-10 col-12">
 
                     </div>
                     <h5 class="col-lg-10 col-12 mt-4 mb-4 mb-lg-2 text-center" th:if="${#lists.size(letter)==0}">
                         지원이력이 없습니다.
                     </h5>
+                  
                     <!-- Thymeleaf 반복문을 사용하여 ArrayList 내의 객체들을 처리 -->
                     <div th:each="letterItem, letterItemStat : ${letter}" th:id="'postPage'+${letterItemStat.index}">
                         <div th:each="letters, lettersStat : ${letterItem}" class="col-lg-10 col-12 mb-4 mb-lg-2 mx-auto">
@@ -89,16 +89,18 @@
                                         </small>
                                         <small><span class="badge bg-dark ms-1" th:text="${letters.job}">백엔드</span></small>
                                     </div>
-                                    <h5 class="mb-2">
-                                        <a href="/v1/user/my-page/apply-list/resume" th:text="${letters.applicationLetterId}">회사명이 들어갈 예정.
-                                        </a>
-                                    </h5>
+                                    <h5 class="m-2" th:text="'지원서 번호 (추후 회사이름) : ' + ${letters.applicationLetterId}"></h5>
                                     <div class="custom-block-bottom d-flex mt-3">
+                                        <input type="hidden" id="letterId" th:value="${letters.applicationLetterId}">
                                         <button type="button" class="btn btn-outline-secondary me-1" th:id="${letters.postId}" name="post">공고정보</button>
                                         <button type="button" class="btn btn-outline-secondary ms-1 me-1" th:id="${letters.applicationLetterId}" name="resume">
                                             지원 이력서
                                         </button>
-                                        <button type="button" class="btn btn-outline-secondary ms-1 me-1" th:id="${letters.applicationLetterId}" name="coverLetter">지원 자기소개서</button>
+                                        <button type="button" class="btn btn-outline-secondary ms-1 me-1"
+                                                th:id="${letters.applicationLetterId}" name="coverLetter"
+                                                th:if="${letters.postType != 'MZ'}">
+                                            지원 자기소개서
+                                        </button>
                                         <button type="button" class="btn btn-outline-secondary ms-1"
                                                 th:id="${#strings.isEmpty(letters.interviewId) ? '0' : letters.interviewId}" name="interview">
                                             면접
@@ -144,40 +146,46 @@
             /*<![CDATA[*/
 
             /*공고이동*/
-            document.getElementById('post').forEach(function (button){
-                button.addEventListener('click', function (){
+            document.querySelectorAll('[name="post"]').forEach(function(button) {
+                button.addEventListener('click', function() {
                     var postId = button.id;
-                    window.location.href = '/v1/click/post/' + postId + 'detail';
+                    var postType = [[${postType}]];
+                    window.location.href = '/v1/click/post/' + postId + 'detail?postType=' + postType;
                 });
             });
 
             /*지원이력서이동*/
-            document.getElementsByName('resume').forEach(function(button) {
+            document.querySelectorAll('[name="resume"]').forEach(function(button) {
                 button.addEventListener('click', function() {
                     var applicationLetterId = button.id;
-                    window.location.href = '/v1/user/my-page/apply-list/' + applicationLetterId;
+                    window.location.href = '/v1/user/my-page/apply-list/submitted-resume/' + applicationLetterId;
                 });
             });
 
             /*지원자소서이동*/
-            document.getElementsByName('coverLetter').forEach(function(button) {
+            document.querySelectorAll('[name="coverLetter"]').forEach(function(button) {
                 button.addEventListener('click', function() {
                     var applicationLetterId = button.id;
-                    window.location.href = '/v1/user/my-page/apply-list/resume?applicationLetterId=' + applicationLetterId;
+                    window.location.href = '/v1/user/my-page/apply-list/submitted-coverLetter/' + applicationLetterId;
                 });
             });
 
             /*면접이동*/
-            document.getElementsByName('interview').forEach(function(button) {
-                button.addEventListener('click', function() {
-                    var applicationLetterId = button.id;
+            document.querySelectorAll('[name="interview"]').forEach(function(button) {
+                button.addEventListener('click', function () {
+                    var interviewId = button.id;
+                    var applicationLetterId = button.closest('.custom-block').querySelector('[id="letterId"]').value;
 
-                    if (applicationLetterId === '0') {
-                        // id가 0이면 다른 경로로 이동
-                        window.location.href = '/v1/user/my-page/apply-list/special-case';
+                    if (interviewId === '0') {
+                        var confirmMessage = "저장된 면접 정보가 없습니다. 등록하시겠습니까?"; // 확인 메시지
+                        if (confirm(confirmMessage)) {
+                            window.location.href = '/v1/user/my-page/interview/form/' + applicationLetterId;
+                        } else {
+
+                        }
                     } else {
                         // id가 0이 아니면 일반적인 이동
-                        window.location.href = '/v1/user/my-page/apply-list/resume?applicationLetterId=' + applicationLetterId;
+                        window.location.href = '/v1/user/my-page/interview/' + applicationLetterId + "/" + interviewId;
                     }
                 });
             });

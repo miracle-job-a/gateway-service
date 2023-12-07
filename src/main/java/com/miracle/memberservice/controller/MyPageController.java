@@ -1,5 +1,9 @@
 package com.miracle.memberservice.controller;
 
+import com.miracle.memberservice.dto.request.InterviewRequestDto;
+import com.miracle.memberservice.dto.request.QnaDto;
+import com.miracle.memberservice.dto.request.QnaListDto;
+import com.miracle.memberservice.dto.response.CoverLetterInApplicationLetterResponseDto;
 import com.miracle.memberservice.dto.response.JobResponseDto;
 import com.miracle.memberservice.dto.response.ResumeInApplicationLetterResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;
@@ -11,13 +15,11 @@ import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/v1/user/my-page")
@@ -28,14 +30,8 @@ public class MyPageController {
     private final UserService userService;
     private final AdminService adminService;
 
-    // 임시 지원 자기소개서 이동
-    @GetMapping("apply-list/submitted-coverLetter")
-    public String submittedLetter(){ return "user/submitted-coverLetter"; }
 
-    // 임시 마이페이지 이동
-    @GetMapping("/apply-list")
-    public String myPageList(){return "user/apply-list"; }
-    // TODO 마이페이지 목록 (추후 url 정리하기)
+    // 마이페이지 목록
     @GetMapping("/apply-list/{startPage}")
     public String applyList(HttpSession session, Model model, @PathVariable(required = false) int startPage){
         PageMoveWithMessage pmwm = myPageService.applicationLetterList(session, startPage);
@@ -45,13 +41,9 @@ public class MyPageController {
         return pmwm.getPageName();
     }
 
-    //TODO 임시 지원이력서 폼 이동 (추후 목록에서 이동 완성 시 수정하기)
-    @GetMapping("/apply-list/submitted-resume")
-    public String submittedResume(){return "user/submitted-resume"; }
-    // 지원이력서 보기
-    @GetMapping("/apply-list/resume")
-    public String applyResume(HttpSession session, Model model){
-        Long applicationLetterId = 1L;
+    // 지원 이력서
+    @GetMapping("/apply-list/submitted-resume/{applicationLetterId}")
+    public String applyResume(HttpSession session, Model model, @PathVariable(required = false) Long applicationLetterId){
         PageMoveWithMessage pmwm = myPageService.resumeInApplicationLetterDetail(session, applicationLetterId);
 
         ResumeInApplicationLetterResponseDto responseDto = (ResumeInApplicationLetterResponseDto) pmwm.getData();
@@ -59,6 +51,69 @@ public class MyPageController {
         ArrayList<StackResponseDto> stacks = (ArrayList<StackResponseDto>) adminService.getStacks(session, responseDto.getUserStackIdSet());
         model.addAttribute("resume", pmwm.getData());
         model.addAttribute("stacks", stacks);
+        return pmwm.getPageName();
+    }
+
+    // 지원 자소서
+    @GetMapping("/apply-list/submitted-coverLetter/{applicationLetterId}")
+    public String applyCoverLetter(HttpSession session, Model model, @PathVariable Long applicationLetterId){
+        PageMoveWithMessage pmwm = myPageService.coverLetterInApplicationLetterDetail(session, applicationLetterId);
+
+        model.addAttribute("letter", pmwm.getData());
+        return pmwm.getPageName();
+    }
+
+    // 지원 면접생성 폼 이동
+    @GetMapping("/interview/form/{applicationLetterId}")
+    public String interviewForm(@PathVariable Long applicationLetterId, Model model){
+        model.addAttribute("applicationLetterId", applicationLetterId);
+        return "user/interview-form";
+    }
+
+    // 면접 저장
+    @PostMapping("/interview")
+    public String createInterview(@ModelAttribute QnaListDto qnaListDto, Long applicationLetterId, HttpSession session){
+        List<QnaDto> qnaDtoList = new ArrayList<>();
+        for (int i = 0; i < qnaListDto.getAnswer().size(); i++){
+            String question = qnaListDto.getQuestion().get(i);
+            String answer = qnaListDto.getAnswer().get(i);
+            qnaDtoList.add(new QnaDto(question, answer));
+        }
+
+        PageMoveWithMessage pmwm = myPageService.createInterview(session, new InterviewRequestDto(applicationLetterId, qnaDtoList));
+        return pmwm.getPageName();
+    }
+
+    // 면접 수정
+    @PostMapping("/interview/update")
+    public String updateInterview(@ModelAttribute QnaListDto qnaListDto,
+                                  Long applicationLetterId, Long interviewId, HttpSession session) {
+        List<QnaDto> qnaDtoList = new ArrayList<>();
+        for (int i = 0; i < qnaListDto.getAnswer().size(); i++){
+            String question = qnaListDto.getQuestion().get(i);
+            String answer = qnaListDto.getAnswer().get(i);
+            qnaDtoList.add(new QnaDto(question, answer));
+        }
+
+        PageMoveWithMessage pmwm = myPageService.updateInterview(session, new InterviewRequestDto(applicationLetterId, qnaDtoList), interviewId, applicationLetterId);
+        return pmwm.getPageName();
+    }
+
+    // 면접 조회
+    @GetMapping("/interview/{applicationLetterId}/{interviewId}")
+    public String interviewDetail(@PathVariable Long interviewId,
+                                  @PathVariable Long applicationLetterId, HttpSession session, Model model) {
+        PageMoveWithMessage pmwm = myPageService.interviewDetail(session, interviewId);
+        model.addAttribute("interview", pmwm.getData());
+        model.addAttribute("interviewId", interviewId);
+        model.addAttribute("applicationLetterId", applicationLetterId);
+        return pmwm.getPageName();
+    }
+
+    // 면접 삭제
+    @GetMapping("/interview/delete/{interviewId}")
+    public String deleteInterview(@PathVariable Long interviewId, HttpSession session){
+        PageMoveWithMessage pmwm = myPageService.deleteInterview(session, interviewId);
         return pmwm.getPageName();
     }
 }
