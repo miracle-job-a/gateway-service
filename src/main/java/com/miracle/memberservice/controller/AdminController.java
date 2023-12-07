@@ -71,4 +71,14 @@ public class AdminController {
     @GetMapping("/jobs")
     private String jobList(){ return "admin/jobList"; }
 
+    @GetMapping("/jobList")
+    private String jobList(HttpSession session, Model model){
+        PageMoveWithMessage pmwm = adminService.getAllStack(session);
+        List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
+
+        model.addAttribute("totalJobList", data);
+        return pmwm.getPageName();
+    }
+
+
 }
