@@ -26,7 +26,7 @@
                         <form action="/v1/user/login" method="post" class="custom-form contact-form" role="form">
                             <div class="row">
 
-                                <div class="col-lg-6 col-md-6 col-12 pb-4">
+                                <div class="col-lg-6 col-md-6 col-12 pb-4" th:unless="${postId}">
                                     <input type="radio" name="memberType" value="user" checked> 일반회원
                                     <input type="radio" name="memberType" value="company" onclick="location.href='/v1/company/login-form'"> 기업회원
                                 </div>
@@ -54,7 +54,11 @@
                                             <button type="button" class="form-control ms-auto" onclick="location.href='/v1/user/join'">회원가입</button>
                                         </div>
                                         <div class="col-lg-3 col-6">
-                                            <input type="hidden" name="page" th:value="${page}" />
+                                            <div th:if="${postId!=null}">
+                                                <input type="hidden" name="postId" th:value="${postId}">
+                                                <input type="hidden" name="companyId" th:value="${companyId}">
+                                                <input type="hidden" name="postType" th:value="${postType}">
+                                            </div>
                                             <button type="submit" class="form-control ms-auto">로그인</button>
                                         </div>
 

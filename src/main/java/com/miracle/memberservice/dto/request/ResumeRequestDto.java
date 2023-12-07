@@ -25,4 +25,7 @@ public class ResumeRequestDto {
     private final List<String> careerDetailList;
     private final List<String> projectList;
     private final List<String> etcList;
+    private final Long postId;
+    private final Long companyId;
+    private final String postType;
 }

@@ -23,12 +23,13 @@
             alert(errorMessage);
             // 이후 로직 추가 가능
         }
-    </script>
-    <script>
 
         function loginform() {
-            var page = [[${postId}]]
-            location.href = "/v1/user/login-form?page=" + page;
+            alert("로그인 페이지로 이동합니다. 로그인 후 이 공고로 다시 옵니다.");
+            var postId = [[${postId}]];
+            var companyId = [[${companyId}]];
+            var postType = [[${detail.postType}]];
+            location.href = "/v1/user/login-form?postId=" + postId + "&companyId=" + companyId + "&postType=" + postType;
         }
 
         function validateForm() {
@@ -52,6 +53,20 @@
 
         function validateForm2() {
             return confirm(`지원하시겠습니까?`);
+        }
+
+        function resumeCreate() {
+            var postId = [[${postId}]];
+            var companyId = [[${companyId}]];
+            var postType = [[${detail.postType}]];
+            location.href = '/v1/user/resume/form?postId=' + postId + "&companyId=" + companyId + "&postType=" + postType;
+        }
+
+        function coverLetterCreate() {
+            var postId = [[${postId}]];
+            var companyId = [[${companyId}]];
+            var postType = [[${detail.postType}]];
+            location.href = '/v1/user/cover-letter/form?postId=' + postId + "&companyId=" + companyId + "&postType=" + postType;
         }
 
     </script>
@@ -304,7 +319,8 @@
                                         지원하기
                                     </button>
                                     <!-- Modal -->
-                                    <form th:action="@{/v1/user/apply/{companyId}(companyId=${companyId})}" id="modal" method="post"
+                                    <form th:action="@{/v1/user/apply/{companyId}(companyId=${companyId})}" id="modal"
+                                          method="post"
                                           onsubmit="return validateForm()" th:if="${detail.postType eq 'NORMAL'}">
                                         <div class="modal modal-backdrop-dark" id="exampleModal" tabindex="-1"
                                              aria-labelledby="exampleModalLabel" aria-hidden="true"
@@ -322,7 +338,8 @@
                                                                 <select class="form-select" name="resumeId" id="resume"
                                                                         aria-label="Default select example">
                                                                     <option th:value="${resume.id}"
-                                                                            th:text="${resume.title}" th:each="resume : ${resumeList}"></option>
+                                                                            th:text="${resume.title}"
+                                                                            th:each="resume : ${resumeList}"></option>
                                                                 </select>
                                                                 <p th:if="${#lists.size(resumeList)==0}">
                                                                     이력서가 존재하지 않습니다.
@@ -336,7 +353,8 @@
                                                                         id="coverLetter"
                                                                         aria-label="Default select example">
                                                                     <option th:value="${coverLetter.id}"
-                                                                            th:text="${coverLetter.title}" th:each="coverLetter : ${coverLetterList}"></option>
+                                                                            th:text="${coverLetter.title}"
+                                                                            th:each="coverLetter : ${coverLetterList}"></option>
                                                                 </select>
                                                                 <p th:if="${#lists.size(coverLetterList)==0}">
                                                                     자소서가 존재하지 않습니다.
@@ -346,9 +364,11 @@
                                                             <div class="col-10 m-2 align-self-center">
                                                                 <a class="text-secondary">이 공고의 이력서, 자소서가 없다면 새로
                                                                     생성해주세요</a>
-                                                                <button type="button" class="btn-outline-danger" onclick="">이력서 작성
+                                                                <button type="button" class="btn-outline-danger"
+                                                                        onclick="resumeCreate()">이력서 작성
                                                                 </button>
-                                                                <button type="button" class="btn-outline-danger" onclick="">자소서 작성
+                                                                <button type="button" class="btn-outline-danger"
+                                                                        onclick="coverLetterCreate()">자소서 작성
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -367,7 +387,8 @@
                                             </div>
                                         </div>
                                     </form>
-                                    <form th:action="@{/v1/user/apply/{companyId}(companyId=${companyId})}" id="modal" method="post"
+                                    <form th:action="@{/v1/user/apply/{companyId}(companyId=${companyId})}" id="modal"
+                                          method="post"
                                           onsubmit="return validateForm2()" th:if="${detail.postType eq 'MZ'}">
                                         <div class="modal modal-backdrop-dark" id="exampleModal" tabindex="-1"
                                              aria-labelledby="exampleModalLabel" aria-hidden="true"

@@ -48,8 +48,10 @@ public class GuestController {
 
     //회원가입 로그인 폼
     @GetMapping("/user/login-form")
-    public String userLoginForm(@RequestParam(required = false) String page, Model model) {
-        model.addAttribute("page", page);
+    public String userLoginForm(@RequestParam(required = false) Long postId, @RequestParam(required = false) Long companyId, @RequestParam(required = false) String postType, Model model) {
+        model.addAttribute("postId", postId);
+        model.addAttribute("companyId", companyId);
+        model.addAttribute("postType", postType);
         return "guest/user-login";
     }
 
@@ -112,18 +114,20 @@ public class GuestController {
     }
 
     @PostMapping("/user/login")
-    public String userLogin(@ModelAttribute LoginDto loginDto, Model model, HttpSession session) {
+    public String userLogin(RedirectAttributes redirectAttributes, @ModelAttribute LoginDto loginDto, Model model, HttpSession session) {
         PageMoveWithMessage pmwm = userService.login(loginDto, session);
-        String pageName = pmwm.getPageName();
-
         if (pmwm.getId() != null) {
             session.setAttribute("id", pmwm.getId());
             session.setAttribute("email", pmwm.getEmail());
             session.setAttribute("name", pmwm.getNameOrBno());
         }
+        if (Objects.nonNull(loginDto.getPostId())) {
+            redirectAttributes.addAttribute("companyId", loginDto.getCompanyId());
+            redirectAttributes.addAttribute("postType", loginDto.getPostType());
+        }
         String errorMessage = pmwm.getErrorMessage();
         model.addAttribute("errorMessage", errorMessage);
-        return pageName;
+        return pmwm.getPageName();
     }
 
     @PostMapping("/admin/login")
@@ -234,7 +238,6 @@ public class GuestController {
             model.addAttribute("resumeList", apply.getResumeList());
             model.addAttribute("coverLetterList", apply.getCoverLetterList());
         }
-
         model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("postId", postId);
         model.addAttribute("companyId", companyId);
