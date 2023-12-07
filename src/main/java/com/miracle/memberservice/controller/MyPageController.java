@@ -63,14 +63,15 @@ public class MyPageController {
         return pmwm.getPageName();
     }
 
-    // 지원 면접생성
-    @GetMapping("/apply-list/interview/form/{applicationLetterId}")
+    // 지원 면접생성 폼 이동
+    @GetMapping("/interview/form/{applicationLetterId}")
     public String interviewForm(@PathVariable Long applicationLetterId, Model model){
         model.addAttribute("applicationLetterId", applicationLetterId);
         return "user/interview-form";
     }
 
-    @PostMapping("/apply-list/interview")
+    // 면접 저장
+    @PostMapping("/interview")
     public String createInterview(@ModelAttribute QnaListDto qnaListDto, Long applicationLetterId, HttpSession session){
         List<QnaDto> qnaDtoList = new ArrayList<>();
         for (int i = 0; i < qnaListDto.getAnswer().size(); i++){
@@ -83,6 +84,19 @@ public class MyPageController {
         return pmwm.getPageName();
     }
 
+    // 면접 조회
+    @GetMapping("/interview/{interviewId}")
+    public String interviewDetail(@PathVariable Long interviewId, HttpSession session, Model model) {
+        PageMoveWithMessage pmwm = myPageService.interviewDetail(session, interviewId);
+        model.addAttribute("interview", pmwm.getData());
+        model.addAttribute("interviewId", interviewId);
+        return pmwm.getPageName();
+    }
 
-
+    // 면접 삭제
+    @GetMapping("/interview/delete/{interviewId}")
+    public String deleteInterview(@PathVariable Long interviewId, HttpSession session){
+        PageMoveWithMessage pmwm = myPageService.deleteInterview(session, interviewId);
+        return pmwm.getPageName();
+    }
 }

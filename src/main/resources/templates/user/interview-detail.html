@@ -61,6 +61,35 @@
             container.appendChild(newTextAreaDiv);
         }
 
+        //삭제기능
+        function confirmDelete(button) {
+            var interviewId = button.getAttribute('data-interview-id');
+            var confirmResult = confirm("면접 내역을 삭제하시겠습니까?")
+
+            if (confirmResult) {
+                window.location.href = '/v1/user/my-page/interview/delete/' + interviewId;
+            } else {}
+        }
+
+        //수정취소
+        function cancelEditing(button) {
+            var interviewId = button.getAttribute('data-interview-id');
+            var confirmResult = confirm("수정을 취소 하시겠습니까?");
+
+            if (confirmResult) {
+                window.location.href = "/v1/user/my-page/interview/" + interviewId;
+            } else {}
+
+        }
+
+        function enableEditing(){
+            $('#addBtn').css('display', 'block');
+            $('#submitBtn').css('display', 'block');
+            $('#cancelBtn').css('display', 'block');
+            $('#deleteBtn').css('display', 'none');
+            $('#editBtn').css('display', 'none');
+        }
+
 
     </script>
 
@@ -78,28 +107,37 @@
                             <h4 class="section-title">면접 등록</h4>
                         </div>
 
-                        <form action="/v1/user/my-page/interview" method="post">
+                        <form action="/v1/user/my-page/apply-list/interview" method="post">
                         <div class="row justify-content-center">
                             <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-11 align-self-center">
 
                                 <div id="inputFieldsContainer">
-                                    <div class="col-11 mt-5 mb-2 mx-auto">
-                                        <input type="text" name="question" class="form-control mb-1 mx-4 mx-auto"
-                                               placeholder="면접 질문을 입력" required/>
-                                    </div>
+                                    <div th:each="qnaItem, qnaItemStat : ${interview.qnaList}">
+                                        <div class="col-11 mt-5 mb-2 mx-auto">
+                                            <input type="text" readonly name="question" class="form-control-plaintext mb-1 mx-4 mx-auto"
+                                                   placeholder="면접 질문을 입력" required
+                                                   th:value="${qnaItem.question}" />
+                                        </div>
 
-                                    <div class="col-11 mt-1 mb-3 mx-auto">
-                                        <textarea class="form-control" rows="8" name="answer" placeholder="대응 내용" style="resize: none"></textarea>
+                                        <div class="col-11 mt-1 mb-3 mx-auto">
+                                        <textarea readonly class="form-control" rows="8" name="answer" placeholder="대응 내용" style="resize: none"
+                                        th:text="${qnaItem.answer}"></textarea>
+                                        </div>
                                     </div>
                                 </div>
 
 
-                                <input type="hidden" name="applicationLetterId" th:value="${applicationLetterId}">
+
+                                <input type="hidden" name="interviewId" th:value="${interviewId}">
                                 <div class="row col-11 m-4 mx-auto">
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-outline-secondary" id="back" onclick="goBack()">돌아가기</button>
-                                        <button type="button" class="btn btn-outline-secondary" onclick="addInputFields()">항목 추가</button>
-                                        <button type="submit" class="btn btn-secondary">저장</button>
+                                        <button type="button" class="btn btn-outline-secondary"
+                                                id="cancelBtn" th:attr="data-interview-id=${interviewId}" onclick="cancelEditing(this)" style="display: none">취소</button>
+                                        <button type="button" class="btn btn-secondary" id="editBtn" onclick="enableEditing()">수정</button>
+                                        <button type="button" class="btn btn-outline-secondary" id="addBtn" onclick="addInputFields()" style="display:none;">항목 추가</button>
+                                        <button type="button" class="btn btn-secondary" id="deleteBtn" th:attr="data-interview-id=${interviewId}" onclick="confirmDelete(this)">삭제</button>
+                                        <button type="submit" class="btn btn-secondary" id="submitBtn" style="display: none;">수정완료</button>
                                     </div>
                                 </div>
 

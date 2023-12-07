@@ -2,10 +2,7 @@ package com.miracle.memberservice.service;
 
 import com.miracle.memberservice.dto.request.InterviewRequestDto;
 import com.miracle.memberservice.dto.request.QnaDto;
-import com.miracle.memberservice.dto.response.ApiResponse;
-import com.miracle.memberservice.dto.response.ApplicationLetterListResponseDto;
-import com.miracle.memberservice.dto.response.CoverLetterInApplicationLetterResponseDto;
-import com.miracle.memberservice.dto.response.ResumeInApplicationLetterResponseDto;
+import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.util.ApiResponseToList;
 import com.miracle.memberservice.util.Const;
 import com.miracle.memberservice.util.PageMoveWithMessage;
@@ -81,6 +78,27 @@ public class MyPageService {
         ApiResponse response = ServiceCall.post(session, requestDto, Const.RequestHeader.USER, "/user/" + userId + "/interview");
 
         return new PageMoveWithMessage("redirect:/v1/user/my-page/apply-list/1", response.getMessage());
+    }
+
+    // 면접 조회
+    public PageMoveWithMessage interviewDetail(HttpSession session, Long interviewId){
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/interview/" + interviewId);
+
+        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+
+        InterviewResponseDto interview = InterviewResponseDto.builder()
+                .qnaList((List<QnaDto>) data.get("qnaList")).build();
+
+        return new PageMoveWithMessage("/user/interview-detail", interview);
+    }
+
+    // 면접 삭제
+    public PageMoveWithMessage deleteInterview(HttpSession session, Long interviewId){
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.USER, "/user/" + userId + "/interview/" + interviewId);
+
+        return new PageMoveWithMessage("redirect:/v1/user/my-page/apply-list/1");
     }
 
 }
