@@ -334,6 +334,30 @@ public class ApiResponseToList {
         return pageList;
     }
 
+    public static List<List<ApplicantListResponseDto>> applicantList(Object object) {
+        List<ArrayList<LinkedHashMap<String, Object>>> data = (ArrayList<ArrayList<LinkedHashMap<String, Object>>>) object;
+        List<List<ApplicantListResponseDto>> pageList = new ArrayList<>();
+
+        for (ArrayList<LinkedHashMap<String, Object>> page : data) {
+            List<ApplicantListResponseDto> dtos = new ArrayList<>();
+            if (!page.isEmpty()) {
+                for (Map<String, Object> letter : page) {
+                    Integer applicationLetterId = (Integer) letter.get("applicationLetterId");
+
+                    dtos.add(ApplicantListResponseDto.builder()
+                            .applicationLetterId(applicationLetterId.longValue())
+                            .submitDate(String.valueOf(letter.get("submitDate")))
+                                    .address(String.valueOf(letter.get("address")))
+                                    .resumeTitle(String.valueOf(letter.get("resumeTitle")))
+                                    .name(String.valueOf(letter.get("name")))
+                            .build());
+                }
+                pageList.add(dtos);
+            }
+        }
+        return pageList;
+    }
+
     public static List<ResumeTitleResponseDto> resumeTitleList(Object object) {
         List<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
         List<ResumeTitleResponseDto> dto = new ArrayList<>();

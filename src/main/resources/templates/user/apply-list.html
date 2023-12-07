@@ -125,7 +125,7 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-lg justify-content-center mt-5">
                                 <li class="page-item" th:if="${startPage>=5}">
-                                    <a class="page-link" th:href="@{/v1/user/my-page/apply-list/{startPage}(startPage=${startPage}-5)}"
+                                    <a class="page-link" th:href="@{/v1/user/my-page/apply-list/{startPage}(startPage=${startPage}-5, sort= ${sort})}"
                                        aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
@@ -138,7 +138,7 @@
                                 </div>
                                 <li class="page-item"
                                     th:if="${#lists.size(letter)>=5 and #lists.size(letter[4])==5}">
-                                    <a class="page-link" th:href="@{/v1/user/my-page/apply-list/{startPage}(startPage=${startPage}+5)}"
+                                    <a class="page-link" th:href="@{/v1/user/my-page/apply-list/{startPage}(startPage=${startPage}+5, sort= ${sort})}"
                                        aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>

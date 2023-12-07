@@ -48,7 +48,8 @@ public class UserService {
                 .name(data.get("name"))
                 .build();
 
-        if(Objects.nonNull(loginDto.getPostId())) return new PageMoveWithMessage("redirect:/v1/click/post/"+loginDto.getPostId()+"/detail", dto);
+        if (Objects.nonNull(loginDto.getPostId()))
+            return new PageMoveWithMessage("redirect:/v1/click/post/" + loginDto.getPostId() + "/detail", dto);
         return new PageMoveWithMessage("redirect:/v1", dto);
     }
 
@@ -88,7 +89,8 @@ public class UserService {
         ApiResponse response = ServiceCall.post(session, resumeRequestDto, Const.RequestHeader.USER, "/user/" + userId + "/resume");
         if (response.getHttpStatus() != 201)
             return new PageMoveWithMessage("redirect:/v1/user/resume/form", response.getMessage());
-        if(Objects.nonNull(resumeRequestDto.getPostId())) return new PageMoveWithMessage("redirect:/v1/click/post/"+resumeRequestDto.getPostId()+"/detail", resumeRequestDto);
+        if (Objects.nonNull(resumeRequestDto.getPostId()))
+            return new PageMoveWithMessage("redirect:/v1/click/post/" + resumeRequestDto.getPostId() + "/detail", resumeRequestDto);
         return new PageMoveWithMessage("redirect:/v1/user/resumes");
     }
 
@@ -142,12 +144,14 @@ public class UserService {
             return new PageMoveWithMessage("redirect:/v1/user/resume/detail/" + resumeId, response.getMessage());
         return new PageMoveWithMessage("redirect:/v1/user/resume/detail/" + resumeId);
     }
-  
+
     public PageMoveWithMessage createCoverLetter(HttpSession session, CoverLetterPostRequestDto requestDto, QnaListDto qnaListDto) {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.post(session, requestDto, Const.RequestHeader.USER, "/user/" + userId + "/cover-letter");
-        if(response.getHttpStatus()!=201) return new PageMoveWithMessage("redirect:/v1/user/cover-letter/form", "같은 문항이 들어갈 수 없습니다.");
-        if(Objects.nonNull(qnaListDto.getPostId())) return new PageMoveWithMessage("redirect:/v1/click/post/"+qnaListDto.getPostId()+"/detail", qnaListDto);
+        if (response.getHttpStatus() != 201)
+            return new PageMoveWithMessage("redirect:/v1/user/cover-letter/form", "같은 문항이 들어갈 수 없습니다.");
+        if (Objects.nonNull(qnaListDto.getPostId()))
+            return new PageMoveWithMessage("redirect:/v1/click/post/" + qnaListDto.getPostId() + "/detail", qnaListDto);
         return new PageMoveWithMessage("redirect:/v1/user/cover-letters/1", response.getMessage());
     }
 
@@ -220,8 +224,8 @@ public class UserService {
     }
 
     public PageMoveWithMessage applicantList(HttpSession session, Long postId, String sort, int startPage) {
-        ApiResponse response = ServiceCall.getUserParamListSort(session, Const.RequestHeader.USER, "/post/" + postId + "/applicant/list", startPage, startPage+4, sort);
+        ApiResponse response = ServiceCall.getUserParamListSort(session, Const.RequestHeader.USER, "/post/" + postId + "/applicant/list", startPage, startPage + 4, sort);
 
-        return null;
+        return new PageMoveWithMessage("company/applicant-list", ApiResponseToList.applicantList(response.getData()));
     }
 }
