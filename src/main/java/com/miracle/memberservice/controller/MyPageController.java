@@ -1,5 +1,8 @@
 package com.miracle.memberservice.controller;
 
+import com.miracle.memberservice.dto.request.InterviewRequestDto;
+import com.miracle.memberservice.dto.request.QnaDto;
+import com.miracle.memberservice.dto.request.QnaListDto;
 import com.miracle.memberservice.dto.response.CoverLetterInApplicationLetterResponseDto;
 import com.miracle.memberservice.dto.response.JobResponseDto;
 import com.miracle.memberservice.dto.response.ResumeInApplicationLetterResponseDto;
@@ -12,13 +15,11 @@ import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/v1/user/my-page")
@@ -62,8 +63,26 @@ public class MyPageController {
         return pmwm.getPageName();
     }
 
-    // 지원 면접 (임시)
-    @GetMapping("/apply-list/interview-form")
-    public String interviewForm(){ return "user/interview-form"; }
+    // 지원 면접생성
+    @GetMapping("/apply-list/interview/form/{applicationLetterId}")
+    public String interviewForm(@PathVariable Long applicationLetterId, Model model){
+        model.addAttribute("applicationLetterId", applicationLetterId);
+        return "user/interview-form";
+    }
+
+    @PostMapping("/apply-list/interview")
+    public String createInterview(@ModelAttribute QnaListDto qnaListDto, Long applicationLetterId, HttpSession session){
+        List<QnaDto> qnaDtoList = new ArrayList<>();
+        for (int i = 0; i < qnaListDto.getAnswer().size(); i++){
+            String question = qnaListDto.getQuestion().get(i);
+            String answer = qnaListDto.getAnswer().get(i);
+            qnaDtoList.add(new QnaDto(question, answer));
+        }
+
+        PageMoveWithMessage pmwm = myPageService.createInterview(session, new InterviewRequestDto(applicationLetterId, qnaDtoList));
+        return pmwm.getPageName();
+    }
+
+
 
 }

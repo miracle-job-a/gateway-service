@@ -107,6 +107,7 @@
                                         </a>
                                     </h5>
                                     <div class="custom-block-bottom d-flex mt-3">
+                                        <input type="hidden" id="applicationLetterId" th:value="${letters.applicationLetterId}">
                                         <button type="button" class="btn btn-outline-secondary me-1" th:id="${letters.postId}" name="post">공고정보</button>
                                         <button type="button" class="btn btn-outline-secondary ms-1 me-1" th:id="${letters.applicationLetterId}" name="resume">
                                             지원 이력서
@@ -188,14 +189,15 @@
             /*면접이동*/
             document.querySelectorAll('[name="interview"]').forEach(function(button) {
                 button.addEventListener('click', function() {
-                    var applicationLetterId = button.id;
+                    var interviewId = button.id;
+                    var applicationLetterId = document.getElementById('applicationLetterId').value;
 
-                    if (applicationLetterId === '0') {
+                    if (interviewId === '0') {
                         // id가 0이면 다른 경로로 이동
-                        window.location.href = '/v1/user/my-page/apply-list/special-case';
+                        window.location.href = '/v1/user/my-page/apply-list/interview/form/' + applicationLetterId;
                     } else {
                         // id가 0이 아니면 일반적인 이동
-                        window.location.href = '/v1/user/my-page/apply-list/resume?applicationLetterId=' + applicationLetterId;
+                        window.location.href = '/v1/user/my-page/apply-list/interview/' + interviewId;
                     }
                 });
             });

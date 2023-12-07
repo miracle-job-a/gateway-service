@@ -78,7 +78,7 @@
                             <h4 class="section-title">면접 등록</h4>
                         </div>
 
-                        <form action="/v1/user/resume" method="post">
+                        <form action="/v1/user/my-page/apply-list/interview" method="post">
                         <div class="row justify-content-center">
                             <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-11 align-self-center">
 
@@ -94,7 +94,7 @@
                                 </div>
 
 
-                                <input type="hidden" name="applicationLetterId" value="0">
+                                <input type="hidden" name="applicationLetterId" th:value="${applicationLetterId}">
                                 <div class="row col-11 m-4 mx-auto">
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-outline-secondary" id="back" onclick="goBack()">돌아가기</button>

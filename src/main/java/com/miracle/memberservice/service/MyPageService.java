@@ -1,5 +1,6 @@
 package com.miracle.memberservice.service;
 
+import com.miracle.memberservice.dto.request.InterviewRequestDto;
 import com.miracle.memberservice.dto.request.QnaDto;
 import com.miracle.memberservice.dto.response.ApiResponse;
 import com.miracle.memberservice.dto.response.ApplicationLetterListResponseDto;
@@ -72,6 +73,14 @@ public class MyPageService {
                 .build();
 
         return new PageMoveWithMessage("/user/submitted-coverLetter", letter);
+    }
+
+    // 면접 생성
+    public PageMoveWithMessage createInterview(HttpSession session, InterviewRequestDto requestDto) {
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.post(session, requestDto, Const.RequestHeader.USER, "/user/" + userId + "/interview");
+
+        return new PageMoveWithMessage("redirect:/v1/user/my-page/apply-list/1", response.getMessage());
     }
 
 }
