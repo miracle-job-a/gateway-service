@@ -1,0 +1,225 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+    <script th:inline="javascript">
+        // 뒤로가기
+        function goBack() {
+            window.history.back();
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Thymeleaf 표현식을 사용하여 서버에서 전달받은 값
+            var totalMonths = /*[[${resume.userCareer}]]*/;
+
+            // 정수값을 년과 개월로 변환하는 함수
+            function convertYearsMonths(value) {
+                var years = Math.floor(value / 12);
+                var months = value % 12;
+
+                var result = "";
+                if (years > 0) {
+                    result += years + "년";
+                }
+                if (months > 0) {
+                    result += " " + months + "개월";
+                }
+
+                return result.trim();
+            }
+
+            // 경력 값을 가져와서 변환하여 출력
+            var convertedValue = convertYearsMonths(totalMonths);
+            document.getElementById('userCareer').value = convertedValue;
+        });
+    </script>
+    <style>
+        .right {
+            text-align: right;
+        }
+    </style>
+
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
+
+        <section class="latest-podcast-section" id="section_2">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <!-- 전체 박스 크기 -->
+                    <div class="col-lg-9 col-12">
+                        <div class="section-title-wrap mb-4">
+                            <h4 class="section-title">지원 이력서</h4>
+                        </div>
+
+                        <div class="row justify-content-center">
+                            <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-11 align-self-center">
+
+                                <div class="col-11 mt-5 mx-3 mx-auto">
+                                    <h4 th:text="${resume.resumeTitle}">지원이력서 제목입니다.</h4>
+                                </div>
+
+                                <div class="card my-3 p-4 col-11 post-form align-self-center">
+                                    <div class="row">
+
+                                        <div class="col-lg-4 col-12 px-5 my-auto align-self-auto">
+                                            <img src="/images/niniz.png" class="rounded float-start" alt="templatemo pod talk">
+                                        </div>
+
+                                        <div class="col-lg-8 col-12 px-5 m-auto align-self-center">
+
+                                            <div class="mb-3 row">
+                                                <label for="name" class="col-sm-4 col-form-label">이름</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" readonly class="form-control-plaintext text-center"
+                                                           style="font-size: 18px;"
+                                                           id="name" th:value="${resume.userName}">
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3 row">
+                                                <label for="email" class="col-sm-4 col-form-label">이메일</label>
+                                                <div class="col-sm-8">
+                                                    <input type="email" readonly class="form-control-plaintext text-center"
+                                                           style="font-size: 18px;"
+                                                           id="email" th:value="${resume.userEmail}">
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3 row">
+                                                <label for="birth" class="col-sm-4 col-form-label">생년월일</label>
+                                                <div class="col-sm-8">
+                                                    <input type="date" readonly class="form-control-plaintext text-center"
+                                                           style="font-size: 18px;"
+                                                           id="birth" th:value="${resume.userBirth}">
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3 row">
+                                                <label for="phone" class="col-sm-4 col-form-label">전화번호</label>
+                                                <div class="col-sm-8">
+                                                    <input type="tel" readonly class="form-control-plaintext text-center"
+                                                           pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}"
+                                                           style="font-size: 18px;"
+                                                           id="phone" th:value="${resume.userPhone}">
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-2 row">
+                                                <label for="address" class="col-sm-3 col-form-label">주소</label>
+                                                <div class="col-sm-9">
+                                                    <input type="tel" readonly class="form-control-plaintext text-center"
+                                                           style="font-size: 18px;"
+                                                           id="address" th:value="${resume.userAddress}">
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- 자기소개서 생성 폼 시작 -->
+                                <div class="card my-3 px-3 col-11 align-self-center">
+
+                                    <div class="row mt-4 mx-2 ">
+                                        <div class="col-12 my-1 mx-auto">
+                                            <div class="col-auto mb-2 mx-3 mx-auto">
+                                                <label for="userStackIdSet">보유 기술스택</label>
+                                            </div>
+                                            <button type="button" disabled class="btn btn-outline-dark mx-1" th:each="stack : ${stacks}">
+                                                <span th:text="${stack.name}"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-3 mb-3">
+                                        <div class="col-1 my-auto right">
+                                            <label for="userCareer" >경력</label>
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="text" readonly name="userCareer" id="userCareer" class="form-control-plaintext" th:value="${resume.userCareer}" />
+                                        </div>
+                                        <div class="col-2 my-auto right">
+                                            <label for="userJob">지원직군</label>
+                                        </div>
+                                        <div class="col-5">
+                                            <input type="text" readonly name="userJob" id="userJob" class="form-control-plaintext" th:value="${resume.userJob}"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12 my-1 mx-auto">
+                                            <div class="col-auto mb-1">
+                                                <label for="userCareerDetailList">경력사항</label>
+                                            </div>
+                                            <div th:each="careerDetail : ${resume.userCareerDetailList}" >
+                                                <input type="text" readonly name="userCareerDetailList" id="userCareerDetailList" class="form-control mb-1" th:value="${careerDetail}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12 my-1 mx-auto">
+                                            <div class="col-auto mb-1">
+                                                <label for="userEducation">최종학력</label>
+                                            </div>
+                                            <input type="text" readonly name="userEducation" id="userEducation" class="form-control" th:value="${resume.userEducation}" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12 my-1 mx-auto">
+                                            <div class="col-auto mb-1">
+                                                <label for="userGitLink">Git 주소</label>
+                                            </div>
+                                            <input type="text" readonly name="userGitLink" id="userGitLink" class="form-control" th:value="${resume.userGitLink}" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12 my-1 mx-auto">
+                                            <div class="col-auto mb-1">
+                                                <label for="userProjectList">프로젝트</label>
+                                            </div>
+                                            <div th:each="project : ${resume.userProjectList}" >
+                                                <input type="text" readonly name="userProjectList" id="userProjectList" class="form-control mb-1" th:value="${project}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12 my-1 mx-auto">
+                                            <div class="col-auto mb-1">
+                                                <label for="userEtcList">기타사항</label>
+                                            </div>
+                                            <div th:each="etc : ${resume.userEtcList}" >
+                                                <input type="text" readonly name="userEtcList" id="userEtcList" class="form-control mb-1" th:value="${userEtcList}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <input type="hidden" name="id" >
+                                    <div class="row col-12 m-4 mx-auto post-form">
+                                        <div class="col-4">
+                                            <button type="button" class="btn" id="back" onclick="goBack()">돌아가기</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+</html>

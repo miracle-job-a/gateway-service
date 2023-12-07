@@ -3,8 +3,10 @@ package com.miracle.memberservice.util;
 import com.miracle.memberservice.dto.request.JobRequestDto;
 import com.miracle.memberservice.dto.response.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.http11.filters.SavedRequestInputFilter;
 
 import javax.servlet.http.HttpSession;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -189,6 +191,36 @@ public class ApiResponseToList {
         return pageList;
     }
 
+    public static List<List<ApplicationLetterListResponseDto>> applicationLetterList(Object object) {
+        List<ArrayList<LinkedHashMap<String, Object>>> data = (ArrayList<ArrayList<LinkedHashMap<String, Object>>>) object;
+        List<List<ApplicationLetterListResponseDto>> pageList = new ArrayList<>();
+
+        for (ArrayList<LinkedHashMap<String, Object>> page : data) {
+            List<ApplicationLetterListResponseDto> dtos = new ArrayList<>();
+            if (!page.isEmpty()) {
+                for (Map<String, Object> letter : page) {
+                    Integer applicationLetterId = (Integer) letter.get("applicationLetterId");
+                    Integer postId = (Integer) letter.get("postId");
+                    Integer interviewId = (Integer) letter.get("interviewId");
+                    Long interviewIdValue = (interviewId != null) ? interviewId.longValue() : null;
+
+                    dtos.add(ApplicationLetterListResponseDto.builder()
+                            .applicationLetterId(applicationLetterId.longValue())
+                            .postId(postId.longValue())
+                            .interviewId(interviewIdValue)
+                            .postType(String.valueOf(letter.get("postType")))
+                            .submitDate(String.valueOf(letter.get("submitDate")))
+                            .applicationStatus(String.valueOf(letter.get("applicationStatus")))
+                            .job(String.valueOf(letter.get("job")))
+                            .build());
+                }
+                pageList.add(dtos);
+            }
+
+        }
+        return pageList;
+    }
+
     public static List<ResumeTitleResponseDto> resumeTitleList(Object object) {
         List<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
         List<ResumeTitleResponseDto> dto = new ArrayList<>();
@@ -218,6 +250,55 @@ public class ApiResponseToList {
     private static String divideTime(String time) {
         String[] ts = time.split("T");
         return ts[0] + " " + ts[1];
+    }
+
+    public static List<List<ManagePostsResponseDto>> companyList(Object object, HttpSession session) {
+        ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+        List<List<ManagePostsResponseDto>> pageList = new ArrayList<>();
+
+        for (LinkedHashMap<String, Object> lhm : data) {
+            List<ManagePostsResponseDto> dtos = new ArrayList<>();
+            Integer numberOfElements = (Integer) lhm.get("numberOfElements");
+            if (numberOfElements > 0) {
+                ArrayList<LinkedHashMap<String, Object>> content = (ArrayList<LinkedHashMap<String, Object>>) lhm.get("content");
+                for (LinkedHashMap<String, Object> dto : content) {
+                    Integer id = (Integer) dto.get("id");
+                    Integer applicant = 0;
+                    try {
+                        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/post/" + id + "/applicant/num");
+                        applicant = (Integer) response.getData();
+                    } catch (ClassCastException e) {
+                        log.error(e.getMessage());
+                    }
+
+                    dtos.add(ManagePostsResponseDto.builder()
+                            .id(id.longValue())
+                            .postType((String) dto.get("postType"))
+                            .closed((Boolean) dto.get("closed"))
+                            .createdAt(divideTime((String) dto.get("createdAt")))
+                            .title((String) dto.get("title"))
+                            .endDate(divideTime((String) dto.get("endDate")))
+                            .applicant(applicant)
+                            .build());
+                }
+                pageList.add(dtos);
+            }
+        }
+        return pageList;
+    }
+
+    public static List<StackAndJobResponseDto> stackList(Object object) {
+        ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+
+        List<StackAndJobResponseDto> dtos = new ArrayList<>();
+        for (LinkedHashMap<String, Object> lhm : data) {
+
+            dtos.add(StackAndJobResponseDto.builder()
+                    .id(lhm.get("id"))
+                    .name(lhm.get("name"))
+                    .build());
+        }
+        return dtos;
     }
 }
 

@@ -44,6 +44,7 @@ public class CompanyController {
         return pmwm.getPageName();
     }
 
+    /*DB_password=5002;DB_url=jdbc:mysql://localhost:3306/miracle_company;DB_username=root*/
     // 공고 생성 폼 이동
     @GetMapping("/post/form")
     public String postFormPage(HttpSession session, Model model) {
@@ -141,4 +142,13 @@ public class CompanyController {
         return pmwm.getPageName();
     }
 
+    @GetMapping("/today/signUp/list")
+    public String getCompanyList(Model model, @RequestParam int strNum, @RequestParam boolean today, HttpSession session) {
+        PageMoveWithMessage pmwm = companyService.getCompanyListToday(session, strNum, strNum+4, today);
+        model.addAttribute("strNum", strNum);
+        model.addAttribute("today", today);
+        model.addAttribute("companyListPage", pmwm.getData());
+        model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        return pmwm.getPageName();
+    }
 }
