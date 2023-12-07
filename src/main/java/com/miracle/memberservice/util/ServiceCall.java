@@ -74,6 +74,11 @@ public class ServiceCall {
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam(name, value).build()), httpSession, serviceType).block();
     }
 
+    public static ApiResponse getParamStackName(HttpSession httpSession, String serviceType, String url, String stackName) {
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam(stackName).build()), httpSession, serviceType).block();
+    }
+
     public static ApiResponse getParamList(HttpSession httpSession, String serviceType, String url, int strNum, int endNum, String sort) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).queryParam("sort", sort).build()), httpSession, serviceType).block();
