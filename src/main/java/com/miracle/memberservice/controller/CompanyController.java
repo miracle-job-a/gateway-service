@@ -30,7 +30,7 @@ public class CompanyController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "index";
+        return "redirect:/v1";
     }
 
     @GetMapping("/post/list/{strNum}")

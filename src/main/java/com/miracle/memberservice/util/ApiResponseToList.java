@@ -3,10 +3,8 @@ package com.miracle.memberservice.util;
 import com.miracle.memberservice.dto.request.JobRequestDto;
 import com.miracle.memberservice.dto.response.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.http11.filters.SavedRequestInputFilter;
 
 import javax.servlet.http.HttpSession;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,6 +12,48 @@ import java.util.Map;
 
 @Slf4j
 public class ApiResponseToList {
+
+    public static Map<String, List<MainPagePostsResponseDto>> mainPage(HttpSession session, Map<String, Object> data) {
+        List<LinkedHashMap<String, Object>> deadlineResponse = (ArrayList<LinkedHashMap<String, Object>>) data.get("deadline");
+        List<LinkedHashMap<String, Object>> newestResponse = (ArrayList<LinkedHashMap<String, Object>>) data.get("newest");
+
+        List<MainPagePostsResponseDto> deadline = mainPageComposition(session, deadlineResponse);
+        List<MainPagePostsResponseDto> newest = mainPageComposition(session, newestResponse);
+
+        return Map.of("deadline", deadline, "newest", newest);
+    }
+
+    private static List<MainPagePostsResponseDto> mainPageComposition(HttpSession session, List<LinkedHashMap<String, Object>> response) {
+        List<MainPagePostsResponseDto> dtos = new ArrayList<>();
+        for (LinkedHashMap<String, Object> lhm : response) {
+            Integer id = (Integer) lhm.get("id");
+            Integer companyId = (Integer) lhm.get("companyId");
+            List<Integer> jobs = (ArrayList<Integer>) lhm.get("jobIdSet");
+
+            ApiResponse job = ServiceCall.post(session, new JobRequestDto(jobs), Const.RequestHeader.ADMIN, "/admin/jobs");
+            String jobDetail;
+            if (job.getData() instanceof Boolean) {
+                jobDetail = null;
+            } else {
+                List<JobResponseDto> jobNames = ApiResponseToList.jobs(job.getData());
+                jobDetail = jobNames.get(0).getName();
+            }
+            dtos.add(MainPagePostsResponseDto.builder()
+                    .id(id.longValue())
+                    .companyId(companyId.longValue())
+                    .postType((String) lhm.get("postType"))
+                    .title((String) lhm.get("title"))
+                    .photo((String) lhm.get("photo"))
+                    .endDate(divideTime((String) lhm.get("endDate")))
+                    .workAddress((String) lhm.get("workAddress"))
+                    .jobIdSet(jobDetail)
+                    .career((Integer) lhm.get("career"))
+                    .name((String) lhm.get("name"))
+                    .build());
+        }
+        return dtos;
+    }
+
     public static List<CompanyFaqResponseDto> faqList(Object object) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
 

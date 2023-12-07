@@ -23,15 +23,17 @@
 
                             <p class="text-black">For Developers. For Job Seekers.</p>
 
-                            <a th:if="${session.id==null}" href="/v1/user/join" class="btn custom-btn smoothscroll mt-3"> 유저 회원가입하기 </a>
-                            <a th:if="${session.id==null}" href="/v1/company/join" class="btn custom-btn smoothscroll mt-3"> 기업 회원가입하기 </a>
+                            <a th:if="${session.id==null}" href="/v1/user/join"
+                               class="btn custom-btn smoothscroll mt-3"> 유저 회원가입하기 </a>
+                            <a th:if="${session.id==null}" href="/v1/company/join"
+                               class="btn custom-btn smoothscroll mt-3"> 기업 회원가입하기 </a>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="trending-podcast-section section-padding">
+        <section class="trending-podcast-section section-padding" th:if="${session.bno==null}">
             <div class="container">
                 <div class="row">
 
@@ -41,155 +43,57 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-4 col-12 mb-4 mb-lg-0">
-                        <div class="custom-block custom-block-full">
-                            <div class="custom-block-image-wrap">
-                                <a href="company/detail-page.html">
-                                    <img src="/images/podcast/27670664_7369753.jpg" class="custom-block-image img-fluid"
-                                         alt="">
-                                </a>
-                            </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-12 mb-4 mb-lg-0" th:each="post, postStat : ${map.deadline}">
+                            <div class="custom-block custom-block-full mb-2">
+                                <div class="custom-block-image-wrap">
+                                    <a th:href="@{/v1/click/post/{postId}/detail(companyId=${post.companyId}, postId=${post.id}, postType=${post.postType})}">
+                                        <img src="/images/podcast/27670664_7369753.jpg"
+                                             class="custom-block-image img-fluid"
+                                             alt="">
+                                    </a>
+                                </div>
 
-                            <div class="custom-block-info">
-                                <a href="company/detail-page.html" class="text-black">
-                                    (주)물가올리는형제들
-                                </a>
-
-                                <div class="profile-block d-flex justify-content-between mt-2">
+                                <div class="custom-block-info">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="mb-2 d-inline-flex" th:if="${post.postType=='NORMAL'}">
+                                            <button class="badge" style="background-color: #717275"
+                                                    th:text="일반공고"></button>
+                                        </div>
+                                        <div class="mb-2 d-inline-flex" th:if="${post.postType=='MZ'}">
+                                            <button class="badge" style="background-color: #0a53be"
+                                                    th:text="MZ공고"></button>
+                                        </div>
+                                        <a class="text-black " th:text="${post.name}">
+                                        </a>
+                                    </div>
                                     <a class="bi-balloon me-1">
-                                        <span class="text-black">서울시 종로구</span>
+                                        <span class="text-black" th:text="${post.workAddress}"></span>
                                     </a>
-                                    <span>
-                                        ~2023.09.14
-                                    </span>
-                                </div>
-
-                                <hr>
-                                <h5 class="mb-0">웹 백엔드 개발자 채용</h5>
-
-                                <div class="custom-block-bottom d-flex justify-content-between mt-2">
-                                    <a class="bi-calendar me-1">
-                                        <span class="text-black">경력 n년</span>
+                                    <a class="d-flex justify-content-between me-1">
+                                        <span class="bi-clock-fill text-black" th:text="'    ~'+${post.endDate}"></span>
                                     </a>
 
-                                    <span>직무명</span>
+                                    <hr>
+                                    <h5 class="mb-0" th:text="${post.title}"></h5>
 
+                                    <div class="custom-block-bottom d-flex justify-content-between mt-2">
+                                        <a class="bi-person me-1">
+                                            <span class="text-black" th:text="'경력 '+${post.career}+'년'"></span>
+                                        </a>
+
+                                        <span th:text="${post.jobIdSet}"></span>
+
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="social-share d-flex flex-column ms-auto">
-                                <a href="#" class="badge ms-auto">
-                                    <i class="bi-heart"></i>
-                                </a>
-
-                                <a href="#" class="badge ms-auto">
-                                    <i class="bi-bookmark"></i>
-                                </a>
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-lg-4 col-12 mb-4 mb-lg-0">
-                        <div class="custom-block custom-block-full">
-                            <div class="custom-block-image-wrap">
-                                <a href="company/detail-page.html">
-                                    <img src="/images/podcast/27670664_7369753.jpg" class="custom-block-image img-fluid"
-                                         alt="">
-                                </a>
-                            </div>
-
-                            <div class="custom-block-info">
-                                <a href="company/detail-page.html" class="text-black">
-                                    (주)물가올리는형제들
-                                </a>
-
-                                <div class="profile-block d-flex justify-content-between mt-2">
-                                    <a class="bi-balloon me-1">
-                                        <span class="text-black">서울시 종로구</span>
-                                    </a>
-                                    <span>
-                                        ~2023.09.14
-                                    </span>
-                                </div>
-
-                                <hr>
-                                <h5 class="mb-0">웹 백엔드 개발자 채용</h5>
-
-                                <div class="custom-block-bottom d-flex justify-content-between mt-2">
-                                    <a class="bi-calendar me-1">
-                                        <span class="text-black">경력 n년</span>
-                                    </a>
-
-                                    <span>직무명</span>
-
-                                </div>
-                            </div>
-
-                            <div class="social-share d-flex flex-column ms-auto">
-                                <a href="#" class="badge ms-auto">
-                                    <i class="bi-heart"></i>
-                                </a>
-
-                                <a href="#" class="badge ms-auto">
-                                    <i class="bi-bookmark"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-4 col-12 mb-4 mb-lg-0">
-                        <div class="custom-block custom-block-full">
-                            <div class="custom-block-image-wrap">
-                                <a href="company/detail-page.html">
-                                    <img src="/images/podcast/27670664_7369753.jpg" class="custom-block-image img-fluid"
-                                         alt="">
-                                </a>
-                            </div>
-
-                            <div class="custom-block-info">
-                                <a href="company/detail-page.html" class="text-black">
-                                    (주)물가올리는형제들
-                                </a>
-
-                                <div class="profile-block d-flex justify-content-between mt-2">
-                                    <a class="bi-balloon me-1">
-                                        <span class="text-black">서울시 종로구</span>
-                                    </a>
-                                    <span>
-                                        ~2023.09.14
-                                    </span>
-                                </div>
-
-                                <hr>
-                                <h5 class="mb-0">웹 백엔드 개발자 채용</h5>
-
-                                <div class="custom-block-bottom d-flex justify-content-between mt-2">
-                                    <a class="bi-calendar me-1">
-                                        <span class="text-black">경력 n년</span>
-                                    </a>
-
-                                    <span>직무명</span>
-
-                                </div>
-                            </div>
-
-                            <div class="social-share d-flex flex-column ms-auto">
-                                <a href="#" class="badge ms-auto">
-                                    <i class="bi-heart"></i>
-                                </a>
-
-                                <a href="#" class="badge ms-auto">
-                                    <i class="bi-bookmark"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </section>
 
-        <section class="trending-podcast-section section-padding">
+        <section class="trending-podcast-section section-padding" th:if="${session.bno==null}">
             <div class="container">
                 <div class="row">
 
@@ -199,150 +103,116 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-4 col-12 mb-4 mb-lg-0">
-                        <div class="custom-block custom-block-full">
-                            <div class="custom-block-image-wrap">
-                                <a href="company/detail-page.html">
-                                    <img src="/images/podcast/27670664_7369753.jpg" class="custom-block-image img-fluid"
-                                         alt="">
-                                </a>
-                            </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-12 mb-4 mb-lg-0" th:each="post, postStat : ${map.deadline}">
+                            <div class="custom-block custom-block-full mb-2">
+                                <div class="custom-block-image-wrap">
+                                    <a th:href="@{/v1/click/post/{postId}/detail(companyId=${post.companyId}, postId=${post.id}, postType=${post.postType})}">
+                                        <img src="/images/podcast/27670664_7369753.jpg"
+                                             class="custom-block-image img-fluid"
+                                             alt="">
+                                    </a>
+                                </div>
 
-                            <div class="custom-block-info">
-                                <a href="company/detail-page.html" class="text-black">
-                                    (주)물가올리는형제들
-                                </a>
-
-                                <div class="profile-block d-flex justify-content-between mt-2">
+                                <div class="custom-block-info">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="mb-2 d-inline-flex" th:if="${post.postType=='NORMAL'}">
+                                            <button class="badge" style="background-color: #717275"
+                                                    th:text="일반공고"></button>
+                                        </div>
+                                        <div class="mb-2 d-inline-flex" th:if="${post.postType=='MZ'}">
+                                            <button class="badge" style="background-color: #0a53be"
+                                                    th:text="MZ공고"></button>
+                                        </div>
+                                        <a class="text-black " th:text="${post.name}">
+                                        </a>
+                                    </div>
                                     <a class="bi-balloon me-1">
-                                        <span class="text-black">서울시 종로구</span>
+                                        <span class="text-black" th:text="${post.workAddress}"></span>
                                     </a>
-                                    <span>
-                                        ~2023.09.14
-                                    </span>
-                                </div>
-
-                                <hr>
-                                <h5 class="mb-0">웹 백엔드 개발자 채용</h5>
-
-                                <div class="custom-block-bottom d-flex justify-content-between mt-2">
-                                    <a class="bi-calendar me-1">
-                                        <span class="text-black">경력 n년</span>
+                                    <a class="d-flex justify-content-between me-1">
+                                        <span class="bi-clock-fill text-black" th:text="'    ~'+${post.endDate}"></span>
                                     </a>
 
-                                    <span>직무명</span>
+                                    <hr>
+                                    <h5 class="mb-0" th:text="${post.title}"></h5>
 
+                                    <div class="custom-block-bottom d-flex justify-content-between mt-2">
+                                        <a class="bi-person me-1">
+                                            <span class="text-black" th:text="'경력 '+${post.career}+'년'"></span>
+                                        </a>
+
+                                        <span th:text="${post.jobIdSet}"></span>
+
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="social-share d-flex flex-column ms-auto">
-                                <a href="#" class="badge ms-auto">
-                                    <i class="bi-heart"></i>
-                                </a>
-
-                                <a href="#" class="badge ms-auto">
-                                    <i class="bi-bookmark"></i>
-                                </a>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </section>
 
-                    <div class="col-lg-4 col-12 mb-4 mb-lg-0">
-                        <div class="custom-block custom-block-full">
-                            <div class="custom-block-image-wrap">
-                                <a href="company/detail-page.html">
-                                    <img src="/images/podcast/27670664_7369753.jpg" class="custom-block-image img-fluid"
-                                         alt="">
-                                </a>
-                            </div>
+        <section class="trending-podcast-section section-padding" th:if="${session.bno!=null}">
+            <div class="container">
+                <div class="row">
 
-                            <div class="custom-block-info">
-                                <a href="company/detail-page.html" class="text-black">
-                                    (주)물가올리는형제들
-                                </a>
-
-                                <div class="profile-block d-flex justify-content-between mt-2">
-                                    <a class="bi-balloon me-1">
-                                        <span class="text-black">서울시 종로구</span>
-                                    </a>
-                                    <span>
-                                        ~2023.09.14
-                                    </span>
-                                </div>
-
-                                <hr>
-                                <h5 class="mb-0">웹 백엔드 개발자 채용</h5>
-
-                                <div class="custom-block-bottom d-flex justify-content-between mt-2">
-                                    <a class="bi-calendar me-1">
-                                        <span class="text-black">경력 n년</span>
-                                    </a>
-
-                                    <span>직무명</span>
-
-                                </div>
-                            </div>
-
-                            <div class="social-share d-flex flex-column ms-auto">
-                                <a href="#" class="badge ms-auto">
-                                    <i class="bi-heart"></i>
-                                </a>
-
-                                <a href="#" class="badge ms-auto">
-                                    <i class="bi-bookmark"></i>
-                                </a>
-                            </div>
+                    <div class="col-lg-12 col-12">
+                        <div class="section-title-wrap mb-5">
+                            <h4 class="section-title">공고 수 정보</h4>
                         </div>
                     </div>
 
-                    <div class="col-lg-4 col-12 mb-4 mb-lg-0">
-                        <div class="custom-block custom-block-full">
-                            <div class="custom-block-image-wrap">
-                                <a href="company/detail-page.html">
-                                    <img src="/images/podcast/27670664_7369753.jpg" class="custom-block-image img-fluid"
-                                         alt="">
-                                </a>
-                            </div>
-
-                            <div class="custom-block-info">
-                                <a href="company/detail-page.html" class="text-black">
-                                    (주)물가올리는형제들
-                                </a>
-
-                                <div class="profile-block d-flex justify-content-between mt-2">
-                                    <a class="bi-balloon me-1">
-                                        <span class="text-black">서울시 종로구</span>
-                                    </a>
-                                    <span>
-                                        ~2023.09.14
-                                    </span>
+                    <div class="row">
+                        <div class="col-lg-4 col-12 mb-4 mb-lg-0">
+                            <div class="custom-block custom-block-full mb-2">
+                                <div class="custom-block-image-wrap">
                                 </div>
 
-                                <hr>
-                                <h5 class="mb-0">웹 백엔드 개발자 채용</h5>
-
-                                <div class="custom-block-bottom d-flex justify-content-between mt-2">
-                                    <a class="bi-calendar me-1">
-                                        <span class="text-black">경력 n년</span>
-                                    </a>
-
-                                    <span>직무명</span>
-
+                                <div class="custom-block-info">
+                                    <div class="d-flex justify-content-center">
+                                        <h5 class="mb-0 text-info">전체 공고 수</h5>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-center">
+                                        <h5 class="mb-0 text-secondary" th:text="${count.countAllPosts}"></h5>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-lg-4 col-12 mb-4 mb-lg-0">
+                            <div class="custom-block custom-block-full mb-2">
+                                <div class="custom-block-image-wrap">
+                                </div>
 
-                            <div class="social-share d-flex flex-column ms-auto">
-                                <a href="#" class="badge ms-auto">
-                                    <i class="bi-heart"></i>
-                                </a>
+                                <div class="custom-block-info">
+                                    <div class="d-flex justify-content-center">
+                                        <h5 class="mb-0 text-success">진행중인 공고 수</h5>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-center">
+                                        <h5 class="mb-0 text-secondary" th:text="${count.countOpen}"></h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-12 mb-4 mb-lg-0">
+                            <div class="custom-block custom-block-full mb-2">
+                                <div class="custom-block-image-wrap">
+                                </div>
 
-                                <a href="#" class="badge ms-auto">
-                                    <i class="bi-bookmark"></i>
-                                </a>
+                                <div class="custom-block-info">
+                                    <div class="d-flex justify-content-center">
+                                        <h5 class="mb-0 text-warning">마감 공고 수</h5>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-center">
+                                        <h5 class="mb-0 text-secondary" th:text="${count.countEndedPosts}"></h5>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
