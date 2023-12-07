@@ -51,6 +51,11 @@ public class GuestController {
         return "guest/company-login";
     }
 
+    @GetMapping("/admin/login-form")
+    public String adminLoginForm() {
+        return "guest/admin-login";
+    }
+
     //회원가입 폼 이동
     @GetMapping("/user/join")
     public String userJoinPage() {
@@ -111,6 +116,20 @@ public class GuestController {
         }
         String errorMessage = pmwm.getErrorMessage();
         model.addAttribute("errorMessage", errorMessage);
+        return pageName;
+    }
+
+    @PostMapping("/admin/login")
+    public String adminLogin(@ModelAttribute LoginDto loginDto, Model model, HttpSession session) {
+        PageMoveWithMessage pmwm = adminService.login(loginDto, session);
+        String pageName = pmwm.getPageName();
+
+        if (pmwm.getId() != null) {
+            session.setAttribute("id", pmwm.getId());
+            session.setAttribute("email", pmwm.getEmail());
+        }
+
+        model.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pageName;
     }
 
@@ -216,5 +235,4 @@ public class GuestController {
         model.addAttribute("stacks", stacks);
         return "guest/post-detail";
     }
-
 }

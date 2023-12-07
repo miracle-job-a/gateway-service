@@ -246,5 +246,54 @@ public class ApiResponseToList {
         String[] ts = time.split("T");
         return ts[0] + " " + ts[1];
     }
+
+    public static List<List<ManagePostsResponseDto>> companyList(Object object, HttpSession session) {
+        ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+        List<List<ManagePostsResponseDto>> pageList = new ArrayList<>();
+
+        for (LinkedHashMap<String, Object> lhm : data) {
+            List<ManagePostsResponseDto> dtos = new ArrayList<>();
+            Integer numberOfElements = (Integer) lhm.get("numberOfElements");
+            if (numberOfElements > 0) {
+                ArrayList<LinkedHashMap<String, Object>> content = (ArrayList<LinkedHashMap<String, Object>>) lhm.get("content");
+                for (LinkedHashMap<String, Object> dto : content) {
+                    Integer id = (Integer) dto.get("id");
+                    Integer applicant = 0;
+                    try {
+                        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/post/" + id + "/applicant/num");
+                        applicant = (Integer) response.getData();
+                    } catch (ClassCastException e) {
+                        log.error(e.getMessage());
+                    }
+
+                    dtos.add(ManagePostsResponseDto.builder()
+                            .id(id.longValue())
+                            .postType((String) dto.get("postType"))
+                            .closed((Boolean) dto.get("closed"))
+                            .createdAt(divideTime((String) dto.get("createdAt")))
+                            .title((String) dto.get("title"))
+                            .endDate(divideTime((String) dto.get("endDate")))
+                            .applicant(applicant)
+                            .build());
+                }
+                pageList.add(dtos);
+            }
+        }
+        return pageList;
+    }
+
+    public static List<StackAndJobResponseDto> stackList(Object object) {
+        ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+
+        List<StackAndJobResponseDto> dtos = new ArrayList<>();
+        for (LinkedHashMap<String, Object> lhm : data) {
+
+            dtos.add(StackAndJobResponseDto.builder()
+                    .id(lhm.get("id"))
+                    .name(lhm.get("name"))
+                    .build());
+        }
+        return dtos;
+    }
 }
 
