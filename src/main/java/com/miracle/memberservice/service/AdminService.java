@@ -123,8 +123,7 @@ public class AdminService {
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("admin/main", response.getMessage());
 
-        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackAndJobList(response.getData());
-        return new PageMoveWithMessage("redirect:/v1/admin/stackList", dtos);
+        return new PageMoveWithMessage("redirect:/v1/admin/stackList", response.getMessage());
     }
 
     public PageMoveWithMessage modifyStack(HttpSession session, Long stackId, String modifiedName){
