@@ -144,7 +144,7 @@
                 button.addEventListener('click', function() {
                     var postId = button.id;
                     var postType = [[${postType}]];
-                    window.location.href = '/v1/click/post/' + postId + 'detail?postType='+postType;
+                    window.location.href = '/v1/click/post/' + postId + 'detail?postType=' + postType;
                 });
             });
 
@@ -159,8 +159,8 @@
             /*지원자소서이동*/
             document.querySelectorAll('[name="coverLetter"]').forEach(function(button) {
                 button.addEventListener('click', function() {
-                    /*var applicationLetterId = button.id;*/
-                    window.location.href = '/v1/user/my-page/apply-list/submitted-coverLetter';
+                    var applicationLetterId = button.id;
+                    window.location.href = '/v1/user/my-page/apply-list/submitted-coverLetter/' + applicationLetterId;
                 });
             });
 

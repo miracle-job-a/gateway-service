@@ -114,6 +114,7 @@ public class UserController {
         return "user/coverLetter-form";
     }
 
+
     @PostMapping("/cover-letter/create")
     public String createCoverLetter(String title, @ModelAttribute QnaListDto qnaListDto, HttpSession session) {
         List<QnaDto> qnaDtoList = new ArrayList<>();

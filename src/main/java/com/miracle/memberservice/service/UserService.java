@@ -12,10 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -140,9 +137,11 @@ public class UserService {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.USER, "/user/" + userId + "/resume/" + resumeId);
         if (response.getHttpStatus() != 200)
-            return new PageMoveWithMessage("redirect:/v1/user/resume//detail/" + resumeId, response.getMessage());
+            return new PageMoveWithMessage("redirect:/v1/user/resume/detail/" + resumeId, response.getMessage());
         return new PageMoveWithMessage("redirect:/v1/user/resume/detail/" + resumeId);
     }
+
+
 
     public PageMoveWithMessage createCoverLetter(HttpSession session, CoverLetterPostRequestDto requestDto) {
         Long userId = (Long) session.getAttribute("id");

@@ -69,16 +69,6 @@ public class ApiResponseToList {
         return dtos;
     }
 
-    /*public static List<InterviewResponseDto> interview(Object object) {
-        ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
-
-        List<InterviewResponseDto> dtos = new ArrayList<>();
-        for (LinkedHashMap<String, Object> item : data ){
-            dtos.add(InterviewResponseDto.builder()
-                    ..build())
-        }
-    }*/
-
     public static List<StackResponseDto> stacks(Object object) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
 
