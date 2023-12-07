@@ -29,11 +29,8 @@ public class MyPageController {
     private final UserService userService;
     private final AdminService adminService;
 
-    // 임시 지원 자기소개서 이동
-    @GetMapping("apply-list/submitted-coverLetter")
-    public String submittedLetter(){ return "user/submitted-coverLetter"; }
 
-    // TODO 마이페이지 목록 (추후 url 정리하기)
+    // 마이페이지 목록
     @GetMapping("/apply-list/{startPage}")
     public String applyList(HttpSession session, Model model, @PathVariable(required = false) int startPage){
         PageMoveWithMessage pmwm = myPageService.applicationLetterList(session, startPage);
@@ -43,6 +40,7 @@ public class MyPageController {
         return pmwm.getPageName();
     }
 
+    // 지원 이력서
     @GetMapping("/apply-list/submitted-resume/{applicationLetterId}")
     public String applyResume(HttpSession session, Model model, @PathVariable(required = false) Long applicationLetterId){
         PageMoveWithMessage pmwm = myPageService.resumeInApplicationLetterDetail(session, applicationLetterId);
@@ -55,6 +53,7 @@ public class MyPageController {
         return pmwm.getPageName();
     }
 
+    // 지원 자소서
     @GetMapping("/apply-list/submitted-coverLetter/{applicationLetterId}")
     public String applyCoverLetter(HttpSession session, Model model, @PathVariable Long applicationLetterId){
         PageMoveWithMessage pmwm = myPageService.coverLetterInApplicationLetterDetail(session, applicationLetterId);
@@ -62,5 +61,9 @@ public class MyPageController {
         model.addAttribute("letter", pmwm.getData());
         return pmwm.getPageName();
     }
+
+    // 지원 면접 (임시)
+    @GetMapping("/apply-list/interview-form")
+    public String interviewForm(){ return "user/interview-form"; }
 
 }

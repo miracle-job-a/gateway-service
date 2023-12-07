@@ -111,7 +111,11 @@
                                         <button type="button" class="btn btn-outline-secondary ms-1 me-1" th:id="${letters.applicationLetterId}" name="resume">
                                             지원 이력서
                                         </button>
-                                        <button type="button" class="btn btn-outline-secondary ms-1 me-1" th:id="${letters.applicationLetterId}" name="coverLetter">지원 자기소개서</button>
+                                        <button type="button" class="btn btn-outline-secondary ms-1 me-1"
+                                                th:id="${letters.applicationLetterId}" name="coverLetter"
+                                                th:if="${letters.postType != 'MZ'}">
+                                            지원 자기소개서
+                                        </button>
                                         <button type="button" class="btn btn-outline-secondary ms-1"
                                                 th:id="${#strings.isEmpty(letters.interviewId) ? '0' : letters.interviewId}" name="interview">
                                             면접
