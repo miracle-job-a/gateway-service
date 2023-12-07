@@ -82,7 +82,7 @@
                     </div>
 
                     <!-- Thymeleaf 반복문을 사용하여 ArrayList 내의 객체들을 처리 -->
-                    <div th:each="letterItem, letterItemStat : ${letter}" th:id="'postPage'+${letterItemStat}">
+                    <div th:each="letterItem, letterItemStat : ${letter}" th:id="'postPage'+${letterItemStat.index}">
                         <div th:each="letters, lettersStat : ${letterItem}" class="col-lg-10 col-12 mb-4 mb-lg-2 mx-auto">
                             <div class="custom-block d-flex">
                                 <div class="custom-block-info">
@@ -134,12 +134,12 @@
                                 </li>
                                 <div th:each="letterItem, letterItemStat : ${letter}">
                                     <li class="page-item" th:id="'page'+${letterItemStat.index}">
-                                        <a class="page-link" th:onclick="showOnlySelected(${letterItemStat.index})"
+                                        <a class="page-link" th:onclick="showOnlySelected([[${letterItemStat.index}]])"
                                            th:text="${letterItemStat.index + startPage}"></a>
                                     </li>
                                 </div>
                                 <li class="page-item"
-                                    th:if="${#lists.size(letter)>=5 and #lists.size(letter[4])==9}">
+                                    th:if="${#lists.size(letter)>=5 and #lists.size(letter[4])==5}">
                                     <a class="page-link" th:href="@{/v1/user/my-page/apply-list/{startPage}(startPage=${startPage}+5)}"
                                        aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
@@ -168,7 +168,7 @@
             document.getElementsByName('resume').forEach(function(button) {
                 button.addEventListener('click', function() {
                     var applicationLetterId = button.id;
-                    window.location.href = '/v1/user/my-page/apply-list/resume?applicationLetterId=' + applicationLetterId;
+                    window.location.href = '/v1/user/my-page/apply-list/' + applicationLetterId;
                 });
             });
 
