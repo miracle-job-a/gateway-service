@@ -50,6 +50,15 @@ public class AdminController {
         return pmwm.getPageName();
     }
 
+    @GetMapping("/search/stack")
+    private String searchStack(@RequestParam String stackName, Model model, HttpSession session){
+        PageMoveWithMessage pmwm = adminService.searchStack(session, stackName);
+        List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
+
+        model.addAttribute("totalStackList", data);
+        return pmwm.getPageName();
+    }
+
     @GetMapping("/jobs")
     private String jobList(){ return "admin/jobList"; }
 
