@@ -26,11 +26,6 @@ public class AdminController {
         session.invalidate();
         return "index";
     }
-    @GetMapping("/users")
-    private String userList(){ return "admin/userList"; }
-
-    @GetMapping("/stacks")
-    private String stackList(){ return "admin/stackList"; }
 
     @GetMapping("/stackList")
     private String stackList(HttpSession session, Model model){
@@ -67,9 +62,6 @@ public class AdminController {
         model.addAttribute("totalStackList", data);
         return pmwm.getPageName();
     }
-
-    @GetMapping("/jobs")
-    private String jobList(){ return "admin/jobList"; }
 
     @GetMapping("/jobList")
     private String jobList(HttpSession session, Model model){
