@@ -12,17 +12,15 @@
             xhr.open("POST", "/v1/admin/register/stack", true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-            // 요청 파라미터 설정
             var param = "stackName=" + encodeURIComponent(stackName);
 
-            // 요청 완료 후의 동작 설정
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status === 200) {
-                        console.log("Stack modified successfully!");
+                        console.log("stack registered successfully!");
                         alert("성공적으로 처리되었습니다.");
                     } else {
-                        console.error("Failed to modify stack. Status: " + xhr.status);
+                        console.error("Failed to register stack. Status: " + xhr.status);
                     }
                 }
             };
@@ -83,14 +81,14 @@
                                 <!-- 입력, 섹션 시작 -->
                                 <div class="card p-4 col-11 post-form align-self-center">
                                     <form action="/v1/admin/stackList" method="get">
-                                    <div class="mb-1">
-                                        <label for="register">스택 등록</label>
-                                    </div>
-                                    <div class="col-12 mt-2 input-group">
-                                        <input type="text" name="name" id="register"
-                                               class="form-control" placeholder="등록하려는 스택명 기입" required="" />
-                                        <button class="btn" type="submit" onclick="registerStack()">등록</button>
-                                    </div>
+                                        <div class="mb-1">
+                                            <label for="register">스택 등록</label>
+                                        </div>
+                                        <div class="col-12 mt-2 input-group">
+                                            <input type="text" name="name" id="register"
+                                                   class="form-control" placeholder="등록하려는 스택명 기입" required="" />
+                                            <button class="btn" type="submit" onclick="registerStack()">등록</button>
+                                        </div>
                                     </form>
 
                                     <form action="/v1/admin/stackList" method="get">
