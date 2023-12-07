@@ -5,6 +5,34 @@
 
 <div layout:fragment="content">
     <script>
+        function registerStack() {
+            var stackName = document.getElementById('register').value;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/v1/admin/register/stack", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            // 요청 파라미터 설정
+            var param = "stackName=" + encodeURIComponent(stackName);
+
+            // 요청 완료 후의 동작 설정
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        // 요청이 성공하면 추가 동작 수행
+                        console.log("Stack modified successfully!");
+                        // 성공 시 필요한 동작 추가 (예: 화면 갱신)
+                        alert("성공적으로 처리되었습니다.");
+                    } else {
+                        // 요청이 실패한 경우 처리
+                        console.error("Failed to modify stack. Status: " + xhr.status);
+                    }
+                }
+            };
+
+            xhr.send(param);
+        }
+
         function modifyStack() {
             var modifiedName = document.getElementById('modify').value;
             var stackId = document.getElementById('modifyId').value;
@@ -22,8 +50,8 @@
                     if (xhr.status === 200) {
                         // 요청이 성공하면 추가 동작 수행
                         console.log("Stack modified successfully!");
-                        // TODO: 성공 시 필요한 동작 추가 (예: 화면 갱신)
-                        alert("성공적으로 수정되었습니다.")
+                        // 성공 시 필요한 동작 추가 (예: 화면 갱신)
+                        alert("성공적으로 처리되었습니다.");
                     } else {
                         // 요청이 실패한 경우 처리
                         console.error("Failed to modify stack. Status: " + xhr.status);
@@ -91,7 +119,7 @@
                                     <div class="col-12 mt-2 input-group">
                                         <input type="text" name="name" id="register"
                                                class="form-control" placeholder="등록하려는 스택명 기입" required="" />
-                                        <button class="btn" type="button">등록</button>
+                                        <button class="btn" type="button" onclick="registerStack()">등록</button>
                                     </div>
 
                                     <div class="col-12 mt-2 input-group">
@@ -111,7 +139,7 @@
 
                                     <div class="col-12 mt-2 input-group justify-content-center">
                                         <!-- 목록 -->
-                                        <div class="row row-cols-lg-7">
+                                        <div id="stackListContainer" class="row row-cols-lg-7">
                                             <div class="col-lg-3 col-1 mb-4 mb-lg-2" th:each="stack : ${totalStackList}">
                                                 <button class="badge" style="background-color: #FCB711"
                                                         th:attr="data-stack-id=${stack.id}"
