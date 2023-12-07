@@ -1,5 +1,6 @@
 package com.miracle.memberservice.controller;
 
+import com.miracle.memberservice.dto.response.CoverLetterInApplicationLetterResponseDto;
 import com.miracle.memberservice.dto.response.JobResponseDto;
 import com.miracle.memberservice.dto.response.ResumeInApplicationLetterResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;
@@ -53,4 +54,13 @@ public class MyPageController {
         model.addAttribute("stacks", stacks);
         return pmwm.getPageName();
     }
+
+    @GetMapping("/apply-list/submitted-coverLetter/{applicationLetterId}")
+    public String applyCoverLetter(HttpSession session, Model model, @PathVariable Long applicationLetterId){
+        PageMoveWithMessage pmwm = myPageService.coverLetterInApplicationLetterDetail(session, applicationLetterId);
+
+        model.addAttribute("letter", pmwm.getData());
+        return pmwm.getPageName();
+    }
+
 }

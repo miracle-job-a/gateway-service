@@ -22,42 +22,44 @@
                     <!-- 전체 박스 크기 -->
                     <div class="col-lg-9 col-12">
                         <div class="section-title-wrap mb-4">
-                            <h4 class="section-title">지원 이력서</h4>
+                            <h4 class="section-title">지원 자기소개서</h4>
                         </div>
 
                         <div class="row justify-content-center">
                             <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-11 align-self-center">
 
                                 <div class="col-11 mt-5 mx-3 mx-auto">
-                                    <h4 >지원 자기소개서 제목입니다.</h4>
+                                    <h4 th:text="${letter.coverLetterTitle}">지원 자기소개서 제목입니다.</h4>
                                 </div>
 
                                 <!-- 자기소개서 생성 폼 시작 -->
                                 <div class="card my-3 px-3 col-11 align-self-center">
 
-                                    <div class="row">
-                                        <div class="col-12 mt-3 mb-2 mx-auto">
-                                            <input type="text" readonly name="userCareerDetailList" id="userCareerDetailList" class="form-control-plaintext mb-1 mx-4 mx-auto" value="문항 제목이 들어갑니다.문항 제목이 들어갑니다.문항 제목이 들어갑니다."/>
+                                    <!-- 반복문 시작 -->
+                                    <div th:each="qna : ${letter.qnaList}">
+                                        <!-- 첫 번째 반복문의 내용 -->
+                                        <div class="row">
+                                            <div class="col-12 mt-3 mb-2 mx-auto">
+                                                <input type="text" readonly name="userCareerDetailList" id="userCareerDetailList" class="form-control-plaintext mb-1 mx-4 mx-auto"
+                                                       th:value="${qna.question}"/>
+                                            </div>
                                         </div>
+
+                                        <div class="row">
+                                            <div class="col-12 my-1 mx-auto">
+                                                <textarea class="form-control" id="content" rows="8" th:text="${qna.answer}">컨텐츠 내용이 들어갑니다.</textarea>
+                                            </div>
+                                        </div>
+                                        <!-- 첫 번째 반복문의 내용 끝 -->
+                                    </div>
+                                    <!-- 반복문 끝 -->
+
+                                    <!-- qnaList가 null인 경우 대비 -->
+                                    <div th:if="${#lists.isEmpty(letter.qnaList)}">
+                                        <!-- qnaList가 비어있는 경우 처리할 내용 -->
+                                        <p>Q&A가 없습니다.</p>
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-12 my-1 mx-auto">
-                                            <textarea class="form-control" id="content" rows="8">컨텐츠 내용이 들어갑니다.</textarea>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-12 mt-3 mb-2 mx-auto">
-                                            <input type="text" readonly name="userCareerDetailList" id="userCareerDetailList" class="form-control-plaintext mb-1 mx-4 mx-auto" value="문항 제목이 들어갑니다.문항 제목이 들어갑니다.문항 제목이 들어갑니다."/>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-12 my-1 mx-auto">
-                                            <textarea class="form-control" id="content" rows="8">컨텐츠 내용이 들어갑니다.</textarea>
-                                        </div>
-                                    </div>
 
                                     <input type="hidden" name="id" >
                                     <div class="row col-12 m-4 mx-auto post-form">

@@ -160,7 +160,8 @@
             document.querySelectorAll('[name="post"]').forEach(function(button) {
                 button.addEventListener('click', function() {
                     var postId = button.id;
-                    window.location.href = '/v1/click/post/' + postId + 'detail';
+                    var postType = [[${postType}]];
+                    window.location.href = '/v1/click/post/' + postId + 'detail?postType='+postType;
                 });
             });
 

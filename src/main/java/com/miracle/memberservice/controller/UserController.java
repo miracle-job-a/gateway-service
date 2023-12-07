@@ -99,7 +99,7 @@ public class UserController {
         return pmwm.getPageName();
     }
 
-    // [임시] 자소서 목록으로 이동
+    // 자소서 목록으로 이동
     @GetMapping("/cover-letters/{strNum}")
     public String coverLetterList(HttpSession session, Model model, @PathVariable(required = false) int strNum) {
         PageMoveWithMessage pmwm = userService.coverLetterList(session, strNum);

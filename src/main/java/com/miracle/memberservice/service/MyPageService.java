@@ -62,12 +62,12 @@ public class MyPageService {
     // 지원 자소서 조회하기
     public PageMoveWithMessage coverLetterInApplicationLetterDetail(HttpSession session, Long applicationLetterId){
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user" + userId + "/application-letter/" + applicationLetterId + "/cover-letter");
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId + "/cover-letter");
 
         LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
         CoverLetterInApplicationLetterResponseDto letter = CoverLetterInApplicationLetterResponseDto.builder()
-                .coverLetterTitle((String) data.get("title"))
+                .coverLetterTitle((String) data.get("coverLetterTitle"))
                 .qnaList((List<QnaDto>) data.get("qnaList"))
                 .build();
 
