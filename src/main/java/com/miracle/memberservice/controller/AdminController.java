@@ -27,6 +27,11 @@ public class AdminController {
         return "index";
     }
 
+    @GetMapping
+    public String main(HttpSession session) {
+        return "admin/main";
+    }
+
     @GetMapping("/stacks")
     private String stackList(HttpSession session, Model model){
         PageMoveWithMessage pmwm = adminService.getAllStack(session);
