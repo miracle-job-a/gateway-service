@@ -89,4 +89,14 @@ public class AdminController {
         return pmwm.getPageName();
     }
 
+
+    @PostMapping("/jobs")
+    private String modifyJob(@RequestParam Long jobId, @RequestParam String modifiedName, Model model, HttpSession session){
+        PageMoveWithMessage pmwm = adminService.modifyJob(session, jobId, modifiedName);
+        List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
+
+        model.addAttribute("totalJobList", data);
+        return pmwm.getPageName();
+    }
+
 }
