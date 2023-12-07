@@ -51,7 +51,7 @@ public class AdminController {
     }
 
     @PostMapping("/stacks")
-    private String modifyStack(@RequestParam Long stackId, @RequestParam String modifiedName, Model model, HttpSession session){
+    private String modifyStack(@RequestParam String stackId, @RequestParam String modifiedName, Model model, HttpSession session){
         PageMoveWithMessage pmwm = adminService.modifyStack(session, stackId, modifiedName);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
 
@@ -87,8 +87,8 @@ public class AdminController {
     }
 
     @PostMapping("/jobs")
-    private String modifyJob(@RequestParam Long id, @RequestParam String modifiedName, Model model, HttpSession session){
-        PageMoveWithMessage pmwm = adminService.modifyJob(session, id, modifiedName);
+    private String modifyJob(@RequestParam String jodId, @RequestParam String modifiedName, Model model, HttpSession session){
+        PageMoveWithMessage pmwm = adminService.modifyJob(session, jodId, modifiedName);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
 
         model.addAttribute("totalJobList", data);
