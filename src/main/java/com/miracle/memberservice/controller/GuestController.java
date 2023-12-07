@@ -194,6 +194,16 @@ public class GuestController {
         return pmwm.getPageName();
     }
 
+    @GetMapping("/search/posts/total/{strNum}")
+    public String searchTotalPosts(HttpSession session, @RequestParam String search, @PathVariable int strNum, Model model) {
+        PageMoveWithMessage pmwm = companyService.searchTotalPosts(session, search, strNum, strNum + 4);
+        Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
+        model.addAttribute("postPage", pmwm.getData());
+        model.addAttribute("jobs", allJobsAndStacks.get("jobs"));
+        model.addAttribute("stacks", allJobsAndStacks.get("stacks"));
+        return pmwm.getPageName();
+    }
+
     @ModelAttribute("dto")
     public ConditionalSearchPostRequestDto setupModel(@RequestParam(name = "jobIdSet", required = false) Set<Long> jobIdSet,
                                                       @RequestParam(name = "stackIdSet", required = false) Set<Long> stackIdSet,

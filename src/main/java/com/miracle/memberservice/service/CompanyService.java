@@ -228,6 +228,16 @@ public class CompanyService {
         return new PageMoveWithMessage("guest/search-post", searchPosts);
     }
 
+    public PageMoveWithMessage searchTotalPosts(HttpSession session, String search, int strNum, int endNum) {
+
+        ApiResponse response = ServiceCall.postParam(session, search, Const.RequestHeader.COMPANY, "/company/posts/search", strNum, endNum);
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("redirect:/v1", response.getMessage());
+
+        List<List<ConditionalSearchPostResponseDto>> searchPosts = ApiResponseToList.searchPosts(response.getData(), session);
+
+        return new PageMoveWithMessage("guest/search-post", searchPosts);
+    }
+
     private LocalDateTime truncatedTo(Object time) {
         LocalDateTime localDateTime = LocalDateTime.parse((String) time);
         return localDateTime.truncatedTo(ChronoUnit.MINUTES);
