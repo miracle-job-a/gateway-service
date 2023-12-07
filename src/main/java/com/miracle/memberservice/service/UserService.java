@@ -218,4 +218,10 @@ public class UserService {
 
         return new PageMoveWithMessage("redirect:/v1/click/post/" + dto.getPostId() + "/detail?companyId=" + companyId + "&postType=" + dto.getPostType(), response.getMessage(), dto);
     }
+
+    public PageMoveWithMessage applicantList(HttpSession session, Long postId, String sort, int startPage) {
+        ApiResponse response = ServiceCall.getUserParamListSort(session, Const.RequestHeader.USER, "/post/" + postId + "/applicant/list", startPage, startPage+4, sort);
+
+        return null;
+    }
 }

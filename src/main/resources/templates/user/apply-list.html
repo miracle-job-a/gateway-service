@@ -87,13 +87,13 @@
                                             <span th:if="${letters.applicationStatus eq 'PASS'}" class="badge bg-success ms-1 me-1">합격</span>
                                             <span th:if="${letters.applicationStatus eq 'FAIL'}" class="badge bg-secondary ms-1 me-1">불합격</span>
                                         </small>
-                                        <small><span class="badge bg-dark ms-1" th:text="${letters.job}">백엔드</span></small>
+                                        <small><span class="badge bg-dark ms-1" th:text="${letters.job}" th:if="${letters.job != 'null'}"></span></small>
                                     </div>
                                     <h5 class="m-2" th:text="'지원서 번호 (추후 회사이름) : ' + ${letters.applicationLetterId}"></h5>
                                     <div class="custom-block-bottom d-flex mt-3">
                                         <input type="hidden" id="letterId" th:value="${letters.applicationLetterId}">
                                         <button type="button" class="btn btn-outline-secondary me-1" th:id="${letters.postId}" name="post">공고정보</button>
-                                        <button type="button" class="btn btn-outline-secondary ms-1 me-1" th:id="${letters.applicationLetterId}" name="resume">
+                                        <button type="button" class="btn btn-outline-secondary ms-1 me-1" th:id="${letters.applicationLetterId}" th:if="${letters.postType eq 'NORMAL'}" name="resume">
                                             지원 이력서
                                         </button>
                                         <button type="button" class="btn btn-outline-secondary ms-1 me-1"

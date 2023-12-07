@@ -315,7 +315,7 @@ public class ApiResponseToList {
                     Integer applicationLetterId = (Integer) letter.get("applicationLetterId");
                     Integer postId = (Integer) letter.get("postId");
                     Integer interviewId = (Integer) letter.get("interviewId");
-                    Long interviewIdValue = (interviewId != null) ? interviewId.longValue() : null;
+                    Long interviewIdValue = (interviewId == null) ? null : interviewId.longValue();
 
                     dtos.add(ApplicationLetterListResponseDto.builder()
                             .applicationLetterId(applicationLetterId.longValue())

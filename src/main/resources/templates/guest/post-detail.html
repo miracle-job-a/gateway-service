@@ -336,10 +336,10 @@
                                                                  th:if="${resumeList!=null}">
                                                                 <label for="resume">이력서를 선택해 주세요.</label>
                                                                 <select class="form-select" name="resumeId" id="resume"
-                                                                        aria-label="Default select example">
+                                                                        aria-label="Default select example" th:if="${#lists.size(resumeList)!=0}">
                                                                     <option th:value="${resume.id}"
                                                                             th:text="${resume.title}"
-                                                                            th:each="resume : ${resumeList}"></option>
+                                                                            th:each="resume : ${resumeList}" ></option>
                                                                 </select>
                                                                 <p th:if="${#lists.size(resumeList)==0}">
                                                                     이력서가 존재하지 않습니다.
@@ -351,7 +351,7 @@
 
                                                                 <select class="form-select" name="coverLetterId"
                                                                         id="coverLetter"
-                                                                        aria-label="Default select example">
+                                                                        aria-label="Default select example" th:if="${#lists.size(coverLetterList)!=0}">
                                                                     <option th:value="${coverLetter.id}"
                                                                             th:text="${coverLetter.title}"
                                                                             th:each="coverLetter : ${coverLetterList}"></option>

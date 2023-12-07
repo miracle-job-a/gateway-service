@@ -46,6 +46,11 @@
             let id = button.id;
             location.href = "/v1/company/post/list/1?sort=" + id;
         }
+
+        function applicantList(button) {
+            let id = button.id;
+            location.href = "/v1/company/post/applicant/1?postId=" + id;
+        }
     </script>
     <main>
         <header class="site-header d-flex flex-column justify-content-center align-items-center">
@@ -128,7 +133,10 @@
 
                                 <!-- 버튼 부 -->
                                 <div class="d-flex flex-column ms-auto">
-                                    <button type="button" class="btn-light">채용관리</button>
+                                    <button type="button" class="btn-light"
+                                            th:id="${post.id}" name="interview" onclick="applicantList(this)">
+                                        채용관리
+                                    </button>
                                 </div>
                             </div>
                         </div>
