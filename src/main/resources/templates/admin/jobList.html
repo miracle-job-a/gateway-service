@@ -12,20 +12,15 @@
             xhr.open("POST", "/v1/admin/register/job", true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-            // 요청 파라미터 설정
             var param = "jobName=" + encodeURIComponent(jobName);
 
-            // 요청 완료 후의 동작 설정
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status === 200) {
-                        // 요청이 성공하면 추가 동작 수행
-                        console.log("job modified successfully!");
-                        // 성공 시 필요한 동작 추가 (예: 화면 갱신)
+                        console.log("job registered successfully!");
                         alert("성공적으로 처리되었습니다.");
                     } else {
-                        // 요청이 실패한 경우 처리
-                        console.error("Failed to modify job. Status: " + xhr.status);
+                        console.error("Failed to register job. Status: " + xhr.status);
                     }
                 }
             };
@@ -41,19 +36,14 @@
             xhr.open("POST", "/v1/admin/jobs", true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-            // 요청 파라미터 설정
             var params = "jobId=" + encodeURIComponent(jobId) + "&modifiedName=" + encodeURIComponent(modifiedName);
 
-            // 요청 완료 후의 동작 설정
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status === 200) {
-                        // 요청이 성공하면 추가 동작 수행
                         console.log("job modified successfully!");
-                        // 성공 시 필요한 동작 추가 (예: 화면 갱신)
                         alert("성공적으로 처리되었습니다.");
                     } else {
-                        // 요청이 실패한 경우 처리
                         console.error("Failed to modify job. Status: " + xhr.status);
                     }
                 }
@@ -68,29 +58,6 @@
 
             document.getElementById('modifyId').value = jobId;
             document.getElementById('modify').value = jobName;
-        }
-
-        function searchJob() {
-            var searchInput = document.getElementById('searchInput').value;
-
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "/v1/admin/search/job?jobName=" + encodeURIComponent(searchInput), true);
-
-            // 요청 완료 후의 동작 설정
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-                        // 요청이 성공하면 추가 동작 수행
-                        console.log("job search successfully!");
-                        // TODO: 성공 시 필요한 동작 추가 (예: 화면 갱신)
-                    } else {
-                        // 요청이 실패한 경우 처리
-                        console.error("Failed to search job. Status: " + xhr.status);
-                    }
-                }
-            };
-
-            xhr.send();
         }
     </script>
 
@@ -113,30 +80,34 @@
                                 <div class="col-12 mt-5"></div>
                                 <!-- 입력, 섹션 시작 -->
                                 <div class="card p-4 col-11 post-form align-self-center">
+                                    <form action="/v1/admin/jobList" method="get">
                                     <div class="mb-1">
                                         <label for="register">직무 등록</label>
                                     </div>
                                     <div class="col-12 mt-2 input-group">
                                         <input type="text" name="name" id="register"
                                                class="form-control" placeholder="등록하려는 직무명 기입" required="" />
-                                        <button class="btn" type="button" onclick="registerJob()">등록</button>
+                                        <button class="btn" type="submit" onclick="registerJob()">등록</button>
                                     </div>
+                                    </form>
 
+                                    <form action="/v1/admin/jobList" method="get">
                                     <div class="col-12 mt-2 input-group">
                                         <input type="text" name="name" id="modify"
                                                class="form-control" placeholder="직무 클릭 후 수정하고 싶은 직무명 기입" required="" />
                                         <input type="hidden" name="id" id="modifyId" />
-                                        <button class="btn" type="button" onclick="modifyJob()">수정</button>
+                                        <button class="btn" type="submit" onclick="modifyJob()">수정</button>
                                     </div>
+                                    </form>
                                 </div>
 
                                 <div class="card mt-4 mb-4 p-4 col-11 post-form align-self-center">
-                                    <!-- 검색 섹션 시작 -->
+                                    <form action="/v1/admin/search/job" method="get">
                                     <div class="col-12 mt-3 input-group m-1 mb-5">
-                                        <input type="text" class="form-control col-lg-4" placeholder="Search" id="searchInput">
-                                        <button class="btn" type="button" onclick="searchJob()">검색</button>
+                                        <input type="text" class="form-control col-lg-4" placeholder="Search" name="jobName">
+                                        <button class="btn" type="submit">검색</button>
                                     </div>
-
+                                    </form>
                                     <div class="col-12 mt-2 input-group justify-content-center">
                                         <!-- 목록 -->
                                         <div id="jobListContainer" class="row row-cols-lg-7">

@@ -60,7 +60,7 @@ public class AdminController {
     }
 
     @GetMapping("/search/stack")
-    private String searchStack(@RequestParam String stackName, Model model, HttpSession session){
+    private String searchStack(@RequestParam(required = false) String stackName, Model model, HttpSession session){
         PageMoveWithMessage pmwm = adminService.searchStack(session, stackName);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
 
@@ -90,8 +90,8 @@ public class AdminController {
     }
 
     @PostMapping("/jobs")
-    private String modifyJob(@RequestParam Long jobId, @RequestParam String modifiedName, Model model, HttpSession session){
-        PageMoveWithMessage pmwm = adminService.modifyJob(session, jobId, modifiedName);
+    private String modifyJob(@RequestParam Long id, @RequestParam String modifiedName, Model model, HttpSession session){
+        PageMoveWithMessage pmwm = adminService.modifyJob(session, id, modifiedName);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
 
         model.addAttribute("totalJobList", data);
@@ -99,7 +99,7 @@ public class AdminController {
     }
 
     @GetMapping("/search/job")
-    private String searchJob(@RequestParam String jobName, Model model, HttpSession session){
+    private String searchJob(@RequestParam(required = false) String jobName, Model model, HttpSession session){
         PageMoveWithMessage pmwm = adminService.searchJob(session, jobName);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
 
