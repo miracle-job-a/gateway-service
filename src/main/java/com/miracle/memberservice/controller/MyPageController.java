@@ -84,12 +84,29 @@ public class MyPageController {
         return pmwm.getPageName();
     }
 
+    // 면접 수정
+    @PostMapping("/interview/update")
+    public String updateInterview(@ModelAttribute QnaListDto qnaListDto,
+                                  Long applicationLetterId, Long interviewId, HttpSession session) {
+        List<QnaDto> qnaDtoList = new ArrayList<>();
+        for (int i = 0; i < qnaListDto.getAnswer().size(); i++){
+            String question = qnaListDto.getQuestion().get(i);
+            String answer = qnaListDto.getAnswer().get(i);
+            qnaDtoList.add(new QnaDto(question, answer));
+        }
+
+        PageMoveWithMessage pmwm = myPageService.updateInterview(session, new InterviewRequestDto(applicationLetterId, qnaDtoList), interviewId, applicationLetterId);
+        return pmwm.getPageName();
+    }
+
     // 면접 조회
-    @GetMapping("/interview/{interviewId}")
-    public String interviewDetail(@PathVariable Long interviewId, HttpSession session, Model model) {
+    @GetMapping("/interview/{applicationLetterId}/{interviewId}")
+    public String interviewDetail(@PathVariable Long interviewId,
+                                  @PathVariable Long applicationLetterId, HttpSession session, Model model) {
         PageMoveWithMessage pmwm = myPageService.interviewDetail(session, interviewId);
         model.addAttribute("interview", pmwm.getData());
         model.addAttribute("interviewId", interviewId);
+        model.addAttribute("applicationLetterId", applicationLetterId);
         return pmwm.getPageName();
     }
 

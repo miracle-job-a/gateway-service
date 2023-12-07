@@ -88,6 +88,8 @@
             $('#cancelBtn').css('display', 'block');
             $('#deleteBtn').css('display', 'none');
             $('#editBtn').css('display', 'none');
+            $('.question').removeAttr('readonly').removeClass('form-control-plaintext').addClass('form-control');
+            $('.answer').removeAttr('readonly');
         }
 
 
@@ -107,20 +109,20 @@
                             <h4 class="section-title">면접 등록</h4>
                         </div>
 
-                        <form action="/v1/user/my-page/apply-list/interview" method="post">
+                        <form action="/v1/user/my-page/interview/update" method="post">
                         <div class="row justify-content-center">
                             <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-11 align-self-center">
 
                                 <div id="inputFieldsContainer">
                                     <div th:each="qnaItem, qnaItemStat : ${interview.qnaList}">
                                         <div class="col-11 mt-5 mb-2 mx-auto">
-                                            <input type="text" readonly name="question" class="form-control-plaintext mb-1 mx-4 mx-auto"
+                                            <input type="text" readonly name="question" class="question form-control-plaintext mb-1 mx-4 mx-auto"
                                                    placeholder="면접 질문을 입력" required
                                                    th:value="${qnaItem.question}" />
                                         </div>
 
                                         <div class="col-11 mt-1 mb-3 mx-auto">
-                                        <textarea readonly class="form-control" rows="8" name="answer" placeholder="대응 내용" style="resize: none"
+                                        <textarea readonly class="answer form-control" rows="8" name="answer" placeholder="대응 내용" style="resize: none"
                                         th:text="${qnaItem.answer}"></textarea>
                                         </div>
                                     </div>
@@ -129,6 +131,7 @@
 
 
                                 <input type="hidden" name="interviewId" th:value="${interviewId}">
+                                <input type="hidden" name="applicationLetterId" th:value="${applicationLetterId}">
                                 <div class="row col-11 m-4 mx-auto">
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-outline-secondary" id="back" onclick="goBack()">돌아가기</button>

@@ -80,6 +80,14 @@ public class MyPageService {
         return new PageMoveWithMessage("redirect:/v1/user/my-page/apply-list/1", response.getMessage());
     }
 
+    // 면접 수정
+    public PageMoveWithMessage updateInterview(HttpSession session, InterviewRequestDto requestDto, Long interviewId, Long applicationLetterId) {
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.USER, "/user/" + userId + "/interview/" + interviewId);
+
+        return new PageMoveWithMessage("redirect:/v1/user/my-page/interview/" + applicationLetterId + "/" + interviewId, response.getMessage());
+    }
+
     // 면접 조회
     public PageMoveWithMessage interviewDetail(HttpSession session, Long interviewId){
         Long userId = (Long) session.getAttribute("id");
