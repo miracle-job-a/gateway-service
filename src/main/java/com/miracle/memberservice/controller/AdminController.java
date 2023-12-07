@@ -41,6 +41,15 @@ public class AdminController {
         return pmwm.getPageName();
     }
 
+    @PostMapping("/register/stack")
+    private String registerStack(@RequestParam String stackName, Model model, HttpSession session){
+        PageMoveWithMessage pmwm = adminService.registerStack(session, stackName);
+        List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
+
+        model.addAttribute("totalStackList", data);
+        return pmwm.getPageName();
+    }
+
     @PostMapping("/stacks")
     private String modifyStack(@RequestParam Long stackId, @RequestParam String modifiedName, Model model, HttpSession session){
         PageMoveWithMessage pmwm = adminService.modifyStack(session, stackId, modifiedName);
