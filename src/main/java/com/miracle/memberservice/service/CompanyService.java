@@ -238,7 +238,7 @@ public class CompanyService {
     //오늘 회원가입한 기업 회원 목록
     public PageMoveWithMessage getCompanyListToday(HttpSession session, int strNum, int endNum, boolean today) {
 
-        ApiResponse response = ServiceCall.getParamListWithToday(session, "company", "/company/list", strNum, endNum, today);
+        ApiResponse response = ServiceCall.getParamListWithToday(session, Const.RequestHeader.COMPANY, "/company/list", strNum, endNum, today);
 
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("error/500", response.getMessage());
 
