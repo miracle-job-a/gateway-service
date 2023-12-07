@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 @Controller
@@ -34,18 +35,25 @@ public class UserController {
     }
 
     @GetMapping("/resume/form")
-    public String createResume(HttpSession session, Model model) {
+    public String createResume(HttpSession session, Model model, @RequestParam(required = false) String postId, @RequestParam(required = false) String companyId, @RequestParam(required = false) String postType) {
         PageMoveWithMessage pmwm = userService.formResume(session);
         Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
         model.addAttribute("info", pmwm.getData());
         model.addAttribute("jobs", allJobsAndStacks.get("jobs"));
         model.addAttribute("stacks", allJobsAndStacks.get("stacks"));
+        model.addAttribute("postId", postId);
+        model.addAttribute("companyId", companyId);
+        model.addAttribute("postType", postType);
         return pmwm.getPageName();
     }
 
     @PostMapping("/resume")
     public String addResume(RedirectAttributes redirectAttributes, HttpSession session, ResumeRequestDto resumeRequestDto) {
         PageMoveWithMessage pmwm = userService.addResume(session, resumeRequestDto);
+        if (Objects.nonNull(resumeRequestDto.getPostId())) {
+            redirectAttributes.addAttribute("companyId", resumeRequestDto.getCompanyId());
+            redirectAttributes.addAttribute("postType", resumeRequestDto.getPostType());
+        }
         redirectAttributes.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
@@ -110,21 +118,27 @@ public class UserController {
     }
 
     @GetMapping("/cover-letter/form")
-    public String coverLetterForm() {
+    public String coverLetterForm(@RequestParam(required = false) String postId, @RequestParam(required = false) String companyId, @RequestParam(required = false) String postType, Model model) {
+        model.addAttribute("postId", postId);
+        model.addAttribute("companyId", companyId);
+        model.addAttribute("postType", postType);
         return "user/coverLetter-form";
     }
 
 
     @PostMapping("/cover-letter/create")
-    public String createCoverLetter(String title, @ModelAttribute QnaListDto qnaListDto, HttpSession session) {
+    public String createCoverLetter(RedirectAttributes redirectAttributes, String title, @ModelAttribute QnaListDto qnaListDto, HttpSession session) {
         List<QnaDto> qnaDtoList = new ArrayList<>();
         for (int i = 0; i < qnaListDto.getAnswer().size(); i++) {
             String question = qnaListDto.getQuestion().get(i);
             String answer = qnaListDto.getAnswer().get(i);
             qnaDtoList.add(new QnaDto(question, answer));
         }
-
-        PageMoveWithMessage pmwm = userService.createCoverLetter(session, new CoverLetterPostRequestDto(title, qnaDtoList));
+        if (Objects.nonNull(qnaListDto.getPostId())) {
+            redirectAttributes.addAttribute("companyId", qnaListDto.getCompanyId());
+            redirectAttributes.addAttribute("postType", qnaListDto.getPostType());
+        }
+        PageMoveWithMessage pmwm = userService.createCoverLetter(session, new CoverLetterPostRequestDto(title, qnaDtoList), qnaListDto);
         return pmwm.getPageName();
     }
 

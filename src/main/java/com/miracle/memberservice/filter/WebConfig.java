@@ -15,7 +15,7 @@ public class WebConfig {
 
         filterRegistrationBean.setFilter(new UserLoginCheckFilter()); // LogFilter 등록
         filterRegistrationBean.setOrder(1);
-        filterRegistrationBean.addUrlPatterns("/v1/user/resumes", "/v1/user/resume/*", "/v1/user/resume", "/v1/user/cover-letters/*", "/v1/user/cover-letter/*", "/v1/user/apply");
+        filterRegistrationBean.addUrlPatterns("/v1/user/resumes", "/v1/user/resume/*", "/v1/user/resume", "/v1/user/cover-letters/*", "/v1/user/cover-letter/*", "/v1/user/apply", "/v1/user/my-page/*");
         return filterRegistrationBean;
     }
 

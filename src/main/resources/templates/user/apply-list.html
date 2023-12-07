@@ -61,7 +61,13 @@
                         </div>
                     </div>
 
+                    <div class="row col-lg-10 col-12">
 
+                    </div>
+                    <h5 class="col-lg-10 col-12 mt-4 mb-4 mb-lg-2 text-center" th:if="${#lists.size(letter)==0}">
+                        지원이력이 없습니다.
+                    </h5>
+                  
                     <!-- Thymeleaf 반복문을 사용하여 ArrayList 내의 객체들을 처리 -->
                     <div th:each="letterItem, letterItemStat : ${letter}" th:id="'postPage'+${letterItemStat.index}">
                         <div th:each="letters, lettersStat : ${letterItem}" class="col-lg-10 col-12 mb-4 mb-lg-2 mx-auto">
