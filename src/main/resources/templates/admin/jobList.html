@@ -36,7 +36,7 @@
             xhr.open("POST", "/v1/admin/jobs", true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-            var params = "jobId=" + encodeURIComponent(jobId) + "&modifiedName=" + encodeURIComponent(modifiedName);
+            var params = "jodId=" + encodeURIComponent(jobId) + "&modifiedName=" + encodeURIComponent(modifiedName);
 
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -72,12 +72,12 @@
                     <div class="col-lg-9 col-12">
                         <div class="section-title-wrap mb-5">
                             <h4 class="section-title">직무 관리</h4>
+                            <button style="float: right" class="section-title" onclick="location.href='/v1/admin/jobs';">새로고침</button>
                         </div>
                         <div style="margin-top: 10%" class="row justify-content-center">
                             <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
 
-                                <div class="col-12 mt-5">                            <button style="float: right" class="section-title" onclick="location.href='/v1/admin/jobs';">전체 목록보기</button>
-                                </div>
+                                <div class="col-12 mt-5"></div>
                                 <!-- 입력, 섹션 시작 -->
                                 <div class="card p-4 col-11 post-form align-self-center">
                                     <form action="/v1/admin/jobs" method="get">
