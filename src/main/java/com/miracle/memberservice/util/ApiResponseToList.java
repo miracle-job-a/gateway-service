@@ -327,7 +327,7 @@ public class ApiResponseToList {
         return pageList;
     }
 
-    public static List<StackAndJobResponseDto> stackList(Object object) {
+        public static List<StackAndJobResponseDto> stackAndJobList(Object object) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
 
         List<StackAndJobResponseDto> dtos = new ArrayList<>();

@@ -5,22 +5,22 @@
 
 <div layout:fragment="content">
     <script>
-        function registerStack() {
-            var stackName = document.getElementById('register').value;
+        function registerJob() {
+            var jobName = document.getElementById('register').value;
 
             var xhr = new XMLHttpRequest();
-            xhr.open("POST", "/v1/admin/register/stack", true);
+            xhr.open("POST", "/v1/admin/register/job", true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-            var param = "stackName=" + encodeURIComponent(stackName);
+            var param = "jobName=" + encodeURIComponent(jobName);
 
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status === 200) {
-                        console.log("stack registered successfully!");
+                        console.log("job registered successfully!");
                         alert("성공적으로 처리되었습니다.");
                     } else {
-                        console.error("Failed to register stack. Status: " + xhr.status);
+                        console.error("Failed to register job. Status: " + xhr.status);
                     }
                 }
             };
@@ -28,23 +28,23 @@
             xhr.send(param);
         }
 
-        function modifyStack() {
+        function modifyJob() {
             var modifiedName = document.getElementById('modify').value;
-            var stackId = document.getElementById('modifyId').value;
+            var jobId = document.getElementById('modifyId').value;
 
             var xhr = new XMLHttpRequest();
-            xhr.open("POST", "/v1/admin/stacks", true);
+            xhr.open("POST", "/v1/admin/jobs", true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-            var params = "stackId=" + encodeURIComponent(stackId) + "&modifiedName=" + encodeURIComponent(modifiedName);
+            var params = "jodId=" + encodeURIComponent(jobId) + "&modifiedName=" + encodeURIComponent(modifiedName);
 
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status === 200) {
-                        console.log("Stack modified successfully!");
+                        console.log("job modified successfully!");
                         alert("성공적으로 처리되었습니다.");
                     } else {
-                        console.error("Failed to modify stack. Status: " + xhr.status);
+                        console.error("Failed to modify job. Status: " + xhr.status);
                     }
                 }
             };
@@ -53,11 +53,11 @@
         }
 
         function fillModifyForm(button) {
-            var stackId = button.getAttribute('data-stack-id');
-            var stackName = button.textContent;
+            var jobId = button.getAttribute('data-job-id');
+            var jobName = button.textContent;
 
-            document.getElementById('modifyId').value = stackId;
-            document.getElementById('modify').value = stackName;
+            document.getElementById('modifyId').value = jobId;
+            document.getElementById('modify').value = jobName;
         }
     </script>
 
@@ -71,51 +71,50 @@
                 <div class="row justify-content-center">
                     <div class="col-lg-9 col-12">
                         <div class="section-title-wrap mb-5">
-                            <h4 class="section-title">기술스택 관리</h4>
-                            <button style="float: right" class="section-title" onclick="location.href='/v1/admin/stacks';">새로고침</button>
+                            <h4 class="section-title">직무 관리</h4>
+                            <button style="float: right" class="section-title" onclick="location.href='/v1/admin/jobs';">새로고침</button>
                         </div>
-
                         <div style="margin-top: 10%" class="row justify-content-center">
                             <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
 
                                 <div class="col-12 mt-5"></div>
                                 <!-- 입력, 섹션 시작 -->
                                 <div class="card p-4 col-11 post-form align-self-center">
-                                    <form action="/v1/admin/stacks" method="get">
-                                        <div class="mb-1">
-                                            <label for="register">스택 등록</label>
-                                        </div>
-                                        <div class="col-12 mt-2 input-group">
-                                            <input type="text" name="name" id="register"
-                                                   class="form-control" placeholder="등록하려는 스택명 기입" required="" />
-                                            <button class="btn" type="submit" onclick="registerStack()">등록</button>
-                                        </div>
+                                    <form action="/v1/admin/jobs" method="get">
+                                    <div class="mb-1">
+                                        <label for="register">직무 등록</label>
+                                    </div>
+                                    <div class="col-12 mt-2 input-group">
+                                        <input type="text" name="name" id="register"
+                                               class="form-control" placeholder="등록하려는 직무명 기입" required="" />
+                                        <button class="btn" type="submit" onclick="registerJob()">등록</button>
+                                    </div>
                                     </form>
 
-                                    <form action="/v1/admin/stacks" method="get">
-                                    <div class="col-12 mt-2 input-group">
-                                        <input type="text" name="name" id="modify"
-                                               class="form-control" placeholder="스택 클릭 후 수정하고 싶은 스택명 기입" required="" />
-                                        <input type="hidden" name="id" id="modifyId" />
-                                        <button class="btn" type="submit" onclick="modifyStack()">수정</button>
-                                    </div>
+                                    <form action="/v1/admin/jobs" method="get">
+                                        <div class="col-12 mt-2 input-group">
+                                            <input type="text" name="name" id="modify"
+                                                   class="form-control" placeholder="직무 클릭 후 수정하고 싶은 직무명 기입" required="" />
+                                            <input type="hidden" name="id" id="modifyId" />
+                                            <button class="btn" type="submit" onclick="modifyJob()">수정</button>
+                                        </div>
                                     </form>
                                 </div>
 
                                 <div class="card mt-4 mb-4 p-4 col-11 post-form align-self-center">
-                                    <form action="/v1/admin/search/stack" method="get">
+                                    <form action="/v1/admin/search/job" method="get">
                                     <div class="col-12 mt-3 input-group m-1 mb-5">
-                                        <input type="text" class="form-control col-lg-4" placeholder="Search" name="stackName">
+                                        <input type="text" class="form-control col-lg-4" placeholder="Search" name="jobName">
                                         <button class="btn" type="submit">검색</button>
                                     </div>
                                     </form>
                                     <div class="col-12 mt-2 input-group justify-content-center">
                                         <!-- 목록 -->
-                                        <div id="stackListContainer" class="row row-cols-lg-7">
-                                            <div class="col-lg-3 col-1 mb-4 mb-lg-2" th:each="stack : ${totalStackList}">
+                                        <div id="jobListContainer" class="row row-cols-lg-7">
+                                            <div class="col-lg-3 col-1 mb-4 mb-lg-2" th:each="job : ${totalJobList}">
                                                 <button class="badge" style="background-color: #FCB711"
-                                                        th:attr="data-stack-id=${stack.id}"
-                                                        th:text="${stack.name}"
+                                                        th:attr="data-job-id=${job.id}"
+                                                        th:text="${job.name}"
                                                         onclick="fillModifyForm(this)">
                                                 </button>
                                             </div>
