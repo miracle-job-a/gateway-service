@@ -54,6 +54,7 @@ public class ServiceCall {
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).build()).bodyValue(dto), httpSession, serviceType).block();
     }
 
+
     public static ApiResponse delete(HttpSession httpSession, String serviceType, String url) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().delete()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()), httpSession, serviceType).block();
@@ -72,6 +73,11 @@ public class ServiceCall {
     public static ApiResponse getParamList(HttpSession httpSession, String serviceType, String url, int strNum, int endNum, String sort) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).queryParam("sort", sort).build()), httpSession, serviceType).block();
+    }
+
+    public static ApiResponse getUserParamList(HttpSession httpSession, String serviceType, String url, int strNum, int endNum) {
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("startPage", strNum).queryParam("endPage", endNum).queryParam("pageSize", 5).build()), httpSession, serviceType).block();
     }
 
     private static int port(String memberType) {

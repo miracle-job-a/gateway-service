@@ -54,6 +54,10 @@
 
         });
 
+        // 뒤로가기
+        function goBack() {
+            window.history.back();
+        }
 
     </script>
 
@@ -106,15 +110,22 @@
                                                     <label for="answer">내용</label>
                                                     <span id="charCount" class="text-secondary"></span>
                                                 </div>
-                                                <textarea class="form-control" rows="5" name="answer" id="answer" placeholder="내용을 입력해주세요."></textarea>
+                                                <textarea class="form-control" rows="5" name="answer" id="answer" placeholder="내용을 입력해주세요." required="" ></textarea>
                                             </div>
                                         </div>
 
 
 
 
-                                        <div class="col-12 mt-2">
-                                            <button type="submit" class="form-control" >등록하기</button>
+                                        <div class="row col-12">
+                                            <div class="col-4 pt-4 m-auto justify-content-center">
+                                                <button type="submit" class="form-control" >등록하기</button>
+                                            </div>
+                                            <div class="col-4 pt-4 m-auto justify-content-center">
+                                            </div>
+                                            <div class="col-4 pt-4 m-auto justify-content-center">
+                                                <button type="button" class="form-control" id="back" onclick="goBack()">돌아가기</button>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
