@@ -44,7 +44,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-lg-4 col-12 mb-4 mb-lg-0" th:each="post, postStat : ${map.deadline}">
+                        <div class="col-lg-4 col-12 mb-4 mb-lg-0" th:each="post, postStat : ${map.newest}">
                             <div class="custom-block custom-block-full mb-2">
                                 <div class="custom-block-image-wrap">
                                     <a th:href="@{/v1/click/post/{postId}/detail(companyId=${post.companyId}, postId=${post.id}, postType=${post.postType})}">
@@ -71,7 +71,7 @@
                                         <span class="text-black" th:text="${post.workAddress}"></span>
                                     </a>
                                     <a class="d-flex justify-content-between me-1">
-                                        <span class="bi-clock-fill text-black" th:text="'    ~'+${post.endDate}"></span>
+                                        <span class="bi-clock-fill text-black" th:text="' 마감일: ~'+${post.endDate}"></span>
                                     </a>
 
                                     <hr>
@@ -131,7 +131,7 @@
                                         <span class="text-black" th:text="${post.workAddress}"></span>
                                     </a>
                                     <a class="d-flex justify-content-between me-1">
-                                        <span class="bi-clock-fill text-black" th:text="'    ~'+${post.endDate}"></span>
+                                        <span class="bi-clock-fill text-black" th:text="' 마감일: ~'+${post.endDate}"></span>
                                     </a>
 
                                     <hr>
