@@ -194,13 +194,68 @@
 
         }
 
-        function enableSubmit(){
+        function validateSpecialCharacters() {
+            var inputValues = [
+                document.getElementById('title').value,
+                document.getElementById('education').value,
+                document.getElementById('gitLink').value,
+                document.getElementById('career_title').value,
+                ...Array.from(document.getElementsByClassName('project')).map(function(element) {
+                    return element.value;
+                }),
+                ...Array.from(document.getElementsByClassName('etc')).map(function(element) {
+                    return element.value;
+                })
+            ];
+
+            for (var i = 0; i < inputValues.length; i++) {
+                if (inputValues[i].includes('<') || inputValues[i].includes('>') || inputValues[i].includes(';')
+                    || inputValues[i].includes('/') || inputValues[i].includes('\\')) {
+                    // 특수 문자가 포함된 경우 경고 메시지 표시하고 false 반환
+                    alert('입력란에 >, <, ;, /, \\, 특수기호는 입력할 수 없습니다.');
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function validateForm(){
+
+            // 빈칸 경고
             var careerInput = document.getElementById('careerCal');
             if (careerInput.value.trim() === '') {
                 alert('경력기간 계산이 필요합니다.');
                 event.preventDefault();
-                /*return false; // 더 이상 진행하지 않음*/
+                return false;
             }
+
+            var jobCheckboxes = document.querySelectorAll('input[name="jobIdSet"]:checked');
+            if (jobCheckboxes.length === 0) {
+                alert('개발 가능한 직무를 하나 이상 선택해주세요.');
+                return false;
+            }
+
+            var stackCheckboxes = document.querySelectorAll('input[name="stackIdSet"]:checked');
+            if (stackCheckboxes.length === 0) {
+                alert('보유한 기술 스택을 하나 이상 선택해주세요.');
+                return false;
+            }
+
+            var titleInput = document.getElementById('title');
+            if (titleInput.value.trim() === '') {
+                alert('이력서 제목을 입력해주세요.');
+                event.preventDefault();
+                return false;
+            }
+
+            if (!validateSpecialCharacters()) {
+                event.preventDefault();
+                return false;
+            }
+
+            // 모든 조건이 충족되면 true 반환
+            return true;
 
         }
 
@@ -368,7 +423,7 @@
                                             <div class="pre_set" id="pre_set2">
                                                 <div th:each="project, iterStat : ${resume.projectList}">
                                                     <div class="input-group m-1">
-                                                        <input type="text" readonly class="form-control" name="projectList" th:value="${project}" />
+                                                        <input type="text" readonly class="form-control" id="project" name="projectList" th:value="${project}" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -382,7 +437,7 @@
                                             <div class="pre_set" id="pre_set3">
                                                 <div th:each="etc, iterStat : ${resume.etcList}">
                                                     <div class="input-group m-1">
-                                                        <input type="text" readonly class="form-control" name="etcList" th:value="${etc}" />
+                                                        <input type="text" readonly class="form-control" id="etc" name="etcList" th:value="${etc}" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -404,7 +459,7 @@
                                         <div class="row col-12">
                                             <div class="col-4 pt-4 m-auto justify-content-center">
                                                 <button type="button"  class="form-control" id="editBtn" onclick="enableEditing()">수정하기</button>
-                                                <button type="submit" class="form-control" id="submitEdit" onclick="enableSubmit()" style="display:none;">수정완료</button>
+                                                <button type="submit" class="form-control" id="submitEdit" onclick="validateForm()" style="display:none;">수정완료</button>
                                             </div>
                                             <div class="col-4 pt-4 m-auto justify-content-center">
                                                 <button type="button" class="form-control" th:attr="data-resume-id=${resume.id}" onclick="confirmDelete(this)">삭제하기</button>
