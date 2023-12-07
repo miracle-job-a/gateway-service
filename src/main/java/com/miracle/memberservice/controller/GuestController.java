@@ -185,6 +185,7 @@ public class GuestController {
 
     @GetMapping("/search/posts/{strNum}")
     public String searchPosts(HttpSession session, @ModelAttribute("dto") ConditionalSearchPostRequestDto dto, @PathVariable int strNum, Model model) {
+        //TODO 이거 해야함
         PageMoveWithMessage pmwm = companyService.searchPosts(session, dto, strNum, strNum + 4);
         Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
         model.addAttribute("dto", dto);
