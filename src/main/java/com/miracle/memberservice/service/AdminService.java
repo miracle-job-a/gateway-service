@@ -102,6 +102,16 @@ public class AdminService {
         return new PageMoveWithMessage("admin/jobList", dtos);
     }
 
+    public PageMoveWithMessage searchJob(HttpSession session, String jobName) {
+        System.out.println(jobName);
+        ApiResponse response = ServiceCall.getParamStackName(session, Const.RequestHeader.ADMIN, "/admin/search", jobName);
+        System.out.println(response.getData());
+        if (response.getHttpStatus() != 200)
+            return new PageMoveWithMessage("admin/main", response.getMessage());
+
+        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackList(response.getData());
+        return new PageMoveWithMessage("admin/stackList", dtos);
+    }
 
     public PageMoveWithMessage getAllStack(HttpSession session){
          ApiResponse response = ServiceCall.get(session, Const.RequestHeader.ADMIN, "/admin/stacks");
