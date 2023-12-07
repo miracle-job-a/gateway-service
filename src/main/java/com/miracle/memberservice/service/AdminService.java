@@ -75,42 +75,43 @@ public class AdminService {
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("admin/main", response.getMessage());
 
-        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackList(response.getData());
+        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackAndJobList(response.getData());
+        System.out.println(dtos);
         return new PageMoveWithMessage("admin/jobList", dtos);
     }
 
     public PageMoveWithMessage registerJob(HttpSession session, String jobName){
         System.out.println(jobName);
-        ApiResponse response = ServiceCall.getParamStackName(session, Const.RequestHeader.ADMIN, "/admin/add", jobName);
+        ApiResponse response = ServiceCall.getParamJobName(session, Const.RequestHeader.ADMIN, "/admin/add", jobName);
         System.out.println(response);
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("admin/main", response.getMessage());
 
-        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackList(response.getData());
-        return new PageMoveWithMessage("admin/jobList", dtos);
+        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackAndJobList(response.getData());
+        return new PageMoveWithMessage("redirect:/v1/admin/jobList", dtos);
     }
 
     public PageMoveWithMessage modifyJob(HttpSession session, Long jobId, String modifiedName){
         String id = String.valueOf(jobId);
 
-        ApiResponse response = ServiceCall.putModifyParam(session, Const.RequestHeader.ADMIN, "/admin/edit", id, modifiedName);
+        ApiResponse response = ServiceCall.putModifyJobParam(session, Const.RequestHeader.ADMIN, "/admin/edit", id, modifiedName);
 
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("admin/main", response.getMessage());
 
-        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackList(response.getData());
-        return new PageMoveWithMessage("admin/jobList", dtos);
+        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackAndJobList(response.getData());
+        return new PageMoveWithMessage("redirect:/v1/admin/jobList", dtos);
     }
 
     public PageMoveWithMessage searchJob(HttpSession session, String jobName) {
         System.out.println(jobName);
-        ApiResponse response = ServiceCall.getParamStackName(session, Const.RequestHeader.ADMIN, "/admin/search", jobName);
+        ApiResponse response = ServiceCall.getParamJobName(session, Const.RequestHeader.ADMIN, "/admin/search", jobName);
         System.out.println(response.getData());
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("admin/main", response.getMessage());
 
-        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackList(response.getData());
-        return new PageMoveWithMessage("admin/stackList", dtos);
+        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackAndJobList(response.getData());
+        return new PageMoveWithMessage("redirect:/v1/admin/stackList", dtos);
     }
 
     public PageMoveWithMessage getAllStack(HttpSession session){
@@ -119,7 +120,7 @@ public class AdminService {
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("admin/main", response.getMessage());
 
-        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackList(response.getData());
+        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackAndJobList(response.getData());
         return new PageMoveWithMessage("admin/stackList", dtos);
     }
 
@@ -130,8 +131,8 @@ public class AdminService {
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("admin/main", response.getMessage());
 
-        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackList(response.getData());
-        return new PageMoveWithMessage("admin/stackList", dtos);
+        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackAndJobList(response.getData());
+        return new PageMoveWithMessage("redirect:/v1/admin/stackList", dtos);
     }
 
     public PageMoveWithMessage modifyStack(HttpSession session, Long stackId, String modifiedName){
@@ -142,8 +143,8 @@ public class AdminService {
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("admin/main", response.getMessage());
 
-        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackList(response.getData());
-        return new PageMoveWithMessage("admin/stackList", dtos);
+        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackAndJobList(response.getData());
+        return new PageMoveWithMessage("redirect:/v1/admin/stackList", dtos);
     }
 
     public PageMoveWithMessage searchStack(HttpSession session, String stackName) {
@@ -153,7 +154,7 @@ public class AdminService {
         if (response.getHttpStatus() != 200)
         return new PageMoveWithMessage("admin/main", response.getMessage());
 
-        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackList(response.getData());
-        return new PageMoveWithMessage("admin/stackList", dtos);
+        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackAndJobList(response.getData());
+        return new PageMoveWithMessage("redirect:/v1/admin/stackList", dtos);
     }
 }
