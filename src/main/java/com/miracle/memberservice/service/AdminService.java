@@ -89,10 +89,9 @@ public class AdminService {
         return new PageMoveWithMessage("redirect:/v1/admin/jobs", response.getMessage());
     }
 
-    public PageMoveWithMessage modifyJob(HttpSession session, Long jobId, String modifiedName){
-        String id = String.valueOf(jobId);
+    public PageMoveWithMessage modifyJob(HttpSession session, String jodId, String modifiedName){
 
-        ApiResponse response = ServiceCall.putModifyJobParam(session, Const.RequestHeader.ADMIN, "/admin/edit", id, modifiedName);
+        ApiResponse response = ServiceCall.putModifyJobParam(session, Const.RequestHeader.ADMIN, "/admin/edit", jodId, modifiedName);
 
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("admin/main", response.getMessage());
@@ -127,10 +126,9 @@ public class AdminService {
         return new PageMoveWithMessage("redirect:/v1/admin/stacks", response.getMessage());
     }
 
-    public PageMoveWithMessage modifyStack(HttpSession session, Long stackId, String modifiedName){
-        String id = String.valueOf(stackId);
+    public PageMoveWithMessage modifyStack(HttpSession session, String stackId, String modifiedName){
 
-        ApiResponse response = ServiceCall.putModifyParam(session, Const.RequestHeader.ADMIN, "/admin/edit", id, modifiedName);
+        ApiResponse response = ServiceCall.putModifyParam(session, Const.RequestHeader.ADMIN, "/admin/edit", stackId, modifiedName);
 
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("admin/main", response.getMessage());
