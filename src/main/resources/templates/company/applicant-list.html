@@ -5,7 +5,7 @@
 
 <div layout:fragment="content">
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-    <script>
+    <script th:inline="javascript">
         document.addEventListener("DOMContentLoaded", function () {
             // 페이지 로딩 시 초기 상태 설정
             initializePage();
@@ -44,13 +44,10 @@
 
         function sort(button) {
             let id = button.id;
-            location.href = "/v1/company/post/list/1?sort=" + id;
+            let postId = [[${postId}]];
+            location.href = "/v1/company/post/applicant/1?sort=" + id + "&postId=" + postId;
         }
 
-        function applicantList(button) {
-            let id = button.id;
-            location.href = "/v1/company/post/applicant/1?postId=" + id;
-        }
     </script>
     <main>
         <header class="site-header d-flex flex-column justify-content-center align-items-center">
@@ -62,81 +59,55 @@
 
                     <div class="col-lg-10 col-12">
                         <div class="section-title-wrap mb-5">
-                            <h4 class="section-title">공고 목록</h4>
+                            <h4 class="section-title">지원자 목록</h4>
                         </div>
                     </div>
 
 
-                    <div class="row col-lg-10 col-12 d-flex justify-content-between">
+                    <div class="row col-lg-10 col-12 mb-4 d-flex justify-content-between">
                         <div class="col-4">
                             <div class="btn-group">
-                                <button id="latest" type="button" th:class="${sort == 'latest' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}"
+                                <button id="SUBMIT_DATE_ASC" type="button"
+                                        th:class="${sort == 'SUBMIT_DATE_ASC' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}"
                                         onclick="sort(this)">최신순
                                 </button>
-                                <button id="open" type="button" th:class="${sort == 'open' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}" onclick="sort(this)">
-                                    진행중
+                                <button id="SUBMIT_DATE_DESC" type="button"
+                                        th:class="${sort == 'SUBMIT_DATE_DESC' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}"
+                                        onclick="sort(this)">
+                                    오래된순
                                 </button>
-                                <button id="deadline" type="button" th:class="${sort == 'deadline' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}"
-                                        onclick="sort(this)">마감임박
-                                </button>
-                                <button id="close" type="button" th:class="${sort == 'close' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}" onclick="sort(this)">
-                                    마감만
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="col-3 mb-3">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-outline-success"
-                                        onclick="location.href='/v1/company/post/form'">일반공고 생성
-                                </button>
-                                <button type="button" class="btn btn-outline-primary"
-                                        onclick="location.href='/v1/company/post/mz/form'">MZ공고 생성
+                                <button id="NAME" type="button"
+                                        th:class="${sort == 'NAME' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}"
+                                        onclick="sort(this)">이름순
                                 </button>
                             </div>
                         </div>
                     </div>
 
                     <!-- 목록 페이지 시작 -->
-                    <div class="col-lg-12 col-12 mb-4 mb-lg-0 text-center" th:if="${#lists.size(postPage) == 0 or postPage==null}">
-                        <h5>공고가 없습니다.</h5>
+                    <div class="col-lg-12 col-12 mb-4 mb-lg-0 text-center"
+                         th:if="${#lists.size(applicantList) == 0 or applicantList==null}">
+                        <h5>지원자가 없습니다.</h5>
                     </div>
                     <!-- 목록 1칸 -->
-                    <div class="col-lg-10 col-12 mb-4 mb-lg-2 post-form" th:each="postList, postListStat : ${postPage}"
+                    <div class="col-lg-10 col-12 mb-4 mb-lg-2 post-form"
+                         th:each="postList, postListStat : ${applicantList}"
                          th:id="'postPage'+${postListStat.index}">
                         <div th:each="post, postStat : ${postList}">
                             <div class="custom-block d-flex">
                                 <div class="custom-block-info">
-                                    <div class="mb-2 d-inline-flex" th:if="${post.postType=='NORMAL'}">
-                                        <button class="badge" style="background-color: #717275" th:text="일반공고"></button>
-                                    </div>
-                                    <div class="mb-2 d-inline-flex" th:if="${post.postType=='MZ'}">
-                                        <button class="badge" style="background-color: #0a53be" th:text="MZ공고"></button>
-                                    </div>
-                                    <div class="mb-2 d-inline-flex" th:if="${post.closed==true}">
-                                        <button class="badge" style="background-color: #b02a37" th:text="마감"></button>
-                                    </div>
                                     <h6>
-                                        <a th:href="@{/v1/company/post/detail(id=${post.id}, postType=${post.postType})}"
-                                           th:text="${post.title}"></a>
+                                        <a th:text="${post.resumeTitle}"></a>
                                     </h6>
 
                                     <div class="custom-block-bottom d-flex mt-1">
-                                        <div class="col-auto d-flex m-2"><span>게시날짜:<span
-                                                th:text="${post.createdAt}"></span></span></div>
-                                        <div class="col-auto d-flex m-2"><span>마감일:<span
-                                                th:text="${post.endDate}"></span></span></div>
-                                        <div class="col-auto d-flex m-2"><span>지원현황: <span
-                                                th:text="${post.applicant}"></span>명</span></div>
+                                        <div class="col-auto d-flex m-2"><span>이름:<span
+                                                th:text="${post.name}"></span></span></div>
+                                        <div class="col-auto d-flex m-2"><span>주소:<span
+                                                th:text="${post.address}"></span></span></div>
+                                        <div class="col-auto d-flex m-2"><span>지원날짜: <span
+                                                th:text="${post.submitDate}"></span></span></div>
                                     </div>
-                                </div>
-
-                                <!-- 버튼 부 -->
-                                <div class="d-flex flex-column ms-auto">
-                                    <button type="button" class="btn-light"
-                                            th:id="${post.id}" name="interview" onclick="applicantList(this)">
-                                        채용관리
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -146,20 +117,20 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-lg justify-content-center mt-5">
                                 <li class="page-item" th:if="${strNum>=5}">
-                                    <a class="page-link" th:href="@{/v1/company/post/list/{strNum}(strNum=${strNum}-5, sort= ${sort})}"
+                                    <a class="page-link" th:href="@{/v1/company/post/applicant/{strNum}(strNum=${strNum}-5, postId=${postId}, sort=${sort})}"
                                        aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
-                                <div th:each="post, postStat:${postPage}">
+                                <div th:each="post, postStat:${applicantList}">
                                     <li class="page-item" th:id="'page'+${postStat.index}"><a class="page-link"
                                                                                               th:onclick="showOnlySelected([[${postStat.index}]])"
                                                                                               th:text="${postStat.index+strNum}"></a>
                                     </li>
                                 </div>
                                 <li class="page-item"
-                                    th:if="${#lists.size(postPage)>=5 and #lists.size(postPage[4])==9}">
-                                    <a class="page-link" th:href="@{/v1/company/post/list/{strNum}(strNum=${strNum}+5, sort= ${sort})}"
+                                    th:if="${#lists.size(applicantList)>=5 and #lists.size(applicantList[4])==9}">
+                                    <a class="page-link" th:href="@{/v1/company/post/applicant/{strNum}(strNum=${strNum}+5, postId=${postId}, sort=${sort})}"
                                        aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>

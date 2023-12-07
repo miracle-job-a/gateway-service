@@ -177,6 +177,79 @@ public class ApiResponseToList {
         return pageList;
     }
 
+    public static List<List<TotalSearchPostResponseDto>> searchTotalPost(List<LinkedHashMap<String, Object>> data, HttpSession session) {
+        List<List<TotalSearchPostResponseDto>> pageList = new ArrayList<>();
+
+        for (LinkedHashMap<String, Object> lhm : data) {
+            List<TotalSearchPostResponseDto> dtos = new ArrayList<>();
+            Integer numberOfElements = (Integer) lhm.get("numberOfElements");
+            if (numberOfElements > 0) {
+                ArrayList<LinkedHashMap<String, Object>> content = (ArrayList<LinkedHashMap<String, Object>>) lhm.get("content");
+                for (LinkedHashMap<String, Object> dto : content) {
+                    Integer id = (Integer) dto.get("id");
+                    List<Integer> jobs = (ArrayList<Integer>) dto.get("jobIdSet");
+
+                    ApiResponse response = ServiceCall.post(session, new JobRequestDto(jobs), Const.RequestHeader.ADMIN, "/admin/jobs");
+                    String jobDetail;
+                    if (response.getData() instanceof Boolean) {
+                        jobDetail = null;
+                    } else {
+                        List<JobResponseDto> job = ApiResponseToList.jobs(response.getData());
+                        jobDetail = job.get(0).getName();
+                    }
+
+                    dtos.add(TotalSearchPostResponseDto.builder()
+                            .id(id.longValue())
+                            .title((String) dto.get("title"))
+                            .endDate((String) dto.get("endDate"))
+                            .workAddress((String) dto.get("workAddress"))
+                            .career((Integer) dto.get("career"))
+                            .job(jobDetail)
+                            .build());
+                }
+                pageList.add(dtos);
+            }
+        }
+        return pageList;
+    }
+
+    public static List<List<TotalSearchPostResponseDto>> searchTotalCompany(List<LinkedHashMap<String, Object>> data, HttpSession session) {
+        List<List<TotalSearchPostResponseDto>> pageList = new ArrayList<>();
+
+        for (LinkedHashMap<String, Object> lhm : data) {
+            List<TotalSearchPostResponseDto> dtos = new ArrayList<>();
+            Integer numberOfElements = (Integer) lhm.get("numberOfElements");
+            if (numberOfElements > 0) {
+                ArrayList<LinkedHashMap<String, Object>> content = (ArrayList<LinkedHashMap<String, Object>>) lhm.get("content");
+                for (LinkedHashMap<String, Object> dto : content) {
+                    Integer id = (Integer) dto.get("id");
+                    Integer companyId = (Integer) dto.get("companyId");
+                    ArrayList<Integer> jobs = (ArrayList<Integer>) dto.get("jobIdSet");
+
+                    ApiResponse response = ServiceCall.post(session, new JobRequestDto(jobs), Const.RequestHeader.ADMIN, "/admin/jobs");
+                    String jobDetail;
+                    if (response.getData() instanceof Boolean) {
+                        jobDetail = null;
+                    } else {
+                        List<JobResponseDto> job = ApiResponseToList.jobs(response.getData());
+                        jobDetail = job.get(0).getName();
+                    }
+
+                    dtos.add(TotalSearchPostResponseDto.builder()
+                            .id(id.longValue())
+                            .title((String) dto.get("title"))
+                            .endDate(divideTime((String) dto.get("endDate")))
+                            .workAddress((String) dto.get("workAddress"))
+                            .career((Integer) dto.get("career"))
+                            .job(jobDetail)
+                            .build());
+                }
+                pageList.add(dtos);
+            }
+        }
+        return pageList;
+    }
+
     public static List<QuestionResponseDto> questionList(Object object) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
 
@@ -242,7 +315,7 @@ public class ApiResponseToList {
                     Integer applicationLetterId = (Integer) letter.get("applicationLetterId");
                     Integer postId = (Integer) letter.get("postId");
                     Integer interviewId = (Integer) letter.get("interviewId");
-                    Long interviewIdValue = (interviewId != null) ? interviewId.longValue() : null;
+                    Long interviewIdValue = (interviewId == null) ? null : interviewId.longValue();
 
                     dtos.add(ApplicationLetterListResponseDto.builder()
                             .applicationLetterId(applicationLetterId.longValue())
@@ -257,6 +330,30 @@ public class ApiResponseToList {
                 pageList.add(dtos);
             }
 
+        }
+        return pageList;
+    }
+
+    public static List<List<ApplicantListResponseDto>> applicantList(Object object) {
+        List<ArrayList<LinkedHashMap<String, Object>>> data = (ArrayList<ArrayList<LinkedHashMap<String, Object>>>) object;
+        List<List<ApplicantListResponseDto>> pageList = new ArrayList<>();
+
+        for (ArrayList<LinkedHashMap<String, Object>> page : data) {
+            List<ApplicantListResponseDto> dtos = new ArrayList<>();
+            if (!page.isEmpty()) {
+                for (Map<String, Object> letter : page) {
+                    Integer applicationLetterId = (Integer) letter.get("applicationLetterId");
+
+                    dtos.add(ApplicantListResponseDto.builder()
+                            .applicationLetterId(applicationLetterId.longValue())
+                            .submitDate(String.valueOf(letter.get("submitDate")))
+                                    .address(String.valueOf(letter.get("address")))
+                                    .resumeTitle(String.valueOf(letter.get("resumeTitle")))
+                                    .name(String.valueOf(letter.get("name")))
+                            .build());
+                }
+                pageList.add(dtos);
+            }
         }
         return pageList;
     }

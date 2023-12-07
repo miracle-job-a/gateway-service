@@ -52,7 +52,12 @@
         }
 
         function validateForm2() {
-            return confirm(`지원하시겠습니까?`);
+            let testStartDate = [[${detail.testStartDate}]];
+            let testEndDate = [[${detail.testEndDate}]];
+            if(confirm(`지원하시겠습니까?`)){
+                alert(`테스트 시작 시간은 `+testStartDate+ `이고\n테스트 종료 시각은`+testEndDate+`입니다.`);
+                return true;
+            }
         }
 
         function resumeCreate() {
@@ -265,27 +270,32 @@
                                            class="form-control mb-2" placeholder="근무주소" th:value="${detail.workAddress}"
                                            readonly/>
                                 </div>
-                                <div class="col-8 mt-2">
-                                    <div class="form-floating">
-                                        <button type="button" class="custom-btn" id="addressInputBtn"
-                                                style="display: none">주소변경
-                                        </button>
+                                <div th:if="${detail.postType eq 'NORMAL'}">
+                                    <h5 class="mb-4 mt-4" style="display: inline-block;">자기소개서 질문</h5>
+                                    <br>
+
+                                    <div class="col-12 mb-4"
+                                         th:each="question : ${detail.questionList}">
+                                        <div>
+                                            <input type="hidden" class="form-control" name="idList"
+                                                   th:value="${question.id}"/>
+                                            <input type="text" th:id="'question' + ${question.id}" name="questionList"
+                                                   class="form-control" th:value="${question.question}" disabled/>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <h5 class="mb-4 mt-4" style="display: inline-block;">자기소개서 질문</h5>
-                                <br>
+                                <div th:if="${detail.postType eq 'MZ'}">
+                                    <h5 class="mb-4 mt-4" style="display: inline-block;">테스트 시작 날짜</h5>
+                                    <br>
+                                    <input type="text" id="testStartDate" name="testStartDate"
+                                           class="form-control" th:value="${detail.testStartDate}" disabled/>
 
-                                <div class="col-12 mb-4"
-                                     th:each="question : ${detail.questionList}">
-                                    <div>
-                                        <input type="hidden" class="form-control" name="idList"
-                                               th:value="${question.id}"/>
-                                        <input type="text" th:id="'question' + ${question.id}" name="questionList"
-                                               class="form-control" th:value="${question.question}" disabled/>
-                                    </div>
+                                    <h5 class="mb-4 mt-4" style="display: inline-block;">테스트 시작 날짜</h5>
+                                    <br>
+                                    <input type="text" id="testEndDate" name="testEndDate"
+                                           class="form-control" th:value="${detail.testEndDate}" disabled/>
                                 </div>
-
 
                                 <!-- Company_FAQ 의 질문(question) 컬럼명이 겹침 주의 ! -->
                                 <h5 class="mb-4 mt-4">자주하는 질문</h5>
@@ -336,7 +346,8 @@
                                                                  th:if="${resumeList!=null}">
                                                                 <label for="resume">이력서를 선택해 주세요.</label>
                                                                 <select class="form-select" name="resumeId" id="resume"
-                                                                        aria-label="Default select example">
+                                                                        aria-label="Default select example"
+                                                                        th:if="${#lists.size(resumeList)!=0}">
                                                                     <option th:value="${resume.id}"
                                                                             th:text="${resume.title}"
                                                                             th:each="resume : ${resumeList}"></option>
@@ -351,7 +362,8 @@
 
                                                                 <select class="form-select" name="coverLetterId"
                                                                         id="coverLetter"
-                                                                        aria-label="Default select example">
+                                                                        aria-label="Default select example"
+                                                                        th:if="${#lists.size(coverLetterList)!=0}">
                                                                     <option th:value="${coverLetter.id}"
                                                                             th:text="${coverLetter.title}"
                                                                             th:each="coverLetter : ${coverLetterList}"></option>
