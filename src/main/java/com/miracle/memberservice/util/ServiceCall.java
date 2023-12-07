@@ -64,14 +64,14 @@ public class ServiceCall {
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()).bodyValue(dto), httpSession, serviceType).block();
     }
 
-    public static ApiResponse putModifyParam(HttpSession httpSession, String serviceType, String url, String id, String modifiedName) {
+    public static ApiResponse putModifyParam(HttpSession httpSession, String serviceType, String url, String stackId, String modifiedName) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().put()
-                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("stackId", id).queryParam("stackName", modifiedName).build()), httpSession, serviceType).block();
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("stackId", stackId).queryParam("stackName", modifiedName).build()), httpSession, serviceType).block();
     }
 
-    public static ApiResponse putModifyJobParam(HttpSession httpSession, String serviceType, String url, String id, String modifiedName) {
+    public static ApiResponse putModifyJobParam(HttpSession httpSession, String serviceType, String url, String jobId, String modifiedName) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().put()
-                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("jobId", id).queryParam("jobName", modifiedName).build()), httpSession, serviceType).block();
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("jobId", jobId).queryParam("jobName", modifiedName).build()), httpSession, serviceType).block();
     }
 
     public static ApiResponse getParam(HttpSession httpSession, String serviceType, String url, String name, String value) {
