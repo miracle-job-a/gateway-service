@@ -80,5 +80,13 @@ public class AdminController {
         return pmwm.getPageName();
     }
 
+    @PostMapping("/register/job")
+    private String registerJob(@RequestParam String jobName, Model model, HttpSession session){
+        PageMoveWithMessage pmwm = adminService.registerJob(session, jobName);
+        List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
+
+        model.addAttribute("totalJobList", data);
+        return pmwm.getPageName();
+    }
 
 }
