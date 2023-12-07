@@ -73,14 +73,14 @@
                         <div class="section-title-wrap mb-5">
                             <h4 class="section-title">직무 관리</h4>
                         </div>
-
                         <div style="margin-top: 10%" class="row justify-content-center">
                             <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
 
-                                <div class="col-12 mt-5"></div>
+                                <div class="col-12 mt-5">                            <button style="float: right" class="section-title" onclick="location.href='/v1/admin/jobs';">전체 목록보기</button>
+                                </div>
                                 <!-- 입력, 섹션 시작 -->
                                 <div class="card p-4 col-11 post-form align-self-center">
-                                    <form action="/v1/admin/jobList" method="get">
+                                    <form action="/v1/admin/jobs" method="get">
                                     <div class="mb-1">
                                         <label for="register">직무 등록</label>
                                     </div>
@@ -91,13 +91,13 @@
                                     </div>
                                     </form>
 
-                                    <form action="/v1/admin/jobList" method="get">
-                                    <div class="col-12 mt-2 input-group">
-                                        <input type="text" name="name" id="modify"
-                                               class="form-control" placeholder="직무 클릭 후 수정하고 싶은 직무명 기입" required="" />
-                                        <input type="hidden" name="id" id="modifyId" />
-                                        <button class="btn" type="submit" onclick="modifyJob()">수정</button>
-                                    </div>
+                                    <form action="/v1/admin/jobs" method="get">
+                                        <div class="col-12 mt-2 input-group">
+                                            <input type="text" name="name" id="modify"
+                                                   class="form-control" placeholder="직무 클릭 후 수정하고 싶은 직무명 기입" required="" />
+                                            <input type="hidden" name="id" id="modifyId" />
+                                            <button class="btn" type="submit" onclick="modifyJob()">수정</button>
+                                        </div>
                                     </form>
                                 </div>
 
