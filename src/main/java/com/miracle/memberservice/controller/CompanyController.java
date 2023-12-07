@@ -44,6 +44,7 @@ public class CompanyController {
         return pmwm.getPageName();
     }
 
+    /*DB_password=5002;DB_url=jdbc:mysql://localhost:3306/miracle_company;DB_username=root*/
     // 공고 생성 폼 이동
     @GetMapping("/post/form")
     public String postFormPage(HttpSession session, Model model) {
