@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpSession;
@@ -35,20 +36,33 @@ public class GuestController {
     private final AdminService adminService;
 
     @GetMapping
-    public String index() {
+    public String index(HttpSession session, Model model) {
+        PageMoveWithMessage pmwm = companyService.mainPage(session);
+        if (Objects.nonNull(session.getAttribute("bno"))) {
+            Long id = (Long) session.getAttribute("id");
+            model.addAttribute("count", companyService.mainPageCompany(session, id));
+        }
+        model.addAttribute("map", pmwm.getData());
         return "index";
     }
 
     //회원가입 로그인 폼
     @GetMapping("/user/login-form")
-    public String userLoginForm(@RequestParam(required = false) String page, Model model) {
-        model.addAttribute("page", page);
+    public String userLoginForm(@RequestParam(required = false) Long postId, @RequestParam(required = false) Long companyId, @RequestParam(required = false) String postType, Model model) {
+        model.addAttribute("postId", postId);
+        model.addAttribute("companyId", companyId);
+        model.addAttribute("postType", postType);
         return "guest/user-login";
     }
 
     @GetMapping("/company/login-form")
     public String companyLoginForm() {
         return "guest/company-login";
+    }
+
+    @GetMapping("/admin/login-form")
+    public String adminLoginForm() {
+        return "guest/admin-login";
     }
 
     //회원가입 폼 이동
@@ -100,17 +114,33 @@ public class GuestController {
     }
 
     @PostMapping("/user/login")
-    public String userLogin(@ModelAttribute LoginDto loginDto, Model model, HttpSession session) {
+    public String userLogin(RedirectAttributes redirectAttributes, @ModelAttribute LoginDto loginDto, Model model, HttpSession session) {
         PageMoveWithMessage pmwm = userService.login(loginDto, session);
-        String pageName = pmwm.getPageName();
-
         if (pmwm.getId() != null) {
             session.setAttribute("id", pmwm.getId());
             session.setAttribute("email", pmwm.getEmail());
             session.setAttribute("name", pmwm.getNameOrBno());
         }
+        if (Objects.nonNull(loginDto.getPostId())) {
+            redirectAttributes.addAttribute("companyId", loginDto.getCompanyId());
+            redirectAttributes.addAttribute("postType", loginDto.getPostType());
+        }
         String errorMessage = pmwm.getErrorMessage();
         model.addAttribute("errorMessage", errorMessage);
+        return pmwm.getPageName();
+    }
+
+    @PostMapping("/admin/login")
+    public String adminLogin(@ModelAttribute LoginDto loginDto, Model model, HttpSession session) {
+        PageMoveWithMessage pmwm = adminService.login(loginDto, session);
+        String pageName = pmwm.getPageName();
+
+        if (pmwm.getId() != null) {
+            session.setAttribute("id", pmwm.getId());
+            session.setAttribute("email", pmwm.getEmail());
+        }
+
+        model.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pageName;
     }
 
@@ -164,6 +194,14 @@ public class GuestController {
         return pmwm.getPageName();
     }
 
+    @GetMapping("/search/total/{strNum}")
+    public String searchTotalPosts(HttpSession session, @RequestParam(required = false) String search, @PathVariable int strNum, Model model) {
+        PageMoveWithMessage pmwm = companyService.searchTotalPosts(session, search, strNum, strNum + 4);
+        model.addAttribute("postAndCompany", pmwm.getData());
+        model.addAttribute("strNum", strNum);
+        return pmwm.getPageName();
+    }
+
     @ModelAttribute("dto")
     public ConditionalSearchPostRequestDto setupModel(@RequestParam(name = "jobIdSet", required = false) Set<Long> jobIdSet,
                                                       @RequestParam(name = "stackIdSet", required = false) Set<Long> stackIdSet,
@@ -193,7 +231,7 @@ public class GuestController {
     }
 
     @GetMapping("/click/post/{postId}/detail")
-    public String clickPostDetail(HttpSession session, @PathVariable Long postId, @RequestParam(required = false) Long companyId, @RequestParam(required = false) String postType, Model model) {
+    public String clickPostDetail(HttpSession session, @PathVariable Long postId, @RequestParam(required = false) Long companyId, @RequestParam(required = false) String postType, @RequestParam(required = false) String errorMessage, Model model) {
         PageMoveWithMessage postInfo = companyService.formPost(session, postType, companyId);
         PageMoveWithMessage postDetail = companyService.getPostDetail(session, postId, postType, companyId);
 
@@ -208,13 +246,13 @@ public class GuestController {
             model.addAttribute("resumeList", apply.getResumeList());
             model.addAttribute("coverLetterList", apply.getCoverLetterList());
         }
-
+        model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("postId", postId);
+        model.addAttribute("companyId", companyId);
         model.addAttribute("info", postInfo.getData());
         model.addAttribute("detail", postDetail.getData());
         model.addAttribute("jobs", jobs);
         model.addAttribute("stacks", stacks);
         return "guest/post-detail";
     }
-
 }

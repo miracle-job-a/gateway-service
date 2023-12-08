@@ -53,24 +53,15 @@
                         </div>
                         <div class="col-auto">
                             <button type="button" class="btn btn-secondary" id="resume">이력서 생성</button>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-outline-secondary">최근 작성일</button>
-                                <button type="button" class="btn btn-outline-secondary">오래된 작성일</button>
-                            </div>
-                        </div>
-
-                        <div class="col-3">
-                            <div class="input-group mb-3 ">
-                                <input type="text" class="form-control" placeholder="Search">
-                                <button class="btn btn-outline-secondary" type="submit">Go</button>
-                            </div>
                         </div>
                     </div>
 
                     <div class="col-12 m-2"></div>
 
                     <!-- 목록 페이지 시작 -->
-
+                    <h5 class="col-lg-10 col-12 mt-4 mb-4 mb-lg-2 text-center" th:if="${#lists.size(resumeList)==0}">
+                        이력서가 없습니다.
+                    </h5>
                     <!-- 목록 1칸 -->
                     <div th:each="resume : ${resumeList}" class="col-lg-10 col-12 mb-4 mb-lg-2">
                         <div class="custom-block d-flex">
@@ -81,8 +72,8 @@
 
                                 <div class="custom-block-bottom d-flex mt-3">
                                     <div class="col-auto d-flex m-2">
-                                        <span th:if="${not resume.open}" class="badge rounded-pill btn-primary">공개</span>
-                                        <span th:if="${resume.open}" class="badge rounded-pill bg-secondary">비공개</span>
+                                        <span th:if="${resume.open}" class="badge rounded-pill btn-primary">공개</span>
+                                        <span th:if="${not resume.open}" class="badge rounded-pill bg-secondary">비공개</span>
                                     </div>
                                     <div class="col-auto d-flex m-2">
                                         <span th:text="'작성일 : ' + ${resume.modifiedAt.substring(0, 10)}"></span>

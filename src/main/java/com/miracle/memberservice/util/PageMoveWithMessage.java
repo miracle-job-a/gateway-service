@@ -1,5 +1,6 @@
 package com.miracle.memberservice.util;
 
+import com.miracle.memberservice.dto.response.AdminLoginResponseDto;
 import com.miracle.memberservice.dto.response.CompanyLoginResponseDto;
 import com.miracle.memberservice.dto.response.UserLoginResponseDto;
 import lombok.Getter;
@@ -23,6 +24,15 @@ public class PageMoveWithMessage {
         this.data = null;
     }
 
+    public PageMoveWithMessage(String pageName, String errorMessage, Object data) {
+        this.pageName = pageName;
+        this.errorMessage = errorMessage;
+        this.id = null;
+        this.email = null;
+        this.nameOrBno = null;
+        this.data = data;
+    }
+
     //id만 전달
 
     public PageMoveWithMessage(String pageName, Long id) {
@@ -30,6 +40,15 @@ public class PageMoveWithMessage {
         this.errorMessage = null;
         this.id = id;
         this.email = null;
+        this.nameOrBno = null;
+        this.data = null;
+    }
+
+    public PageMoveWithMessage(String pageName, AdminLoginResponseDto dto) {
+        this.pageName = pageName;
+        this.errorMessage = null;
+        this.id = dto.getId();
+        this.email = dto.getEmail();
         this.nameOrBno = null;
         this.data = null;
     }

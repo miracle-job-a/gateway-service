@@ -215,6 +215,10 @@
                     </div>
                 </div>
 
+                <div class="col-lg-12 col-12 mb-4 mb-lg-0" th:if="${#lists.size(postPage) == 0 or postPage==null}">
+                    <h1>검색 결과가 없습니다.</h1>
+                </div>
+
                 <div class="row" th:each="postList, postListStat : ${postPage}"
                      th:id="'postPage'+${postListStat.index}">
 
@@ -240,14 +244,14 @@
                                         <button class="badge" style="background-color: #b02a37" th:text="마감"
                                                 th:if="${post.closed==true}"></button>
                                     </div>
-                                    <a href="company/detail-page.html" class="text-black " th:text="${post.name}">
+                                    <a class="text-black " th:text="${post.name}">
                                     </a>
                                 </div>
                                 <a class="bi-balloon me-1">
                                     <span class="text-black" th:text="${post.workAddress}"></span>
                                 </a>
                                 <a class="d-flex justify-content-between me-1">
-                                    <span class="bi-calendar text-black" th:text="'    ~'+${post.endDate}"></span>
+                                    <span class="bi-clock-fill text-black" th:text="' 마감일: ~'+${post.endDate}"></span>
                                 </a>
 
                                 <hr>

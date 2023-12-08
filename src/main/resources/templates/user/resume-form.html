@@ -40,7 +40,6 @@
         }
 
         // 경력사항에서 기간 계산
-        // 경력사항에서 기간 계산
         function calculateAndSetCareer() {
             let totalMonths = 0;
 
@@ -88,10 +87,9 @@
             const remainingMonths = totalMonths % 12;
 
             // 계산된 값을 입력 필드에 설정
-            document.getElementById("careerInput").value = totalYears + "년 " + remainingMonths + "개월";
-            document.getElementById("careerCal").value = totalMonths;
+            document.getElementById("careerInput").value = isNaN(totalYears) ? '신입' : totalYears + "년 " + remainingMonths + "개월";
+            document.getElementById("careerCal").value = isNaN(totalMonths) ? '0' : totalMonths;
         }
-
 
 
         // 프로젝트나 기타사항에 대한 새로운 입력 필드 추가
@@ -103,9 +101,9 @@
             var newField = document.createElement("div");
             newField.className = "input-group m-1";
             newField.innerHTML = `
-            <input type="text" class="form-control" name="${fieldId}" value="">
-            <button class="btn" type="button" value="삭제" onclick="removeItem(this, '${preSetId}', '${fieldId}')">-</button>
-        `;
+        <input type="text" class="form-control" name="${fieldId}" value="">
+        <button class="btn" type="button" value="삭제" onclick="removeItem(this, '${preSetId}', '${fieldId}')">-</button>
+    `;
             preSet.appendChild(newField);
         }
 
@@ -123,74 +121,20 @@
             }
         }
 
-
-        /*프로젝트 필드 추가
-        let itemCount = 1;
-
-        function addItem(preSetId, fieldId) {
-            var div = document.createElement('div');
-            /!*div.classList.add('careerCal');*!/
-            div.innerHTML = document.getElementById(preSetId).innerHTML.replace(/1/g, itemCount);
-            document.getElementById(fieldId).appendChild(div);
-
-            // 추가된 입력 필드를 보이게 함
-            document.getElementById(`pre_set${itemCount}`).style.display = 'block';
-
-            itemCount++;
+        // 뒤로가기
+        function goBack() {
+            window.history.back();
         }
 
-        function removeItem(button) {
-            var parentDiv = button.parentNode.parentNode;
-            var itemDiv = parentDiv.parentNode;
-
-            // Check if it's the last item before removing
-            if (itemDiv.querySelectorAll('.field > div').length > 0) {
-                parentDiv.parentNode.removeChild(parentDiv);
-            } else {
-                alert("마지막 항목은 삭제할 수 없습니다.");
+        function enableSubmit(){
+            var careerInput = document.getElementById('careerCal');
+            if (careerInput.value.trim() === '') {
+                alert('경력기간 계산이 필요합니다.');
+                event.preventDefault();
+                /*return false; // 더 이상 진행하지 않음*/
             }
 
-            // 기간 계산 및 careerInput에 설정
-            calculateAndSetCareer();
         }
-
-        // 경력사항을 경력으로 계산
-        function calculateAndSetCareer() {
-            let totalMonths = 0;
-
-            // 모든 입력 필드의 날짜 합산 계산
-            document.querySelectorAll('.career').forEach((item, index) => {
-                const startElement = item.querySelector('#start_date');
-                const endElement = item.querySelector('#end_date');
-
-                if (!startElement || !endElement) {
-                    return;
-                }
-
-                const startDate = new Date(startElement.value);
-                const endDate = new Date(endElement.value);
-
-                // 두 날짜가 같은 경우 0년 0개월로 처리
-                if (startDate.getTime() === endDate.getTime()) {
-                    return;
-                }
-
-                // 각 입력 필드의 년수 및 개월 수 계산
-                const years = endDate.getFullYear() - startDate.getFullYear();
-                const months = endDate.getMonth() - startDate.getMonth();
-
-                // 전체 년수 및 개월 수에 더함
-                totalMonths += years * 12 + months;
-            });
-
-            // 전체 년수 및 개월 수를 년(Y)과 개월(M)로 변환하여 표시
-            const totalYears = Math.floor(totalMonths / 12);
-            const remainingMonths = totalMonths % 12;
-
-            // 계산된 값을 입력 필드에 설정
-            document.getElementById("careerInput").value = totalYears + "년 " + remainingMonths + "개월";
-            document.getElementById("careerCal").value = totalMonths;
-        }*/
 
     </script>
 
@@ -287,6 +231,7 @@
                                             <input type="text" name="title" id="title"
                                                    class="form-control" placeholder="이력서 제목" required="" />
                                         </div>
+
                                         <div class="card mt-3 p-3 col-12 post-form align-self-center">
                                             <div class="mb-1">
                                                 <label for="job">개발 가능한 직무를 골라주세요.</label>
@@ -337,7 +282,7 @@
                                                 <button class="btn m-2" type="button" onclick="addCareerItem('pre_set1', 'field1', 'career')">+</button>
                                                 <button class="btn m-2" type="button" onclick="calculateAndSetCareer()">경력기간 계산</button>
                                                 <input type="text" readonly class="form-control" name="careerNum" id="careerInput" />
-                                                <input type="hidden" name="career" id="careerCal" />
+                                                <input type="hidden" name="career" id="careerCal" value="" />
                                             </div>
                                             <div class="pre_set" id="pre_set1">
                                                 <div class="input-group m-1 career">
@@ -355,7 +300,7 @@
                                         <div class="card mt-3 p-3 col-12 post-form align-self-center" id="item2">
                                             <div class="mb-1">
                                                 <label for="projectList">프로젝트</label>
-                                                <button class="btn m-2" type="button" onclick="addItem('pre_set2', 'field2', 'project')">+</button>
+                                                <button class="btn m-2" type="button" onclick="addItem('pre_set2', 'projectList')">+</button>
                                             </div>
                                             <div class="pre_set" id="pre_set2">
                                                 <div class="input-group m-1">
@@ -363,14 +308,14 @@
                                                     <button class="btn" type="button" value="삭제" onclick="removeItem(this)">-</button>
                                                 </div>
                                             </div>
-                                            <div class="field" id="field2"></div>
+                                            <div class="field" id="projectList"></div>
                                         </div>
 
                                         <!-- 기타사항 -->
                                         <div class="card mt-3 mb-3 p-3 col-12 post-form align-self-center" id="item3">
                                             <div class="mb-1">
                                                 <label for="etcList">기타사항</label>
-                                                <button class="btn m-2" type="button" onclick="addItem('pre_set3', 'field3', 'etc')">+</button>
+                                                <button class="btn m-2" type="button" onclick="addItem('pre_set3', 'etcList', 'etc')">+</button>
                                             </div>
                                             <div class="pre_set" id="pre_set3">
                                                 <div class="input-group m-1">
@@ -378,57 +323,8 @@
                                                     <button class="btn" type="button" value="삭제" onclick="removeItem(this)">-</button>
                                                 </div>
                                             </div>
-                                            <div class="field" id="field3"></div>
+                                            <div class="field" id="etcList"></div>
                                         </div>
-
-                                        <!--<div class="card mt-3 p-3 col-12 post-form align-self-center" id="item1">
-                                            <div class="mb-1">
-                                                <label for="careerDetail">경력사항</label>
-                                                <button class="btn m-2" type="button" onclick="addItem('pre_set1', 'field1')">+</button>
-                                                <button class="btn m-2" type="button" onclick="calculateAndSetCareer()">경력기간 계산</button>
-                                                <input type="text" readonly class="form-control" name="careerNum" id="careerInput" />
-                                                <input type="hidden" name="career" id="careerCal" />
-                                            </div>
-                                            <div class="pre_set" id="pre_set1">
-                                                <div class="input-group m-1 career">
-                                                    <input type="date" class="form-control" name="start_date" id="start_date" value="" />
-                                                    <input type="date" class="form-control" name="end_date" id="end_date" value="" />
-                                                    <input type="text" class="form-control" name="career_title" id="career_title" value="" />
-                                                    <input type="hidden" name="careerDetailList" id="careerDetailList" />
-                                                    <button class="btn" type="button" value="삭제" onclick="removeItem(this)">-</button>
-                                                </div>
-                                            </div>
-                                            <div class="field" id="field1"></div>
-                                        </div>
-
-                                        <div class="card mt-3 p-3 col-12 post-form align-self-center" id="item2">
-                                            <div class="mb-1">
-                                                <label for="projectList">프로젝트</label>
-                                                <button class="btn m-2" type="button" onclick="addItem('pre_set2', 'field2')">+</button>
-                                            </div>
-                                            <div class="pre_set" id="pre_set2">
-                                                <div class="input-group m-1">
-                                                    <input type="text" class="form-control" name="projectList" value="">
-                                                    <button class="btn" type="button" value="삭제" onclick="removeItem(this)">-</button>
-                                                </div>
-                                            </div>
-                                            <div class="field" id="field2"></div>
-                                        </div>
-
-                                        <div class="card mt-3 mb-3 p-3 col-12 post-form align-self-center" id="item3">
-                                            <div class="mb-1">
-                                                <label for="etcList">기타사항</label>
-                                                <button class="btn m-2" type="button" onclick="addItem('pre_set3', 'field3')">+</button>
-                                            </div>
-                                            <div class="pre_set" id="pre_set3">
-                                                <div class="input-group m-1">
-                                                    <input type="text" class="form-control" name="etcList" value="">
-                                                    <button class="btn" type="button" value="삭제" onclick="removeItem(this)">-</button>
-                                                </div>
-                                            </div>
-                                            <div class="field" id="field3"></div>
-                                        </div>-->
-
 
                                         <div class="col-12 mt-2 mb-4">
                                             <div class="mb-1">
@@ -440,8 +336,20 @@
                                             </select>
                                         </div>
 
-                                        <div class="col-12 mt-2">
-                                            <button type="submit" class="form-control" >등록하기</button>
+                                        <div class="row col-12">
+                                            <div class="col-4 pt-4 m-auto justify-content-center">
+                                                <div th:if="${postId!=null}">
+                                                    <input type="hidden" name="postId" th:value="${postId}">
+                                                    <input type="hidden" name="companyId" th:value="${companyId}">
+                                                    <input type="hidden" name="postType" th:value="${postType}">
+                                                </div>
+                                                <button type="submit" class="form-control" onclick="enableSubmit()" >등록하기</button>
+                                            </div>
+                                            <div class="col-4 pt-4 m-auto justify-content-center">
+                                            </div>
+                                            <div class="col-4 pt-4 m-auto justify-content-center">
+                                                <button type="button" class="form-control" id="back" onclick="goBack()">돌아가기</button>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>

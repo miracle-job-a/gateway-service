@@ -19,21 +19,34 @@ import java.util.*;
 @Slf4j
 public class CompanyService {
 
+    public PageMoveWithMessage mainPage(HttpSession session) {
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/main");
+        Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+
+        return new PageMoveWithMessage("redirect:/v1", ApiResponseToList.mainPage(session, data));
+    }
+
+    public Object mainPageCompany(HttpSession session, Long companyId) {
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/"+companyId+"/posts/count");
+        Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        return data;
+    }
+
     public ResponseEntity<String> bnoCertify(CompanyCheckBnoRequestDto bno, HttpSession session) {
 
-        ApiResponse response = ServiceCall.post(session, bno, "company", "/company/bno");
+        ApiResponse response = ServiceCall.post(session, bno, Const.RequestHeader.COMPANY, "/company/bno");
 
         return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
     }
 
     public PageMoveWithMessage join(CompanyJoinDto companyJoinDto, HttpSession session) {
 
-        ApiResponse response = ServiceCall.post(session, companyJoinDto, "company", "/company/signup");
+        ApiResponse response = ServiceCall.post(session, companyJoinDto, Const.RequestHeader.COMPANY, "/company/signup");
 
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("guest/company-join", response.getMessage());
 
-        return new PageMoveWithMessage("index");
+        return new PageMoveWithMessage("guest/company-login");
     }
 
     public PageMoveWithMessage login(LoginDto loginDto, HttpSession session) {
@@ -51,12 +64,12 @@ public class CompanyService {
                 .bno(data.get("bno"))
                 .build();
 
-        return new PageMoveWithMessage("index", dto);
+        return new PageMoveWithMessage("redirect:/v1", dto);
     }
 
     public ResponseEntity<String> duplicateEmail(HttpSession session, String email) {
 
-        ApiResponse response = ServiceCall.post(session, new CompanyCheckEmailRequestDto(email), "company", "/company/email");
+        ApiResponse response = ServiceCall.post(session, new CompanyCheckEmailRequestDto(email), Const.RequestHeader.COMPANY, "/company/email");
 
         return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
     }
@@ -66,9 +79,9 @@ public class CompanyService {
 
         Long companyId = (Long) session.getAttribute("id");
 
-        ApiResponse response = ServiceCall.getParamList(session, "company", "/company/" + companyId + "/posts", strNum, endNum, sort);
+        ApiResponse response = ServiceCall.getParamList(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts", strNum, endNum, sort);
 
-        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("index", response.getMessage());
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("redirect:/v1", response.getMessage());
 
         List<List<ManagePostsResponseDto>> postList = ApiResponseToList.postList(response.getData(), session);
 
@@ -78,9 +91,9 @@ public class CompanyService {
     // MZ 공고 등록
 
     public PageMoveWithMessage formPost(HttpSession session, String postType, Long companyId) {
-        if(Objects.isNull(companyId)) companyId = (Long) session.getAttribute("id");
+        if (Objects.isNull(companyId)) companyId = (Long) session.getAttribute("id");
 
-        ApiResponse response = ServiceCall.get(session, "company", "/company/" + companyId + "/info");
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/info");
 
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("redirect:/v1/company/post/list/1", response.getMessage());
@@ -113,7 +126,7 @@ public class CompanyService {
     }
 
     public PageMoveWithMessage getPostDetail(HttpSession session, Long postId, String postType, Long companyId) {
-        if(Objects.isNull(companyId)) companyId = (Long) session.getAttribute("id");
+        if (Objects.isNull(companyId)) companyId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/" + postId);
 
         Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
@@ -179,10 +192,10 @@ public class CompanyService {
 
     public PageMoveWithMessage faqList(HttpSession session) {
         Long companyId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.get(session, "company", "/company/" + companyId + "/faqs");
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/faqs");
 
         if (response.getHttpStatus() != 200)
-            return new PageMoveWithMessage("index", response.getMessage());
+            return new PageMoveWithMessage("redirect:/v1", response.getMessage());
 
         List<CompanyFaqResponseDto> dtos = ApiResponseToList.faqList(response.getData());
 
@@ -191,7 +204,7 @@ public class CompanyService {
 
     public PageMoveWithMessage addFaq(HttpSession session, CompanyFaqRequestDto companyFaqRequestDto) {
         Long companyId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.post(session, companyFaqRequestDto, "company", "/company/" + companyId + "/faq");
+        ApiResponse response = ServiceCall.post(session, companyFaqRequestDto, Const.RequestHeader.COMPANY, "/company/" + companyId + "/faq");
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("redirect:/v1/company/faq", response.getMessage());
         return new PageMoveWithMessage("redirect:/v1/company/faq");
@@ -199,7 +212,7 @@ public class CompanyService {
 
     public PageMoveWithMessage deleteFaq(HttpSession session, String faqId) {
         Long companyId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.delete(session, "company", "/company/" + companyId + "/faqs/" + faqId);
+        ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/faqs/" + faqId);
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("redirect:/v1/company/faq", response.getMessage());
         return new PageMoveWithMessage("redirect:/v1/company/faq");
@@ -207,12 +220,25 @@ public class CompanyService {
 
     public PageMoveWithMessage searchPosts(HttpSession session, ConditionalSearchPostRequestDto dto, int strNum, int endNum) {
 
-        ApiResponse response = ServiceCall.postParam(session, dto, Const.RequestHeader.COMPANY,"/company/posts/search", strNum, endNum);
-        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("index", response.getMessage());
+        ApiResponse response = ServiceCall.postParam(session, dto, Const.RequestHeader.COMPANY, "/company/posts/search", strNum, endNum);
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("redirect:/v1", response.getMessage());
 
         List<List<ConditionalSearchPostResponseDto>> searchPosts = ApiResponseToList.searchPosts(response.getData(), session);
 
         return new PageMoveWithMessage("guest/search-post", searchPosts);
+    }
+
+    public PageMoveWithMessage searchTotalPosts(HttpSession session, String search, int strNum, int endNum) {
+
+        ApiResponse response = ServiceCall.getParamSearch(session, Const.RequestHeader.COMPANY, "/company", strNum, endNum, search);
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("redirect:/v1", response.getMessage());
+
+        Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        List<LinkedHashMap<String, Object>> postList = (ArrayList<LinkedHashMap<String, Object>>) data.get("postList");
+
+        List<List<TotalSearchPostResponseDto>> postPage = ApiResponseToList.searchTotalPost(postList, session);
+
+        return new PageMoveWithMessage("guest/total-search", Map.of("postPage", postPage));
     }
 
     private LocalDateTime truncatedTo(Object time) {
@@ -233,6 +259,18 @@ public class CompanyService {
             questionRequestDtos.add(build);
         }
         return questionRequestDtos;
+    }
+
+    //오늘 회원가입한 기업 회원 목록
+    public PageMoveWithMessage getCompanyListToday(HttpSession session, int strNum, int endNum, boolean today) {
+
+        ApiResponse response = ServiceCall.getParamListWithToday(session, Const.RequestHeader.COMPANY, "/company/list", strNum, endNum, today);
+
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("error/500", response.getMessage());
+
+        List<List<ManagePostsResponseDto>> postList = ApiResponseToList.postList(response.getData(), session);
+
+        return new PageMoveWithMessage("admin/main", postList);
     }
 
 }

@@ -6,6 +6,7 @@ import com.miracle.memberservice.dto.response.PostResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;
 import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.CompanyService;
+import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
@@ -26,11 +27,12 @@ public class CompanyController {
 
     private final CompanyService companyService;
     private final AdminService adminService;
+    private final UserService userService;
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "index";
+        return "redirect:/v1";
     }
 
     @GetMapping("/post/list/{strNum}")
@@ -44,6 +46,7 @@ public class CompanyController {
         return pmwm.getPageName();
     }
 
+    /*DB_password=5002;DB_url=jdbc:mysql://localhost:3306/miracle_company;DB_username=root*/
     // 공고 생성 폼 이동
     @GetMapping("/post/form")
     public String postFormPage(HttpSession session, Model model) {
@@ -140,5 +143,26 @@ public class CompanyController {
         redirectAttributes.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
+
+    @GetMapping("/post/applicant/{startPage}")
+    public String applicantList(@PathVariable int startPage, @RequestParam Long postId, @RequestParam(required = false, defaultValue = "SUBMIT_DATE_ASC") String sort, HttpSession session, Model model) {
+        PageMoveWithMessage pmwm = userService.applicantList(session, postId, sort, startPage);
+        model.addAttribute("applicantList", pmwm.getData());
+        model.addAttribute("strNum", startPage);
+        model.addAttribute("sort", sort);
+        model.addAttribute("postId", postId);
+        return pmwm.getPageName();
+    }
+
+    @GetMapping("/today/signUp/list")
+    public String getCompanyList(Model model, @RequestParam int strNum, @RequestParam boolean today, HttpSession session) {
+        PageMoveWithMessage pmwm = companyService.getCompanyListToday(session, strNum, strNum + 4, today);
+        model.addAttribute("strNum", strNum);
+        model.addAttribute("today", today);
+        model.addAttribute("companyListPage", pmwm.getData());
+        model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        return pmwm.getPageName();
+    }
+
 
 }

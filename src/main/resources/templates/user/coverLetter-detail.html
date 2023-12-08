@@ -88,8 +88,15 @@
             $('#title').removeAttr('readonly');
             $('#QNA input, #QNA textarea').removeAttr('readonly');
 
+            $('#editBtn').hide();
+            $('#back').hide();
+
         }
 
+        // 뒤로가기
+        function goBack() {
+            window.history.back();
+        }
     </script>
 
     <main>
@@ -148,17 +155,16 @@
 
                                         <input type="hidden" name="id" th:value="${coverLetter.id}">
                                         <div class="row col-12 mt-2">
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <button type="button" class="form-control" id="editBtn" onclick="enableEditing()">수정</button>
+                                                <button type="submit" class="form-control" id="submitEdit" style="display:none">수정완료</button>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <button type="button" class="form-control" th:attr="data-letter-id=${coverLetter.id}" onclick="confirmDelete(this)">삭제</button>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <button type="button" class="form-control" id="cancelBtn" onclick="cancelEditing()" style="display:none">취소</button>
-                                            </div>
-                                            <div class="col-3">
-                                                <button type="submit" class="form-control" id="submitEdit" style="display:none">수정완료</button>
+                                                <button type="button" class="form-control" id="back" onclick="goBack()">돌아가기</button>
                                             </div>
                                         </div>
                                     </form>

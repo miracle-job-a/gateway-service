@@ -18,6 +18,7 @@ public class ResumeResponseDto {
     private final String phone;
     private final String education;
     private final String gitLink;
+    private final boolean open;
     private final ArrayList<Integer> jobIdSet;
     private final ArrayList<Integer> stackIdSet;
     private final List<String> careerDetailList;
@@ -25,7 +26,7 @@ public class ResumeResponseDto {
     private final List<String> etcList;
 
     @Builder
-    public ResumeResponseDto(Long id, String title, String photo, int career, String birth, String phone, String education, String gitLink, ArrayList<Integer> jobIdSet, ArrayList<Integer> stackIdSet, List<String> careerDetailList, List<String> projectList, List<String> etcList) {
+    public ResumeResponseDto(Long id, String title, String photo, int career, String birth, String phone, String education, String gitLink, boolean open, ArrayList<Integer> jobIdSet, ArrayList<Integer> stackIdSet, List<String> careerDetailList, List<String> projectList, List<String> etcList) {
         this.id = id;
         this.title = title;
         this.photo = photo;
@@ -34,6 +35,7 @@ public class ResumeResponseDto {
         this.phone = phone;
         this.education = education;
         this.gitLink = gitLink;
+        this.open = open;
         this.jobIdSet = jobIdSet;
         this.stackIdSet = stackIdSet;
         this.careerDetailList = careerDetailList;

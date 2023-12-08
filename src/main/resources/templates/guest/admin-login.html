@@ -4,21 +4,7 @@
         layout:decorate="~{layout/default_layout}" lang="ko">
 
 <div layout:fragment="content">
-    <script type="javascript">
-        function changeLogin(a) {
-            switch(a) {
-                case "user":
-                    document.location="/v1/user/login-form";
-                    break;
-                case "company":
-                    document.location="/v1/company/login-form";
-                    break;
-                default:
-                    document.location="/v1/user/login-form";
-                    break;
-            }
-        }
-    </script>
+
     <main>
         <header class="site-header d-flex flex-column justify-content-center align-items-center">
         </header>
@@ -28,16 +14,13 @@
 
                     <div class="col-lg-8 col-12 mx-auto">
                         <div class="section-title-wrap mb-5">
-                            <h4 class="section-title">로그인</h4>
+                            <h4 class="section-title">관리자 로그인</h4>
                         </div>
 
-                        <form action="#" method="post" class="custom-form contact-form" role="form">
+                        <form action="/v1/admin/login" method="post" class="custom-form contact-form" role="form">
                             <div class="row">
 
-                                <div class="col-lg-6 col-md-6 col-12 pb-4">
-                                    <input type="radio" name="memberType" id="user" onclick="changeLogin('user')"> 일반회원
-                                    <input type="radio" name="memberType" id="company" onclick="changeLogin('company')"> 기업회원
-                                </div>
+                                <input type="hidden" name="memberType" id="admin" value='admin'>
 
                                 <div class="col-lg-12 col-12">
                                     <div class="form-floating">
@@ -56,17 +39,12 @@
                                         <label for="password">비밀번호</label>
                                     </div>
                                 </div>
-                                <div class="col-12 d-flex justify-content-between align-items-center">
 
-                                        <div class="col-lg-3 col-6">
-                                            <button type="button" class="form-control ms-auto" onclick="join()">회원가입</button>
-                                        </div>
+                                <div class="col-12 d-flex justify-content-between align-items-center">
                                         <div class="col-lg-3 col-6">
                                             <button type="submit" class="form-control ms-auto">로그인</button>
                                         </div>
-
                                 </div>
-
                             </div>
                         </form>
                     </div>

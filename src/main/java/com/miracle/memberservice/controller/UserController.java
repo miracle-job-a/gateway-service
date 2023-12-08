@@ -5,6 +5,7 @@ import com.miracle.memberservice.dto.response.JobResponseDto;
 import com.miracle.memberservice.dto.response.ResumeResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;
 import com.miracle.memberservice.service.AdminService;
+import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 @Controller
@@ -26,26 +28,34 @@ public class UserController {
 
     private final UserService userService;
     private final AdminService adminService;
+    private final CompanyService companyService;
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "index";
+        return "redirect:/v1";
     }
 
     @GetMapping("/resume/form")
-    public String createResume(HttpSession session, Model model) {
+    public String createResume(HttpSession session, Model model, @RequestParam(required = false) String postId, @RequestParam(required = false) String companyId, @RequestParam(required = false) String postType) {
         PageMoveWithMessage pmwm = userService.formResume(session);
         Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
         model.addAttribute("info", pmwm.getData());
         model.addAttribute("jobs", allJobsAndStacks.get("jobs"));
         model.addAttribute("stacks", allJobsAndStacks.get("stacks"));
+        model.addAttribute("postId", postId);
+        model.addAttribute("companyId", companyId);
+        model.addAttribute("postType", postType);
         return pmwm.getPageName();
     }
 
     @PostMapping("/resume")
     public String addResume(RedirectAttributes redirectAttributes, HttpSession session, ResumeRequestDto resumeRequestDto) {
         PageMoveWithMessage pmwm = userService.addResume(session, resumeRequestDto);
+        if (Objects.nonNull(resumeRequestDto.getPostId())) {
+            redirectAttributes.addAttribute("companyId", resumeRequestDto.getCompanyId());
+            redirectAttributes.addAttribute("postType", resumeRequestDto.getPostType());
+        }
         redirectAttributes.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
@@ -99,30 +109,50 @@ public class UserController {
         return pmwm.getPageName();
     }
 
-    // [임시] 자소서 목록으로 이동
-    @GetMapping("/cover-letters")
-    public String coverLetterList(HttpSession session, Model model) {
-        PageMoveWithMessage pmwm = userService.coverLetterList(session);
+    // 자소서 목록으로 이동
+    @GetMapping("/cover-letters/{strNum}")
+    public String coverLetterList(HttpSession session, Model model, @PathVariable(required = false) int strNum, @RequestParam(required = false, defaultValue = "MODIFIED_AT_DESC") String sort, @RequestParam(required = false, defaultValue = "") String word) {
+        PageMoveWithMessage pmwm;
+        if (word.isEmpty()) {
+            pmwm = userService.coverLetterList(session, strNum, sort);
+        } else {
+            pmwm = userService.coverLetterListSearch(session, strNum, word);
+        }
         model.addAttribute("letterList", pmwm.getData());
+        model.addAttribute("strNum", strNum);
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        model.addAttribute("sort", sort);
         return pmwm.getPageName();
     }
 
     @GetMapping("/cover-letter/form")
-    public String coverLetterForm() {
+    public String coverLetterForm(HttpSession session, @RequestParam(required = false) Long postId, @RequestParam(required = false) Long companyId, @RequestParam(required = false) String postType, @RequestParam(required = false) String errorMessage, Model model) {
+        if(Objects.nonNull(postId)){
+            PageMoveWithMessage postDetail = companyService.getPostDetail(session, postId, postType, companyId);
+            model.addAttribute("detail", postDetail.getData());
+        }
+        model.addAttribute("postId", postId);
+        model.addAttribute("companyId", companyId);
+        model.addAttribute("postType", postType);
+        model.addAttribute("errorMessage", errorMessage);
         return "user/coverLetter-form";
     }
 
     @PostMapping("/cover-letter/create")
-    public String createCoverLetter(String title, @ModelAttribute QnaListDto qnaListDto, HttpSession session) {
+    public String createCoverLetter(RedirectAttributes redirectAttributes, String title, @ModelAttribute QnaListDto qnaListDto, HttpSession session) {
         List<QnaDto> qnaDtoList = new ArrayList<>();
         for (int i = 0; i < qnaListDto.getAnswer().size(); i++) {
             String question = qnaListDto.getQuestion().get(i);
             String answer = qnaListDto.getAnswer().get(i);
             qnaDtoList.add(new QnaDto(question, answer));
         }
-
-        PageMoveWithMessage pmwm = userService.createCoverLetter(session, new CoverLetterPostRequestDto(title, qnaDtoList));
+        if (Objects.nonNull(qnaListDto.getPostId())) {
+            redirectAttributes.addAttribute("companyId", qnaListDto.getCompanyId());
+            redirectAttributes.addAttribute("postId", qnaListDto.getPostId());
+            redirectAttributes.addAttribute("postType", qnaListDto.getPostType());
+        }
+        PageMoveWithMessage pmwm = userService.createCoverLetter(session, new CoverLetterPostRequestDto(title, qnaDtoList), qnaListDto);
+        redirectAttributes.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
 
@@ -152,10 +182,10 @@ public class UserController {
         return pmwm.getPageName();
     }
 
-    @PostMapping("/apply")
-    public String apply(HttpSession session, @ModelAttribute ApplicationLetterPostRequestDto dto, Model model) {
-        PageMoveWithMessage pmwm = userService.apply(session, dto);
-        model.addAttribute("errorMessage", pmwm.getErrorMessage());
+    @PostMapping("/apply/{companyId}")
+    public String apply(RedirectAttributes redirectAttributes, HttpSession session, @ModelAttribute ApplicationLetterPostRequestDto dto, @PathVariable Long companyId) {
+        PageMoveWithMessage pmwm = userService.apply(session, dto, companyId);
+        redirectAttributes.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
 }
