@@ -133,8 +133,7 @@ public class AdminService {
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("admin/main", response.getMessage());
 
-        List<StackAndJobResponseDto> dtos = ApiResponseToList.stackAndJobList(response.getData());
-        return new PageMoveWithMessage("redirect:/v1/admin/stacks", dtos);
+        return new PageMoveWithMessage("redirect:/v1/admin/stacks", response.getMessage());
     }
 
     public PageMoveWithMessage searchStack(HttpSession session, String stackName) {
