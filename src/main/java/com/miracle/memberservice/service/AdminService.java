@@ -2,16 +2,16 @@ package com.miracle.memberservice.service;
 
 import com.miracle.memberservice.dto.request.JobRequestDto;
 import com.miracle.memberservice.dto.request.StackRequestDto;
-import com.miracle.memberservice.dto.response.ApiResponse;
-import com.miracle.memberservice.dto.response.JobResponseDto;
-import com.miracle.memberservice.dto.response.StackResponseDto;
+import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.util.ApiResponseToList;
 import com.miracle.memberservice.util.Const;
+import com.miracle.memberservice.util.PageMoveWithMessage;
 import com.miracle.memberservice.util.ServiceCall;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AdminService {
@@ -52,4 +52,19 @@ public class AdminService {
         return ApiResponseToList.jobs(response.getData());
     }
 
+    public PageMoveWithMessage getUserList(HttpSession session, int strNum, int endNum) {
+        ApiResponse response = ServiceCall.getParamList(session, Const.RequestHeader.USER, "/user", strNum, endNum);
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("index", response.getMessage());
+        List<List<UserListResponseDto>> userList = ApiResponseToList.userList(response.getData());
+
+        return new PageMoveWithMessage("admin/userList", userList);
+    }
+
+    public PageMoveWithMessage getCompanyList(HttpSession session, int strNum, int endNum) {
+        ApiResponse response = ServiceCall.getParamList(session, Const.RequestHeader.COMPANY, "/company/list", strNum, endNum, false);
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("index", response.getMessage());
+        List<List<CompanyListResponseDto>> companyList = ApiResponseToList.companyList(response.getData());
+
+        return new PageMoveWithMessage("admin/companyList", companyList);
+    }
 }
