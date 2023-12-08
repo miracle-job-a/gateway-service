@@ -161,8 +161,26 @@ public class CompanyController {
     }
 
     // 수정페이지 전 이동
-    @GetMapping("/update-form")
+    @GetMapping("/edit-info")
     public String companyMdfy(){ return "company/validation"; }
+
+    // 수정페이지 요청
+    @PostMapping("/info-check")
+    public String checkCompanyInfo(HttpSession session, @ModelAttribute CompanyLoginRequestDto requestDto) {
+        boolean checked = companyService.checkCompanyInfo(session, requestDto);
+        if (checked) {
+            return "redirect:/v1/company/modify";
+        } else {
+            return "/error/500";
+        }
+    }
+
+    @GetMapping("/modify")
+    public String modifyCompanyInfo(HttpSession session, Model model) {
+        PageMoveWithMessage pmwm = companyService.modifyCompanyInfo(session);
+        model.addAttribute("info", pmwm.getData());
+        return pmwm.getPageName();
+    }
 
 
 }

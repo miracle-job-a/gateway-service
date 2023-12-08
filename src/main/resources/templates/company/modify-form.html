@@ -11,7 +11,6 @@
             alert(errorMessage);
             // 이후 로직 추가 가능
         }
-
         /* 비밀번호 체크 */
         $(document).ready(function () {
 
@@ -21,9 +20,6 @@
 
             $('#pwConfirm').keyup(function () {
                 checkPasswordConfirmation();
-            });
-
-            $('#termsAgree').change(function () {
             });
 
             function checkPassword() {
@@ -85,33 +81,6 @@
         function goBack() {
             window.history.back();
         }
-
-    function enableEditing(){
-
-        $('#cancelBtn ').css('display', 'block');
-        $('#submitBtn').css('display', 'block');
-
-        $('#editBtn').css('display', 'none');
-        $('#back').css('display', 'none');
-        /*$('.question').removeAttr('readonly').removeClass('form-control-plaintext').addClass('form-control');*/
-
-        var pwdDiv = document.getElementById("pwd");
-        var passwordInput = document.getElementById("password");
-        var confirmPwdInput = document.getElementById("confirmPwd");
-
-        if (pwdDiv.style.display === "none") {
-            // 숨겨진 경우 나타내기
-            pwdDiv.style.display = "block";
-            passwordInput.style.display = "block";
-            confirmPwdInput.style.display = "block";
-        } else {
-            // 나타난 경우 숨기기
-            pwdDiv.style.display = "none";
-            passwordInput.style.display = "none";
-            confirmPwdInput.style.display = "none";
-        }
-
-    }
 
         function validateSpecialCharacters() {
             var inputValues = [
@@ -181,9 +150,6 @@
 
         }
 
-        function infoBtn(){
-            window.location.href = '/v1/company/edit-info';
-        }
 
     </script>
 
@@ -200,6 +166,7 @@
                             <h4 class="section-title">기업정보</h4>
                         </div>
 
+                        <form action="/v1/company/info-check" method="post" role="form" >
                         <div class="row justify-content-center">
                             <div class="row ">
                                 <div class="col-lg-4 col-12">
@@ -214,28 +181,48 @@
                                     <div class="custom-block-info post-form">
 
                                         <div class="col-10 mt-4 mx-auto">
-                                        <h2 class="mb-2 " th:text="${info.name}">Kakao</h2> <!-- 기업명 -->
+                                            <input type="text" class="form-control-lg" th:value="${info.name}"/>
+                                        </div>
+
+                                        <!-- 비밀번호 -->
+                                        <div class="col-10 mt-3 mx-auto">
+                                            <div class="form-floating">
+                                                <input type="password" name="password" id="inputPw" class="form-control"
+                                                       placeholder="비밀번호" required="">
+                                                <label for="floatingInput" id="checkPw">비밀번호(알파벳 포함 숫자 6자리 이상, 특수문자 1개
+                                                    포함)<span class="text-danger">*</span></label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-10 mt-3 mx-auto">
+                                            <div class="form-floating">
+                                                <input type="password" name="passwordConfirm" id="pwConfirm"
+                                                       class="form-control"
+                                                       placeholder="비밀번호확인" required="">
+                                                <label for="floatingInput" id="pwConfirmMsg">비밀번호 확인<span
+                                                        class="text-danger">*</span></label>
+                                            </div>
                                         </div>
 
                                         <div class="col-10 mt-3 mx-auto">
                                             <label>대표자</label>
-                                            <input type="text" readonly class="form-control mt-2" id="ceoName" name="ceoName" placeholder="" th:value="${info.ceoName}">
+                                            <input type="text" class="form-control mt-2" id="ceoName" name="ceoName" placeholder="" th:value="${info.ceoName}">
                                         </div>
 
                                         <div class="col-10 mt-3 mx-auto">
                                             <label>업종</label>
-                                            <input type="text" readonly class="form-control mt-2" id="sector" name="sector" th:value="${info.sector}">
+                                            <input type="text" class="form-control mt-2" id="sector" name="sector" th:value="${info.sector}">
                                         </div>
 
                                         <div class="col-10 mt-3 mx-auto">
                                             <label>직원수</label>
-                                            <input type="num" readonly class="form-control mt-2" id="employeeNum" name="employeeNum" th:value="${info.employeeNum}"
+                                            <input type="num" class="form-control mt-2" id="employeeNum" name="employeeNum" th:value="${info.employeeNum}"
                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                         </div>
 
                                         <div class="col-10 mt-3 mx-auto">
                                             <label>주소</label>
-                                            <input type="text" readonly class="form-control-plaintext mt-2" id="address" name="address" th:value="${info.address}">
+                                            <input type="text" class="form-control mt-2" id="address" name="address" th:value="${info.address}">
                                         </div>
 
                                         <div class="col-10 mt-3 mx-auto">
@@ -255,18 +242,16 @@
 
                                             </div>
                                             <div class="col-4">
-                                                <button type="button" class="form-control" onclick="infoBtn()" >정보수정</button>
+                                                <button type="submit" class="form-control" >정보수정</button>
                                             </div>
                                         </div>
-
 
                                     </div>
                                 </div>
                             </div>
-
                         </div>
+                        </form>
                     </div>
-
                 </div>
             </div>
         </section>
