@@ -54,8 +54,9 @@ public class AdminController {
     private String modifyStack(@RequestParam String stackId, @RequestParam String modifiedName, Model model, HttpSession session){
         PageMoveWithMessage pmwm = adminService.modifyStack(session, stackId, modifiedName);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
-
+        String errorMessage = pmwm.getErrorMessage();
         model.addAttribute("totalStackList", data);
+        model.addAttribute("errorMessage", errorMessage);
         return pmwm.getPageName();
     }
 
@@ -102,5 +103,16 @@ public class AdminController {
 
         model.addAttribute("totalJobList", data);
         return pmwm.getPageName();
+    }
+
+    @GetMapping("/userList")
+    private String userList(HttpSession session){
+        return "admin/userList";
+    }
+
+    @GetMapping("/companyList")
+    private String companyList(HttpSession session, Model model){
+        model.addAttribute("companyId", 1L);
+        return "admin/companyList";
     }
 }
