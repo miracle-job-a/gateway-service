@@ -7,7 +7,7 @@
     <script>
         function registerStack() {
             var stackName = document.getElementById('register').value;
-            var confirmation = confirm("등록 후, 삭제 할 수 없습니다. 등록하시겠습니까?");
+            var confirmation = confirm("등록 후에는 삭제 할 수 없습니다. 등록하시겠습니까?");
 
             if (confirmation) {
                 var xhr = new XMLHttpRequest();
@@ -44,16 +44,19 @@
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status === 200) {
-                        console.log("스택이 성공적으로 등록되었습니다!");
-                        alert("성공적으로 처리되었습니다.");
+/*                        var errorMessage = document.getElementById('errorMessage').getAttribute('data-error-message');
+                        alert(errorMessage);*/
                     } else {
-                        console.error("스택 등록에 실패했습니다. 상태: " + xhr.status);
+                        console.error("스택 수정에 실패했습니다. status: " + xhr.status);
+                        alert("스택 수정에 실패했습니다.");
                     }
                 }
             };
 
             xhr.send(params);
         }
+
+
 
         function fillModifyForm(button) {
             var stackId = button.getAttribute('data-stack-id');
@@ -100,6 +103,7 @@
                                                class="form-control" placeholder="스택 클릭 후 수정하고 싶은 스택명 기입" required="" />
                                         <input type="hidden" name="id" id="modifyId" />
                                         <button class="btn" type="submit" onclick="modifyStack()">수정</button>
+                                        <input type="hidden" id="errorMessage" data-error-message="${errorMesssage}" />
                                     </div>
                                     </form>
                                 </div>
