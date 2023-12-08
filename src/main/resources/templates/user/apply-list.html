@@ -61,50 +61,58 @@
                         </div>
                     </div>
 
-
-                    <!-- Thymeleaf 반복문을 사용하여 ArrayList 내의 객체들을 처리 -->
-                    <div th:each="letterItem, letterItemStat : ${letter}" th:id="'postPage'+${letterItemStat.index}">
+                    <div th:each="letterItem, letterItemStat : ${letter}" th:id="'postPage' + ${letterItemStat.index}">
                         <div th:each="letters, lettersStat : ${letterItem}" class="col-lg-10 col-12 mb-4 mb-lg-2 mx-auto">
                             <div class="custom-block d-flex">
                                 <div class="custom-block-info">
-                                    <div class="custom-block-top d-flex mb-1">
-                                        <small class="me-4">
-                                            <i class="bi-clock-fill custom-icon" th:title="'지원일자 : ' + ${letters.submitDate.substring(0, 10)}"></i>
-                                            <span th:text="'지원일자 : ' + ${letters.submitDate}"></span>
-                                        </small>
-                                        <small>
-                                            <span th:if="${letters.postType eq 'MZ'}" class="badge bg-primary me-1">MZ 공고</span>
-                                            <span th:if="${letters.postType eq 'NORMAL'}" class="badge bg-secondary me-1">일반 공고</span>
-                                        </small>
-                                        <small>
-                                            <span th:if="${letters.applicationStatus eq 'IN_PROGRESS'}" class="badge bg-warning ms-1 me-1">진행중</span>
-                                            <span th:if="${letters.applicationStatus eq 'PASS'}" class="badge bg-success ms-1 me-1">합격</span>
-                                            <span th:if="${letters.applicationStatus eq 'FAIL'}" class="badge bg-secondary ms-1 me-1">불합격</span>
-                                        </small>
-                                        <small><span class="badge bg-dark ms-1" th:text="${letters.job}">백엔드</span></small>
-                                    </div>
-                                    <h5 class="m-2" th:text="'지원서 번호 (추후 회사이름) : ' + ${letters.applicationLetterId}"></h5>
-                                    <div class="custom-block-bottom d-flex mt-3">
-                                        <input type="hidden" id="letterId" th:value="${letters.applicationLetterId}">
-                                        <button type="button" class="btn btn-outline-secondary me-1" th:id="${letters.postId}" name="post">공고정보</button>
-                                        <button type="button" class="btn btn-outline-secondary ms-1 me-1" th:id="${letters.applicationLetterId}" name="resume">
-                                            지원 이력서
-                                        </button>
-                                        <button type="button" class="btn btn-outline-secondary ms-1 me-1"
-                                                th:id="${letters.applicationLetterId}" name="coverLetter"
-                                                th:if="${letters.postType != 'MZ'}">
-                                            지원 자기소개서
-                                        </button>
-                                        <button type="button" class="btn btn-outline-secondary ms-1"
-                                                th:id="${#strings.isEmpty(letters.interviewId) ? '0' : letters.interviewId}" name="interview">
-                                            면접
-                                        </button>
+                                    <!-- th:with를 사용하여 현재 letter의 postId를 변수에 저장 -->
+                                    <div th:with="currentPostId=${letters.postId}">
+                                        <!-- company와의 중첩된 반복문을 통해 postId 일치 여부 확인 -->
+                                        <div th:each="companyInfo : ${info}">
+                                            <div th:if="${companyInfo.postId == currentPostId}">
+                                                <div class="custom-block-top d-flex mb-1">
+                                                    <small class="me-4">
+                                                        <i class="bi-clock-fill custom-icon" th:title="'지원일자 : ' + ${letters.submitDate.substring(0, 10)}"></i>
+                                                        <span th:text="'지원일자 : ' + ${letters.submitDate}"></span>
+                                                    </small>
+                                                    <small>
+                                                        <span th:if="${letters.postType eq 'MZ'}" class="badge bg-primary me-1">MZ 공고</span>
+                                                        <span th:if="${letters.postType eq 'NORMAL'}" class="badge bg-secondary me-1">일반 공고</span>
+                                                    </small>
+                                                    <small>
+                                                        <span th:if="${letters.applicationStatus eq 'IN_PROGRESS'}" class="badge bg-warning ms-1 me-1">진행중</span>
+                                                        <span th:if="${letters.applicationStatus eq 'PASS'}" class="badge bg-success ms-1 me-1">합격</span>
+                                                        <span th:if="${letters.applicationStatus eq 'FAIL'}" class="badge bg-secondary ms-1 me-1">불합격</span>
+                                                    </small>
+                                                    <small><span class="badge bg-dark ms-1" th:text="${letters.job}">백엔드</span></small>
+                                                </div>
+
+                                                <h5 class="m-2 text-dark" th:text="${companyInfo.companyName}"></h5>
+                                                <div class="custom-block-bottom d-flex mt-3">
+                                                    <input type="hidden" id="letterId" th:value="${letters.applicationLetterId}">
+                                                    <input type="hidden" id="companyId" th:value="${companyInfo.companyId}">
+                                                    <input type="hidden" id="postType" th:value="${letters.postType}">
+                                                    <button type="button" class="btn btn-outline-secondary me-1" th:id="${letters.postId}" name="post">공고정보</button>
+                                                    <button type="button" class="btn btn-outline-secondary ms-1 me-1" th:id="${letters.applicationLetterId}" name="resume">
+                                                        지원 이력서
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-secondary ms-1 me-1"
+                                                            th:id="${letters.applicationLetterId}" name="coverLetter"
+                                                            th:if="${letters.postType != 'MZ'}">
+                                                        지원 자기소개서
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-secondary ms-1"
+                                                            th:id="${#strings.isEmpty(letters.interviewId) ? '0' : letters.interviewId}" name="interview">
+                                                        면접
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
 
                     <div class="col-lg-4 col-12 mx-auto">
                         <nav aria-label="Page navigation example">
@@ -131,7 +139,6 @@
                             </ul>
                         </nav>
                     </div>
-
                 </div>
             </div>
         </section>
@@ -143,8 +150,10 @@
             document.querySelectorAll('[name="post"]').forEach(function(button) {
                 button.addEventListener('click', function() {
                     var postId = button.id;
-                    var postType = [[${postType}]];
-                    window.location.href = '/v1/click/post/' + postId + 'detail?postType=' + postType;
+                    var companyId = button.closest('.custom-block').querySelector('[id="companyId"]').value;
+                    var postType = button.closest('.custom-block').querySelector('[id="postType"]').value;
+                    window.location.href = '/v1/click/post/' + postId + '/detail?companyId='+ companyId + '&postType=' + postType;
+
                 });
             });
 

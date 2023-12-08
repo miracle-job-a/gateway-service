@@ -1,6 +1,7 @@
 package com.miracle.memberservice.util;
 
 import com.miracle.memberservice.dto.request.JobRequestDto;
+import com.miracle.memberservice.dto.request.PostIdRequestDto;
 import com.miracle.memberservice.dto.response.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -336,6 +337,23 @@ public class ApiResponseToList {
             dtos.add(StackAndJobResponseDto.builder()
                     .id(lhm.get("id"))
                     .name(lhm.get("name"))
+                    .build());
+        }
+        return dtos;
+    }
+
+    public static List<CompanyNameResponseDto> companyInfo(Object object){
+        ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+
+        List<CompanyNameResponseDto> dtos = new ArrayList<>();
+        for (LinkedHashMap<String, Object> info : data){
+
+            Integer postId = (Integer) info.get("postId");
+            Integer companyId = (Integer) info.get("companyId");
+            dtos.add(CompanyNameResponseDto.builder()
+                            .postId(postId.longValue())
+                            .companyId(companyId.longValue())
+                            .companyName((String) info.get("companyName"))
                     .build());
         }
         return dtos;
