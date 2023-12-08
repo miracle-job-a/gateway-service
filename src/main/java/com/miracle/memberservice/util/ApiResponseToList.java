@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class ApiResponseToList {
@@ -437,5 +438,73 @@ public class ApiResponseToList {
         }
         return dtos;
     }
-}
 
+    public static List<List<UserListResponseDto>> userList(Object object) {
+        List<List<UserListResponseDto>> pageList = new ArrayList<>();
+
+        if (object instanceof List) {
+            List<?> outerList = (List<?>) object;
+
+            for (Object innerList : outerList) {
+                if (innerList instanceof List) {
+                    List<?> dataList = (List<?>) innerList;
+
+                    List<UserListResponseDto> dtos = dataList.stream()
+                            .filter(dtoItem -> dtoItem instanceof Map)
+                            .map(dtoItem -> (Map<?, ?>) dtoItem)
+                            .map(dto -> UserListResponseDto.builder()
+                                    .id(((Number) dto.get("id")).longValue())
+                                    .email(dto.get("email"))
+                                    .name(dto.get("name"))
+                                    .address(dto.get("address"))
+                                    .createdAt(dto.get("joinDate"))
+                                    .build())
+                            .collect(Collectors.toList());
+
+                    pageList.add(dtos);
+                }
+            }
+        }
+        System.out.println("ApiResponseToList pageList : " + pageList);
+        return pageList;
+    }
+
+    public static List<List<CompanyListResponseDto>> companyList(Object object) {
+        List<List<CompanyListResponseDto>> pageList = new ArrayList<>();
+
+        if (object instanceof List) {
+            List<?> outerList = (List<?>) object;
+
+            for (Object outerItem : outerList) {
+                if (outerItem instanceof Map) {
+                    Map<?, ?> outerMap = (Map<?, ?>) outerItem;
+
+                    if (outerMap.containsKey("content")) {
+                        Object contentObject = outerMap.get("content");
+                        if (contentObject instanceof List) {
+                            List<?> contentList = (List<?>) contentObject;
+
+                            List<CompanyListResponseDto> dtos = contentList.stream()
+                                    .filter(dtoItem -> dtoItem instanceof Map)
+                                    .map(dtoItem -> (Map<?, ?>) dtoItem)
+                                    .map(dto -> CompanyListResponseDto.builder()
+                                            .id(((Number) dto.get("id")).longValue())
+                                            .email(dto.get("email"))
+                                            .name(dto.get("name"))
+                                            .employeeNum(dto.get("employeeNum"))
+                                            .bno(dto.get("bno"))
+                                            .status(dto.get("status"))
+                                            .approveStatus(dto.get("approveStatus"))
+                                            .createdAt(dto.get("createdAt"))
+                                            .build())
+                                    .collect(Collectors.toList());
+
+                            pageList.add(dtos);
+                        }
+                    }
+                }
+            }
+        }
+        return pageList;
+    }
+}
