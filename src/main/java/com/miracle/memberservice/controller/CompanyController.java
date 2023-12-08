@@ -1,6 +1,7 @@
 package com.miracle.memberservice.controller;
 
 import com.miracle.memberservice.dto.request.*;
+import com.miracle.memberservice.dto.response.CompanyPageResponseDto;
 import com.miracle.memberservice.dto.response.JobResponseDto;
 import com.miracle.memberservice.dto.response.PostResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;
@@ -150,4 +151,18 @@ public class CompanyController {
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
+
+    //기업정보 상세보기 (임시)
+    @GetMapping("/company-info")
+    public String getCompanyInfo(HttpSession session, Model model) {
+        PageMoveWithMessage pmwm = companyService.getCompanyInfo(session);
+        model.addAttribute("info", pmwm.getData());
+        return pmwm.getPageName();
+    }
+
+    // 수정페이지 전 이동
+    @GetMapping("/update-form")
+    public String companyMdfy(){ return "company/validation"; }
+
+
 }

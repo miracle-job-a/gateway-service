@@ -126,4 +126,15 @@ public class MyPageController {
         PageMoveWithMessage pmwm = myPageService.deleteInterview(session, interviewId);
         return pmwm.getPageName();
     }
+
+    // 개인정보 조회 (임시)
+    @GetMapping("/personal")
+    public String getPersonal(){ return "user/personal-info"; }
+
+    // 개인정보 확인
+    @GetMapping("/validation")
+    public String vaildation() { return "user/validation"; }
+
+    // 개인정보 수정
+
 }

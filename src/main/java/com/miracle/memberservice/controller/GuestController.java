@@ -258,4 +258,6 @@ public class GuestController {
         model.addAttribute("stacks", stacks);
         return "guest/post-detail";
     }
+
+
 }
