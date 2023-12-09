@@ -1,7 +1,6 @@
 package com.miracle.memberservice.util;
 
 import com.miracle.memberservice.dto.request.JobRequestDto;
-import com.miracle.memberservice.dto.request.PostIdRequestDto;
 import com.miracle.memberservice.dto.response.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -10,6 +9,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class ApiResponseToList {
@@ -348,9 +348,9 @@ public class ApiResponseToList {
                     dtos.add(ApplicantListResponseDto.builder()
                             .applicationLetterId(applicationLetterId.longValue())
                             .submitDate(String.valueOf(letter.get("submitDate")))
-                                    .address(String.valueOf(letter.get("address")))
-                                    .resumeTitle(String.valueOf(letter.get("resumeTitle")))
-                                    .name(String.valueOf(letter.get("name")))
+                            .address(String.valueOf(letter.get("address")))
+                            .resumeTitle(String.valueOf(letter.get("resumeTitle")))
+                            .name(String.valueOf(letter.get("name")))
                             .build());
                 }
                 pageList.add(dtos);
@@ -425,7 +425,7 @@ public class ApiResponseToList {
         return pageList;
     }
 
-        public static List<StackAndJobResponseDto> stackAndJobList(Object object) {
+    public static List<StackAndJobResponseDto> stackAndJobList(Object object) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
 
         List<StackAndJobResponseDto> dtos = new ArrayList<>();
@@ -439,21 +439,90 @@ public class ApiResponseToList {
         return dtos;
     }
 
-    public static List<CompanyNameResponseDto> companyInfo(Object object){
+    public static List<CompanyNameResponseDto> companyInfo(Object object) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
 
         List<CompanyNameResponseDto> dtos = new ArrayList<>();
-        for (LinkedHashMap<String, Object> info : data){
+        for (LinkedHashMap<String, Object> info : data) {
 
             Integer postId = (Integer) info.get("postId");
             Integer companyId = (Integer) info.get("companyId");
             dtos.add(CompanyNameResponseDto.builder()
-                            .postId(postId.longValue())
-                            .companyId(companyId.longValue())
-                            .companyName((String) info.get("companyName"))
+                    .postId(postId.longValue())
+                    .companyId(companyId.longValue())
+                    .companyName((String) info.get("companyName"))
                     .build());
         }
         return dtos;
     }
-}
 
+
+    public static List<List<UserListResponseDto>> userList(Object object) {
+        List<List<UserListResponseDto>> pageList = new ArrayList<>();
+
+        if (object instanceof List) {
+            List<?> outerList = (List<?>) object;
+
+            for (Object innerList : outerList) {
+                if (innerList instanceof List) {
+                    List<?> dataList = (List<?>) innerList;
+
+                    List<UserListResponseDto> dtos = dataList.stream()
+                            .filter(dtoItem -> dtoItem instanceof Map)
+                            .map(dtoItem -> (Map<?, ?>) dtoItem)
+                            .map(dto -> UserListResponseDto.builder()
+                                    .id(((Number) dto.get("id")).longValue())
+                                    .email(dto.get("email"))
+                                    .name(dto.get("name"))
+                                    .address(dto.get("address"))
+                                    .createdAt(dto.get("joinDate"))
+                                    .build())
+                            .collect(Collectors.toList());
+
+                    pageList.add(dtos);
+                }
+            }
+        }
+        System.out.println("ApiResponseToList pageList : " + pageList);
+        return pageList;
+    }
+
+    public static List<List<CompanyListResponseDto>> companyList(Object object) {
+        List<List<CompanyListResponseDto>> pageList = new ArrayList<>();
+
+        if (object instanceof List) {
+            List<?> outerList = (List<?>) object;
+
+            for (Object outerItem : outerList) {
+                if (outerItem instanceof Map) {
+                    Map<?, ?> outerMap = (Map<?, ?>) outerItem;
+
+                    if (outerMap.containsKey("content")) {
+                        Object contentObject = outerMap.get("content");
+                        if (contentObject instanceof List) {
+                            List<?> contentList = (List<?>) contentObject;
+
+                            List<CompanyListResponseDto> dtos = contentList.stream()
+                                    .filter(dtoItem -> dtoItem instanceof Map)
+                                    .map(dtoItem -> (Map<?, ?>) dtoItem)
+                                    .map(dto -> CompanyListResponseDto.builder()
+                                            .id(((Number) dto.get("id")).longValue())
+                                            .email(dto.get("email"))
+                                            .name(dto.get("name"))
+                                            .employeeNum(dto.get("employeeNum"))
+                                            .bno(dto.get("bno"))
+                                            .status(dto.get("status"))
+                                            .approveStatus(dto.get("approveStatus"))
+                                            .createdAt(dto.get("createdAt"))
+                                            .build())
+                                    .collect(Collectors.toList());
+
+                            pageList.add(dtos);
+                        }
+                    }
+                }
+            }
+        }
+        return pageList;
+    }
+}
