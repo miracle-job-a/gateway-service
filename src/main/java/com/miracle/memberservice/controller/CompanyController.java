@@ -163,12 +163,4 @@ public class CompanyController {
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
-
-    @GetMapping("/approval/{companyId}")
-    public String approveCompany(@PathVariable Long companyId, Model model, HttpSession session) {
-        PageMoveWithMessage pmwm = companyService.approveCompany(session, companyId);
-        System.out.println(pmwm.getData());
-        model.addAttribute("status", pmwm.getData());
-        return pmwm.getPageName();
-    }
 }
