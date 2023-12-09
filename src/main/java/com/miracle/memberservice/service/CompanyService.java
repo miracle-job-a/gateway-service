@@ -273,20 +273,14 @@ public class CompanyService {
         return new PageMoveWithMessage("admin/main", postList);
     }
 
-    public PageMoveWithMessage approveCompany(HttpSession session, Long companyId) {
-        String id = String.valueOf(companyId);
-        System.out.println(companyId);
-        ApiResponse response = ServiceCall.putApproveCompany(session, Const.RequestHeader.COMPANY, "/company/" + id + "/approval");
-        System.out.println(session);
+    public PageMoveWithMessage approveCompany(HttpSession session, String companyId) {
+        ApiResponse response = ServiceCall.putApproveCompany(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/approval");
         if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("admin/main", response.getMessage());
         } else if (response.getData() instanceof Boolean && (Boolean) response.getData() == false) {
-            System.out.println(response.getData());
-            return new PageMoveWithMessage("admin/companyList", response.getData());
+            return new PageMoveWithMessage("admin/companyList", response.getMessage());
         } else {
-            System.out.println(response.getData());
-            return new PageMoveWithMessage("admin/companyList", response.getData());
+            return new PageMoveWithMessage("redirect:/v1/admin/company/list/1/5");
         }
-
     }
 }
