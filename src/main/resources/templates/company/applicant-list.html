@@ -67,12 +67,12 @@
                     <div class="row col-lg-10 col-12 mb-4 d-flex justify-content-between">
                         <div class="col-4">
                             <div class="btn-group">
-                                <button id="SUBMIT_DATE_ASC" type="button"
-                                        th:class="${sort == 'SUBMIT_DATE_ASC' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}"
-                                        onclick="sort(this)">최신순
-                                </button>
                                 <button id="SUBMIT_DATE_DESC" type="button"
                                         th:class="${sort == 'SUBMIT_DATE_DESC' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}"
+                                        onclick="sort(this)">최신순
+                                </button>
+                                <button id="SUBMIT_DATE_ASC" type="button"
+                                        th:class="${sort == 'SUBMIT_DATE_ASC' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}"
                                         onclick="sort(this)">
                                     오래된순
                                 </button>

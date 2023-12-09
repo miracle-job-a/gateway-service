@@ -60,7 +60,7 @@ public class CompanyController {
     @GetMapping("/post/detail")
     public String postDetail(HttpSession session, Model model, @RequestParam(name = "id") Long postId, @RequestParam String postType) {
         PageMoveWithMessage pmwm = companyService.getPostDetail(session, postId, postType, null);
-        PageMoveWithMessage pmwm2 = companyService.formPost(session, null, null);
+        PageMoveWithMessage info = companyService.formPost(session, null, null);
 
         PostResponseDto data = (PostResponseDto) pmwm.getData();
 
@@ -70,7 +70,7 @@ public class CompanyController {
 
         model.addAttribute("postType", postType);
         model.addAttribute("postId", postId);
-        model.addAttribute("info", pmwm2.getData());
+        model.addAttribute("info", info.getData());
         model.addAttribute("detail", data);
         model.addAttribute("jobs", jobs);
         model.addAttribute("stacks", stacks);
@@ -144,7 +144,7 @@ public class CompanyController {
     }
 
     @GetMapping("/post/applicant/{startPage}")
-    public String applicantList(@PathVariable int startPage, @RequestParam Long postId, @RequestParam(required = false, defaultValue = "SUBMIT_DATE_ASC") String sort, HttpSession session, Model model) {
+    public String applicantList(@PathVariable int startPage, @RequestParam Long postId, @RequestParam(required = false, defaultValue = "SUBMIT_DATE_DESC") String sort, HttpSession session, Model model) {
         PageMoveWithMessage pmwm = userService.applicantList(session, postId, sort, startPage);
         model.addAttribute("applicantList", pmwm.getData());
         model.addAttribute("strNum", startPage);
