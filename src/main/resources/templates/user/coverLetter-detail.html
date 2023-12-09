@@ -80,7 +80,6 @@
 
         function enableEditing(){
             // 버튼 보이게 하기
-           /* $('#addButton').show();*/
             $('#cancelBtn').show();
             $('#submitEdit').show();
 
@@ -96,6 +95,29 @@
         // 뒤로가기
         function goBack() {
             window.history.back();
+        }
+
+        function validateForm(){
+            var inputValues = [
+                ...Array.from(document.getElementsByName('question')).map(function(element) {
+                    return element.value;
+                }),
+                ...Array.from(document.getElementsByName('answer')).map(function(element) {
+                    return element.value;
+                })
+            ];
+
+            for (var i = 0; i < inputValues.length; i++) {
+                if (inputValues[i].includes('<') || inputValues[i].includes('>') || inputValues[i].includes(';')
+                    || inputValues[i].includes('/') || inputValues[i].includes('\\')) {
+                    // 특수 문자가 포함된 경우 경고 메시지 표시하고 false 반환
+                    alert('입력란에 >, <, ;, /, \\, 특수기호는 입력할 수 없습니다.');
+                    return false;
+                }
+            }
+
+            return true;
+
         }
     </script>
 
@@ -117,7 +139,7 @@
 
                                 <!-- 자기소개서 생성 폼 시작 -->
                                 <div class="card mt-5 mb-4 p-4 col-11 post-form align-self-center">
-                                    <form th:action="@{/v1/user/cover-letter/update}" method="post" role="form" class="row align-self-center col-12">
+                                    <form th:action="@{/v1/user/cover-letter/update}" method="post" role="form" class="row align-self-center col-12" onsubmit="return validateForm()">
 
                                         <div class="col-12 mt-2">
                                             <div class="mb-1">
@@ -157,7 +179,7 @@
                                         <div class="row col-12 mt-2">
                                             <div class="col-4">
                                                 <button type="button" class="form-control" id="editBtn" onclick="enableEditing()">수정</button>
-                                                <button type="submit" class="form-control" id="submitEdit" style="display:none">수정완료</button>
+                                                <button type="submit" class="form-control" id="submitEdit" style="display:none" onclick="validateForm()">수정완료</button>
                                             </div>
                                             <div class="col-4">
                                                 <button type="button" class="form-control" th:attr="data-letter-id=${coverLetter.id}" onclick="confirmDelete(this)">삭제</button>

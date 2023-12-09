@@ -1,6 +1,7 @@
 package com.miracle.memberservice.service;
 
 import com.miracle.memberservice.dto.request.InterviewRequestDto;
+import com.miracle.memberservice.dto.request.PostIdRequestDto;
 import com.miracle.memberservice.dto.request.QnaDto;
 import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.util.ApiResponseToList;
@@ -27,7 +28,6 @@ public class MyPageService {
         List<List<ApplicationLetterListResponseDto>> letter = ApiResponseToList.applicationLetterList(response.getData());
         return new PageMoveWithMessage("user/apply-list", letter);
     }
-
 
     // 지원 이력서 조회하기
     public PageMoveWithMessage resumeInApplicationLetterDetail(HttpSession session, Long applicationLetterId){
@@ -107,6 +107,14 @@ public class MyPageService {
         ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.USER, "/user/" + userId + "/interview/" + interviewId);
 
         return new PageMoveWithMessage("redirect:/v1/user/my-page/apply-list/1");
+    }
+
+    // 공고 id로 기업 정보조회
+    public List<CompanyNameResponseDto> getCompanyInfo(HttpSession session, Set<Long> postId){
+        ApiResponse response = ServiceCall.post(session, new PostIdRequestDto(postId), Const.RequestHeader.COMPANY, "/company/posts");
+        if (response.getData() instanceof  Boolean) return null;
+
+        return ApiResponseToList.companyInfo(response.getData());
     }
 
 }

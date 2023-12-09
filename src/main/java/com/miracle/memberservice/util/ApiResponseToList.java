@@ -348,9 +348,9 @@ public class ApiResponseToList {
                     dtos.add(ApplicantListResponseDto.builder()
                             .applicationLetterId(applicationLetterId.longValue())
                             .submitDate(String.valueOf(letter.get("submitDate")))
-                                    .address(String.valueOf(letter.get("address")))
-                                    .resumeTitle(String.valueOf(letter.get("resumeTitle")))
-                                    .name(String.valueOf(letter.get("name")))
+                            .address(String.valueOf(letter.get("address")))
+                            .resumeTitle(String.valueOf(letter.get("resumeTitle")))
+                            .name(String.valueOf(letter.get("name")))
                             .build());
                 }
                 pageList.add(dtos);
@@ -425,7 +425,7 @@ public class ApiResponseToList {
         return pageList;
     }
 
-        public static List<StackAndJobResponseDto> stackAndJobList(Object object) {
+    public static List<StackAndJobResponseDto> stackAndJobList(Object object) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
 
         List<StackAndJobResponseDto> dtos = new ArrayList<>();
@@ -438,6 +438,24 @@ public class ApiResponseToList {
         }
         return dtos;
     }
+
+    public static List<CompanyNameResponseDto> companyInfo(Object object) {
+        ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+
+        List<CompanyNameResponseDto> dtos = new ArrayList<>();
+        for (LinkedHashMap<String, Object> info : data) {
+
+            Integer postId = (Integer) info.get("postId");
+            Integer companyId = (Integer) info.get("companyId");
+            dtos.add(CompanyNameResponseDto.builder()
+                    .postId(postId.longValue())
+                    .companyId(companyId.longValue())
+                    .companyName((String) info.get("companyName"))
+                    .build());
+        }
+        return dtos;
+    }
+
 
     public static List<List<UserListResponseDto>> userList(Object object) {
         List<List<UserListResponseDto>> pageList = new ArrayList<>();

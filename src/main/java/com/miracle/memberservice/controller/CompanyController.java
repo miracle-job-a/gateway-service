@@ -46,7 +46,6 @@ public class CompanyController {
         return pmwm.getPageName();
     }
 
-    /*DB_password=5002;DB_url=jdbc:mysql://localhost:3306/miracle_company;DB_username=root*/
     // 공고 생성 폼 이동
     @GetMapping("/post/form")
     public String postFormPage(HttpSession session, Model model) {
@@ -161,6 +160,36 @@ public class CompanyController {
         model.addAttribute("today", today);
         model.addAttribute("companyListPage", pmwm.getData());
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        return pmwm.getPageName();
+    }
+
+    //기업정보 상세보기 (임시)
+    @GetMapping("/company-info")
+    public String getCompanyInfo(HttpSession session, Model model) {
+        PageMoveWithMessage pmwm = companyService.getCompanyInfo(session);
+        model.addAttribute("info", pmwm.getData());
+        return pmwm.getPageName();
+    }
+
+    // 수정페이지 전 이동
+    @GetMapping("/edit-info")
+    public String companyMdfy(){ return "company/validation"; }
+
+    // 수정페이지 요청
+    @PostMapping("/info-check")
+    public String checkCompanyInfo(HttpSession session, @ModelAttribute CompanyLoginRequestDto requestDto) {
+        boolean checked = companyService.checkCompanyInfo(session, requestDto);
+        if (checked) {
+            return "redirect:/v1/company/modify";
+        } else {
+            return "/error/500";
+        }
+    }
+
+    @GetMapping("/modify")
+    public String modifyCompanyInfo(HttpSession session, Model model) {
+        PageMoveWithMessage pmwm = companyService.modifyCompanyInfo(session);
+        model.addAttribute("info", pmwm.getData());
         return pmwm.getPageName();
     }
 
