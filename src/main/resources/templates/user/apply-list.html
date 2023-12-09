@@ -64,10 +64,10 @@
                     <div class="row col-lg-10 col-12 mb-4">
                         <div class="col-auto">
                             <div class="btn-group">
-                                <button id="SUBMIT_DATE_ASC" type="button" th:class="${sort == 'SUBMIT_DATE_ASC' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}"
+                                <button id="SUBMIT_DATE_DESC" type="button" th:class="${sort == 'SUBMIT_DATE_DESC' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}"
                                         onclick="sort(this)">최신 지원순
                                 </button>
-                                <button id="SUBMIT_DATE_DESC" type="button" th:class="${sort == 'SUBMIT_DATE_DESC' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}" onclick="sort(this)">
+                                <button id="SUBMIT_DATE_ASC" type="button" th:class="${sort == 'SUBMIT_DATE_ASC' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}" onclick="sort(this)">
                                     오래된 지원순
                                 </button>
                             </div>
@@ -101,10 +101,10 @@
                                                         <span th:if="${letters.applicationStatus eq 'PASS'}" class="badge bg-success ms-1 me-1">합격</span>
                                                         <span th:if="${letters.applicationStatus eq 'FAIL'}" class="badge bg-secondary ms-1 me-1">불합격</span>
                                                     </small>
-                                                    <small><span class="badge bg-dark ms-1" th:text="${letters.job}" th:if="${letters.postType eq 'NORMAL'}">백엔드</span></small>
+                                                    <small><span class="badge bg-dark ms-1" th:text="${letters.job}" th:if="${letters.postType eq 'NORMAL'}"></span></small>
                                                 </div>
 
-                                                <h5 class="m-2 text-dark" th:text="${companyInfo.companyName}"></h5>
+                                                <h5 class="m-2 text-dark" th:text="${companyInfo.title}+' - '+${companyInfo.companyName}"></h5>
                                                 <div class="custom-block-bottom d-flex mt-3">
                                                     <input type="hidden" id="letterId" th:value="${letters.applicationLetterId}">
                                                     <input type="hidden" id="companyId" th:value="${companyInfo.companyId}">
