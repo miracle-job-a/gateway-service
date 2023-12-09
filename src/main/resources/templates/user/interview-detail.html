@@ -92,6 +92,29 @@
             $('.answer').removeAttr('readonly');
         }
 
+        function validateForm(){
+            var inputValues = [
+                ...Array.from(document.getElementsByName('question')).map(function(element) {
+                    return element.value;
+                }),
+                ...Array.from(document.getElementsByName('answer')).map(function(element) {
+                    return element.value;
+                })
+            ];
+
+            for (var i = 0; i < inputValues.length; i++) {
+                if (inputValues[i].includes('<') || inputValues[i].includes('>') || inputValues[i].includes(';')
+                    || inputValues[i].includes('/') || inputValues[i].includes('\\')) {
+                    // 특수 문자가 포함된 경우 경고 메시지 표시하고 false 반환
+                    alert('입력란에 >, <, ;, /, \\, 특수기호는 입력할 수 없습니다.');
+                    return false;
+                }
+            }
+
+            return true;
+
+        }
+
 
     </script>
 
@@ -109,7 +132,7 @@
                             <h4 class="section-title">면접 등록</h4>
                         </div>
 
-                        <form action="/v1/user/my-page/interview/update" method="post">
+                        <form action="/v1/user/my-page/interview/update" method="post" onsubmit="return validateForm()">
                         <div class="row justify-content-center">
                             <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-11 align-self-center">
 
@@ -140,7 +163,7 @@
                                         <button type="button" class="btn btn-secondary" id="editBtn" onclick="enableEditing()">수정</button>
                                         <button type="button" class="btn btn-outline-secondary" id="addBtn" onclick="addInputFields()" style="display:none;">항목 추가</button>
                                         <button type="button" class="btn btn-secondary" id="deleteBtn" th:attr="data-interview-id=${interviewId}" onclick="confirmDelete(this)">삭제</button>
-                                        <button type="submit" class="btn btn-secondary" id="submitBtn" style="display: none;">수정완료</button>
+                                        <button type="submit" class="btn btn-secondary" id="submitBtn" onclick="validateForm()" style="display: none;">수정완료</button>
                                     </div>
                                 </div>
 

@@ -7,6 +7,7 @@ import lombok.ToString;
 @Getter
 @ToString
 public class ApplicationLetterListResponseDto {
+
     private final Long applicationLetterId;
     private final Long postId;
     private final Long interviewId;

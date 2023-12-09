@@ -1153,14 +1153,14 @@ main {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  margin-top: 40px;
-  padding-top: 100px;
-  padding-bottom: 150px;
+  margin-top: 30px;
+  padding-top: 50px;
+  padding-bottom: 100px;
 }
 
 .site-footer > .container {
   position: relative;
-  top: 50px;
+  top: 30px;
 }
 
 .site-footer-title,
