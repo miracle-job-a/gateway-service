@@ -9,11 +9,8 @@ import com.miracle.memberservice.util.Const;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import com.miracle.memberservice.util.ServiceCall;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
@@ -69,6 +66,22 @@ public class AdminService {
     public List<JobResponseDto> getAllJobs(HttpSession session){
         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.ADMIN, "/admin/jobs");
         return ApiResponseToList.jobs(response.getData());
+    }
+
+    public PageMoveWithMessage getUserList(HttpSession session, int strNum, int endNum) {
+        ApiResponse response = ServiceCall.getParamList(session, Const.RequestHeader.USER, "/user", strNum, endNum);
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("index", response.getMessage());
+        List<List<UserListResponseDto>> userList = ApiResponseToList.userList(response.getData());
+
+        return new PageMoveWithMessage("admin/userList", userList);
+    }
+
+    public PageMoveWithMessage getCompanyList(HttpSession session, int strNum, int endNum) {
+        ApiResponse response = ServiceCall.getParamList(session, Const.RequestHeader.COMPANY, "/company/list", strNum, endNum, false);
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("index", response.getMessage());
+        List<List<CompanyListResponseDto>> companyList = ApiResponseToList.companyList(response.getData());
+
+        return new PageMoveWithMessage("admin/companyList", companyList);
     }
 
     public PageMoveWithMessage getAllJob(HttpSession session){
