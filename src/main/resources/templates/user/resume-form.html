@@ -141,10 +141,9 @@
             ];
 
             for (var i = 0; i < inputValues.length; i++) {
-                if (inputValues[i].includes('<') || inputValues[i].includes('>') || inputValues[i].includes(';')
-                || inputValues[i].includes('/') || inputValues[i].includes('\\')) {
+                if (inputValues[i].includes('<') || inputValues[i].includes('>') || inputValues[i].includes(';') || inputValues[i].includes('\\')) {
                     // 특수 문자가 포함된 경우 경고 메시지 표시하고 false 반환
-                    alert('입력란에 >, <, ;, /, \\, 특수기호는 입력할 수 없습니다.');
+                    alert('입력란에 >, <, ;, \\ 등 특수기호는 입력할 수 없습니다.');
                     return false;
                 }
             }
@@ -157,7 +156,8 @@
             // 빈칸 경고
             var careerInput = document.getElementById('careerCal');
             if (careerInput.value.trim() === '') {
-                alert('경력기간 계산이 필요합니다.');
+                alert(`경력기간 계산 버튼을 눌러주세요.
+신입인 경우에도 경력기간 계산 버튼을 눌러주세요.`);
                 event.preventDefault();
                 return false;
             }

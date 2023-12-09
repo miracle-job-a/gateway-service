@@ -332,4 +332,14 @@ public class CompanyService {
 
         return new PageMoveWithMessage("company/modify-info", info);
     }
+    public PageMoveWithMessage approveCompany(HttpSession session, String companyId) {
+        ApiResponse response = ServiceCall.putApproveCompany(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/approval");
+        if (response.getHttpStatus() != 200) {
+            return new PageMoveWithMessage("admin/main", response.getMessage());
+        } else if (response.getData() instanceof Boolean && (Boolean) response.getData() == false) {
+            return new PageMoveWithMessage("admin/companyList", response.getMessage());
+        } else {
+            return new PageMoveWithMessage("redirect:/v1/admin/company/list/1/5");
+        }
+    }
 }
