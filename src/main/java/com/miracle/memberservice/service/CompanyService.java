@@ -27,7 +27,7 @@ public class CompanyService {
     }
 
     public Object mainPageCompany(HttpSession session, Long companyId) {
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/"+companyId+"/posts/count");
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/count");
         Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
         return data;
     }
@@ -273,13 +273,13 @@ public class CompanyService {
         return new PageMoveWithMessage("admin/main", postList);
     }
 
-    public PageMoveWithMessage getCompanyInfo(HttpSession session){
+    public PageMoveWithMessage getCompanyInfo(HttpSession session) {
         Long companyId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/"+companyId);
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId);
 
-        if (response.getHttpStatus() != 200 ) return new PageMoveWithMessage("error/500", response.getMessage());
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("error/500", response.getMessage());
 
-        LinkedHashMap<String ,Object> data = (LinkedHashMap<String, Object>) response.getData();
+        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
         CompanyPageResponseDto info = CompanyPageResponseDto.builder()
                 .companyId((Integer) data.get("companyId"))
                 .approveStatus((Boolean) data.get("approveStatus"))
@@ -298,9 +298,9 @@ public class CompanyService {
 
     }
 
-    public Boolean checkCompanyInfo (HttpSession session, CompanyLoginRequestDto requestDto){
+    public Boolean checkCompanyInfo(HttpSession session, CompanyLoginRequestDto requestDto) {
         Long companyId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.post(session, requestDto, Const.RequestHeader.COMPANY, "/company/"+companyId);
+        ApiResponse response = ServiceCall.post(session, requestDto, Const.RequestHeader.COMPANY, "/company/" + companyId);
         if (response.getHttpStatus() != 200) {
             return false;
         }
@@ -311,11 +311,11 @@ public class CompanyService {
 
     public PageMoveWithMessage modifyCompanyInfo(HttpSession session) {
         Long companyId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/"+companyId);
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId);
 
-        if (response.getHttpStatus() != 200 ) return new PageMoveWithMessage("error/500", response.getMessage());
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("error/500", response.getMessage());
 
-        LinkedHashMap<String ,Object> data = (LinkedHashMap<String, Object>) response.getData();
+        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
         CompanyPageResponseDto info = CompanyPageResponseDto.builder()
                 .companyId((Integer) data.get("companyId"))
                 .approveStatus((Boolean) data.get("approveStatus"))
@@ -332,6 +332,7 @@ public class CompanyService {
 
         return new PageMoveWithMessage("company/modify-info", info);
     }
+
     public PageMoveWithMessage approveCompany(HttpSession session, String companyId) {
         ApiResponse response = ServiceCall.putApproveCompany(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/approval");
         if (response.getHttpStatus() != 200) {
@@ -341,65 +342,5 @@ public class CompanyService {
         } else {
             return new PageMoveWithMessage("redirect:/v1/admin/company/list/1/5");
         }
-    }
-
-    public PageMoveWithMessage getCompanyInfo(HttpSession session){
-        Long companyId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/"+companyId);
-
-        if (response.getHttpStatus() != 200 ) return new PageMoveWithMessage("error/500", response.getMessage());
-
-        LinkedHashMap<String ,Object> data = (LinkedHashMap<String, Object>) response.getData();
-        CompanyPageResponseDto info = CompanyPageResponseDto.builder()
-                .companyId((Integer) data.get("companyId"))
-                .approveStatus((Boolean) data.get("approveStatus"))
-                .name((String) data.get("name"))
-                .ceoName((String) data.get("ceoName"))
-                .photo((String) data.get("photo"))
-                .employeeNum((Integer) data.get("employeeNum"))
-                .address((String) data.get("address"))
-                .introduction((String) data.get("introduction"))
-                .sector((String) data.get("sector"))
-                .bnoStatus((Boolean) data.get("bnoStatus"))
-                .countOpen((Integer) data.get("countOpen"))
-                .build();
-
-        return new PageMoveWithMessage("company/company-info", info);
-
-    }
-
-    public Boolean checkCompanyInfo (HttpSession session, CompanyLoginRequestDto requestDto){
-        Long companyId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.post(session, requestDto, Const.RequestHeader.COMPANY, "/company/"+companyId);
-        if (response.getHttpStatus() != 200) {
-            return false;
-        }
-
-        Boolean status = (Boolean) response.getData();
-        return status;
-    }
-
-    public PageMoveWithMessage modifyCompanyInfo(HttpSession session) {
-        Long companyId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/"+companyId);
-
-        if (response.getHttpStatus() != 200 ) return new PageMoveWithMessage("error/500", response.getMessage());
-
-        LinkedHashMap<String ,Object> data = (LinkedHashMap<String, Object>) response.getData();
-        CompanyPageResponseDto info = CompanyPageResponseDto.builder()
-                .companyId((Integer) data.get("companyId"))
-                .approveStatus((Boolean) data.get("approveStatus"))
-                .name((String) data.get("name"))
-                .ceoName((String) data.get("ceoName"))
-                .photo((String) data.get("photo"))
-                .employeeNum((Integer) data.get("employeeNum"))
-                .address((String) data.get("address"))
-                .introduction((String) data.get("introduction"))
-                .sector((String) data.get("sector"))
-                .bnoStatus((Boolean) data.get("bnoStatus"))
-                .countOpen((Integer) data.get("countOpen"))
-                .build();
-
-        return new PageMoveWithMessage("company/modify-info", info);
     }
 }
