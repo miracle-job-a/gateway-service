@@ -126,13 +126,68 @@
             window.history.back();
         }
 
-        function enableSubmit(){
+        function validateSpecialCharacters() {
+            var inputValues = [
+                document.getElementById('title').value,
+                document.getElementById('education').value,
+                document.getElementById('gitLink').value,
+                document.getElementById('career_title').value,
+                ...Array.from(document.getElementsByClassName('project')).map(function(element) {
+                    return element.value;
+                }),
+                ...Array.from(document.getElementsByClassName('etc')).map(function(element) {
+                    return element.value;
+                })
+            ];
+
+            for (var i = 0; i < inputValues.length; i++) {
+                if (inputValues[i].includes('<') || inputValues[i].includes('>') || inputValues[i].includes(';') || inputValues[i].includes('\\')) {
+                    // 특수 문자가 포함된 경우 경고 메시지 표시하고 false 반환
+                    alert('입력란에 >, <, ;, \\ 등 특수기호는 입력할 수 없습니다.');
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function validateForm(){
+
+            // 빈칸 경고
             var careerInput = document.getElementById('careerCal');
             if (careerInput.value.trim() === '') {
-                alert('경력기간 계산이 필요합니다.');
+                alert(`경력기간 계산 버튼을 눌러주세요.
+신입인 경우에도 경력기간 계산 버튼을 눌러주세요.`);
                 event.preventDefault();
-                /*return false; // 더 이상 진행하지 않음*/
+                return false;
             }
+
+            var jobCheckboxes = document.querySelectorAll('input[name="jobIdSet"]:checked');
+            if (jobCheckboxes.length === 0) {
+                alert('개발 가능한 직무를 하나 이상 선택해주세요.');
+                return false;
+            }
+
+            var stackCheckboxes = document.querySelectorAll('input[name="stackIdSet"]:checked');
+            if (stackCheckboxes.length === 0) {
+                alert('보유한 기술 스택을 하나 이상 선택해주세요.');
+                return false;
+            }
+
+            var titleInput = document.getElementById('title');
+            if (titleInput.value.trim() === '') {
+                alert('이력서 제목을 입력해주세요.');
+                event.preventDefault();
+                return false;
+            }
+
+            if (!validateSpecialCharacters()) {
+                event.preventDefault();
+                return false;
+            }
+
+            // 모든 조건이 충족되면 true 반환
+            return true;
 
         }
 
@@ -223,7 +278,7 @@
 
                                 <!-- 이력서 생성 폼 시작 -->
                                 <div class="card mt-4 mb-4 p-4 col-11 post-form align-self-center">
-                                    <form action="/v1/user/resume" method="post" role="form" class="row align-self-center col-12">
+                                    <form action="/v1/user/resume" method="post" role="form" class="row align-self-center col-12" onsubmit="return validateForm()">
                                         <div class="col-12 mt-2">
                                             <div class="mb-1">
                                                 <label for="title">이력서 제목</label>
@@ -272,7 +327,7 @@
                                             <div class="mb-1">
                                                 <label for="gitLink">GitHub 주소</label>
                                             </div>
-                                            <input type="url" class="form-control" id="gitLink" name="gitLink" placeholder="http://www.github.com" value="https://github.com/" size="30" required>
+                                            <input type="url" class="form-control" id="gitLink" name="gitLink" placeholder="http://www.github.com" value="https://github.com/" size="30" >
                                         </div>
 
                                         <!-- 경력사항 -->
@@ -304,7 +359,7 @@
                                             </div>
                                             <div class="pre_set" id="pre_set2">
                                                 <div class="input-group m-1">
-                                                    <input type="text" class="form-control" name="projectList" value="">
+                                                    <input type="text" class="form-control" id="project" name="projectList" value="">
                                                     <button class="btn" type="button" value="삭제" onclick="removeItem(this)">-</button>
                                                 </div>
                                             </div>
@@ -319,7 +374,7 @@
                                             </div>
                                             <div class="pre_set" id="pre_set3">
                                                 <div class="input-group m-1">
-                                                    <input type="text" class="form-control" name="etcList" value="">
+                                                    <input type="text" class="form-control" id="etc" name="etcList" value="">
                                                     <button class="btn" type="button" value="삭제" onclick="removeItem(this)">-</button>
                                                 </div>
                                             </div>
@@ -343,7 +398,7 @@
                                                     <input type="hidden" name="companyId" th:value="${companyId}">
                                                     <input type="hidden" name="postType" th:value="${postType}">
                                                 </div>
-                                                <button type="submit" class="form-control" onclick="enableSubmit()" >등록하기</button>
+                                                <button type="submit" class="form-control" onclick="validateForm()" >등록하기</button>
                                             </div>
                                             <div class="col-4 pt-4 m-auto justify-content-center">
                                             </div>

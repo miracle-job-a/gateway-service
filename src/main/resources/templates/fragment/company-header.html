@@ -24,14 +24,17 @@
        </li>
 
        <li class="nav-item">
-        <a class="nav-link" href="contact.html">기업페이지</a>
+        <a class="nav-link" href="/v1/company/company-info">기업페이지</a>
        </li>
+
+       <li class="nav-item">
+        <a th:if="${session.id!=null}" href="/v1/company/logout" class="btn custom-btn custom-border-btn smoothscroll">로그아웃</a>
+        <a th:if="${session.id==null}" href="/v1/company/login-form" class="btn custom-btn custom-border-btn smoothscroll">로그인/회원가입</a>
+       </li>
+
       </ul>
 
-      <div class="ms-4">
-       <a th:if="${session.id!=null}" href="/v1/company/logout" class="btn custom-btn custom-border-btn smoothscroll">로그아웃</a>
-       <a th:if="${session.id==null}" href="/v1/company/login-form" class="btn custom-btn custom-border-btn smoothscroll">로그인/회원가입</a>
-      </div>
+
      </div>
     </div>
    </nav>

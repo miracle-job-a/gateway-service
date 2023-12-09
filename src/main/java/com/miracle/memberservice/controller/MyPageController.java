@@ -5,6 +5,7 @@ import com.miracle.memberservice.dto.request.QnaDto;
 import com.miracle.memberservice.dto.request.QnaListDto;
 import com.miracle.memberservice.dto.response.ResumeInApplicationLetterResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;
+import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.MyPageService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/v1/user/my-page")
@@ -30,6 +33,16 @@ public class MyPageController {
     @GetMapping("/apply-list/{startPage}")
     public String applyList(HttpSession session, Model model, @PathVariable(required = false) int startPage, @RequestParam(required = false, defaultValue = "SUBMIT_DATE_ASC") String sort) {
         PageMoveWithMessage pmwm = myPageService.applicationLetterList(session, startPage, sort);
+
+        List<List<ApplicationLetterListResponseDto>> data = (List<List<ApplicationLetterListResponseDto>>) pmwm.getData();
+
+        Set<Long> postIdSet = new HashSet<>();
+        data.iterator().forEachRemaining((List<ApplicationLetterListResponseDto> list) -> {
+            list.iterator().forEachRemaining((ApplicationLetterListResponseDto dto) -> postIdSet.add(dto.getPostId()));
+        });
+        ArrayList<CompanyNameResponseDto> info = (ArrayList<CompanyNameResponseDto>) myPageService.getCompanyInfo(session, postIdSet);
+
+        model.addAttribute("info", info);
         model.addAttribute("startPage", startPage);
         model.addAttribute("letter", pmwm.getData());
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
@@ -112,4 +125,15 @@ public class MyPageController {
         PageMoveWithMessage pmwm = myPageService.deleteInterview(session, interviewId);
         return pmwm.getPageName();
     }
+
+    // 개인정보 조회 (임시)
+    @GetMapping("/personal")
+    public String getPersonal(){ return "user/personal-info"; }
+
+    // 개인정보 확인
+    @GetMapping("/validation")
+    public String vaildation() { return "user/validation"; }
+
+    // 개인정보 수정
+
 }

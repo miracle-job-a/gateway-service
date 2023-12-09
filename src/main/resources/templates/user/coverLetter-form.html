@@ -67,6 +67,29 @@
             window.history.back();
         }
 
+        function validateForm(){
+            var inputValues = [
+                ...Array.from(document.getElementsByName('question')).map(function(element) {
+                    return element.value;
+                }),
+                ...Array.from(document.getElementsByName('answer')).map(function(element) {
+                    return element.value;
+                })
+            ];
+
+            for (var i = 0; i < inputValues.length; i++) {
+                if (inputValues[i].includes('<') || inputValues[i].includes('>') || inputValues[i].includes(';')
+                    || inputValues[i].includes('/') || inputValues[i].includes('\\')) {
+                    // 특수 문자가 포함된 경우 경고 메시지 표시하고 false 반환
+                    alert('입력란에 >, <, ;, /, \\, 특수기호는 입력할 수 없습니다.');
+                    return false;
+                }
+            }
+
+            return true;
+
+        }
+
     </script>
 
     <main>
@@ -87,7 +110,7 @@
 
                                 <!-- 자기소개서 생성 폼 시작 -->
                                 <div class="card mt-5 mb-4 p-4 col-11 post-form align-self-center">
-                                    <form action="/v1/user/cover-letter/create" method="post" role="form" class="row align-self-center col-12">
+                                    <form action="/v1/user/cover-letter/create" method="post" role="form" class="row align-self-center col-12" onsubmit="return validateForm()">
 
                                             <div class="col-12 mt-2">
                                                 <div class="mb-1">
@@ -145,7 +168,7 @@
                                                     <input type="hidden" name="companyId" th:value="${companyId}">
                                                     <input type="hidden" name="postType" th:value="${postType}">
                                                 </div>
-                                                <button type="submit" class="form-control" >등록하기</button>
+                                                <button type="submit" class="form-control" onclick="validateForm()">등록하기</button>
                                             </div>
                                             <div class="col-4 pt-4 m-auto justify-content-center">
                                             </div>
