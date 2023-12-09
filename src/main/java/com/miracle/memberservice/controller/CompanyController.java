@@ -192,6 +192,4 @@ public class CompanyController {
         model.addAttribute("info", pmwm.getData());
         return pmwm.getPageName();
     }
-
-
 }
