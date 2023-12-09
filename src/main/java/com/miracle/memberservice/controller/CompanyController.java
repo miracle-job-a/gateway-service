@@ -164,7 +164,7 @@ public class CompanyController {
     }
 
     //기업정보 상세보기 (임시)
-    @GetMapping("/company-info")
+    @GetMapping("/info")
     public String getCompanyInfo(HttpSession session, Model model) {
         PageMoveWithMessage pmwm = companyService.getCompanyInfo(session);
         model.addAttribute("info", pmwm.getData());
@@ -172,28 +172,36 @@ public class CompanyController {
     }
 
     // 수정페이지 전 이동
-    @GetMapping("/edit-info")
+    @GetMapping("/info/move")
     public String companyMdfy(){ return "company/validation"; }
 
     // 수정페이지 요청
-    @PostMapping("/info-check")
-    public String checkCompanyInfo(HttpSession session, @ModelAttribute CompanyLoginRequestDto requestDto) {
+    @PostMapping("/info/validation")
+    public String checkCompanyInfo(HttpSession session,String password,
+                                   @ModelAttribute CompanyLoginRequestDto requestDto,
+                                   RedirectAttributes redirectAttributes) {
         boolean checked = companyService.checkCompanyInfo(session, requestDto);
         if (checked) {
-            return "redirect:/v1/company/modify";
+            /* 임시로 비밀번호 값 가져옴 */
+            redirectAttributes.addAttribute("password", password);
+            return "redirect:/v1/company/info/modify";
         } else {
             return "/error/500";
         }
     }
 
-    @GetMapping("/modify")
-    public String modifyCompanyInfo(HttpSession session, Model model) {
+    @GetMapping("/info/modify")
+    public String modifyCompanyInfo(HttpSession session, Model model, @RequestParam(name = "password", required = false) String password) {
         PageMoveWithMessage pmwm = companyService.modifyCompanyInfo(session);
+
+        //String password = (String) model.asMap().get("password");
+        model.addAttribute("password", password);
+
         model.addAttribute("info", pmwm.getData());
         return pmwm.getPageName();
     }
 
-    @PostMapping("/modify-info")
+    @PostMapping("/info/update")
     public String updateCompanyInfo(HttpSession session, @ModelAttribute CompanyInfoRequestDto requestDto) {
         PageMoveWithMessage pmwm = companyService.updateCompanyInfo(session, requestDto);
         return pmwm.getPageName();

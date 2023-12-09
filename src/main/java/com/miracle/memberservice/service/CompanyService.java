@@ -335,11 +335,11 @@ public class CompanyService {
 
     public PageMoveWithMessage updateCompanyInfo(HttpSession session, CompanyInfoRequestDto requestDto){
      Long companyId = (Long) session.getAttribute("id");
-     ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.COMPANY, "/company/" + companyId);
+    ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.COMPANY, "/company/" + companyId);
 
      if (response.getHttpStatus() != 200) {
-            return new PageMoveWithMessage("redirect:/v1/company/company-info", response.getMessage());
+            return new PageMoveWithMessage("redirect:/v1/company/info", response.getMessage());
         }
-        return new PageMoveWithMessage("redirect:/v1/company/company-info");
+        return new PageMoveWithMessage("redirect:/v1/company/info");
     }
 }
