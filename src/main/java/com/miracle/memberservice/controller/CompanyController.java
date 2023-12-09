@@ -193,5 +193,11 @@ public class CompanyController {
         return pmwm.getPageName();
     }
 
+    @PostMapping("/modify-info")
+    public String updateCompanyInfo(HttpSession session, @ModelAttribute CompanyInfoRequestDto requestDto) {
+        PageMoveWithMessage pmwm = companyService.updateCompanyInfo(session, requestDto);
+        return pmwm.getPageName();
+    }
+
 
 }

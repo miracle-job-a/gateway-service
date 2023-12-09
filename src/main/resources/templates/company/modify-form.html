@@ -4,6 +4,7 @@
         layout:decorate="~{layout/default_layout}" lang="ko">
 
 <div layout:fragment="content">
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script th:inline="javascript">
         var errorMessage = [[${errorMessage}]];
 
@@ -56,14 +57,42 @@
             }
         });
 
-        /* 사업자번호 정규식 적용 */
-        $(document).ready(function () {
-            $('#bno').on('input', function () {
-                this.value = this.value
-                    .replace(/[^0-9]/g, '')
-                    .replace(/(\d{3})(\d{2})(\d{5})/, "$1-$2-$3");
-            });
-        });
+       /* 주소 API */
+       window.onload = function () {
+           document.getElementById("addressInputBtn").addEventListener("click", function () {
+               new daum.Postcode({
+                   oncomplete: function (data) {
+                       var address = '';
+                       var detailAddress = '';
+
+                       address = data.sido + ' ' + data.sigungu; // 시/도와 시/군/구를 조합하여 address에 저장
+                       if (data.userSelectedType === 'R') {
+                           detailAddress = removeSidoSigungu(data.roadAddress, data.sido, data.sigungu);
+                       }
+                       if (data.userSelectedType === 'J') {
+                           detailAddress = removeSidoSigungu(data.jibunAddress, data.sido, data.sigungu);
+                       }
+
+                       // 우편번호, 주소 정보를 해당 필드에 넣는다.
+                       document.getElementById('address').value = data.zonecode;
+                       document.getElementById("address").value = address;
+
+                       // 나머지 주소 정보를 detailAddress 필드에 넣는다.
+                       document.getElementById("detailAddress").value = detailAddress;
+
+                       // 커서를 상세주소 필드로 이동한다.
+                       document.getElementById("detailAddress").focus();
+                   }
+               }).open();
+           });
+       }
+
+       function removeSidoSigungu(address, sido, sigungu) {
+           // sido와 sigungu를 공백으로 치환하여 제거
+           var result = address.replace(sido, '').replace(sigungu, '').trim();
+           return result;
+       }
+
 
     // 수정취소 (상세보기로 돌아가기)
         function cancelEditing(button) {
@@ -133,12 +162,6 @@
                 return false;
             }
 
-            var stackCheckboxes = document.querySelectorAll('input[name="stackIdSet"]:checked');
-            if (stackCheckboxes.length === 0) {
-                alert('보유한 기술 스택을 하나 이상 선택해주세요.');
-                return false;
-            }
-
 
             if (!validateSpecialCharacters()) {
                 event.preventDefault();
@@ -166,7 +189,7 @@
                             <h4 class="section-title">기업정보</h4>
                         </div>
 
-                        <form action="/v1/company/info-check" method="post" role="form" >
+                        <form action="/v1/company/modify-info" method="post" role="form" >
                         <div class="row justify-content-center">
                             <div class="row ">
                                 <div class="col-lg-4 col-12">
@@ -181,14 +204,16 @@
                                     <div class="custom-block-info post-form">
 
                                         <div class="col-10 mt-4 mx-auto">
-                                            <input type="text" class="form-control-lg" th:value="${info.name}"/>
+                                            <label>기업명</label>
+                                            <input type="text" class="form-control" id="name" name="name" th:value="${info.name}"/>
                                         </div>
 
                                         <!-- 비밀번호 -->
-                                        <div class="col-10 mt-3 mx-auto">
+                                        <div class="col-10 mt-4 mx-auto">
+                                            <label>비밀번호 변경</label>
                                             <div class="form-floating">
-                                                <input type="password" name="password" id="inputPw" class="form-control"
-                                                       placeholder="비밀번호" required="">
+                                                <input type="password" name="pwd" id="inputPw" class="form-control"
+                                                       placeholder="비밀번호" >
                                                 <label for="floatingInput" id="checkPw">비밀번호(알파벳 포함 숫자 6자리 이상, 특수문자 1개
                                                     포함)<span class="text-danger">*</span></label>
                                             </div>
@@ -198,11 +223,14 @@
                                             <div class="form-floating">
                                                 <input type="password" name="passwordConfirm" id="pwConfirm"
                                                        class="form-control"
-                                                       placeholder="비밀번호확인" required="">
+                                                       placeholder="비밀번호확인" >
                                                 <label for="floatingInput" id="pwConfirmMsg">비밀번호 확인<span
                                                         class="text-danger">*</span></label>
                                             </div>
                                         </div>
+
+                                        <!-- 임시 사진 데이터.. -->
+                                        <input hidden type="text" name="photo" value="임시데이터 입니다.">
 
                                         <div class="col-10 mt-3 mx-auto">
                                             <label>대표자</label>
@@ -221,8 +249,25 @@
                                         </div>
 
                                         <div class="col-10 mt-3 mx-auto">
-                                            <label>주소</label>
-                                            <input type="text" class="form-control mt-2" id="address" name="address" th:value="${info.address}">
+                                            <div class="form-floating">
+                                                <input type="text" name="address" id="address" class="form-control"
+                                                       placeholder="address" required="" readonly th:value="${info.address}">
+
+                                                <label for="floatingInput">주소입력</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-10 mt-2 mx-auto">
+                                            <div class="form-floating">
+                                                <input type="text" name="detailAddress" id="detailAddress" class="form-control"
+                                                       placeholder="address" >
+
+                                                <label for="floatingInput">상세주소입력</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-10 mt-2 mx-auto">
+                                            <div class="form-floating">
+                                                <button type="button" class="custom-btn" id="addressInputBtn">주소 찾기</button>
+                                            </div>
                                         </div>
 
                                         <div class="col-10 mt-3 mx-auto">
