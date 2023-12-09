@@ -48,7 +48,8 @@ public class UserService {
                 .name(data.get("name"))
                 .build();
 
-        if(Objects.nonNull(loginDto.getPostId())) return new PageMoveWithMessage("redirect:/v1/click/post/"+loginDto.getPostId()+"/detail", dto);
+        if (Objects.nonNull(loginDto.getPostId()))
+            return new PageMoveWithMessage("redirect:/v1/click/post/" + loginDto.getPostId() + "/detail", dto);
         return new PageMoveWithMessage("redirect:/v1", dto);
     }
 
@@ -88,7 +89,8 @@ public class UserService {
         ApiResponse response = ServiceCall.post(session, resumeRequestDto, Const.RequestHeader.USER, "/user/" + userId + "/resume");
         if (response.getHttpStatus() != 201)
             return new PageMoveWithMessage("redirect:/v1/user/resume/form", response.getMessage());
-        if(Objects.nonNull(resumeRequestDto.getPostId())) return new PageMoveWithMessage("redirect:/v1/click/post/"+resumeRequestDto.getPostId()+"/detail", resumeRequestDto);
+        if (Objects.nonNull(resumeRequestDto.getPostId()))
+            return new PageMoveWithMessage("redirect:/v1/click/post/" + resumeRequestDto.getPostId() + "/detail", resumeRequestDto);
         return new PageMoveWithMessage("redirect:/v1/user/resumes");
     }
 
@@ -146,13 +148,27 @@ public class UserService {
     public PageMoveWithMessage createCoverLetter(HttpSession session, CoverLetterPostRequestDto requestDto, QnaListDto qnaListDto) {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.post(session, requestDto, Const.RequestHeader.USER, "/user/" + userId + "/cover-letter");
-        if(Objects.nonNull(qnaListDto.getPostId())) return new PageMoveWithMessage("redirect:/v1/click/post/"+qnaListDto.getPostId()+"/detail", qnaListDto);
+        if (response.getHttpStatus() != 201)
+            return new PageMoveWithMessage("redirect:/v1/user/cover-letter/form", "같은 문항이 들어갈 수 없습니다.");
+        if (Objects.nonNull(qnaListDto.getPostId()))
+            return new PageMoveWithMessage("redirect:/v1/click/post/" + qnaListDto.getPostId() + "/detail", qnaListDto);
         return new PageMoveWithMessage("redirect:/v1/user/cover-letters/1", response.getMessage());
     }
 
-    public PageMoveWithMessage coverLetterList(HttpSession session, int strNum) {
+    public PageMoveWithMessage coverLetterList(HttpSession session, int strNum, String sort) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.getUserParamList(session, Const.RequestHeader.USER, "/user/" + userId + "/cover-letter", strNum, strNum + 4);
+        ApiResponse response = ServiceCall.getUserParamListSort(session, Const.RequestHeader.USER, "/user/" + userId + "/cover-letter", strNum, strNum + 4, sort);
+        if (response.getHttpStatus() != 200)
+            return new PageMoveWithMessage("redirect:/v1", response.getMessage());
+
+        List<List<CoverLetterListResponseDto>> letterList = ApiResponseToList.coverLetterList(response.getData());
+
+        return new PageMoveWithMessage("user/cover-letters", letterList);
+    }
+
+    public PageMoveWithMessage coverLetterListSearch(HttpSession session, int strNum, String word) {
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.getUserParamListSearch(session, Const.RequestHeader.USER, "/user/" + userId + "/cover-letter/search", strNum, strNum + 4, word);
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("redirect:/v1", response.getMessage());
 
@@ -205,5 +221,11 @@ public class UserService {
         ApiResponse response = ServiceCall.post(session, dto, Const.RequestHeader.USER, "/user/" + userId + "/application-letter");
 
         return new PageMoveWithMessage("redirect:/v1/click/post/" + dto.getPostId() + "/detail?companyId=" + companyId + "&postType=" + dto.getPostType(), response.getMessage(), dto);
+    }
+
+    public PageMoveWithMessage applicantList(HttpSession session, Long postId, String sort, int startPage) {
+        ApiResponse response = ServiceCall.getUserParamListSort(session, Const.RequestHeader.USER, "/post/" + postId + "/applicant/list", startPage, startPage + 4, sort);
+
+        return new PageMoveWithMessage("company/applicant-list", ApiResponseToList.applicantList(response.getData()));
     }
 }

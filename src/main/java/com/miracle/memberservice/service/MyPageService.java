@@ -19,9 +19,9 @@ import java.util.*;
 public class MyPageService {
 
     // 지원현황 목록 불러오기
-    public PageMoveWithMessage applicationLetterList(HttpSession session, int startPage){
+    public PageMoveWithMessage applicationLetterList(HttpSession session, int startPage, String sort){
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.getUserParamList(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter", startPage, startPage + 4);
+        ApiResponse response = ServiceCall.getUserParamListSort(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter", startPage, startPage + 4, sort);
 
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("/v1", response.getMessage());
 

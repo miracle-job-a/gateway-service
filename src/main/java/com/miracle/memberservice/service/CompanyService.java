@@ -230,12 +230,15 @@ public class CompanyService {
 
     public PageMoveWithMessage searchTotalPosts(HttpSession session, String search, int strNum, int endNum) {
 
-        ApiResponse response = ServiceCall.postParam(session, search, Const.RequestHeader.COMPANY, "/company/posts/search", strNum, endNum);
+        ApiResponse response = ServiceCall.getParamSearch(session, Const.RequestHeader.COMPANY, "/company", strNum, endNum, search);
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("redirect:/v1", response.getMessage());
 
-        List<List<ConditionalSearchPostResponseDto>> searchPosts = ApiResponseToList.searchPosts(response.getData(), session);
+        Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        List<LinkedHashMap<String, Object>> postList = (ArrayList<LinkedHashMap<String, Object>>) data.get("postList");
 
-        return new PageMoveWithMessage("guest/search-post", searchPosts);
+        List<List<TotalSearchPostResponseDto>> postPage = ApiResponseToList.searchTotalPost(postList, session);
+
+        return new PageMoveWithMessage("guest/total-search", Map.of("postPage", postPage));
     }
 
     private LocalDateTime truncatedTo(Object time) {

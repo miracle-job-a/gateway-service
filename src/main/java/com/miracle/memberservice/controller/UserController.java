@@ -5,6 +5,7 @@ import com.miracle.memberservice.dto.response.JobResponseDto;
 import com.miracle.memberservice.dto.response.ResumeResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;
 import com.miracle.memberservice.service.AdminService;
+import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class UserController {
 
     private final UserService userService;
     private final AdminService adminService;
+    private final CompanyService companyService;
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
@@ -109,22 +111,32 @@ public class UserController {
 
     // 자소서 목록으로 이동
     @GetMapping("/cover-letters/{strNum}")
-    public String coverLetterList(HttpSession session, Model model, @PathVariable(required = false) int strNum) {
-        PageMoveWithMessage pmwm = userService.coverLetterList(session, strNum);
+    public String coverLetterList(HttpSession session, Model model, @PathVariable(required = false) int strNum, @RequestParam(required = false, defaultValue = "MODIFIED_AT_DESC") String sort, @RequestParam(required = false, defaultValue = "") String word) {
+        PageMoveWithMessage pmwm;
+        if (word.isEmpty()) {
+            pmwm = userService.coverLetterList(session, strNum, sort);
+        } else {
+            pmwm = userService.coverLetterListSearch(session, strNum, word);
+        }
         model.addAttribute("letterList", pmwm.getData());
         model.addAttribute("strNum", strNum);
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        model.addAttribute("sort", sort);
         return pmwm.getPageName();
     }
 
     @GetMapping("/cover-letter/form")
-    public String coverLetterForm(@RequestParam(required = false) String postId, @RequestParam(required = false) String companyId, @RequestParam(required = false) String postType, Model model) {
+    public String coverLetterForm(HttpSession session, @RequestParam(required = false) Long postId, @RequestParam(required = false) Long companyId, @RequestParam(required = false) String postType, @RequestParam(required = false) String errorMessage, Model model) {
+        if(Objects.nonNull(postId)){
+            PageMoveWithMessage postDetail = companyService.getPostDetail(session, postId, postType, companyId);
+            model.addAttribute("detail", postDetail.getData());
+        }
         model.addAttribute("postId", postId);
         model.addAttribute("companyId", companyId);
         model.addAttribute("postType", postType);
+        model.addAttribute("errorMessage", errorMessage);
         return "user/coverLetter-form";
     }
-
 
     @PostMapping("/cover-letter/create")
     public String createCoverLetter(RedirectAttributes redirectAttributes, String title, @ModelAttribute QnaListDto qnaListDto, HttpSession session) {
@@ -136,9 +148,11 @@ public class UserController {
         }
         if (Objects.nonNull(qnaListDto.getPostId())) {
             redirectAttributes.addAttribute("companyId", qnaListDto.getCompanyId());
+            redirectAttributes.addAttribute("postId", qnaListDto.getPostId());
             redirectAttributes.addAttribute("postType", qnaListDto.getPostType());
         }
         PageMoveWithMessage pmwm = userService.createCoverLetter(session, new CoverLetterPostRequestDto(title, qnaDtoList), qnaListDto);
+        redirectAttributes.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
 

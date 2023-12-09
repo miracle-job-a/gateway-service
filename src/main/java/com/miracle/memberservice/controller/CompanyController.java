@@ -1,12 +1,12 @@
 package com.miracle.memberservice.controller;
 
 import com.miracle.memberservice.dto.request.*;
-import com.miracle.memberservice.dto.response.CompanyPageResponseDto;
 import com.miracle.memberservice.dto.response.JobResponseDto;
 import com.miracle.memberservice.dto.response.PostResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;
 import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.CompanyService;
+import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
@@ -27,6 +27,7 @@ public class CompanyController {
 
     private final CompanyService companyService;
     private final AdminService adminService;
+    private final UserService userService;
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
@@ -142,9 +143,19 @@ public class CompanyController {
         return pmwm.getPageName();
     }
 
+    @GetMapping("/post/applicant/{startPage}")
+    public String applicantList(@PathVariable int startPage, @RequestParam Long postId, @RequestParam(required = false, defaultValue = "SUBMIT_DATE_ASC") String sort, HttpSession session, Model model) {
+        PageMoveWithMessage pmwm = userService.applicantList(session, postId, sort, startPage);
+        model.addAttribute("applicantList", pmwm.getData());
+        model.addAttribute("strNum", startPage);
+        model.addAttribute("sort", sort);
+        model.addAttribute("postId", postId);
+        return pmwm.getPageName();
+    }
+
     @GetMapping("/today/signUp/list")
     public String getCompanyList(Model model, @RequestParam int strNum, @RequestParam boolean today, HttpSession session) {
-        PageMoveWithMessage pmwm = companyService.getCompanyListToday(session, strNum, strNum+4, today);
+        PageMoveWithMessage pmwm = companyService.getCompanyListToday(session, strNum, strNum + 4, today);
         model.addAttribute("strNum", strNum);
         model.addAttribute("today", today);
         model.addAttribute("companyListPage", pmwm.getData());

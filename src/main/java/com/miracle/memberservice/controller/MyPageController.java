@@ -1,16 +1,15 @@
 package com.miracle.memberservice.controller;
 
 import com.miracle.memberservice.dto.request.InterviewRequestDto;
-import com.miracle.memberservice.dto.request.PostIdRequestDto;
 import com.miracle.memberservice.dto.request.QnaDto;
 import com.miracle.memberservice.dto.request.QnaListDto;
+import com.miracle.memberservice.dto.response.ResumeInApplicationLetterResponseDto;
+import com.miracle.memberservice.dto.response.StackResponseDto;
 import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.MyPageService;
-import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,14 +26,13 @@ import java.util.Set;
 public class MyPageController {
 
     private final MyPageService myPageService;
-    private final UserService userService;
     private final AdminService adminService;
 
 
     // 마이페이지 목록
     @GetMapping("/apply-list/{startPage}")
-    public String applyList(HttpSession session, Model model, @PathVariable(required = false) int startPage) {
-        PageMoveWithMessage pmwm = myPageService.applicationLetterList(session, startPage);
+    public String applyList(HttpSession session, Model model, @PathVariable(required = false) int startPage, @RequestParam(required = false, defaultValue = "SUBMIT_DATE_ASC") String sort) {
+        PageMoveWithMessage pmwm = myPageService.applicationLetterList(session, startPage, sort);
 
         List<List<ApplicationLetterListResponseDto>> data = (List<List<ApplicationLetterListResponseDto>>) pmwm.getData();
 
@@ -48,6 +46,7 @@ public class MyPageController {
         model.addAttribute("startPage", startPage);
         model.addAttribute("letter", pmwm.getData());
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        model.addAttribute("sort", sort);
         return pmwm.getPageName();
     }
 
