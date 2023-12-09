@@ -39,9 +39,9 @@
                     $('#checkPw').css("color", "#660099").html('<b>사용가능</b>');
                     $('#pwConfirm').prop("disabled", false);
 
-                    if (password !== document.getElementById('secret').value) {
+                    if (password !== $('input[name="password"]').data('password')) {
                         // 비밀번호가 변경되었으면 hidden 필드의 값을 지웁니다.
-                        document.getElementById('secret').value = '';
+                        $('#secret').val('');
                     }
                 }
             }
@@ -226,12 +226,13 @@
                                         </div>
 
                                         <!-- 비밀번호 -->
-                                        <input hidden="" type="password" id="secret" name="pwd" th:value="${password}" >
+                                        <input hidden="" type="password" id="secret" name="password" th:value="${password}" th:attr="data-password=${password}" >
+
 
                                         <div class="col-10 mt-4 mx-auto">
                                             <label>비밀번호 변경</label>
                                             <div class="form-floating">
-                                                <input type="password" name="pwd" id="inputPw" class="form-control"
+                                                <input type="password" name="password" id="inputPw" class="form-control"
                                                        placeholder="비밀번호" >
                                                 <label for="floatingInput" id="checkPw">비밀번호(알파벳 포함 숫자 6자리 이상, 특수문자 1개
                                                     포함)<span class="text-danger">*</span></label>
