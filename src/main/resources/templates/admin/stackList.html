@@ -6,12 +6,28 @@
 <div layout:fragment="content">
     <script>
         var badgeStackName;
+
+        function isStackNameExists(stackName) {
+            var stackList = document.querySelectorAll('[data-stack-id]');
+            for (var i = 0; i < stackList.length; i++) {
+                if (stackList[i].textContent === stackName) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         function registerStack() {
             var stackName = document.getElementById('register').value.trim();
             var confirmation = confirm("등록 후에는 삭제 할 수 없습니다. 등록하시겠습니까?");
 
             if (!stackName) {
                 alert('등록하고자 하는 스택명을 입력해주세요.');
+                return;
+            }
+
+            if (isStackNameExists(stackName)) {
+                alert('이미 등록된 스택입니다.');
                 return;
             }
 
