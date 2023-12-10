@@ -15,7 +15,7 @@ import java.util.function.Function;
 
 public class ServiceCall {
 
-    private static final String BASE_URL = "http://localhost:";
+    private static final String BASE_URL = "http://";
     private static final String VERSION = "/v1";
 
     private static WebClient.Builder createWebClientBuilder(String serviceType) {
@@ -98,11 +98,12 @@ public class ServiceCall {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).queryParam("sort", sort).build()), httpSession, serviceType).block();
     }
-  
+
     public static ApiResponse getParamListWithToday(HttpSession httpSession, String serviceType, String url, int strNum, int endNum, boolean today) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).queryParam("today", today).build()), httpSession, serviceType).block();
     }
+
     public static ApiResponse getUserParamList(HttpSession httpSession, String serviceType, String url, int strNum, int endNum) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("startPage", strNum).queryParam("endPage", endNum).queryParam("pageSize", 5).build()), httpSession, serviceType).block();
@@ -133,17 +134,17 @@ public class ServiceCall {
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).queryParam("today", today).build()), httpSession, serviceType).block();
     }
 
-    private static int port(String memberType) {
+    private static String port(String memberType) {
         switch (memberType) {
             case Const.RequestHeader.USER:
-                return 60001;
+                return "3.36.113.249:60001";
             case Const.RequestHeader.COMPANY:
-                return 60002;
+                return "13.125.211.61:60002";
 
             case Const.RequestHeader.ADMIN:
-                return 60003;
+                return "3.36.98.12:60003";
             default:
-                return 60000;
+                return "60000";
         }
     }
 
