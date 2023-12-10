@@ -1,8 +1,6 @@
 package com.miracle.memberservice.controller;
 
-import com.miracle.memberservice.dto.request.InterviewRequestDto;
-import com.miracle.memberservice.dto.request.QnaDto;
-import com.miracle.memberservice.dto.request.QnaListDto;
+import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.MyPageService;
@@ -14,10 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 @RequestMapping("/v1/user/my-page")
@@ -133,15 +128,47 @@ public class MyPageController {
         ArrayList<StackResponseDto> stacks = (ArrayList<StackResponseDto>) adminService.getStacks(session, data.getStackIdSet());
         ArrayList<StackResponseDto> allStack = (ArrayList<StackResponseDto>) adminService.getAllStacks(session);
         model.addAttribute("info", pmwm.getData());
-        model.addAttribute("stack", stacks);
-        model.addAttribute("allstack", allStack);
+        model.addAttribute("stacks", stacks);
+        model.addAttribute("allStack", allStack);
         return pmwm.getPageName();
     }
 
-    // 개인정보 확인
-    @GetMapping("/validation")
-    public String vaildation() { return "user/validation"; }
+    // 개인정보 수정 인증접근
+    @GetMapping("/my-info/move")
+    public String userModify() { return "user/validation"; }
 
-    // 개인정보 수정
+    // 개인정보 수정 인증
+    @PostMapping("/my-info/validation")
+    public String checkUserInfo(HttpSession session, @ModelAttribute LoginDto loginDto, String password){
+        PageMoveWithMessage pmwm = myPageService.validationUser(session, loginDto);
+        if ("로그인에 성공했습니다.".equals(pmwm.getErrorMessage())) {
+            session.setAttribute("password", password);
+            return "redirect:/v1/user/my-page/my-info/modify";
+        } else {
+            return "redirect:/v1/user/my-page/my-info/move";
+        }
+    }
 
+    // 개인정보 수정 폼 이동
+    @GetMapping("/my-info/modify")
+    public String modifyUserInfo(HttpSession session, Model model) {
+        PageMoveWithMessage pmwm = myPageService.modifyUserInfo(session);
+        UserInfoResponseDto data = (UserInfoResponseDto) pmwm.getData();
+        ArrayList<StackResponseDto> stacks = (ArrayList<StackResponseDto>) adminService.getStacks(session, data.getStackIdSet());
+        ArrayList<StackResponseDto> allStack = (ArrayList<StackResponseDto>) adminService.getAllStacks(session);
+        model.addAttribute("info", pmwm.getData());
+        model.addAttribute("stacks", stacks);
+        model.addAttribute("allStack", allStack);
+        return pmwm.getPageName();
+    }
+
+    @PostMapping("/my-info/update")
+    public String updateUserInfo(HttpSession session, @ModelAttribute UserUpdateInfoRequestDto requestDto) {
+        if (requestDto.getPassword() == null || requestDto.getPassword().isEmpty()){
+            String password = (String) session.getAttribute("password");
+            requestDto.setPassword(password);
+        }
+        PageMoveWithMessage pmwm = myPageService.updateUserInfo(session, requestDto);
+        return pmwm.getPageName();
+    }
 }

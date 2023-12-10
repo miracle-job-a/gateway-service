@@ -19,14 +19,14 @@ public class CompanyInfoRequestDto {
     private String password;
 
     @Builder
-    public CompanyInfoRequestDto(String name, String ceoName, int employeeNum, String sector, String photo, String introduction, String address, String password) {
+    public CompanyInfoRequestDto(String name, String ceoName, int employeeNum, String sector, String photo, String introduction, String address, String detailAddress, String password) {
         this.name = name;
         this.ceoName = ceoName;
         this.employeeNum = employeeNum;
         this.sector = sector;
         this.photo = photo;
         this.introduction = introduction;
-        this.address = address;
+        this.address = address + " " + detailAddress;
         this.password = password;
     }
 
