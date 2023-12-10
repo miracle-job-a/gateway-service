@@ -27,7 +27,7 @@ public class CompanyService {
     }
 
     public Object mainPageCompany(HttpSession session, Long companyId) {
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/"+companyId+"/posts/count");
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/count");
         Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
         return data;
     }
@@ -273,13 +273,13 @@ public class CompanyService {
         return new PageMoveWithMessage("admin/main", postList);
     }
 
-    public PageMoveWithMessage getCompanyInfo(HttpSession session){
+    public PageMoveWithMessage getCompanyInfo(HttpSession session) {
         Long companyId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/"+companyId);
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId);
 
-        if (response.getHttpStatus() != 200 ) return new PageMoveWithMessage("error/500", response.getMessage());
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("error/500", response.getMessage());
 
-        LinkedHashMap<String ,Object> data = (LinkedHashMap<String, Object>) response.getData();
+        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
         CompanyPageResponseDto info = CompanyPageResponseDto.builder()
                 .companyId((Integer) data.get("companyId"))
                 .approveStatus((Boolean) data.get("approveStatus"))
@@ -298,9 +298,9 @@ public class CompanyService {
 
     }
 
-    public Boolean checkCompanyInfo (HttpSession session, CompanyLoginRequestDto requestDto){
+    public Boolean checkCompanyInfo(HttpSession session, CompanyLoginRequestDto requestDto) {
         Long companyId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.post(session, requestDto, Const.RequestHeader.COMPANY, "/company/"+companyId);
+        ApiResponse response = ServiceCall.post(session, requestDto, Const.RequestHeader.COMPANY, "/company/" + companyId);
         if (response.getHttpStatus() != 200) {
             return false;
         }
@@ -311,11 +311,11 @@ public class CompanyService {
 
     public PageMoveWithMessage modifyCompanyInfo(HttpSession session) {
         Long companyId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/"+companyId);
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId);
 
-        if (response.getHttpStatus() != 200 ) return new PageMoveWithMessage("error/500", response.getMessage());
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("error/500", response.getMessage());
 
-        LinkedHashMap<String ,Object> data = (LinkedHashMap<String, Object>) response.getData();
+        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
         CompanyPageResponseDto info = CompanyPageResponseDto.builder()
                 .companyId((Integer) data.get("companyId"))
                 .approveStatus((Boolean) data.get("approveStatus"))
@@ -341,5 +341,16 @@ public class CompanyService {
             return new PageMoveWithMessage("redirect:/v1/company/info", response.getMessage());
         }
         return new PageMoveWithMessage("redirect:/v1/company/info");
+    }
+
+    public PageMoveWithMessage approveCompany(HttpSession session, String companyId) {
+        ApiResponse response = ServiceCall.putApproveCompany(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/approval");
+        if (response.getHttpStatus() != 200) {
+            return new PageMoveWithMessage("admin/main", response.getMessage());
+        } else if (response.getData() instanceof Boolean && (Boolean) response.getData() == false) {
+            return new PageMoveWithMessage("admin/companyList", response.getMessage());
+        } else {
+            return new PageMoveWithMessage("redirect:/v1/admin/company/list/1/5");
+        }
     }
 }

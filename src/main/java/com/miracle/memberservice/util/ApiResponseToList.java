@@ -439,7 +439,7 @@ public class ApiResponseToList {
         return dtos;
     }
 
-    public static List<CompanyNameResponseDto> companyInfo(Object object) {
+    public static List<CompanyNameResponseDto> companyInfo(HttpSession session, Object object) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
 
         List<CompanyNameResponseDto> dtos = new ArrayList<>();
@@ -447,10 +447,14 @@ public class ApiResponseToList {
 
             Integer postId = (Integer) info.get("postId");
             Integer companyId = (Integer) info.get("companyId");
+            ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/" + postId);
+            Map<String, Object> titleData = (LinkedHashMap<String, Object>) response.getData();
+            String title = (String) titleData.get("title");
             dtos.add(CompanyNameResponseDto.builder()
                     .postId(postId.longValue())
                     .companyId(companyId.longValue())
                     .companyName((String) info.get("companyName"))
+                    .title(title)
                     .build());
         }
         return dtos;

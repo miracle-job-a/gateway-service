@@ -4,6 +4,7 @@ import com.miracle.memberservice.dto.response.CompanyListResponseDto;
 import com.miracle.memberservice.dto.response.UserListResponseDto;
 import com.miracle.memberservice.dto.response.StackAndJobResponseDto;
 import com.miracle.memberservice.service.AdminService;
+import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -23,14 +24,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AdminController {
 
     private final AdminService adminService;
+    private final CompanyService companyService;
 
     @GetMapping("/login")
     private String adminLogin(){ return "admin/login"; }
+
     @GetMapping("/user/list/{strNum}/{endNum}")
     public String getUserList(@PathVariable int strNum, @PathVariable int endNum, HttpSession session, Model model) {
         PageMoveWithMessage pmwm = adminService.getUserList(session, strNum, endNum);
         List<UserListResponseDto> data = (List<UserListResponseDto>) pmwm.getData();
-        System.out.println("AdminController data : " + data);
         model.addAttribute("strNum", strNum);
         model.addAttribute("endNum", endNum);
         model.addAttribute("listPage", data);
@@ -41,9 +43,7 @@ public class AdminController {
     public String getCompanyList(@PathVariable int strNum, @PathVariable int endNum, HttpSession session, Model model) {
         PageMoveWithMessage pmwm = adminService.getCompanyList(session, strNum, endNum);
         List<CompanyListResponseDto> data = (List<CompanyListResponseDto>) pmwm.getData();
-        System.out.println("AdminController getCompanyList data : " + data);
-        System.out.println("AdminController getCompanyList strNum : " + strNum);
-        System.out.println("AdminController getCompanyList endNum : " + endNum);
+
         model.addAttribute("strNum", strNum);
         model.addAttribute("endNum", endNum);
         model.addAttribute("listPage", data);
@@ -86,8 +86,9 @@ public class AdminController {
     private String modifyStack(@RequestParam String stackId, @RequestParam String modifiedName, Model model, HttpSession session){
         PageMoveWithMessage pmwm = adminService.modifyStack(session, stackId, modifiedName);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
-
+        String errorMessage = pmwm.getErrorMessage();
         model.addAttribute("totalStackList", data);
+        model.addAttribute("errorMessage", errorMessage);
         return pmwm.getPageName();
     }
 
@@ -133,6 +134,12 @@ public class AdminController {
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
 
         model.addAttribute("totalJobList", data);
+        return pmwm.getPageName();
+    }
+
+    @GetMapping("/approval/{companyId}")
+    public String approveCompany(@PathVariable String companyId, HttpSession session) {
+        PageMoveWithMessage pmwm = companyService.approveCompany(session, companyId);
         return pmwm.getPageName();
     }
 }

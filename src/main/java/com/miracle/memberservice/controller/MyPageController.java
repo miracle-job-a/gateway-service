@@ -3,9 +3,10 @@ package com.miracle.memberservice.controller;
 import com.miracle.memberservice.dto.request.InterviewRequestDto;
 import com.miracle.memberservice.dto.request.QnaDto;
 import com.miracle.memberservice.dto.request.QnaListDto;
+import com.miracle.memberservice.dto.response.ApplicationLetterListResponseDto;
+import com.miracle.memberservice.dto.response.CompanyNameResponseDto;
 import com.miracle.memberservice.dto.response.ResumeInApplicationLetterResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;
-import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.MyPageService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
@@ -31,16 +33,14 @@ public class MyPageController {
 
     // 마이페이지 목록
     @GetMapping("/apply-list/{startPage}")
-    public String applyList(HttpSession session, Model model, @PathVariable(required = false) int startPage, @RequestParam(required = false, defaultValue = "SUBMIT_DATE_ASC") String sort) {
+    public String applyList(HttpSession session, Model model, @PathVariable(required = false) int startPage, @RequestParam(required = false, defaultValue = "SUBMIT_DATE_DESC") String sort) {
         PageMoveWithMessage pmwm = myPageService.applicationLetterList(session, startPage, sort);
 
         List<List<ApplicationLetterListResponseDto>> data = (List<List<ApplicationLetterListResponseDto>>) pmwm.getData();
 
         Set<Long> postIdSet = new HashSet<>();
-        data.iterator().forEachRemaining((List<ApplicationLetterListResponseDto> list) -> {
-            list.iterator().forEachRemaining((ApplicationLetterListResponseDto dto) -> postIdSet.add(dto.getPostId()));
-        });
-        ArrayList<CompanyNameResponseDto> info = (ArrayList<CompanyNameResponseDto>) myPageService.getCompanyInfo(session, postIdSet);
+        data.iterator().forEachRemaining((List<ApplicationLetterListResponseDto> list) -> list.iterator().forEachRemaining((ApplicationLetterListResponseDto dto) -> postIdSet.add(dto.getPostId())));
+        List<CompanyNameResponseDto> info = myPageService.getCompanyInfo(session, postIdSet);
 
         model.addAttribute("info", info);
         model.addAttribute("startPage", startPage);
@@ -74,14 +74,15 @@ public class MyPageController {
 
     // 지원 면접생성 폼 이동
     @GetMapping("/interview/form/{applicationLetterId}")
-    public String interviewForm(@PathVariable Long applicationLetterId, Model model) {
+    public String interviewForm(@PathVariable Long applicationLetterId, @RequestParam(required = false) String errorMessage, Model model) {
         model.addAttribute("applicationLetterId", applicationLetterId);
+        model.addAttribute("errorMessage", errorMessage);
         return "user/interview-form";
     }
 
     // 면접 저장
     @PostMapping("/interview")
-    public String createInterview(@ModelAttribute QnaListDto qnaListDto, Long applicationLetterId, HttpSession session) {
+    public String createInterview(RedirectAttributes redirectAttributes, @ModelAttribute QnaListDto qnaListDto, Long applicationLetterId, HttpSession session) {
         List<QnaDto> qnaDtoList = new ArrayList<>();
         for (int i = 0; i < qnaListDto.getAnswer().size(); i++) {
             String question = qnaListDto.getQuestion().get(i);
@@ -89,7 +90,8 @@ public class MyPageController {
             qnaDtoList.add(new QnaDto(question, answer));
         }
 
-        PageMoveWithMessage pmwm = myPageService.createInterview(session, new InterviewRequestDto(applicationLetterId, qnaDtoList));
+        PageMoveWithMessage pmwm = myPageService.createInterview(session, new InterviewRequestDto(applicationLetterId, qnaDtoList), applicationLetterId);
+        redirectAttributes.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
 

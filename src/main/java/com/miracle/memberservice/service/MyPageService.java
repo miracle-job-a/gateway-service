@@ -19,7 +19,7 @@ import java.util.*;
 public class MyPageService {
 
     // 지원현황 목록 불러오기
-    public PageMoveWithMessage applicationLetterList(HttpSession session, int startPage, String sort){
+    public PageMoveWithMessage applicationLetterList(HttpSession session, int startPage, String sort) {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.getUserParamListSort(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter", startPage, startPage + 4, sort);
 
@@ -30,10 +30,10 @@ public class MyPageService {
     }
 
     // 지원 이력서 조회하기
-    public PageMoveWithMessage resumeInApplicationLetterDetail(HttpSession session, Long applicationLetterId){
+    public PageMoveWithMessage resumeInApplicationLetterDetail(HttpSession session, Long applicationLetterId) {
         Long userId = (Long) session.getAttribute("id");
 
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/"+userId+"/application-letter/"+applicationLetterId+"/resume");
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId + "/resume");
 
         LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
@@ -58,7 +58,7 @@ public class MyPageService {
     }
 
     // 지원 자소서 조회하기
-    public PageMoveWithMessage coverLetterInApplicationLetterDetail(HttpSession session, Long applicationLetterId){
+    public PageMoveWithMessage coverLetterInApplicationLetterDetail(HttpSession session, Long applicationLetterId) {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId + "/cover-letter");
 
@@ -73,10 +73,11 @@ public class MyPageService {
     }
 
     // 면접 생성
-    public PageMoveWithMessage createInterview(HttpSession session, InterviewRequestDto requestDto) {
+    public PageMoveWithMessage createInterview(HttpSession session, InterviewRequestDto requestDto, Long applicationLetterId) {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.post(session, requestDto, Const.RequestHeader.USER, "/user/" + userId + "/interview");
-
+        if (response.getHttpStatus() != 200)
+            return new PageMoveWithMessage("redirect:/v1/user/my-page/interview/form/" + applicationLetterId, "같은 문항이 들어갈 수 없습니다.");
         return new PageMoveWithMessage("redirect:/v1/user/my-page/apply-list/1", response.getMessage());
     }
 
@@ -89,7 +90,7 @@ public class MyPageService {
     }
 
     // 면접 조회
-    public PageMoveWithMessage interviewDetail(HttpSession session, Long interviewId){
+    public PageMoveWithMessage interviewDetail(HttpSession session, Long interviewId) {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/interview/" + interviewId);
 
@@ -102,7 +103,7 @@ public class MyPageService {
     }
 
     // 면접 삭제
-    public PageMoveWithMessage deleteInterview(HttpSession session, Long interviewId){
+    public PageMoveWithMessage deleteInterview(HttpSession session, Long interviewId) {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.USER, "/user/" + userId + "/interview/" + interviewId);
 
@@ -110,11 +111,11 @@ public class MyPageService {
     }
 
     // 공고 id로 기업 정보조회
-    public List<CompanyNameResponseDto> getCompanyInfo(HttpSession session, Set<Long> postId){
+    public List<CompanyNameResponseDto> getCompanyInfo(HttpSession session, Set<Long> postId) {
         ApiResponse response = ServiceCall.post(session, new PostIdRequestDto(postId), Const.RequestHeader.COMPANY, "/company/posts");
-        if (response.getData() instanceof  Boolean) return null;
+        if (response.getData() instanceof Boolean) return null;
 
-        return ApiResponseToList.companyInfo(response.getData());
+        return ApiResponseToList.companyInfo(session, response.getData());
     }
 
 }
