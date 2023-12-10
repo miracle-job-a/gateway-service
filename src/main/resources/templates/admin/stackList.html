@@ -5,10 +5,32 @@
 
 <div layout:fragment="content">
     <script>
-        function registerStack() {
-            var stackName = document.getElementById('register').value;
-            var confirmation = confirm("등록 후에는 삭제 할 수 없습니다. 등록하시겠습니까?");
+        var badgeStackName;
 
+        function isStackNameExists(stackName) {
+            var stackList = document.querySelectorAll('[data-stack-id]');
+            for (var i = 0; i < stackList.length; i++) {
+                if (stackList[i].textContent === stackName) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function registerStack() {
+            var stackName = document.getElementById('register').value.trim();
+
+            if (!stackName) {
+                alert('등록하고자 하는 스택명을 입력해주세요.');
+                return;
+            }
+
+            if (isStackNameExists(stackName)) {
+                alert('이미 등록된 스택입니다.');
+                return;
+            }
+
+            var confirmation = confirm("등록 후에는 삭제 할 수 없습니다. 등록하시겠습니까?");
             if (confirmation) {
                 var xhr = new XMLHttpRequest();
                 xhr.open("POST", "/v1/admin/register/stack", true);
@@ -21,8 +43,10 @@
                         if (xhr.status === 200) {
                             console.log("스택이 성공적으로 등록되었습니다!");
                             alert("성공적으로 처리되었습니다.");
+                            location.reload();
                         } else {
-                            console.error("스택 등록에 실패했습니다. 상태: " + xhr.status);
+                            console.error("스택 등록에 실패했습니다. status: " + xhr.status);
+                            alert("스택 수정에 실패하였습니다.");
                         }
                     }
                 };
@@ -31,39 +55,55 @@
             }
         }
 
-        function modifyStack() {
-            var modifiedName = document.getElementById('modify').value;
-            var stackId = document.getElementById('modifyId').value;
-
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "/v1/admin/stacks", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-            var params = "stackId=" + encodeURIComponent(stackId) + "&modifiedName=" + encodeURIComponent(modifiedName);
-
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-/*                        var errorMessage = document.getElementById('errorMessage').getAttribute('data-error-message');
-                        alert(errorMessage);*/
-                    } else {
-                        console.error("스택 수정에 실패했습니다. status: " + xhr.status);
-                        alert("스택 수정에 실패했습니다.");
-                    }
-                }
-            };
-
-            xhr.send(params);
-        }
-
-
-
         function fillModifyForm(button) {
             var stackId = button.getAttribute('data-stack-id');
             var stackName = button.textContent;
+            badgeStackName = button.textContent;
 
             document.getElementById('modifyId').value = stackId;
             document.getElementById('modify').value = stackName;
+        }
+
+        async function modifyStack() {
+            var modifiedName = document.getElementById('modify').value;
+            var stackId = document.getElementById('modifyId').value;
+
+            if (badgeStackName === modifiedName) {
+                alert('변경사항이 없습니다. 수정 할 스택명을 다시 입력해주세요.');
+                return;
+            }
+
+            if (!modifiedName) {
+                alert('수정하고자 하는 스택명을 입력해주세요.');
+                return;
+            }
+
+            if (isStackNameExists(modifiedName)) {
+                alert('이미 등록되어 있는 스택입니다.');
+                return;
+            }
+
+            try {
+                    var response = await fetch("/v1/admin/stacks", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                        },
+                        body: "stackId=" + encodeURIComponent(stackId) + "&modifiedName=" + encodeURIComponent(modifiedName),
+                    });
+
+                    if (response.ok) {
+                        console.log("스택이 성공적으로 수정되었습니다!");
+                        alert("성공적으로 처리되었습니다.");
+                        location.reload();
+                    } else {
+                        console.error("스택 수정에 실패했습니다. status: " + response.status);
+                        alert("스택 수정에 실패했습니다.");
+                    }
+                } catch (error) {
+                    console.error("modifyStack 요청 중 오류 발생:", error);
+                    alert('스택 수정 중 오류가 발생했습니다. 다시 시도해주세요.');
+                }
         }
     </script>
 
@@ -79,7 +119,7 @@
                         <div class="section-title-wrap mb-4">
                             <h4 class="section-title">기술스택 관리</h4>
                         </div>
-                        <button style="float: right" class="section-title" onclick="location.href='/v1/admin/stacks';">새로고침</button>
+                        <button style="float: right" class="section-title" onclick="location.href='/v1/admin/stacks';">목록보기</button>
 
                         <div style="margin-top: 10%" class="row justify-content-center">
                             <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 mt-1 post-form">
@@ -87,25 +127,21 @@
                                 <div class="col-12 mt-5"></div>
                                 <!-- 입력, 섹션 시작 -->
                                 <div class="card p-4 col-11 post-form align-self-center">
-                                    <form action="/v1/admin/stacks" method="get">
-                                        <div class="mb-1">
-                                            <label for="register">스택 등록</label>
-                                        </div>
-                                        <div class="col-12 mt-2 input-group">
-                                            <input type="text" name="name" id="register" class="form-control" placeholder="등록하려는 스택명 기입" required="" />
-                                            <button class="btn" type="button" onclick="registerStack()">등록</button>
-                                        </div>
-                                    </form>
+                                    <div class="mb-1">
+                                        <label for="register">스택 등록</label>
+                                    </div>
+                                    <div class="col-12 mt-2 input-group">
+                                        <input type="text" name="name" id="register"
+                                               class="form-control" placeholder="등록하려는 스택명 기입" required="" />
+                                        <button class="btn" type="button" onclick="registerStack()">등록</button>
+                                    </div>
 
-                                    <form action="/v1/admin/stacks" method="get">
                                     <div class="col-12 mt-2 input-group">
                                         <input type="text" name="name" id="modify"
                                                class="form-control" placeholder="스택 클릭 후 수정하고 싶은 스택명 기입" required="" />
                                         <input type="hidden" name="id" id="modifyId" />
-                                        <button class="btn" type="submit" onclick="modifyStack()">수정</button>
-                                        <input type="hidden" id="errorMessage" data-error-message="${errorMesssage}" />
+                                        <button class="btn" type="button" onclick="modifyStack()">수정</button>
                                     </div>
-                                    </form>
                                 </div>
 
                                 <div class="card mt-4 mb-4 p-4 col-11 post-form align-self-center">
@@ -115,6 +151,7 @@
                                         <button class="btn" type="submit">검색</button>
                                     </div>
                                     </form>
+
                                     <div class="col-12 mt-2 input-group justify-content-center">
                                         <!-- 목록 -->
                                         <div id="stackListContainer" class="row row-cols-lg-7">
