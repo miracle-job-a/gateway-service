@@ -19,7 +19,6 @@
 
         function registerStack() {
             var stackName = document.getElementById('register').value.trim();
-            var confirmation = confirm("등록 후에는 삭제 할 수 없습니다. 등록하시겠습니까?");
 
             if (!stackName) {
                 alert('등록하고자 하는 스택명을 입력해주세요.');
@@ -31,6 +30,7 @@
                 return;
             }
 
+            var confirmation = confirm("등록 후에는 삭제 할 수 없습니다. 등록하시겠습니까?");
             if (confirmation) {
                 var xhr = new XMLHttpRequest();
                 xhr.open("POST", "/v1/admin/register/stack", true);
@@ -68,12 +68,18 @@
             var modifiedName = document.getElementById('modify').value;
             var stackId = document.getElementById('modifyId').value;
 
-            if (badgeStackName == modifiedName) {
+            if (badgeStackName === modifiedName) {
                 alert('변경사항이 없습니다. 수정 할 스택명을 다시 입력해주세요.');
                 return;
             }
+
             if (!modifiedName) {
                 alert('수정하고자 하는 스택명을 입력해주세요.');
+                return;
+            }
+
+            if (isStackNameExists(modifiedName)) {
+                alert('이미 등록되어 있는 스택입니다.');
                 return;
             }
 
