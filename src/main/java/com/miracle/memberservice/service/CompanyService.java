@@ -340,6 +340,8 @@ public class CompanyService {
      if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("redirect:/v1/company/info", response.getMessage());
         }
+
+        session.removeAttribute("pwd");
         return new PageMoveWithMessage("redirect:/v1/company/info");
     }
 

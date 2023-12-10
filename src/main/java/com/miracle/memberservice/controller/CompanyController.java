@@ -178,9 +178,10 @@ public class CompanyController {
 
     // 수정페이지 요청
     @PostMapping("/info/validation")
-    public String checkCompanyInfo(HttpSession session,@ModelAttribute CompanyLoginRequestDto requestDto) {
+    public String checkCompanyInfo(HttpSession session,@ModelAttribute CompanyLoginRequestDto requestDto, String password) {
         boolean checked = companyService.checkCompanyInfo(session, requestDto);
         if (checked) {
+            session.setAttribute("pwd", password);
             return "redirect:/v1/company/info/modify";
         } else {
             return "/error/500";
@@ -194,13 +195,13 @@ public class CompanyController {
         return pmwm.getPageName();
     }
 
-    @Value("${miracle.passwordChecker}")
-    private String passwordChecker;
+
 
     @PostMapping("/info/update")
     public String updateCompanyInfo(HttpSession session, @ModelAttribute CompanyInfoRequestDto requestDto) {
         if (requestDto.getPassword() == null || requestDto.getPassword().isEmpty()) {
-            requestDto.setPassword(passwordChecker);
+            String password = (String) session.getAttribute("pwd");
+            requestDto.setPassword(password);
         }
         PageMoveWithMessage pmwm = companyService.updateCompanyInfo(session, requestDto);
         return pmwm.getPageName();

@@ -1,3 +1,6 @@
+miracle:
+  miracle: passwordChecker;
+
 server:
   port: 60000
   error:
@@ -35,4 +38,6 @@ spring:
           starttls:
             enable: true
           auth: true
+
+
 

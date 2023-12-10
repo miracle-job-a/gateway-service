@@ -118,4 +118,22 @@ public class MyPageService {
         return ApiResponseToList.companyInfo(session, response.getData());
     }
 
+    // 유저 정보 조회
+    public PageMoveWithMessage userInfo(HttpSession session) {
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.get(session,Const.RequestHeader.USER, "/user/" + userId);
+        if (response.getHttpStatus() != 200)
+            return new PageMoveWithMessage("redirect:/v1", response.getMessage());
+        Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        UserInfoResponseDto info = UserInfoResponseDto.builder()
+                .id(Long.valueOf((Integer) data.get("id")))
+                .name((String) data.get("name"))
+                .birth((String) data.get("birth"))
+                .phone((String) data.get("phone"))
+                .address((String) data.get("address"))
+                .stackIdSet((ArrayList<Integer>) data.get("stackIdSet"))
+                .build();
+        return new PageMoveWithMessage("user/user-info", info);
+    }
+
 }
