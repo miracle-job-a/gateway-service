@@ -4,9 +4,50 @@
         layout:decorate="~{layout/default_layout}" lang="ko">
 
 <div layout:fragment="content">
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+
+        if (errorMessage != null) {
+            alert(errorMessage);
+            // 이후 로직 추가 가능
+        }
+
+        function removeSidoSigungu(address, sido, sigungu) {
+            // sido와 sigungu를 공백으로 치환하여 제거
+            return address.replace(sido, '').replace(sigungu, '').trim();
+        }
+
         /* 전화번호 정규식 */
         window.onload = function() {
+
+            document.getElementById("addressInputBtn").addEventListener("click", function () {
+                new daum.Postcode({
+                    oncomplete: function (data) {
+                        var address = '';
+                        var detailAddress = '';
+
+                        address = data.sido + ' ' + data.sigungu; // 시/도와 시/군/구를 조합하여 address에 저장
+                        if (data.userSelectedType === 'R') {
+                            detailAddress = removeSidoSigungu(data.roadAddress, data.sido, data.sigungu);
+                        }
+                        if (data.userSelectedType === 'J') {
+                            detailAddress = removeSidoSigungu(data.jibunAddress, data.sido, data.sigungu);
+                        }
+
+                        // 우편번호, 주소 정보를 해당 필드에 넣는다.
+                        document.getElementById('address').value = data.zonecode;
+                        document.getElementById("address").value = address;
+
+                        // 나머지 주소 정보를 detailAddress 필드에 넣는다.
+                        document.getElementById("detailAddress").value = detailAddress;
+
+                        // 커서를 상세주소 필드로 이동한다.
+                        document.getElementById("detailAddress").focus();
+                    }
+                }).open();
+            });
+
             /* 전화번호 정규식 */
             function onInputPhone(input) {
                 if (input.id === 'phone') {
@@ -26,14 +67,64 @@
         // 처음에 들어온 값을 적용하기 위해
         document.getElementById('phone').value = document.getElementById('phone').value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
 
+        /* 비밀번호 체크 */
+        $(document).ready(function () {
+
+            $('#inputPw').keyup(function () {
+                checkPassword();
+            });
+
+            $('#pwConfirm').keyup(function () {
+                checkPasswordConfirmation();
+            });
+
+            // 비밀번호 변경
+            function checkPassword() {
+                var password = $('#inputPw').val();
+
+                // 비밀번호가 6자리 이상이고, 특수문자가 최소 1개 이상 포함되어 있는지 확인
+                var passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/;
+
+                if (!passwordRegex.test(password)) {
+                    $('#checkPw').css("color", "grey").html('<b>알파벳 포함 숫자 6자리 이상, 특수문자 1개 포함해주세요.</b>');
+                    $('#pwConfirm').prop("disabled", true);
+                } else {
+                    $('#checkPw').css("color", "#660099").html('<b>사용가능</b>');
+                    $('#pwConfirm').prop("disabled", false);
+
+                    if (password !== $('input[name="password"]').data('password')) {
+                        // 비밀번호가 변경되었으면 hidden 필드의 값을 지웁니다.
+                        $('#secret').val('');
+                    }
+                }
+            }
+
+
+            function checkPasswordConfirmation() {
+                var password = $('#inputPw').val();
+                var confirmPassword = $('#pwConfirm').val();
+
+                if (confirmPassword === "") {
+                    $('#pwConfirmMsg').css("color", "grey").html('<b>비밀번호 확인을 입력해주세요.</b>');
+                    return;
+                }
+
+                if (password === confirmPassword) {
+                    $('#pwConfirmMsg').css("color", "#660099").html('<b>암호 일치</b>');
+                } else {
+                    $('#pwConfirmMsg').css("color", "grey").html('<b>암호가 일치하지 않습니다.</b>');
+                }
+            }
+        });
+
+
 
         // 수정취소 (상세보기로 돌아가기)
-        function cancelEditing(button) {
-            var resumeId = button.getAttribute('data-delete-id');
+        function cancelEditing() {
             var confirmResult = confirm("수정 취소 하시겠습니까?")
 
             if (confirmResult){
-                window.location.href = '/v1/user/resume/detail/' + resumeId;
+                window.location.href = '/v1/user/my-page/my-info';
             } else {
 
             }
@@ -48,11 +139,14 @@
 
         $('#cancelBtn ').css('display', 'block');
         $('#submitBtn').css('display', 'block');
+        $('#addressInputBtn').css('display', 'block');
+        $('#passwordCard').css('display', 'block');
+        $('#detailAddress').css('display', 'block');
+        $('#subAddress').css('display', 'block');
 
         $('#editBtn').css('display', 'none');
         $('#back').css('display', 'none');
 
-        var pwdDiv = document.getElementById("pwd");
         var passwordInput = document.getElementById("password");
         var confirmPwdInput = document.getElementById("confirmPwd");
 
@@ -93,35 +187,40 @@
         function validateForm(){
 
             // 빈칸 경고
-            var careerInput = document.getElementById('email');
-            if (careerInput.value.trim() === '') {
+
+            var emailInput = document.getElementById('email');
+            if (emailInput.value.trim() === '') {
                 alert('이메일 입력이 필요합니다.');
                 event.preventDefault();
                 return false;
             }
 
-            var careerInput = document.getElementById('phone');
-            if (careerInput.value.trim() === '') {
+            var phoneInput = document.getElementById('phone');
+            if (phoneInput.value.trim() === '') {
                 alert('전화번호 입력이 필요합니다.');
                 event.preventDefault();
                 return false;
             }
 
-            var careerInput = document.getElementById('birth');
-            if (careerInput.value.trim() === '') {
+            var birthInput = document.getElementById('birth');
+            if (birthInput.value.trim() === '') {
                 alert('생년월일 입력이 필요합니다.');
                 event.preventDefault();
                 return false;
             }
 
-            var careerInput = document.getElementById('address');
-            if (careerInput.value.trim() === '') {
+            var addressInput = document.getElementById('address');
+            if (addressInput.value.trim() === '') {
                 alert('주소 입력이 필요합니다.');
                 event.preventDefault();
                 return false;
             }
 
-
+            var stackCheckboxes = document.querySelectorAll('input[name="stackIdSet"]:checked');
+            if (stackCheckboxes.length === 0) {
+                alert('보유한 기술 스택을 하나 이상 선택해주세요.');
+                return false;
+            }
 
 
             if (!validateSpecialCharacters()) {
@@ -133,6 +232,7 @@
             return true;
 
         }
+
 
 
     </script>
@@ -164,12 +264,29 @@
                                     <div class="custom-block-info post-form">
 
                                         <div class="col-10 mt-4 mx-auto">
-                                            <h2 class="mb-2 " th:text="${info.name}">Kakao</h2>
+                                            <h2 class="mb-2 " th:text="${info.name}"></h2>
+                                        </div>
+
+                                        <div class="col-10 mt-4 mx-auto" id="passwordCard" style="display: none">
+                                            <label>비밀번호 변경</label>
+                                            <div class="form-floating">
+                                                <input type="password" name="password" id="inputPw" class="form-control"
+                                                       placeholder="비밀번호" autocomplete="off">
+                                                <label for="floatingInput" id="checkPw">비밀번호(알파벳 포함 숫자 6자리 이상, 특수문자 1개
+                                                    포함)<span class="text-danger">*</span></label>
+                                            </div>
+                                            <div class="form-floating">
+                                                <input type="password" name="passwordConfirm" id="pwConfirm"
+                                                       class="form-control mt-1"
+                                                       placeholder="비밀번호확인" >
+                                                <label for="floatingInput" id="pwConfirmMsg">비밀번호 확인<span
+                                                        class="text-danger">*</span></label>
+                                            </div>
                                         </div>
 
                                         <div class="col-10 mt-3 mx-auto">
                                             <label>생년월일</label>
-                                            <input type="date" readonly class="form-control mt-2" id="birth" name="birth" th:value="${info.birth}">
+                                            <input type="date" readonly class="form-control-plaintext mt-2" id="birth" name="birth" th:value="${info.birth}">
                                         </div>
 
                                         <div class="col-10 mt-3 mx-auto">
@@ -179,12 +296,21 @@
 
                                         <div class="col-10 mt-3 mx-auto">
                                             <label>주소</label>
-                                            <input type="text" readonly class="form-control-plaintext mt-2" id="address" name="address" th:value="${info.address}">
+                                            <input type="text" readonly class="form-control mt-2" id="address" name="address" th:value="${info.address}">
+                                        </div>
+
+                                        <div class="col-10 mt-1 mx-auto" id="subAddress" style="display: none">
+                                            <label>상세 주소</label>
+                                            <input type="text" readonly class="form-control mt-2" id="detailAddress" name="detailAddress" style="display: none" />
+                                        </div>
+
+                                        <div class="col-10 mt-1 mx-auto">
+                                            <button type="button" class="custom-btn" id="addressInputBtn" style="display: none">주소 찾기</button>
                                         </div>
 
                                         <div class="col-10 mt-3 mx-auto">
                                             <label for="stack">보유한 기술 스택</label>
-                                            <div class="card mt-2 mb-4 p-4 col-11 post-form align-self-center">
+                                            <div class="card mt-2 mb-4 p-4 col-12 post-form align-self-center">
                                                 <div th:each="stacks : ${stack}">
                                                     <span id="bi-person-workspace" th:text="${stacks.name}"></span>
                                                 </div>
@@ -195,14 +321,14 @@
                                         <div class="row col-12 my-5">
                                             <div class="col-4">
                                                 <button type="button" class="form-control" id="back" onclick="goBack()">돌아가기</button>
-                                                <button type="button" class="form-control" id="cancelBtn" onclick="cancelEditing(this)" style="display: none">수정취소</button>
+                                                <button type="button" class="form-control" id="cancelBtn" onclick="cancelEditing()" style="display: none">수정 취소</button>
                                             </div>
                                             <div class="col-4">
 
                                             </div>
                                             <div class="col-4">
                                                 <button type="button" class="form-control" id="editBtn" onclick="enableEditing()">정보수정</button>
-                                                <button type="submit" class="form-control" id="submitBtn" onclick="validateForm()" style="display: none">수정완료</button>
+                                                <button type="submit" class="form-control" id="submitBtn" style="display: none">수정하기</button>
                                             </div>
                                         </div>
 

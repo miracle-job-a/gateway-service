@@ -131,10 +131,10 @@ public class MyPageController {
         PageMoveWithMessage pmwm = myPageService.userInfo(session);
         UserInfoResponseDto data = (UserInfoResponseDto) pmwm.getData();
         ArrayList<StackResponseDto> stacks = (ArrayList<StackResponseDto>) adminService.getStacks(session, data.getStackIdSet());
-        // ArrayList<StackResponseDto> allStack = (ArrayList<StackResponseDto>) adminService.getAllStacks(session);
+        ArrayList<StackResponseDto> allStack = (ArrayList<StackResponseDto>) adminService.getAllStacks(session);
         model.addAttribute("info", pmwm.getData());
         model.addAttribute("stack", stacks);
-        // model.addAttribute("allstack", allStack);
+        model.addAttribute("allstack", allStack);
         return pmwm.getPageName();
     }
 

@@ -108,7 +108,7 @@
             var confirmResult = confirm("수정 취소 하시겠습니까?")
 
             if (confirmResult){
-                window.location.href = '/v1/user/resume/detail/' + resumeId;
+                window.location.href = '/v1/user/my-page/my-info';
             } else {
 
             }
@@ -142,8 +142,8 @@
         function validateForm(){
 
             // 빈칸 경고
-            var careerInput = document.getElementById('email');
-            if (careerInput.value.trim() === '') {
+            var emailInput = document.getElementById('email');
+            if (emailInput.value.trim() === '') {
                 alert('이메일 입력이 필요합니다.');
                 event.preventDefault();
                 return false;
@@ -213,7 +213,7 @@
 
                                         <div class="col-10 mt-4 mx-auto">
                                             <label>기업명</label>
-                                            <input type="text" class="form-control" id="name" name="name" th:value="${info.name}"/>
+                                            <input type="text" class="form-control" id="name" name="name" th:value="${info.name}" />
                                         </div>
 
                                         <div class="col-10 mt-4 mx-auto">
