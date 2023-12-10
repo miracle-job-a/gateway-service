@@ -9,6 +9,7 @@ import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -193,11 +194,19 @@ public class CompanyController {
         return pmwm.getPageName();
     }
 
+    @Value("${miracle.passwordChecker}")
+    private String passwordChecker;
+
     @PostMapping("/info/update")
     public String updateCompanyInfo(HttpSession session, @ModelAttribute CompanyInfoRequestDto requestDto) {
+        if (requestDto.getPassword() == null || requestDto.getPassword().isEmpty()) {
+            requestDto.setPassword(passwordChecker);
+        }
         PageMoveWithMessage pmwm = companyService.updateCompanyInfo(session, requestDto);
         return pmwm.getPageName();
     }
+
+
 
 
 }

@@ -2,6 +2,7 @@ package com.miracle.memberservice.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @Getter
@@ -14,7 +15,8 @@ public class CompanyInfoRequestDto {
     private final String photo;
     private final String introduction;
     private final String address;
-    private final String password;
+    @Setter
+    private String password;
 
     @Builder
     public CompanyInfoRequestDto(String name, String ceoName, int employeeNum, String sector, String photo, String introduction, String address, String password) {
@@ -27,4 +29,5 @@ public class CompanyInfoRequestDto {
         this.address = address;
         this.password = password;
     }
+
 }
