@@ -88,7 +88,12 @@ public class CompanyService {
         return new PageMoveWithMessage("company/post-list", postList);
     }
 
-    // MZ 공고 등록
+    // 확인 용도
+    public Boolean statusCompany(HttpSession session){
+        Long companyId = (Long) session.getAttribute("id");
+        ApiResponse apiResponse = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/status");
+        return (Boolean) apiResponse.getData();
+    }
 
     public PageMoveWithMessage formPost(HttpSession session, String postType, Long companyId) {
         if (Objects.isNull(companyId)) companyId = (Long) session.getAttribute("id");

@@ -36,11 +36,11 @@ public class CompanyController {
     }
 
     @GetMapping("/post/list/{strNum}")
-    public String postList(HttpSession session, Model model, @PathVariable int strNum, @RequestParam(required = false, defaultValue = "") String sort) {
+    public String postList(HttpSession session, Model model, @PathVariable int strNum, @RequestParam(required = false, defaultValue = "") String sort, @RequestParam(required = false) String errorMessage) {
         PageMoveWithMessage pmwm = companyService.postList(session, strNum, strNum + 4, sort);
         model.addAttribute("strNum", strNum);
         model.addAttribute("postPage", pmwm.getData());
-        model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        model.addAttribute("errorMessage", errorMessage);
         if (Strings.isBlank(sort)) sort = "latest";
         model.addAttribute("sort", sort);
         return pmwm.getPageName();
@@ -48,7 +48,11 @@ public class CompanyController {
 
     // 공고 생성 폼 이동
     @GetMapping("/post/form")
-    public String postFormPage(HttpSession session, Model model) {
+    public String postFormPage(RedirectAttributes redirectAttributes, HttpSession session, Model model) {
+        if(!companyService.statusCompany(session)) {
+            redirectAttributes.addAttribute("errorMessage", "현재 가입 승인 전입니다. \n관리자 승인 이전에 공고 생성은 불가합니다.");
+            return "redirect:/v1/company/post/list/1";
+        }
         PageMoveWithMessage pmwm = companyService.formPost(session, null, null);
         Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
         model.addAttribute("info", pmwm.getData());
@@ -99,7 +103,11 @@ public class CompanyController {
     }
 
     @GetMapping("/post/{postType}/form")
-    public String postForm(HttpSession session, Model model, @PathVariable String postType) {
+    public String postForm(RedirectAttributes redirectAttributes, HttpSession session, Model model, @PathVariable String postType) {
+        if(!companyService.statusCompany(session)) {
+            redirectAttributes.addAttribute("errorMessage", "현재 가입 승인 전입니다. \n관리자 승인 이전에 공고 생성은 불가합니다.");
+            return "redirect:/v1/company/post/list/1";
+        }
         PageMoveWithMessage pmwm = companyService.formPost(session, postType, null);
         Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
         model.addAttribute("info", pmwm.getData());
