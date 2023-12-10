@@ -228,4 +228,6 @@ public class UserService {
 
         return new PageMoveWithMessage("company/applicant-list", ApiResponseToList.applicantList(response.getData()));
     }
+
+
 }
