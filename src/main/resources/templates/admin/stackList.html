@@ -8,12 +8,12 @@
         var badgeStackName;
         function registerStack() {
             var stackName = document.getElementById('register').value.trim();
+            var confirmation = confirm("등록 후에는 삭제 할 수 없습니다. 등록하시겠습니까?");
+
             if (!stackName) {
                 alert('등록하고자 하는 스택명을 입력해주세요.');
                 return;
             }
-
-            var confirmation = confirm("등록 후에는 삭제 할 수 없습니다. 등록하시겠습니까?");
 
             if (confirmation) {
                 var xhr = new XMLHttpRequest();
@@ -30,6 +30,7 @@
                             location.reload();
                         } else {
                             console.error("스택 등록에 실패했습니다. status: " + xhr.status);
+                            alert("스택 수정에 실패하였습니다.");
                         }
                     }
                 };
@@ -81,7 +82,6 @@
                     console.error("modifyStack 요청 중 오류 발생:", error);
                     alert('스택 수정 중 오류가 발생했습니다. 다시 시도해주세요.');
                 }
-
         }
     </script>
 
