@@ -3,10 +3,7 @@ package com.miracle.memberservice.controller;
 import com.miracle.memberservice.dto.request.InterviewRequestDto;
 import com.miracle.memberservice.dto.request.QnaDto;
 import com.miracle.memberservice.dto.request.QnaListDto;
-import com.miracle.memberservice.dto.response.ApplicationLetterListResponseDto;
-import com.miracle.memberservice.dto.response.CompanyNameResponseDto;
-import com.miracle.memberservice.dto.response.ResumeInApplicationLetterResponseDto;
-import com.miracle.memberservice.dto.response.StackResponseDto;
+import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.MyPageService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
@@ -129,8 +126,17 @@ public class MyPageController {
     }
 
     // 개인정보 조회 (임시)
-    @GetMapping("/personal")
-    public String getPersonal(){ return "user/personal-info"; }
+    @GetMapping("/my-info")
+    public String getPersonal(HttpSession session, Model model){
+        PageMoveWithMessage pmwm = myPageService.userInfo(session);
+        UserInfoResponseDto data = (UserInfoResponseDto) pmwm.getData();
+        ArrayList<StackResponseDto> stacks = (ArrayList<StackResponseDto>) adminService.getStacks(session, data.getStackIdSet());
+        ArrayList<StackResponseDto> allStack = (ArrayList<StackResponseDto>) adminService.getAllStacks(session);
+        model.addAttribute("info", pmwm.getData());
+        model.addAttribute("stack", stacks);
+        model.addAttribute("allstack", allStack);
+        return pmwm.getPageName();
+    }
 
     // 개인정보 확인
     @GetMapping("/validation")

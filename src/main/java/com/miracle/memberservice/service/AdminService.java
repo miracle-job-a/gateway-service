@@ -87,6 +87,11 @@ public class AdminService {
         return ApiResponseToList.jobs(response.getData());
     }
 
+    public List<StackResponseDto> getAllStacks(HttpSession session){
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.ADMIN, "/admin/stacks");
+        return ApiResponseToList.stacks(response.getData());
+    }
+
     public PageMoveWithMessage getUserList(HttpSession session, int strNum, int endNum) {
         ApiResponse response = ServiceCall.getParamList(session, Const.RequestHeader.USER, "/user", strNum, endNum);
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("index", response.getMessage());
