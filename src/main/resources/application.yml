@@ -1,43 +1,14 @@
-miracle:
-  miracle: passwordChecker;
-
-server:
-  port: 60000
-  error:
-    include-exception: true
-    include-stacktrace: always
-    path: /error
-
 spring:
-  devtools:
-    livereload:
-      # 정적 리소스 변화가 있을 때 반영
-      enabled: true
-    restart:
-      enabled: true
+  application:
+    name: gatewayService
+  profiles:
+    active: prod
+  config:
+    import: optional:configserver:http://miracle:1234@3.36.100.180:60010
 
-  thymeleaf:
-    # 타임리프 참조 경로
-    prefix: classpath:/templates/
-    suffix: .html
 
-    # 캐시 저장 여부
-    cache: false
 
-    # 디렉토리에 파일이 있는지 체크, 없으면 에러발생 유도
-    check-template-location: true
 
-  mail:
-    host: ${Smtp}
-    port: 587
-    username: ${Email_id}
-    password: ${Email_password}
-    properties:
-      mail:
-        smtp:
-          starttls:
-            enable: true
-          auth: true
 
 
 

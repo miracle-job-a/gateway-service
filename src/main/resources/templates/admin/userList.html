@@ -122,32 +122,6 @@
 
                                     </div>
 
-                                    <div class="col-lg-4 col-12 mx-auto">
-                                        <nav aria-label="Page navigation example">
-                                            <ul class="pagination pagination-lg justify-content-center mt-5">
-                                                <li class="page-item" th:if="${strNum>=5}">
-                                                    <a class="page-link" th:href="@{/v1/admin/user/list/{strNum}(strNum=${strNum}-5)}"
-                                                       aria-label="Previous">
-                                                        <span aria-hidden="true">&laquo;</span>
-                                                    </a>
-                                                </li>
-                                                <div th:each="user, userStat:${listPage}">
-                                                    <li class="page-item" th:id="'page'+${userStat.index}">
-                                                        <a class="page-link" th:onclick="showOnlySelected([[${userStat.index}]])"
-                                                           th:text="${userStat.index+strNum}"></a>
-                                                    </li>
-                                                </div>
-                                                <li class="page-item"
-                                                    th:if="${#lists.size(listPage)>=5 and #lists.size(listPage[4])==5}">
-                                                    <a class="page-link" th:href="@{/v1/admin/user/list/{strNum}(strNum=${strNum}+5)}"
-                                                       aria-label="Next">
-                                                        <span aria-hidden="true">&raquo;</span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </nav>
-                                    </div>
-
                                 </div>
                             </div>
                         </div>

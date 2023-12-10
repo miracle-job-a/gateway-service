@@ -19,4 +19,12 @@ public class ApiResponse {
         this.exception = null;
         this.data = null;
     }
+
+    public ApiResponse(Object data) {
+        this.httpStatus = 0;
+        this.message = null;
+        this.code = null;
+        this.exception = null;
+        this.data = data;
+    }
 }

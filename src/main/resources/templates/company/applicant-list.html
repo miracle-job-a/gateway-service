@@ -97,7 +97,7 @@
                             <div class="custom-block d-flex">
                                 <div class="custom-block-info">
                                     <h6>
-                                        <a th:text="${post.resumeTitle}"></a>
+                                        <a th:text="${post.resumeTitle}" th:if="${post.resumeTitle!='null'}"></a>
                                     </h6>
 
                                     <div class="custom-block-bottom d-flex mt-1">
