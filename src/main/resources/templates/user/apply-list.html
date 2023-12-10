@@ -1,0 +1,223 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            // 페이지 로딩 시 초기 상태 설정
+            initializePage();
+        });
+
+        function initializePage() {
+            var posts = document.querySelectorAll('[id^="postPage"]');
+
+            posts.forEach(function (post, index) {
+                if (index === 0) {
+                    var page = document.getElementById("page" + index);
+                    // 초기에는 첫 번째 post만 보이도록 설정
+                    post.style.display = 'block';
+                    page.classList.add("active");
+                } else {
+                    // 나머지 post는 숨김
+                    post.style.display = 'none';
+                }
+            });
+        }
+
+        function showOnlySelected(selectedIndex) {
+            var posts = document.querySelectorAll('[id^="postPage"]');
+            posts.forEach(function (post) {
+                var index = parseInt(post.id.replace('postPage', ''), 10);
+                var page = document.getElementById("page" + index);
+                if (index === selectedIndex) {
+                    page.classList.add("active");
+                    post.style.display = 'block';
+                } else {
+                    page.classList.remove("active");
+                    post.style.display = 'none';
+                }
+            });
+        }
+
+        function sort(button) {
+            let id = button.id;
+            location.href = "/v1/user/my-page/apply-list/1?sort=" + id;
+        }
+
+    </script>
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
+
+        <section class="latest-podcast-section" id="section_2">
+            <div class="container">
+                <div class="row justify-content-center">
+
+                    <div class="col-lg-10 col-12">
+                        <div class="section-title-wrap mb-4">
+                            <h4 class="section-title">내 지원현황</h4>
+                        </div>
+                    </div>
+
+                    <div class="row col-lg-10 col-12 mb-4">
+                        <div class="col-auto">
+                            <div class="btn-group">
+                                <button id="SUBMIT_DATE_DESC" type="button" th:class="${sort == 'SUBMIT_DATE_DESC' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}"
+                                        onclick="sort(this)">최신 지원순
+                                </button>
+                                <button id="SUBMIT_DATE_ASC" type="button" th:class="${sort == 'SUBMIT_DATE_ASC' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}" onclick="sort(this)">
+                                    오래된 지원순
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <h5 class="col-lg-10 col-12 mt-4 mb-4 mb-lg-2 text-center" th:if="${#lists.size(letter)==0}">
+                        지원이력이 없습니다.
+                    </h5>
+
+                    <!-- Thymeleaf 반복문을 사용하여 ArrayList 내의 객체들을 처리 -->
+                    <div th:each="letterItem, letterItemStat : ${letter}" th:id="'postPage'+${letterItemStat.index}">
+                        <div th:each="letters, lettersStat : ${letterItem}" class="col-lg-10 col-12 mb-4 mb-lg-2 mx-auto">
+                            <div class="custom-block d-flex">
+                                <div class="custom-block-info">
+                                    <!-- th:with를 사용하여 현재 letter의 postId를 변수에 저장 -->
+                                    <div th:with="currentPostId=${letters.postId}">
+                                        <!-- company와의 중첩된 반복문을 통해 postId 일치 여부 확인 -->
+                                        <div th:each="companyInfo : ${info}">
+                                            <div th:if="${companyInfo.postId == currentPostId}">
+                                                <div class="custom-block-top d-flex mb-1">
+                                                    <small class="me-4">
+                                                        <i class="bi-clock-fill custom-icon" th:title="'지원일자 : ' + ${letters.submitDate.substring(0, 10)}"></i>
+                                                        <span th:text="'지원일자 : ' + ${letters.submitDate}"></span>
+                                                    </small>
+                                                    <small>
+                                                        <span th:if="${letters.postType eq 'MZ'}" class="badge bg-primary me-1">MZ 공고</span>
+                                                        <span th:if="${letters.postType eq 'NORMAL'}" class="badge bg-secondary me-1">일반 공고</span>
+                                                    </small>
+                                                    <small>
+                                                        <span th:if="${letters.applicationStatus eq 'IN_PROGRESS'}" class="badge bg-warning ms-1 me-1">진행중</span>
+                                                        <span th:if="${letters.applicationStatus eq 'PASS'}" class="badge bg-success ms-1 me-1">합격</span>
+                                                        <span th:if="${letters.applicationStatus eq 'FAIL'}" class="badge bg-secondary ms-1 me-1">불합격</span>
+                                                    </small>
+                                                    <small><span class="badge bg-dark ms-1" th:text="${letters.job}" th:if="${letters.postType eq 'NORMAL'}"></span></small>
+                                                </div>
+
+                                                <h5 class="m-2 text-dark" th:text="${companyInfo.title}+' - '+${companyInfo.companyName}"></h5>
+                                                <div class="custom-block-bottom d-flex mt-3">
+                                                    <input type="hidden" id="letterId" th:value="${letters.applicationLetterId}">
+                                                    <input type="hidden" id="companyId" th:value="${companyInfo.companyId}">
+                                                    <input type="hidden" id="postType" th:value="${letters.postType}">
+                                                    <button type="button" class="btn btn-outline-secondary me-1" th:id="${letters.postId}" name="post">공고정보</button>
+                                                    <button type="button" class="btn btn-outline-secondary ms-1 me-1" th:id="${letters.applicationLetterId}" th:if="${letters.postType eq 'NORMAL'}" name="resume">
+                                                        지원 이력서
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-secondary ms-1 me-1"
+                                                            th:id="${letters.applicationLetterId}" name="coverLetter"
+                                                            th:if="${letters.postType != 'MZ'}">
+                                                        지원 자기소개서
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-secondary ms-1"
+                                                            th:id="${#strings.isEmpty(letters.interviewId) ? '0' : letters.interviewId}" name="interview">
+                                                        면접
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-lg-4 col-12 mx-auto">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination pagination-lg justify-content-center mt-5">
+                                <li class="page-item" th:if="${startPage>=5}">
+                                    <a class="page-link" th:href="@{/v1/user/my-page/apply-list/{startPage}(startPage=${startPage}-5, sort= ${sort})}"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <div th:each="letterItem, letterItemStat : ${letter}">
+                                    <li class="page-item" th:id="'page'+${letterItemStat.index}">
+                                        <a class="page-link" th:onclick="showOnlySelected([[${letterItemStat.index}]])"
+                                           th:text="${letterItemStat.index + startPage}"></a>
+                                    </li>
+                                </div>
+                                <li class="page-item"
+                                    th:if="${#lists.size(letter)>=5 and #lists.size(letter[4])==5}">
+                                    <a class="page-link" th:href="@{/v1/user/my-page/apply-list/{startPage}(startPage=${startPage}+5, sort= ${sort})}"
+                                       aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+
+            /*공고이동*/
+            document.querySelectorAll('[name="post"]').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var postId = button.id;
+                    var companyId = button.closest('.custom-block').querySelector('[id="companyId"]').value;
+                    var postType = button.closest('.custom-block').querySelector('[id="postType"]').value;
+                    window.location.href = '/v1/click/post/' + postId + '/detail?companyId='+ companyId + '&postType=' + postType;
+
+                });
+            });
+
+            /*지원이력서이동*/
+            document.querySelectorAll('[name="resume"]').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var applicationLetterId = button.id;
+                    window.location.href = '/v1/user/my-page/apply-list/submitted-resume/' + applicationLetterId;
+                });
+            });
+
+            /*지원자소서이동*/
+            document.querySelectorAll('[name="coverLetter"]').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var applicationLetterId = button.id;
+                    window.location.href = '/v1/user/my-page/apply-list/submitted-coverLetter/' + applicationLetterId;
+                });
+            });
+
+            /*면접이동*/
+            document.querySelectorAll('[name="interview"]').forEach(function(button) {
+                button.addEventListener('click', function () {
+                    var interviewId = button.id;
+                    var applicationLetterId = button.closest('.custom-block').querySelector('[id="letterId"]').value;
+
+                    if (interviewId === '0') {
+                        var confirmMessage = "저장된 면접 정보가 없습니다. 등록하시겠습니까?"; // 확인 메시지
+                        if (confirm(confirmMessage)) {
+                            window.location.href = '/v1/user/my-page/interview/form/' + applicationLetterId;
+                        } else {
+
+                        }
+                    } else {
+                        // id가 0이 아니면 일반적인 이동
+                        window.location.href = '/v1/user/my-page/interview/' + applicationLetterId + "/" + interviewId;
+                    }
+                });
+            });
+
+
+            /*]]>*/
+        </script>
+
+
+
+    </main>
+</div>
+
+</html>

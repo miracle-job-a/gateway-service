@@ -18,11 +18,11 @@ https://templatemo.com/tm-584-pod-talk
 -----------------------------------------*/
 :root {
   --white-color:                  #ffffff;
-  --primary-color:                #d204fb;
+  --primary-color:                #660099;
   --secondary-color:              #000000;
   --section-bg-color:             #fbf0ff;
-  --custom-btn-bg-color:          #a000cc6a;
-  --custom-btn-bg-hover-color:    #00CC99;
+  --custom-btn-bg-color:          #660099;
+  --custom-btn-bg-hover-color:    #aa00ff;
   --dark-color:                   #000000;
   --p-color:                      #717275;
   --border-color:                 #7fffd4;
@@ -175,7 +175,6 @@ strong {
 
 .section-padding {
   padding-top: 100px;
-  padding-bottom: 100px;
 }
 
 main {
@@ -224,7 +223,8 @@ main {
   font-weight: var(--font-weight-semibold);
   line-height: normal;
   transition: all 0.3s;
-  padding: 10px 20px;
+  padding: 10px 10px;
+  margin-top: 10px;
 }
 
 .custom-btn:hover {
@@ -254,11 +254,11 @@ main {
   SITE HEADER              
 -----------------------------------------*/
 .site-header {
-  background-image: url('../images/templatemo-wave-header.jpg'), linear-gradient(#348CD2, #FFFFFF);;
+  background-image:  linear-gradient(#cf82f5, #FFFFFF);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  min-height: 480px;
+  min-height: 150px;
   position: relative;
 }
 
@@ -479,7 +479,7 @@ main {
   CAROUSEL        
 -----------------------------------------*/
 .hero-section {
-  background-image: url('../images/templatemo-wave-banner.jpg'), linear-gradient(#348CD2, #FFFFFF);
+  background-image: linear-gradient(#cf82f5, #FFFFFF);
   background-repeat: no-repeat;
   background-size: 108% 76%;
   background-position: top;
@@ -909,6 +909,66 @@ main {
   height: 150px;
 }
 
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.contact-form button[type="confirm"] {
+  background: var(--custom-btn-bg-color);
+  border: none;
+  border-radius: var(--border-radius-large);
+  color: var(--white-color);
+  font-family: var(--title-font-family);
+  font-size: var(--p-font-size);
+  font-weight: var(--font-weight-semibold);
+  transition: all 0.3s;
+  margin-top: 10px;
+  margin-bottom: 10px; /* 적절한 여백으로 조절합니다. */
+}
+
+.contact-form button[type="confirm"]:hover,
+.contact-form button[type="confirm"]:focus {
+  background: var(--custom-btn-bg-hover-color);
+  border-color: transparent;
+}
+
+
+/*---------------------------------------
+  SUBSCRIBE FORM
+-----------------------------------------*/
+.subscribe-form-wrap {
+  border: 1px solid var(--white-color);
+  border-radius: var(--border-radius-small);
+  width: 80%;
+  position: relative;
+  top: 12px;
+  padding: 35px;
+}
+
+.subscribe-form-wrap h6 {
+  background: var(--white-color);
+  border-radius: var(--border-radius-medium);
+  color: var(--primary-color);
+  text-align: center;
+  position: relative;
+  bottom: 55px;
+  margin-bottom: -25px;
+  padding: 8px;
+}
+
+.subscribe-form #subscribe-email {
+  border: 0;
+  border-radius: 10px 10px 0 0;
+  margin-bottom: 0;
+}
+
+.subscribe-form #submit {
+  border-radius: 0 0 10px 10px;
+}
 
 /*---------------------------------------
   SUBSCRIBE FORM               
@@ -941,6 +1001,60 @@ main {
 
 .subscribe-form #submit {
   border-radius: 0 0 10px 10px;
+}
+
+/*---------------------------------------
+  POST FORM    (라벨 외부 적용)
+-----------------------------------------*/
+.post-form .form-control {
+  border-radius: var(--border-radius-small);
+  color: var(--p-color);
+  font-family: var(--title-font-family);
+  font-size: var(--p-font-size);
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  outline: none;
+}
+
+.form-floating>label {
+  padding-left: 20px;
+}
+
+.post-form button[type="submit"] {
+  background: var(--custom-btn-bg-color);
+  border: none;
+  border-radius: var(--border-radius-large);
+  color: var(--white-color);
+  font-family: var(--title-font-family);
+  font-size: var(--p-font-size);
+  font-weight: var(--font-weight-semibold);
+  transition: all 0.3s;
+  margin-bottom: 0;
+}
+
+.post-form button[type="submit"]:hover,
+.post-form button[type="submit"]:focus {
+  background: var(--custom-btn-bg-hover-color);
+  border-color: transparent;
+}
+
+.post-form button[type="button"] {
+  background: var(--custom-btn-bg-color);
+  border: none;
+  border-radius: var(--border-radius-small);
+  color: var(--white-color);
+  font-family: var(--title-font-family);
+  font-size: var(--p-font-size);
+  font-weight: var(--font-weight-semibold);
+  transition: all 0.3s;
+  margin-bottom: 0;
+}
+
+.post-form button[type="button"]:hover,
+.post-form button[type="button"]:focus {
+  background: var(--custom-btn-bg-hover-color);
+  border-color: transparent;
 }
 
 
@@ -981,6 +1095,23 @@ main {
   border-color: transparent;
 }
 
+.custom-form button[type="button"] {
+  background: var(--custom-btn-bg-color);
+  border: none;
+  border-radius: var(--border-radius-large);
+  color: var(--white-color);
+  font-family: var(--title-font-family);
+  font-size: var(--p-font-size);
+  font-weight: var(--font-weight-semibold);
+  transition: all 0.3s;
+  margin-bottom: 0;
+}
+
+.custom-form button[type="button"]:hover,
+.custom-form button[type="button"]:focus {
+  background: var(--custom-btn-bg-hover-color);
+  border-color: transparent;
+}
 
 /*---------------------------------------
   SEARCH FORM               
@@ -991,8 +1122,8 @@ main {
 }
 
 .search-form button[type="submit"] {
-  background: var(--secondary-color);
-  border-color: var(--secondary-color);
+  background: var(--primary-color);
+  border-color: var(--primary-color);
   max-width: 50px;
   height: 100%;
   padding-left: 15px;
@@ -1002,24 +1133,34 @@ main {
   background: var(--primary-color);
 }
 
+.search-form button[type="button"] {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  max-width: 50px;
+  height: 100%;
+  padding-left: 15px;
+}
+
+.search-form button[type="button"]:hover {
+  background: var(--primary-color);
+}
 
 /*---------------------------------------
   SITE FOOTER              
 -----------------------------------------*/
 .site-footer {
-  background-image: url('../images/templatemo-wave-footer.jpg'), linear-gradient(#FFFFFF, #348CD2);
+  background-image: linear-gradient(#FFFFFF, #cf82f5);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  margin-top: -80px;
-  padding-top: 100px;
-  padding-bottom: 150px;
+  margin-top: 30px;
+  padding-top: 50px;
+  padding-bottom: 100px;
 }
 
 .site-footer > .container {
   position: relative;
-  top: 50px;
-  padding-top: 100px;
+  top: 30px;
 }
 
 .site-footer-title,

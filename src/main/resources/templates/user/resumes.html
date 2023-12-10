@@ -1,0 +1,135 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var resumeButton = document.getElementById('resume');
+
+            resumeButton.addEventListener('click', function () {
+                window.location.href = '/v1/user/resume/form';
+            });
+        });
+
+        // Thymeleaf를 사용하여 데이터 속성을 통해 id 값을 가져오는 함수
+
+
+        function confirmDelete(button) {
+            var resumeId = button.getAttribute('data-resume-id');
+            var confirmResult = confirm("삭제하시겠습니까?");
+
+            if (confirmResult) {
+                // 사용자가 확인을 선택한 경우
+                window.location.href = '/v1/user/resume/delete/' + resumeId;
+            } else {
+                // 사용자가 취소를 선택한 경우
+                // 아무 동작을 하지 않거나 필요한 작업 수행
+            }
+        }
+
+
+    </script>
+
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
+
+        <section class="latest-podcast-section" id="section_2">
+            <div class="container">
+                <div class="row justify-content-center">
+
+                    <div class="col-lg-10 col-12">
+                        <div class="section-title-wrap mb-5">
+                            <h4 class="section-title">나의 이력서</h4>
+                        </div>
+                    </div>
+
+
+                    <div class="row col-lg-10 col-12">
+                        <div class="col-auto justify-content-start">
+                            이력서 생성은 최대 5개까지 가능합니다.
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-secondary" id="resume">이력서 생성</button>
+                        </div>
+                    </div>
+
+                    <div class="col-12 m-2"></div>
+
+                    <!-- 목록 페이지 시작 -->
+                    <h5 class="col-lg-10 col-12 mt-4 mb-4 mb-lg-2 text-center" th:if="${#lists.size(resumeList)==0}">
+                        이력서가 없습니다.
+                    </h5>
+                    <!-- 목록 1칸 -->
+                    <div th:each="resume : ${resumeList}" class="col-lg-10 col-12 mb-4 mb-lg-2">
+                        <div class="custom-block d-flex">
+                            <div class="custom-block-info">
+                                <h5 class="mb-2">
+                                    <a th:href="@{'/v1/user/resume/detail/' + ${resume.id}}" th:text="${resume.title}"></a>
+                                </h5>
+
+                                <div class="custom-block-bottom d-flex mt-3">
+                                    <div class="col-auto d-flex m-2">
+                                        <span th:if="${resume.open}" class="badge rounded-pill btn-primary">공개</span>
+                                        <span th:if="${not resume.open}" class="badge rounded-pill bg-secondary">비공개</span>
+                                    </div>
+                                    <div class="col-auto d-flex m-2">
+                                        <span th:text="'작성일 : ' + ${resume.modifiedAt.substring(0, 10)}"></span>
+                                    </div>
+                                    <div class="col-auto d-flex m-2">
+                                        <span>지원직무 :</span>
+                                        <div th:each="jobId, iterStat : ${resume.jobIdSet}" style="display: inline-block;">
+                                            <div th:each="job : ${jobs}" th:if="${job.id eq jobId}">
+                                                <span th:if="${iterStat.index < 5}" th:text="'[' + ${job.name} + ']'"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 버튼 부 -->
+                            <div class="d-flex flex-column ms-auto">
+                                <!-- 데이터 속성을 추가하여 resume.id를 저장 -->
+                                <!--<input type="hidden" name="resumeId" th:value="${resume.id}"/>-->
+                                <button type="button" class="btn btn-outline-secondary" th:attr="data-resume-id=${resume.id}" onclick="confirmDelete(this)">삭제하기</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!--<div class="col-lg-4 col-12 mx-auto">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination pagination-lg justify-content-center mt-5">
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>-->
+
+                </div>
+            </div>
+        </section>
+
+
+
+    </main>
+</div>
+
+</html>

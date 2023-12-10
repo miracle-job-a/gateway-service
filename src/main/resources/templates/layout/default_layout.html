@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net/nz/thymeleaf/layout">
+
+<meta charset="UTF-8">
+<head>
+    <title>Job-a</title>
+    <link rel="icon" href="/images/pod-talk-logo.png">
+</head>
+
+<!-- config fragment -->
+<th:block th:replace="/fragment/config :: configFragment"></th:block>
+
+<body>
+<!-- header fragment -->
+<div th:if="${session.id == null}">
+    <th:block th:replace="/fragment/header :: commonHeader"></th:block>
+</div>
+
+<div th:if="${session.bno == null and session.name != null}">
+    <th:block th:replace="/fragment/header :: commonHeader"></th:block>
+</div>
+
+<div th:if="${session.bno != null and session.name == null}">
+    <th:block th:replace="/fragment/company-header :: commonHeader"></th:block>
+</div>
+
+<div th:if="${session.bno == null and session.name == null and session.id != null}">
+    <th:block th:replace="/fragment/admin-header :: commonHeader"></th:block>
+</div>
+
+<!-- Body content -->
+<th:block layout:fragment="content"></th:block>
+
+<!-- footer content -->
+<th:block th:replace="/fragment/footer :: commonFooter"></th:block>
+</body>
+
+</html>

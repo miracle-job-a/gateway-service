@@ -1,0 +1,132 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+    <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+
+        if (errorMessage !== null && errorMessage !== "") {
+            alert(errorMessage);
+            // 이후 로직 추가 가능
+        }
+
+        function validateForm() {
+
+            var question = document.getElementById('question').value;
+            var answer = document.getElementById('answer').value;
+
+            if (question.includes('<') || question.includes('>')) {
+                alert('질문에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            if (answer.includes('<') || answer.includes('>')) {
+                alert('답에 >, < 특수기호는 입력할 수 없습니다.');
+                return false;
+            }
+
+            // 폼 제출을 허용
+            return true;
+        }
+    </script>
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
+
+        <section class="latest-podcast-section" id="section_2">
+            <div class="container">
+                <div class="row justify-content-center">
+
+                    <div class="col-lg-10 col-12">
+                        <div class="section-title-wrap mb-5">
+                            <h4 class="section-title">FAQ 목록</h4>
+                        </div>
+                        <form action="/v1/company/faq/add" method="get" onsubmit="return validateForm()">
+
+                        <div class="row justify-content-center">
+                            <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
+                                <div class="card p-2 col-11 mt-5 align-self-center text-center">
+                                    <h6 class="text-danger">Faq 추가 시 하단으로 이동 / 삭제하려면 X버튼을 눌러주세요.</h6>
+                                </div>
+
+                                <div class="card p-4 col-11 mt-2 align-self-center post-form " th:each="faq, faqStat : ${faqList}">
+                                    <div class="col-12 mt-2 align-self-center">
+                                        <div class="d-flex justify-content-between ">
+                                            <div class="col-11 mb-2">
+                                                <button type="button" class="btn btn-outline-danger btn-primary" disabled>질문</button>
+                                            </div>
+                                            <div class="justify-content-end">
+                                                <a th:href="@{/v1/company/faq/delete/{id}(id=${faq.id})}" class="btn-secondary">
+                                                    <button type="button">X</button>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <input type="text" readonly id="question1"
+                                               class="form-control-plaintext" th:value="${faq.question}" />
+                                    </div>
+
+                                    <div class="col-12 mt-3 align-self-center">
+                                        <div class="mb-2">
+                                            <button type="button" class="btn btn-outline-danger" disabled>답</button>
+                                        </div>
+                                        <textarea readonly class="form-control-plaintext" rows="2"
+                                                  id="answer1" th:text="${faq.answer}" style="resize: none;"></textarea>
+                                        <input type="hidden" name="faqId" th:value="${faq.id}" />
+                                    </div>
+                                </div>
+
+                                <!-- 구분선 -->
+                                <div class="col-10 m-5 align-self-center">
+                                    <hr>
+                                </div>
+
+                                <!-- 질문 생성 -->
+                                <div class="card p-4 col-11 align-self-center post-form ">
+                                    <div class="col-12 mt-2 align-self-center">
+                                        <div class="mb-2">
+                                            <label for="question">질문</label>
+                                        </div>
+                                        <div class="form-floating">
+                                        <input type="text" name="question" id="question"
+                                               class="form-control"/>
+                                        <label for="floatingInput">질문 내용 입력</label>
+                                    </div>
+                                    </div>
+
+                                    <div class="col-12 mt-3 align-self-center">
+                                        <div class="mb-2">
+                                            <label for="answer">답</label>
+                                        </div>
+                                        <div class="form-floating">
+                                        <input type="text" class="form-control" id="answer" name="answer"></input>
+                                        <label for="floatingInput">답변 내용 입력</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" name="companyId" th:value="${session.id}" />
+
+                                <div class="col-10 mt-4 align-self-center text-center">
+                                    <h5 class="text-secondary">자주하는 질문은 최대 10개 가지 등록가능합니다.</h5>
+                                </div>
+                                <div class="col-8 mb-5 align-self-center">
+                                    <button type="submit" class="form-control">등록하기</button>
+                                </div>
+
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+    </main>
+</div>
+
+</html>

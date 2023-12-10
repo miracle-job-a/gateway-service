@@ -1,0 +1,487 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            /*<![CDATA[*/
+            var careerDetailList = document.getElementById('careerList').value;
+            var detailsArray = parseCareerDetailList(careerDetailList);
+
+            // 각 부분에 대한 처리
+            detailsArray.forEach(function (detail, index) {
+                var startDateStr = detail.startDate;
+                var endDateStr = detail.endDate;
+                var title = detail.title;
+
+                // 동적으로 HTML 생성 또는 추가 작업 수행
+                var html = '<div class="input-group m-1 career">';
+                html += '<input type="date" readonly class="form-control" name="career_start_date_' + index + '" value="' + startDateStr + '" />';
+                html += '<input type="date" readonly class="form-control" name="career_end_date_' + index + '" value="' + endDateStr + '" />';
+                html += '<input type="text" readonly class="form-control" name="career_title_' + index + '" value="' + title + '" />';
+                html += '<input type="hidden" name="careerDetailList" value="' + startDateStr + ' ' + endDateStr + ' ' + title + '" />';
+                html += '</div>';
+
+                document.getElementById('field1').insertAdjacentHTML('beforeend', html);
+            });
+
+            // 최초 로드 시 경력 정보 계산 및 출력
+            calculateAndSetCareer();
+            /*]]>*/
+        });
+
+        // 경력기간 계산 버튼에 이벤트 리스너 추가
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById('calculateCareerBtn').addEventListener('click', calculateAndSetCareer);
+        });
+
+        function calculateAndSetCareer() {
+            let totalMonths = 0;
+
+            // 각 input-group의 정보를 담는 배열
+            let detailStringArray = [];
+
+            // 모든 입력 필드의 날짜 합산 계산
+            document.querySelectorAll('.career').forEach((item) => {
+                const startElement = item.querySelector('input[name^="career_start_date"]');
+                const endElement = item.querySelector('input[name^="career_end_date"]');
+                const careerTitleElement = item.querySelector('input[name^="career_title"]');
+
+                if (!startElement || !endElement || !careerTitleElement) {
+                    return;
+                }
+
+                const startDate = new Date(startElement.value);
+                const endDate = new Date(endElement.value);
+
+                // 두 날짜가 같은 경우 0년 0개월로 처리
+                if (startDate.getTime() === endDate.getTime()) {
+                    return;
+                }
+
+                // 각 입력 필드의 년수 및 개월 수 계산
+                const years = endDate.getFullYear() - startDate.getFullYear();
+                const months = endDate.getMonth() - startDate.getMonth();
+
+                // 전체 년수 및 개월 수에 더함
+                totalMonths += years * 12 + months;
+
+                // start_date, end_date, career_title을 문자열로 합쳐 배열에 추가
+                const detailString = startElement.value + ' ' + endElement.value + ' ' + careerTitleElement.value;
+                detailStringArray.push(detailString);
+
+                // 현재 input-group의 detailString 값을 해당 input-group의 hidden field에 저장
+                const hiddenField = item.querySelector('input[name^="careerDetailList"]');
+                if (hiddenField) {
+                    hiddenField.value = detailString;
+                }
+            });
+
+            // 전체 년수 및 개월 수를 년(Y)과 개월(M)로 변환하여 표시
+            const totalYears = Math.floor(totalMonths / 12);
+            const remainingMonths = totalMonths % 12;
+
+            // 계산된 값을 입력 필드에 설정
+            document.getElementById("careerInput").value = '총 경력 : ' + convertYearsMonths(totalYears, remainingMonths);
+            document.getElementById("careerCal").value = totalMonths;
+        }
+
+        // 정수값을 년과 개월로 변환하는 함수
+        function convertYearsMonths(years, months) {
+            var result = "";
+            if (years > 0) {
+                result += years + "년";
+            }
+            if (months > 0) {
+                result += " " + months + "개월";
+            }
+            return result.trim();
+        }
+
+        function parseCareerDetailList(careerDetailList) {
+            var regex = /\d{4}-\d{2}-\d{2} \d{4}-\d{2}-\d{2} \S+/g;
+            var matches = careerDetailList.match(regex);
+
+            if (!matches) {
+                return [];
+            }
+
+            // 날짜와 title을 분리하여 배열에 담기
+            return matches.map(function (item) {
+                var parts = item.split(' ');
+                return {
+                    startDate: formatDate(parts[0]),
+                    endDate: formatDate(parts[1]),
+                    title: parts.slice(2).join(' ')
+                };
+            });
+
+            function formatDate(dateStr) {
+                var date = new Date(dateStr);
+                var year = date.getFullYear();
+                var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                var day = ('0' + date.getDate()).slice(-2);
+                return year + '-' + month + '-' + day;
+            }
+        }
+
+    // 수정취소 (상세보기로 돌아가기)
+        function cancelEditing(button) {
+            var resumeId = button.getAttribute('data-delete-id');
+            var confirmResult = confirm("수정 취소 하시겠습니까?")
+
+            if (confirmResult){
+                window.location.href = '/v1/user/resume/detail/' + resumeId;
+            } else {
+
+            }
+        }
+
+
+        // 삭제기능
+        function confirmDelete(button) {
+            var resumeId = button.getAttribute('data-resume-id');
+            var confirmResult = confirm("삭제하시겠습니까?");
+
+            if (confirmResult) {
+                // 사용자가 확인을 선택한 경우
+                window.location.href = '/v1/user/resume/delete/' + resumeId;
+            } else {
+                // 사용자가 취소를 선택한 경우
+                // 아무 동작을 하지 않거나 필요한 작업 수행
+            }
+            /*]]>*/
+        }
+
+        // 뒤로가기
+        function goBack() {
+            window.history.back();
+        }
+
+        function enableEditing(){
+            $('.btn').removeClass('visually-hidden');
+            $('#submitEdit').css('display', 'block');
+            $('#cancelBtn').css('display', 'block');
+            $('#back').css('display', 'none');
+            $('#editBtn').css('display', 'none');
+            $('.editJobs input[type="checkbox"]').prop('disabled', false);
+            $('.editStacks input[type="checkbox"]').prop('disabled', false);
+            $('#title').removeAttr('readonly');
+            $('#education').removeAttr('readonly');
+            $('#gitLink').removeAttr('readonly');
+            $('#career_start_date').removeAttr('readonly');
+            $('#career_end_date').removeAttr('readonly');
+            $('#career_title').removeAttr('readonly');
+            $('.editStacks').css('display', 'inline-block');
+            $('.editJobs').css('display', 'inline-block');
+            $('#jobs').each(function () {
+                $(this).css('display', 'none');
+            });
+            $('#stacks').each(function () {
+                $(this).css('display', 'none');
+            });
+            $('.bi-person-workspace').prev('input[type="checkbox"]').prop('checked', true);
+            $('.pre_set input[type="date"], .pre_set input[type="text"]').removeAttr('readonly');
+            $('#item2 input[type="text"]').removeAttr('readonly');
+            $('#item3 input[type="text"]').removeAttr('readonly');
+            $('input[name="career_title"]').removeAttr('readonly');
+            $('#open').prop('disabled', false);
+            var careerInput = document.getElementById('careerCal');
+            careerInput.value = '';
+            careerInput.setAttribute('required', true);
+
+        }
+
+        function validateSpecialCharacters() {
+            var inputValues = [
+                document.getElementById('title').value,
+                document.getElementById('education').value,
+                document.getElementById('gitLink').value,
+                document.getElementById('career_title').value,
+                ...Array.from(document.getElementsByClassName('project')).map(function(element) {
+                    return element.value;
+                }),
+                ...Array.from(document.getElementsByClassName('etc')).map(function(element) {
+                    return element.value;
+                })
+            ];
+
+            for (var i = 0; i < inputValues.length; i++) {
+                if (inputValues[i].includes('<') || inputValues[i].includes('>') || inputValues[i].includes(';')
+                    || inputValues[i].includes('/') || inputValues[i].includes('\\')) {
+                    // 특수 문자가 포함된 경우 경고 메시지 표시하고 false 반환
+                    alert('입력란에 >, <, ;, /, \\, 특수기호는 입력할 수 없습니다.');
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function validateForm(){
+
+            // 빈칸 경고
+            var careerInput = document.getElementById('careerCal');
+            if (careerInput.value.trim() === '') {
+                alert('경력기간 계산이 필요합니다.');
+                event.preventDefault();
+                return false;
+            }
+
+            var jobCheckboxes = document.querySelectorAll('input[name="jobIdSet"]:checked');
+            if (jobCheckboxes.length === 0) {
+                alert('개발 가능한 직무를 하나 이상 선택해주세요.');
+                return false;
+            }
+
+            var stackCheckboxes = document.querySelectorAll('input[name="stackIdSet"]:checked');
+            if (stackCheckboxes.length === 0) {
+                alert('보유한 기술 스택을 하나 이상 선택해주세요.');
+                return false;
+            }
+
+            var titleInput = document.getElementById('title');
+            if (titleInput.value.trim() === '') {
+                alert('이력서 제목을 입력해주세요.');
+                event.preventDefault();
+                return false;
+            }
+
+            if (!validateSpecialCharacters()) {
+                event.preventDefault();
+                return false;
+            }
+
+            // 모든 조건이 충족되면 true 반환
+            return true;
+
+        }
+
+
+    </script>
+
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
+
+        <section class="latest-podcast-section" id="section_2">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <!-- 전체 박스 크기 -->
+                    <div class="col-lg-9 col-12">
+                        <div class="section-title-wrap mb-5">
+                            <h4 class="section-title">이력서</h4>
+                        </div>
+
+                        <div class="row justify-content-center">
+                            <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
+
+                                <!-- 유저의 기본 정보 -->
+                                <div class="card mt-4 p-4 col-11 post-form align-self-center">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-12 ps-5 pe-5 align-self-auto">
+                                            <img src="/images/niniz.png" class="rounded float-start" alt="templatemo pod talk">
+                                        </div>
+                                        <!--<div class="col-lg-2 col-12 align-self-auto"></div>-->
+                                        <div class="col-lg-6 col-12 ps-5 pe-5 align-self-center">
+
+                                            <div class="mb-3 row">
+                                                <label for="name" class="col-sm-3 col-form-label">이름</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" readonly class="form-control-plaintext text-center"
+                                                           style="font-size: 18px;"
+                                                           id="name" th:value="${info.name}">
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3 row">
+                                                <label for="email" class="col-sm-3 col-form-label">이메일</label>
+                                                <div class="col-sm-9">
+                                                    <input type="email" readonly class="form-control-plaintext text-center"
+                                                           style="font-size: 18px;"
+                                                           id="email" th:value="${info.email}">
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3 row">
+                                                <label for="birth" class="col-sm-3 col-form-label">생년월일</label>
+                                                <div class="col-sm-9">
+                                                    <input type="date" readonly class="form-control-plaintext text-center"
+                                                           style="font-size: 18px;"
+                                                           id="birth" th:value="${info.birth}">
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3 row">
+                                                <label for="phone" class="col-sm-3 col-form-label">전화번호</label>
+                                                <div class="col-sm-9">
+                                                    <input type="tel" readonly class="form-control-plaintext text-center"
+                                                           pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}"
+                                                           style="font-size: 18px;"
+                                                           id="phone" th:value="${info.phone}">
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3 row">
+                                                <label for="address" class="col-sm-3 col-form-label">주소</label>
+                                                <div class="col-sm-9">
+                                                    <input type="tel" readonly class="form-control-plaintext text-center"
+                                                           style="font-size: 18px;"
+                                                           id="address" th:value="${info.address}">
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!-- 이력서 생성 폼 시작 -->
+                                <div class="card mt-4 mb-4 p-4 col-11 post-form align-self-center">
+                                    <form th:action="@{'/v1/user/resume/update/' + ${resume.id}}" method="post" role="form" class="row align-self-center col-12">
+
+
+                                    <div class="card mt-3 p-3 col-12 post-form align-self-center">
+                                        <div class="col-12 mt-1">
+                                            <div class="mb-1">
+                                                <label for="title" >제목</label>
+                                            </div>
+                                            <input type="text" readonly name="title" id="title"
+                                                   class="form-control" placeholder="이력서 제목" th:value="${resume.title}" required="" />
+                                        </div>
+
+                                            <div class="mb-1">
+                                                <label for="job">개발 가능한 직무</label>
+                                            </div>
+                                            <div th:each="job : ${totalJobs}" class="editJobs" style="display: none;">
+                                                <input class="form-check-input" type="checkbox" th:id="'job'+${job.id}"
+                                                       name="jobIdSet"
+                                                       th:value="${job.id}" th:checked="${jobs.contains(job)}" checked/>
+                                                <label class="form-check-label" th:text="${job.name}"></label>
+                                                <br/>
+                                            </div>
+                                            <div th:each="job : ${jobs}" id="jobs" style="display: inline-block;">
+                                                <label class="form-check-label bi-person-workspace" th:text="'  '+${job.name}"></label>
+                                                <br/>
+                                            </div>
+                                        </div>
+                                        <div class="card mt-3 p-3 col-12 post-form align-self-center">
+                                            <div class="mb-1">
+                                                <label for="stack">보유한 기술 스택</label>
+                                            </div>
+                                            <div th:each="stack : ${totalStacks}" class="editStacks" style="display: none;">
+                                                <input class="form-check-input" type="checkbox" th:id="'stack'+${stack.id}"
+                                                       name="stackIdSet"
+                                                       th:value="${stack.id}" th:checked="${stacks.contains(stack)}" checked/>
+                                                <label class="form-check-label" th:text="${stack.name}"></label>
+                                                <br/>
+                                            </div>
+                                            <div id="stacks">
+                                                <div th:each="stack : ${stacks}"  style="display: inline-block;">
+                                                    <label class="form-check-label bi-view-stacked" th:text="'  '+${stack.name}"></label>
+                                                    <br/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 mt-2">
+                                            <h6></h6>
+                                        </div>
+                                        <div class="col-12 mt-2">
+                                            <div class="mb-1">
+                                                <label for="education">최종학력</label>
+                                            </div>
+                                            <input type="text" readonly name="education" id="education"
+                                                   class="form-control" placeholder="최종학력을 기입해주세요." th:value="${resume.education}" required="" />
+                                        </div>
+                                        <div class="col-12 mt-2">
+                                            <div class="mb-1">
+                                                <label for="gitLink">GitHub 주소</label>
+                                            </div>
+                                            <input type="url" readonly class="form-control" id="gitLink" name="gitLink" placeholder="http://www.github.com" th:value="${resume.gitLink}" size="30" required>
+                                        </div>
+
+                                        <div class="card mt-3 p-3 col-12 post-form align-self-center" id="item1">
+                                            <div class="mb-1">
+                                                <label for="careerDetail">경력사항</label>
+                                                <button class="btn m-2 visually-hidden" type="button" onclick="calculateAndSetCareer()">경력기간 계산</button>
+                                                <input type="text" readonly class="form-control mt-2" name="careerNum" id="careerInput" th:value="'총 경력 : '+${resume.career}" />
+                                                <input type="hidden" name="career" id="careerCal" th:value="${resume.career}"/>
+                                            </div>
+                                            <div class="pre_set" id="pre_set1">
+                                                <div class="field" id="field1"></div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" id="careerList" th:value="${resume.careerDetailList}" />
+
+                                        <!-- 프로젝트 -->
+                                        <div class="card mt-3 p-3 col-12 post-form align-self-center" id="item2">
+                                            <div class="mb-1">
+                                                <label for="projectList">프로젝트</label>
+                                            </div>
+                                            <div class="pre_set" id="pre_set2">
+                                                <div th:each="project, iterStat : ${resume.projectList}">
+                                                    <div class="input-group m-1">
+                                                        <input type="text" readonly class="form-control" id="project" name="projectList" th:value="${project}" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 기타사항 -->
+                                        <div class="card mt-3 mb-3 p-3 col-12 post-form align-self-center" id="item3">
+                                            <div class="mb-1">
+                                                <label for="etcList">기타사항</label>
+                                            </div>
+                                            <div class="pre_set" id="pre_set3">
+                                                <div th:each="etc, iterStat : ${resume.etcList}">
+                                                    <div class="input-group m-1">
+                                                        <input type="text" readonly class="form-control" id="etc" name="etcList" th:value="${etc}" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-12 mt-2 mb-4">
+                                            <div class="mb-1">
+                                                <label for="open">이력서 공개여부</label>
+                                            </div>
+                                            <select class="form-select" aria-label="Default select example" id="open" name="open" th:field="${resume.open}" disabled>
+                                                <option th:value="true" th:selected="${resume.open} == true">공개</option>
+                                                <option th:value="false" th:selected="${resume.open} == false">비공개</option>
+                                            </select>
+                                        </div>
+
+
+
+                                        <div class="row col-12">
+                                            <div class="col-4 pt-4 m-auto justify-content-center">
+                                                <button type="button"  class="form-control" id="editBtn" onclick="enableEditing()">수정하기</button>
+                                                <button type="submit" class="form-control" id="submitEdit" onclick="validateForm()" style="display:none;">수정완료</button>
+                                            </div>
+                                            <div class="col-4 pt-4 m-auto justify-content-center">
+                                                <button type="button" class="form-control" th:attr="data-resume-id=${resume.id}" onclick="confirmDelete(this)">삭제하기</button>
+                                            </div>
+                                            <div class="col-4 pt-4 m-auto justify-content-center">
+                                                <button type="button" class="form-control" th:attr="data-delete-id=${resume.id}" id="cancelBtn" onclick="cancelEditing(this)" style="display:none;">취소</button>
+                                                <button type="button" class="form-control" id="back" onclick="goBack()">돌아가기</button>
+                                            </div>
+                                        </div>
+
+                                    </form>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+</html>

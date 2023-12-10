@@ -1,34 +1,38 @@
 server:
-  port: 60004
+  port: 60000
+  error:
+    include-exception: true
+    include-stacktrace: always
+    path: /error
 
 spring:
-  datasource:
-    url: ${DB_url}
-    username: ${DB_username}
-    password: ${DB_password}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: validate
-      show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-        format_sql: true
-
   devtools:
     livereload:
       # 정적 리소스 변화가 있을 때 반영
+      enabled: true
+    restart:
       enabled: true
 
   thymeleaf:
     # 타임리프 참조 경로
     prefix: classpath:/templates/
     suffix: .html
+
     # 캐시 저장 여부
     cache: false
+
     # 디렉토리에 파일이 있는지 체크, 없으면 에러발생 유도
     check-template-location: true
 
+  mail:
+    host: ${Smtp}
+    port: 587
+    username: ${Email_id}
+    password: ${Email_password}
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
 

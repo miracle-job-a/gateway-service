@@ -1,0 +1,508 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+
+        if (errorMessage != null) {
+            alert(errorMessage);
+            // 이후 로직 추가 가능
+        }
+    </script>
+    <script type="text/javascript">
+        /* 비밀번호 체크 */
+        $(document).ready(function () {
+
+            $('#inputPw').keyup(function () {
+                checkPassword();
+            });
+
+            $('#pwConfirm').keyup(function () {
+                checkPasswordConfirmation();
+            });
+
+            $('#termsAgree').change(function () {
+            });
+
+            function checkPassword() {
+                var password = $('#inputPw').val();
+
+                // 비밀번호가 6자리 이상이고, 특수문자가 최소 1개 이상 포함되어 있는지 확인
+                var passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/;
+
+                if (!passwordRegex.test(password)) {
+                    $('#checkPw').css("color", "grey").html('<b>알파벳 포함 숫자 6자리 이상, 특수문자 1개 포함해주세요.</b>');
+                    $('#pwConfirm').prop("disabled", true);
+                } else {
+                    $('#checkPw').css("color", "#660099").html('<b>사용가능</b>');
+                    $('#pwConfirm').prop("disabled", false);
+                    checkPasswordConfirmation();
+                }
+            }
+
+            function checkPasswordConfirmation() {
+                var password = $('#inputPw').val();
+                var confirmPassword = $('#pwConfirm').val();
+
+                if (confirmPassword === "") {
+                    $('#pwConfirmMsg').css("color", "grey").html('<b>비밀번호 확인을 입력해주세요.</b>');
+                    return;
+                }
+
+                if (password === confirmPassword) {
+                    $('#pwConfirmMsg').css("color", "#660099").html('<b>암호 일치</b>');
+                } else {
+                    $('#pwConfirmMsg').css("color", "grey").html('<b>암호가 일치하지 않습니다.</b>');
+
+                }
+            }
+        });
+
+        $(document).ready(function () {
+            $('#bnoCertify').on('click', function () {
+                var value = $('#bno').val();
+                var msg;
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/v1/company/bno/',
+                    data: {bno: value},
+                    success: function (result) {
+                        $('#bnoResult').css("color", "#660099").html(result);
+                        $('#bnoCertify').prop('disabled', true); // 버튼 비활성화
+                    },
+                    error: function (xhr) {
+                        msg = xhr;
+                        console.log(msg);
+
+                        // 상태 코드에 따라 다르게 처리
+                        if (xhr.status === 400) {
+                            // 클라이언트 오류
+                            $('#bnoResult').css("color", "#FF0000").html('<b>' + xhr.responseText + '</b>');
+                        } else if (xhr.status === 500) {
+                            // 서버 오류
+                            $('#bnoResult').css("color", "#660099").html('<b>' + xhr.responseText + '</b>');
+                        } else {
+                            // 기타 오류
+                            $('#bnoResult').css("color", "#FF0000").html('<b>알 수 없는 오류가 발생했습니다.</b>');
+                        }
+                    }
+                });
+            });
+        });
+
+        $(document).ready(function () {
+            $('#emailCheck').on('click', function () {
+                var value = $('#email').val();
+                var msg;
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/v1/company/email/duplicate/' + value,
+                    data: {email: value},
+                    success: function (result) {
+                        $('#authenticationButton').prop('disabled', false);
+                        $('#authentication').prop('disabled', false);
+                    },
+                    error: function (xhr) {
+                        msg = xhr;
+                        console.log(msg);
+
+                        // 상태 코드에 따라 다르게 처리
+                        alert(xhr.responseText);
+
+                    }
+                });
+            });
+        });
+
+        $(document).ready(function () {
+            $('#authenticationButton').on('click', function () {
+                var value = $('#authentication').val();
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/v1/email/authentication/' + value,
+                    data: {authentication: value},
+                    success: function (result) {
+                        alert("인증 번호 성공");
+                        $('#emailCheck').prop('disabled', true); // 버튼 비활성화
+                        $('#authenticationButton').prop('disabled', true); // 버튼 비활성화
+                        $('#authentication').prop('disabled', true); // 버튼 비활성화
+                    },
+                    error: function (xhr) {
+                        msg = xhr;
+                        console.log(msg);
+                        if (xhr.status === 408) {
+                            $('#authenticationButton').prop('disabled', true);
+                            $('#authentication').prop('disabled', true);
+                            alert(xhr.responseText);
+                        } else {
+                            alert(xhr.responseText);
+                        }
+                        // 상태 코드에 따라 다르게 처리
+
+                    }
+                });
+            });
+        });
+
+
+        /* 사업자번호 정규식 적용 */
+        $(document).ready(function () {
+            $('#bno').on('input', function () {
+                this.value = this.value
+                    .replace(/[^0-9]/g, '')
+                    .replace(/(\d{3})(\d{2})(\d{5})/, "$1-$2-$3");
+            });
+        });
+
+        function removeSidoSigungu(address, sido, sigungu) {
+            // sido와 sigungu를 공백으로 치환하여 제거
+            var result = address.replace(sido, '').replace(sigungu, '').trim();
+            return result;
+        }
+
+        /* 주소 API */
+        window.onload = function () {
+            document.getElementById("addressInputBtn").addEventListener("click", function () {
+                new daum.Postcode({
+                    oncomplete: function (data) {
+                        var address = '';
+                        var detailAddress = '';
+
+                        address = data.sido + ' ' + data.sigungu; // 시/도와 시/군/구를 조합하여 address에 저장
+                        if (data.userSelectedType === 'R') {
+                            detailAddress = removeSidoSigungu(data.roadAddress, data.sido, data.sigungu);
+                        }
+                        if (data.userSelectedType === 'J') {
+                            detailAddress = removeSidoSigungu(data.jibunAddress, data.sido, data.sigungu);
+                        }
+
+                        // 우편번호, 주소 정보를 해당 필드에 넣는다.
+                        document.getElementById('address').value = data.zonecode;
+                        document.getElementById("address").value = address;
+
+                        // 나머지 주소 정보를 detailAddress 필드에 넣는다.
+                        document.getElementById("detailAddress").value = detailAddress;
+
+                        // 커서를 상세주소 필드로 이동한다.
+                        document.getElementById("detailAddress").focus();
+                    }
+                }).open();
+            });
+        }
+
+        // 이미지 파일 업로드 썸네일
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+
+        imageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+
+                reader.onload = (event) => {
+                    const image = new Image();
+                    image.src = event.target.result;
+                    image.style.width = '200px';
+                    image.style.height = 'auto';
+
+                    // `imagePreview` div를 `imageInput` 칸의 자식 요소에서 제거합니다.
+                    imagePreview.parentNode.removeChild(imagePreview);
+
+                    // `imagePreview` div를 `body` 요소의 자식 요소로 추가합니다.
+                    document.body.appendChild(imagePreview);
+
+                    // `imagePreview` div에 이미지를 추가합니다.
+                    imagePreview.appendChild(image);
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                alert('확장자 jpeg, png 이미지 업로드만 가능합니다.');
+                imageInput.value = '';
+            }
+        });
+
+        function updateSubmitButton() {
+            // 약관 동의 체크박스가 체크되고, 비밀번호와 비밀번호 확인이 일치하며, 비밀번호가 조건을 충족하면 submit 버튼 활성화
+            var termsAgreeChecked = $('#termsAgree').prop('checked');
+            var bnoResultChecked = $('#bnoCertify').prop('disabled');
+            var authentication = $('#emailCheck').prop('disabled');
+            var passwordValid = $('#inputPw').prop('disabled') || ($('#inputPw').val() !== "" && $('#pwConfirm').val() !== "" && $('#pwConfirmMsg').text() === "암호 일치");
+            let employeeNum = document.getElementById("employeeNum");
+            let address = document.getElementById("address");
+            if (!termsAgreeChecked) {
+                alert("약관 동의를 체크해 주세요.");
+                return false;
+            }
+
+            if (!bnoResultChecked) {
+                alert("사업자 번호를 인증해 주세요.");
+                return false;
+            }
+
+            if (!authentication) {
+                alert("이메일 인증을 확인해 주세요.");
+                return false;
+            }
+
+            if (!passwordValid) {
+                alert("비밀번호를 확인해 주세요.");
+                return false;
+            }
+
+            if (employeeNum.value <= 0) {
+                alert("재직 인원 수가 0이상이어야 합니다.")
+                return false;
+            }
+
+            if (!address.value) {
+                alert("주소 찾기 버튼을 통해 주소를 넣어주세요.")
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
+
+        <section class="contact-section section-padding pt-0">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-lg-8 col-12 mx-auto">
+                        <div class="section-title-wrap mb-5">
+                            <h4 class="section-title">기업 회원가입<span class="text-danger"
+                                                                   style="font-size: 15px">*필수 사항 표시</span></h4>
+                        </div>
+
+                        <!-- 회원가입 폼  -->
+                        <form action="/v1/company/join" method="post" class="custom-form contact-form" role="form"
+                              onsubmit="return updateSubmitButton()">
+                            <div class="row">
+
+                                <!-- 이메일 주소 입력 -->
+                                <div class="col-lg-4 col-md-4 col-12">
+                                    <div class="form-floating">
+                                        <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*"
+                                               class="form-control" placeholder="Email address" required="">
+                                        <label for="email">가입 이메일<span class="text-danger">*</span></label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-12">
+                                    <div class="form-floating">
+                                        <button type="button" id="emailCheck" class="custom-btn">인증하기<span
+                                                class="text-danger">*</span></button>
+                                    </div>
+                                </div>
+
+                                <!-- 이메일 인증 번호 입력 -->
+                                <div class="col-lg-4 col-md-4 col-12">
+                                    <div class="form-floating">
+                                        <input type="text" name="authentication" id="authentication"
+                                               class="form-control"
+                                               placeholder="인증번호" required="" disabled/>
+                                        <label for="authentication" id="authenticationLabel">인증번호 입력<span
+                                                class="text-danger">*</span></label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-12">
+                                    <div class="form-floating">
+                                        <button type="button" class="custom-btn" disabled id="authenticationButton">인증확인<span
+                                                class="text-danger">*</span></button>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 pt-3"></div>
+
+                                <!-- 비밀번호 -->
+                                <div class="col-lg-12 col-md-5 col-12">
+                                    <div class="form-floating">
+                                        <input type="password" name="password" id="inputPw" class="form-control"
+                                               placeholder="비밀번호" required="">
+                                        <label for="floatingInput" id="checkPw">비밀번호(알파벳 포함 숫자 6자리 이상, 특수문자 1개 포함)<span
+                                                class="text-danger">*</span></label>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12 col-md-5 col-12">
+                                    <div class="form-floating">
+                                        <input type="password" name="passwordConfirm" id="pwConfirm"
+                                               class="form-control"
+                                               placeholder="비밀번호확인" required="">
+                                        <label for="floatingInput" id="pwConfirmMsg">비밀번호 확인<span
+                                                class="text-danger">*</span></label>
+                                    </div>
+                                </div>
+
+
+                                <!-- 기업이름 -->
+                                <div class="col-lg-5 col-md-5 col-12">
+                                    <div class="form-floating">
+                                        <input type="text" name="name" id="name" class="form-control"
+                                               placeholder="기업명" required="">
+                                        <label for="floatingInput">기업명<span class="text-danger">*</span></label>
+                                    </div>
+                                </div>
+                                <!-- 대표자명 -->
+                                <div class="col-lg-5 col-md-5 col-12">
+                                    <div class="form-floating">
+                                        <input type="text" name="ceoName" id="ceoName" class="form-control"
+                                               placeholder="대표자명" required="">
+                                        <label for="floatingInput">대표자명<span class="text-danger">*</span></label>
+                                    </div>
+                                </div>
+
+
+                                <!-- 사업자 번호 -->
+                                <div class="col-lg-5 col-md-5 col-12">
+                                    <div class="form-floating">
+                                        <input type="text" name="bno" id="bno" class="form-control" placeholder="사업자번호"
+                                               required="" maxlength="10">
+                                        <label for="floatingInput">사업자 번호<span class="text-danger">*</span></label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-12">
+                                    <div class="form-floating">
+                                        <button type="button" class="custom-btn" id="bnoCertify">사업자 인증<span
+                                                class="text-danger">*</span></button>
+                                    </div>
+                                </div>
+                                <div class="col-lg-5 col-md-5 col-12">
+                                    <p id="bnoResult"></p>
+                                </div>
+
+                                <!-- 주소 -->
+                                <div class="col-lg-5 col-md-5 col-12">
+                                    <div class="form-floating">
+                                        <input type="text" name="address" id="address" class="form-control"
+                                               placeholder="address" required="" readonly>
+
+                                        <label for="floatingInput">주소입력<span class="text-danger">*</span></label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-5 col-md-5 col-12">
+                                    <div class="form-floating">
+                                        <input type="text" name="detailAddress" id="detailAddress" class="form-control"
+                                               placeholder="address" required="" readonly>
+
+                                        <label for="floatingInput">상세주소입력<span class="text-danger">*</span></label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-12">
+                                    <div class="form-floating">
+                                        <button type="button" class="custom-btn" id="addressInputBtn">주소 찾기<span
+                                                class="text-danger">*</span></button>
+                                    </div>
+                                </div>
+                                <div class="col-12 pt-3"></div>
+
+
+                                <!-- 업종 -->
+                                <div class="col-lg-5 col-md-5 col-12">
+                                    <div class="form-floating">
+                                        <input type="text" name="sector" id="sector" class="form-control"
+                                               placeholder="sector" required="">
+
+                                        <label for="floatingInput">업종<span class="text-danger">*</span></label>
+                                    </div>
+                                </div>
+
+                                <!-- 직원수 -->
+                                <div class="col-lg-5 col-md-5 col-12">
+                                    <div class="form-floating">
+                                        <!-- 텍스트, 음수 입력 못하게 정규식 패턴 추가 -->
+                                        <input type="number" name="employeeNum" id="employeeNum" class="form-control"
+                                               placeholder="employeeNum" value="0"
+                                               oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+
+                                        <label for="floatingInput">직원수</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-2 col-md-2 col-12 mb-2"></div>
+
+                                <!-- 대표 사진 이미지 업로드 -->
+                                <div class="col-lg-12 col-md-12 col-12">
+                                    <label for="floatingInput">기업 대표 이미지<span class="text-danger">*</span></label>
+                                    <div class="form-floating mb-3 mt-1">
+                                        <div class="input-group">
+                                            <input type="file" class="form-control" name="photo" id="imageInput"
+                                                   accept="image/jpeg,image/png" aria-describedby="imageInputHelp"
+                                                   required>
+                                        </div>
+                                        <small id="imageInputHelp" class="form-text text-muted">jpeg, png 이미지만 업로드
+                                            가능합니다.</small>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-8 col-md-8 col-12 mt-2">
+                                    <p>기업소개<span class="text-danger" style="font-size: 10px">*20자 이상</span></p>
+                                </div>
+                                <div class="form-floating">
+                                        <textarea class="form-control" name="introduction"
+                                                  placeholder="Describe message here" required
+                                                  minlength="20"></textarea>
+                                </div>
+
+                                <div class="col-lg-8 col-md-8 col-12 mt-2">
+                                    <p>이용약관</p>
+                                </div>
+                                <div class="form-floating">
+                                        <textarea class="form-control" id="message" name="message"
+                                                  disabled>제1조 (목적)
+본 약관은 ㈜사람인(이하 “회사”)이 “서비스”를 제공함에 있어, “회사”와 회원 간의 이용조건 및 제반 절차, 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다. 회사에서 운영하는 웹사이트(이하 “사이트”) 및 모바일 어플리케이션(이하 “어플리케이션”)을 총칭하여 “사이트 등”이라고 합니다.
+제2조 (용어의 정의)
+본 약관에서 사용하는 용어의 정의는 아래와 같습니다.
+① “사이트”라 함은 회사와 계열사가 서비스를 이용자에게 제공하기 위하여 제작, 운영하는 사이트를 말합니다. 현재 회사가 운영하는 사이트의 주소는 아래와 같습니다.
+- biz.jumpit.co.kr
+- www.jumpit.co.kr
+② “어플리케이션”이라 함은 회사와 계열사가 서비스를 이용자에게 제공하기 위하여 IOS, AOS 등 운영체제와 관계없이 스마트폰 또는 기타 휴대용 단말기에서 이용할 수 있도록 제작, 운영하는 프로그램을 말합니다. 현재 회사가 운영하는 어플리케이션은 아래와 같습니다.
+- 점핏
+③ “서비스”라 함은 채용정보, 이력서 및 기업정보 제공 기타의 서비스를 통하여 구직자와 기업의 연결을 돕는 플랫폼 서비스입니다. 구직자는 회사가 운영하는 사이트 및 어플리케이션을 통해 본인의 이력서를 작성하고 채용정보를 탐색한 후, 입사지원이 가능합니다. 본인의 이력정보가 기업에 제공됨을 동의한 경우만 본인의 이력정보가 지원하는 회사로 제공됩니다. 회사가 운영하는 사이트 및 어플리케이션을 통해 구인과 구직활동을 목적으로 등록하는 자료를 DB화하여 각각의 목적에 맞게 분류 가공, 집계하여 정보를 제공하는 서비스 및 기타 구인∙구직이 원활히 이루어지도록 하기 위하여 사이트 등에서 제공하는 모든 서비스를 말합니다. 서비스는 원칙적으로 무료로 제공되나, 일부 서비스는 유료로 제공될 수 있습니다.
+④ “이용자”라 함은 사이트 등에 접속하여 본 약관에 따라 회사가 제공하는 서비스를 이용하는 회원(기업회원 및 개인회원을 포함) 및 비회원을 말합니다.
+⑤ “개인회원”이라 함은 본 서비스를 이용하기 위하여 본 약관에 동의하여 회사와 이용계약을 체결한 이용자를 말합니다.
+⑥ “비회원”이라 함은 회사와 서비스 이용계약을 체결하지 않은 상태에서 사이트 등을 통하여 회사가 제공하는 서비스를 이용하는 이용자를 말합니다.
+⑦ “서비스 이용계약”이라 함은 회사가 개인회원을 위해 제공하는 서비스를 계속적으로 이용하기 위하여 회사와 이용자 사이에 체결되는 계약을 말합니다.
+⑧ “ID”는 회원의 식별 및 서비스를 이용하기 위하여 회원이 가입시 사용한 이메일 주소를 말합니다.
+⑨ “비밀번호”라 함은 회사가 서비스를 이용하려는 사람이 ID를 부여받은 자와 동일임을 확인하고 회원의 권익을 보호하기 위하여 회원이 선정한 문자와 숫자의 조합을 말합니다.
+⑩ “이력서”라 함은 개인회원이 입사 지원을 위하여 작성하고, 사이트에 업로드한 전자 파일을 말합니다.
+⑪ “계정”이라 함은 개인회원의 개인정보, 이력서 등 이력서를 관리할 수 있도록 회사가 개인회원에게 제공하는 공간을 말합니다.
+                                        </textarea>
+
+
+                                </div>
+
+
+                                <div class="col-4 d-flex justify-content-center">
+                                    <label class="justify-content-center">
+                                        <input type="checkbox" name="termsAgree" id="termsAgree" required="">
+                                        동의합니다.<span class="text-danger">*</span>
+                                    </label>
+                                </div>
+                                <div class="col-4">
+                                    <button type="submit" class="form-control" id="submit-button">가입하기</button>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+    </main>
+
+</div>
+</html>
