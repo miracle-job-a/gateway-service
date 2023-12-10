@@ -177,13 +177,9 @@ public class CompanyController {
 
     // 수정페이지 요청
     @PostMapping("/info/validation")
-    public String checkCompanyInfo(HttpSession session,String password,
-                                   @ModelAttribute CompanyLoginRequestDto requestDto,
-                                   RedirectAttributes redirectAttributes) {
+    public String checkCompanyInfo(HttpSession session,@ModelAttribute CompanyLoginRequestDto requestDto) {
         boolean checked = companyService.checkCompanyInfo(session, requestDto);
         if (checked) {
-            /* 임시로 비밀번호 값 가져옴 */
-            redirectAttributes.addAttribute("password", password);
             return "redirect:/v1/company/info/modify";
         } else {
             return "/error/500";
@@ -191,12 +187,8 @@ public class CompanyController {
     }
 
     @GetMapping("/info/modify")
-    public String modifyCompanyInfo(HttpSession session, Model model, @RequestParam(name = "password", required = false) String password) {
+    public String modifyCompanyInfo(HttpSession session, Model model) {
         PageMoveWithMessage pmwm = companyService.modifyCompanyInfo(session);
-
-        //String password = (String) model.asMap().get("password");
-        model.addAttribute("password", password);
-
         model.addAttribute("info", pmwm.getData());
         return pmwm.getPageName();
     }

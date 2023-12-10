@@ -13,7 +13,6 @@
             // 이후 로직 추가 가능
         }
 
-
         /* 비밀번호 체크 */
         $(document).ready(function () {
 
@@ -58,21 +57,13 @@
 
                 if (password === confirmPassword) {
                     $('#pwConfirmMsg').css("color", "#660099").html('<b>암호 일치</b>');
-                    clearHiddenPassword(); // 비밀번호가 일치하면 hidden 필드의 값을 지웁니다.
                 } else {
                     $('#pwConfirmMsg').css("color", "grey").html('<b>암호가 일치하지 않습니다.</b>');
                 }
             }
         });
 
-       /* function clearHiddenPassword() {
-            console.log("clearHiddenPassword 함수 호출");
-            document.getElementById('secret').value = '';
-        }
-*/
-        function clearHiddenPassword() {
-            $('#secret').val('');
-        }
+
 
        /* 주소 API */
        window.onload = function () {
@@ -225,15 +216,11 @@
                                             <input type="text" class="form-control" id="name" name="name" th:value="${info.name}"/>
                                         </div>
 
-                                        <!-- 비밀번호 -->
-                                        <input hidden="" type="password" id="secret" name="password" th:value="${password}" th:attr="data-password=${password}" >
-
-
                                         <div class="col-10 mt-4 mx-auto">
                                             <label>비밀번호 변경</label>
                                             <div class="form-floating">
                                                 <input type="password" name="password" id="inputPw" class="form-control"
-                                                       placeholder="비밀번호" >
+                                                       placeholder="비밀번호" autocomplete="off">
                                                 <label for="floatingInput" id="checkPw">비밀번호(알파벳 포함 숫자 6자리 이상, 특수문자 1개
                                                     포함)<span class="text-danger">*</span></label>
                                             </div>
