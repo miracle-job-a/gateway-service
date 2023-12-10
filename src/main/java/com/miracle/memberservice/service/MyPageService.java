@@ -1,8 +1,6 @@
 package com.miracle.memberservice.service;
 
-import com.miracle.memberservice.dto.request.InterviewRequestDto;
-import com.miracle.memberservice.dto.request.PostIdRequestDto;
-import com.miracle.memberservice.dto.request.QnaDto;
+import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.util.ApiResponseToList;
 import com.miracle.memberservice.util.Const;
@@ -12,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 @Service
@@ -134,6 +133,44 @@ public class MyPageService {
                 .stackIdSet((ArrayList<Integer>) data.get("stackIdSet"))
                 .build();
         return new PageMoveWithMessage("user/user-info", info);
+    }
+
+    // 수정폼 접근 인증 api
+    public PageMoveWithMessage validationUser(HttpSession session, LoginDto loginDto) {
+        ApiResponse response = ServiceCall.post(session, loginDto, Const.RequestHeader.USER, "/user/login");
+        if (response.getHttpStatus() != 200){
+            return new PageMoveWithMessage("user/validation", response.getMessage());
+        }
+
+        return new PageMoveWithMessage("user/modify-form", response.getMessage());
+    }
+
+    // 수정폼 요청
+    public PageMoveWithMessage modifyUserInfo(HttpSession session){
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.get(session,Const.RequestHeader.USER, "/user/" + userId);
+        if (response.getHttpStatus() != 200)
+            return new PageMoveWithMessage("redirect:/v1", response.getMessage());
+        Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        UserInfoResponseDto info = UserInfoResponseDto.builder()
+                .id(Long.valueOf((Integer) data.get("id")))
+                .name((String) data.get("name"))
+                .birth((String) data.get("birth"))
+                .phone((String) data.get("phone"))
+                .address((String) data.get("address"))
+                .stackIdSet((ArrayList<Integer>) data.get("stackIdSet"))
+                .build();
+        return new PageMoveWithMessage("user/modify-form", info);
+    }
+
+    public PageMoveWithMessage updateUserInfo(HttpSession session, UserUpdateInfoRequestDto requestDto) {
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.USER, "/user/" + userId );
+        if (response.getHttpStatus() != 200) {
+            return new PageMoveWithMessage("user/modify-form", response.getMessage());
+        }
+        session.removeAttribute("password");
+        return new PageMoveWithMessage("redirect:/v1/user/my-page/my-info");
     }
 
 }
