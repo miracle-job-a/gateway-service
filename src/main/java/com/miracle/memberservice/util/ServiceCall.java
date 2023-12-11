@@ -64,6 +64,11 @@ public class ServiceCall {
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()).bodyValue(dto), httpSession, serviceType).block();
     }
 
+    public static ApiResponse putParam(HttpSession httpSession, String serviceType, String url, String name, String value){
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().put()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam(name, value).build()), httpSession, serviceType).block();
+    }
+
     public static ApiResponse putModifyParam(HttpSession httpSession, String serviceType, String url, String stackId, String modifiedName) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().put()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("stackId", stackId).queryParam("stackName", modifiedName).build()), httpSession, serviceType).block();

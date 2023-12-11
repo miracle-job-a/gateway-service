@@ -213,13 +213,13 @@
 
                                         <div class="col-10 mt-4 mx-auto">
                                             <label>기업명</label>
-                                            <input type="text" class="form-control" id="name" name="name" th:value="${info.name}" />
+                                            <input type="text" class="form-control" id="name" name="name" th:value="${info.name}" onsubmit="return validateForm()" />
                                         </div>
 
                                         <div class="col-10 mt-4 mx-auto">
                                             <label>비밀번호 변경</label>
                                             <div class="form-floating">
-                                                <input type="password" name="password" id="inputPw" class="form-control"
+                                                <input type="password" name="pwd" id="inputPw" class="form-control"
                                                        placeholder="비밀번호" autocomplete="off">
                                                 <label for="floatingInput" id="checkPw">비밀번호(알파벳 포함 숫자 6자리 이상, 특수문자 1개
                                                     포함)<span class="text-danger">*</span></label>
@@ -294,7 +294,7 @@
 
                                             </div>
                                             <div class="col-4">
-                                                <button type="submit" class="form-control" >정보수정</button>
+                                                <button type="submit" class="form-control" onclick="validateForm()">정보수정</button>
                                             </div>
                                         </div>
 

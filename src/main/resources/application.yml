@@ -6,8 +6,8 @@ spring:
   config:
     import: optional:configserver:http://miracle:1234@3.36.100.180:60010
 
-
-
+miracle:
+  passwordChecker: ef5008azffhhfcc3371a7d4zzcv23f!6f4bb432c8e3b3a16835392f540b28fasdmlbirqe767366b4pyurib681f385284cd8deqwer==qadafq
 
 
 

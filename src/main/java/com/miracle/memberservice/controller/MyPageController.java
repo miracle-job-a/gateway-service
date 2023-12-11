@@ -42,6 +42,22 @@ public class MyPageController {
         return pmwm.getPageName();
     }
 
+    // 지원서 취소(삭제)
+    @GetMapping("/apply-list/delete/{applicationLetterId}")
+    public String deleteApplicationLetter(@PathVariable Long applicationLetterId, HttpSession session){
+        PageMoveWithMessage pmwm = myPageService.deleteApplicationLetter(session, applicationLetterId);
+        return pmwm.getPageName();
+    }
+
+    // 지원서 상태 변경
+    @GetMapping("/apply-list/update/{applicationLetterId}/{applicationStatus}")
+    public String updateApplicationLetter(@PathVariable Long applicationLetterId, @PathVariable String applicationStatus,
+                                          HttpSession session){
+        PageMoveWithMessage pmwm = myPageService.updateApplicationLetter(session, applicationLetterId, applicationStatus);
+        return pmwm.getPageName();
+    }
+
+
     // 지원 이력서
     @GetMapping("/apply-list/submitted-resume/{applicationLetterId}")
     public String applyResume(HttpSession session, Model model, @PathVariable(required = false) Long applicationLetterId) {

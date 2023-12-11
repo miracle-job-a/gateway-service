@@ -346,7 +346,6 @@ public class CompanyService {
             return new PageMoveWithMessage("redirect:/v1/company/info", response.getMessage());
         }
 
-        session.removeAttribute("pwd");
         return new PageMoveWithMessage("redirect:/v1/company/info");
     }
 

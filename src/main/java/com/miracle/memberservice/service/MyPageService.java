@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.PushBuilder;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
@@ -26,6 +27,23 @@ public class MyPageService {
 
         List<List<ApplicationLetterListResponseDto>> letter = ApiResponseToList.applicationLetterList(response.getData());
         return new PageMoveWithMessage("user/apply-list", letter);
+    }
+
+    // 지원취소 (지원서 삭제)
+    public PageMoveWithMessage deleteApplicationLetter(HttpSession session, Long applicationLetterId) {
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId);
+
+        return new PageMoveWithMessage("redirect:/v1/user/my-page/apply-list/1");
+    }
+
+    // 지원상태 변경하기
+    public PageMoveWithMessage updateApplicationLetter(HttpSession session, Long applicationLetterId, String applicationStatus){
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.putParam(session, Const.RequestHeader.USER,
+                "/user/" + userId + "/application-letter/" + applicationLetterId, "applicationStatus", applicationStatus);
+
+        return new PageMoveWithMessage("redirect:/v1/user/my-page/apply-list/1");
     }
 
     // 지원 이력서 조회하기
