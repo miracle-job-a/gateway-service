@@ -79,6 +79,7 @@ public class UserService {
                 .phone(data.get("phone"))
                 .birth(data.get("birth"))
                 .address(data.get("address"))
+                .stackIdSet(data.get("stackIdSet"))
                 .build();
 
         return new PageMoveWithMessage("user/resume-form", info);

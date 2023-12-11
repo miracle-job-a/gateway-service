@@ -132,10 +132,10 @@
                 document.getElementById('education').value,
                 document.getElementById('gitLink').value,
                 document.getElementById('career_title').value,
-                ...Array.from(document.getElementsByClassName('project')).map(function(element) {
+                ...Array.from(document.getElementsByClassName('project')).map(function (element) {
                     return element.value;
                 }),
-                ...Array.from(document.getElementsByClassName('etc')).map(function(element) {
+                ...Array.from(document.getElementsByClassName('etc')).map(function (element) {
                     return element.value;
                 })
             ];
@@ -151,7 +151,7 @@
             return true;
         }
 
-        function validateForm(){
+        function validateForm() {
 
             // 빈칸 경고
             var careerInput = document.getElementById('careerCal');
@@ -220,7 +220,8 @@
                                         </div>
 
                                         <div class="col-lg-4 col-12 ps-5 pe-5 align-self-auto">
-                                            <img src="/images/niniz.png" class="rounded float-start" alt="templatemo pod talk">
+                                            <img src="/images/niniz.png" class="rounded float-start"
+                                                 alt="templatemo pod talk">
                                         </div>
                                         <!--<div class="col-lg-2 col-12 align-self-auto"></div>-->
                                         <div class="col-lg-6 col-12 ps-5 pe-5 align-self-center">
@@ -228,7 +229,8 @@
                                             <div class="mb-3 row">
                                                 <label for="name" class="col-sm-3 col-form-label">이름</label>
                                                 <div class="col-sm-9">
-                                                    <input type="text" readonly class="form-control-plaintext text-center"
+                                                    <input type="text" readonly
+                                                           class="form-control-plaintext text-center"
                                                            style="font-size: 18px;"
                                                            id="name" th:value="${info.name}">
                                                 </div>
@@ -237,7 +239,8 @@
                                             <div class="mb-3 row">
                                                 <label for="email" class="col-sm-3 col-form-label">이메일</label>
                                                 <div class="col-sm-9">
-                                                    <input type="email" readonly class="form-control-plaintext text-center"
+                                                    <input type="email" readonly
+                                                           class="form-control-plaintext text-center"
                                                            style="font-size: 18px;"
                                                            id="email" th:value="${info.email}">
                                                 </div>
@@ -246,7 +249,8 @@
                                             <div class="mb-3 row">
                                                 <label for="birth" class="col-sm-3 col-form-label">생년월일</label>
                                                 <div class="col-sm-9">
-                                                    <input type="date" readonly class="form-control-plaintext text-center"
+                                                    <input type="date" readonly
+                                                           class="form-control-plaintext text-center"
                                                            style="font-size: 18px;"
                                                            id="birth" th:value="${info.birth}">
                                                 </div>
@@ -255,7 +259,8 @@
                                             <div class="mb-3 row">
                                                 <label for="phone" class="col-sm-3 col-form-label">전화번호</label>
                                                 <div class="col-sm-9">
-                                                    <input type="tel" readonly class="form-control-plaintext text-center"
+                                                    <input type="tel" readonly
+                                                           class="form-control-plaintext text-center"
                                                            pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}"
                                                            style="font-size: 18px;"
                                                            id="phone" th:value="${info.phone}">
@@ -265,7 +270,8 @@
                                             <div class="mb-3 row">
                                                 <label for="address" class="col-sm-3 col-form-label">주소</label>
                                                 <div class="col-sm-9">
-                                                    <input type="tel" readonly class="form-control-plaintext text-center"
+                                                    <input type="tel" readonly
+                                                           class="form-control-plaintext text-center"
                                                            style="font-size: 18px;"
                                                            id="address" th:value="${info.address}">
                                                 </div>
@@ -278,13 +284,14 @@
 
                                 <!-- 이력서 생성 폼 시작 -->
                                 <div class="card mt-4 mb-4 p-4 col-11 post-form align-self-center">
-                                    <form action="/v1/user/resume" method="post" role="form" class="row align-self-center col-12" onsubmit="return validateForm()">
+                                    <form action="/v1/user/resume" method="post" role="form"
+                                          class="row align-self-center col-12" onsubmit="return validateForm()">
                                         <div class="col-12 mt-2">
                                             <div class="mb-1">
                                                 <label for="title">이력서 제목</label>
                                             </div>
                                             <input type="text" name="title" id="title"
-                                                   class="form-control" placeholder="이력서 제목" required="" />
+                                                   class="form-control" placeholder="이력서 제목" required=""/>
                                         </div>
 
                                         <div class="card mt-3 p-3 col-12 post-form align-self-center">
@@ -292,9 +299,11 @@
                                                 <label for="job">개발 가능한 직무를 골라주세요.</label>
                                             </div>
                                             <div class="card mt-2 mb-4 p-4 col-11 post-form align-self-center">
-                                                <div class="scrollable-checkboxes" style="max-height: 150px; overflow-y: auto;">
+                                                <div class="scrollable-checkboxes"
+                                                     style="max-height: 150px; overflow-y: auto;">
                                                     <div th:each="job, jobStat : ${jobs}">
-                                                        <input class="form-check-input" type="checkbox" id="job" name="jobIdSet" th:value="${job.id}" />
+                                                        <input class="form-check-input" type="checkbox" id="job"
+                                                               name="jobIdSet" th:value="${job.id}"/>
                                                         <label class="form-check-label" th:text="${job.name}"></label>
                                                     </div>
                                                 </div>
@@ -302,12 +311,17 @@
                                         </div>
                                         <div class="card mt-3 p-3 col-12 post-form align-self-center">
                                             <div class="mb-1">
-                                                <label for="stack">보유한 기술 스택</label>
+                                                <label for="stack">보유한 기술 스택</label><label class="text-warning"> (불러오는
+                                                스택을 변경하려면 마이페이지에서 해주세요.)</label>
                                             </div>
                                             <div class="card mt-2 mb-4 p-4 col-11 post-form align-self-center">
-                                                <div class="scrollable-checkboxes" style="max-height: 150px; overflow-y: auto;">
-                                                    <div th:each="stack, stackStat : ${stacks}">
-                                                        <input class="form-check-input" type="checkbox" id="stack" name="stackIdSet" th:value="${stack.id}" />
+                                                <div class="scrollable-checkboxes"
+                                                     style="max-height: 150px; overflow-y: auto;">
+                                                    <div th:each="stack : ${stacks}">
+                                                        <input class="form-check-input" type="checkbox" id="stack"
+                                                               name="stackIdSet"
+                                                               th:value="${stack.id}"
+                                                               th:checked="${info.stackIdSet != null and info.stackIdSet.contains(stack.id)}"/>
                                                         <label class="form-check-label" th:text="${stack.name}"></label>
                                                     </div>
                                                 </div>
@@ -321,31 +335,43 @@
                                                 <label for="education">최종학력</label>
                                             </div>
                                             <input type="text" name="education" id="education"
-                                                   class="form-control" placeholder="최종학력을 기입해주세요." required="" />
+                                                   class="form-control" placeholder="최종학력을 기입해주세요." required=""/>
                                         </div>
                                         <div class="col-12 mt-2">
                                             <div class="mb-1">
                                                 <label for="gitLink">GitHub 주소</label>
                                             </div>
-                                            <input type="url" class="form-control" id="gitLink" name="gitLink" placeholder="http://www.github.com" value="https://github.com/" size="30" >
+                                            <input type="url" class="form-control" id="gitLink" name="gitLink"
+                                                   placeholder="http://www.github.com" value="https://github.com/"
+                                                   size="30">
                                         </div>
 
                                         <!-- 경력사항 -->
                                         <div class="card mt-3 p-3 col-12 post-form align-self-center" id="item1">
                                             <div class="mb-1">
                                                 <label for="careerDetail">경력사항</label>
-                                                <button class="btn m-2" type="button" onclick="addCareerItem('pre_set1', 'field1', 'career')">+</button>
-                                                <button class="btn m-2" type="button" onclick="calculateAndSetCareer()">경력기간 계산</button>
-                                                <input type="text" readonly class="form-control" name="careerNum" id="careerInput" />
-                                                <input type="hidden" name="career" id="careerCal" value="" />
+                                                <button class="btn m-2" type="button"
+                                                        onclick="addCareerItem('pre_set1', 'field1', 'career')">+
+                                                </button>
+                                                <button class="btn m-2" type="button" onclick="calculateAndSetCareer()">
+                                                    경력기간 계산
+                                                </button>
+                                                <input type="text" readonly class="form-control" name="careerNum"
+                                                       id="careerInput"/>
+                                                <input type="hidden" name="career" id="careerCal" value=""/>
                                             </div>
                                             <div class="pre_set" id="pre_set1">
                                                 <div class="input-group m-1 career">
-                                                    <input type="date" class="form-control" name="career_start_date" id="start_date" value="" />
-                                                    <input type="date" class="form-control" name="career_end_date" id="end_date" value="" />
-                                                    <input type="text" class="form-control" name="career_title" id="career_title" value="" />
-                                                    <input type="hidden" name="careerDetailList" id="careerDetailList" />
-                                                    <button class="btn" type="button" value="삭제" onclick="removeItem(this)">-</button>
+                                                    <input type="date" class="form-control" name="career_start_date"
+                                                           id="start_date" value=""/>
+                                                    <input type="date" class="form-control" name="career_end_date"
+                                                           id="end_date" value=""/>
+                                                    <input type="text" class="form-control" name="career_title"
+                                                           id="career_title" value=""/>
+                                                    <input type="hidden" name="careerDetailList" id="careerDetailList"/>
+                                                    <button class="btn" type="button" value="삭제"
+                                                            onclick="removeItem(this)">-
+                                                    </button>
                                                 </div>
                                             </div>
                                             <div class="field" id="field1"></div>
@@ -355,12 +381,17 @@
                                         <div class="card mt-3 p-3 col-12 post-form align-self-center" id="item2">
                                             <div class="mb-1">
                                                 <label for="projectList">프로젝트</label>
-                                                <button class="btn m-2" type="button" onclick="addItem('pre_set2', 'projectList')">+</button>
+                                                <button class="btn m-2" type="button"
+                                                        onclick="addItem('pre_set2', 'projectList')">+
+                                                </button>
                                             </div>
                                             <div class="pre_set" id="pre_set2">
                                                 <div class="input-group m-1">
-                                                    <input type="text" class="form-control" id="project" name="projectList" value="">
-                                                    <button class="btn" type="button" value="삭제" onclick="removeItem(this)">-</button>
+                                                    <input type="text" class="form-control" id="project"
+                                                           name="projectList" value="">
+                                                    <button class="btn" type="button" value="삭제"
+                                                            onclick="removeItem(this)">-
+                                                    </button>
                                                 </div>
                                             </div>
                                             <div class="field" id="projectList"></div>
@@ -370,12 +401,17 @@
                                         <div class="card mt-3 mb-3 p-3 col-12 post-form align-self-center" id="item3">
                                             <div class="mb-1">
                                                 <label for="etcList">기타사항</label>
-                                                <button class="btn m-2" type="button" onclick="addItem('pre_set3', 'etcList', 'etc')">+</button>
+                                                <button class="btn m-2" type="button"
+                                                        onclick="addItem('pre_set3', 'etcList', 'etc')">+
+                                                </button>
                                             </div>
                                             <div class="pre_set" id="pre_set3">
                                                 <div class="input-group m-1">
-                                                    <input type="text" class="form-control" id="etc" name="etcList" value="">
-                                                    <button class="btn" type="button" value="삭제" onclick="removeItem(this)">-</button>
+                                                    <input type="text" class="form-control" id="etc" name="etcList"
+                                                           value="">
+                                                    <button class="btn" type="button" value="삭제"
+                                                            onclick="removeItem(this)">-
+                                                    </button>
                                                 </div>
                                             </div>
                                             <div class="field" id="etcList"></div>
@@ -385,7 +421,8 @@
                                             <div class="mb-1">
                                                 <label for="open">이력서 공개여부</label>
                                             </div>
-                                            <select class="form-select" aria-label="Default select example" id="open" name="open">
+                                            <select class="form-select" aria-label="Default select example" id="open"
+                                                    name="open">
                                                 <option value="true" selected>공개</option>
                                                 <option value="false">비공개</option>
                                             </select>
@@ -398,12 +435,16 @@
                                                     <input type="hidden" name="companyId" th:value="${companyId}">
                                                     <input type="hidden" name="postType" th:value="${postType}">
                                                 </div>
-                                                <button type="submit" class="form-control" onclick="validateForm()" >등록하기</button>
+                                                <button type="submit" class="form-control" onclick="validateForm()">
+                                                    등록하기
+                                                </button>
                                             </div>
                                             <div class="col-4 pt-4 m-auto justify-content-center">
                                             </div>
                                             <div class="col-4 pt-4 m-auto justify-content-center">
-                                                <button type="button" class="form-control" id="back" onclick="goBack()">돌아가기</button>
+                                                <button type="button" class="form-control" id="back" onclick="goBack()">
+                                                    돌아가기
+                                                </button>
                                             </div>
                                         </div>
                                     </form>
