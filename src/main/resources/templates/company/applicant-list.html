@@ -48,6 +48,7 @@
             location.href = "/v1/company/post/applicant/1?sort=" + id + "&postId=" + postId;
         }
 
+
     </script>
     <main>
         <header class="site-header d-flex flex-column justify-content-center align-items-center">
@@ -97,8 +98,16 @@
                             <div class="custom-block d-flex">
                                 <div class="custom-block-info">
                                     <h6>
-                                        <a th:text="${post.resumeTitle}" th:if="${post.resumeTitle!='null'}"></a>
+                                        <a th:text="${post.email}" th:if="${post.email!='null'}"></a>
                                     </h6>
+                                    <button type="button" class="btn btn-outline-secondary ms-1 me-1" th:id="${post.applicationLetterId}" th:if="${post.resumeTitle != 'null'}" name="resume">
+                                        지원 이력서
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary ms-1 me-1"
+                                            th:id="${post.applicationLetterId}" name="coverLetter"
+                                            th:if="${post.resumeTitle != 'null'}">
+                                        지원 자기소개서
+                                    </button>
 
                                     <div class="custom-block-bottom d-flex mt-1">
                                         <div class="col-auto d-flex m-2"><span>이름:<span
@@ -143,6 +152,23 @@
             </div>
         </section>
 
+        <script th:inline="javascript">
+            /*지원이력서이동*/
+            document.querySelectorAll('[name="resume"]').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var applicationLetterId = button.id;
+                    window.location.href = '/v1/user/my-page/apply-list/submitted-resume/' + applicationLetterId;
+                });
+            });
+
+            /*지원자소서이동*/
+            document.querySelectorAll('[name="coverLetter"]').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var applicationLetterId = button.id;
+                    window.location.href = '/v1/user/my-page/apply-list/submitted-coverLetter/' + applicationLetterId;
+                });
+            });
+        </script>
 
     </main>
 </div>
