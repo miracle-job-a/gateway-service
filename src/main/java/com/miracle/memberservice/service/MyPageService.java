@@ -28,6 +28,14 @@ public class MyPageService {
         return new PageMoveWithMessage("user/apply-list", letter);
     }
 
+    // 지원취소 (지원서 삭제)
+    public PageMoveWithMessage deleteApplicationLetter(HttpSession session, Long applicationLetterId) {
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId);
+
+        return new PageMoveWithMessage("redirect:/v1/user/my-page/apply-list/1");
+    }
+
     // 지원 이력서 조회하기
     public PageMoveWithMessage resumeInApplicationLetterDetail(HttpSession session, Long applicationLetterId) {
         Long userId = (Long) session.getAttribute("id");

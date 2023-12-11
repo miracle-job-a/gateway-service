@@ -42,6 +42,12 @@ public class MyPageController {
         return pmwm.getPageName();
     }
 
+    @GetMapping("/apply-list/delete/{applicationLetterId}")
+    public String deleteApplicationLetter(@PathVariable Long applicationLetterId, HttpSession session){
+        PageMoveWithMessage pmwm = myPageService.deleteApplicationLetter(session, applicationLetterId);
+        return pmwm.getPageName();
+    }
+
     // 지원 이력서
     @GetMapping("/apply-list/submitted-resume/{applicationLetterId}")
     public String applyResume(HttpSession session, Model model, @PathVariable(required = false) Long applicationLetterId) {

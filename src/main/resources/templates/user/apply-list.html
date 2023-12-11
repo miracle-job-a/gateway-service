@@ -5,6 +5,13 @@
 
 <div layout:fragment="content">
     <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+
+        if (errorMessage != null) {
+            alert(errorMessage);
+            // 이후 로직 추가 가능
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
             // 페이지 로딩 시 초기 상태 설정
             initializePage();
@@ -127,6 +134,12 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- 버튼 부 -->
+                                <div class="d-flex flex-column ms-auto">
+                                    <button type="button" class="btn btn-outline-secondary" th:id="${letters.applicationLetterId}" name="delete">지원취소</button>
+                                    <button type="button" class="btn btn-outline-secondary mt-2" >진행상태 변경</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -207,6 +220,17 @@
                     } else {
                         // id가 0이 아니면 일반적인 이동
                         window.location.href = '/v1/user/my-page/interview/' + applicationLetterId + "/" + interviewId;
+                    }
+                });
+            });
+
+            /* 지원취소(삭제) */
+            document.querySelectorAll('[name="delete"]').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var applicationLetterId = button.id;
+                    var confirmDelete = confirm("정말로 지원을 취소하시겠습니까?\n이 작업은 되돌릴 수 없습니다.\n(저장했던 공고, 면접 기록이 삭제됩니다.)");
+                    if (confirmDelete) {
+                        window.location.href = '/v1/user/my-page/apply-list/delete/' + applicationLetterId;
                     }
                 });
             });
