@@ -328,6 +328,7 @@ public class ApiResponseToList {
                             .address(String.valueOf(letter.get("address")))
                             .resumeTitle(String.valueOf(letter.get("resumeTitle")))
                             .name(String.valueOf(letter.get("name")))
+                            .email(String.valueOf(letter.get("email")))
                             .build());
                 }
                 pageList.add(dtos);

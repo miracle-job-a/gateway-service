@@ -88,7 +88,12 @@ public class CompanyService {
         return new PageMoveWithMessage("company/post-list", postList);
     }
 
-    // MZ 공고 등록
+    // 확인 용도
+    public Boolean statusCompany(HttpSession session){
+        Long companyId = (Long) session.getAttribute("id");
+        ApiResponse apiResponse = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/status");
+        return (Boolean) apiResponse.getData();
+    }
 
     public PageMoveWithMessage formPost(HttpSession session, String postType, Long companyId) {
         if (Objects.isNull(companyId)) companyId = (Long) session.getAttribute("id");
@@ -330,7 +335,19 @@ public class CompanyService {
                 .countOpen((Integer) data.get("countOpen"))
                 .build();
 
-        return new PageMoveWithMessage("company/modify-info", info);
+        return new PageMoveWithMessage("company/modify-form", info);
+    }
+
+    public PageMoveWithMessage updateCompanyInfo(HttpSession session, CompanyInfoRequestDto requestDto){
+     Long companyId = (Long) session.getAttribute("id");
+    ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.COMPANY, "/company/" + companyId);
+
+     if (response.getHttpStatus() != 200) {
+            return new PageMoveWithMessage("redirect:/v1/company/info", response.getMessage());
+        }
+
+        session.removeAttribute("pwd");
+        return new PageMoveWithMessage("redirect:/v1/company/info");
     }
 
     public PageMoveWithMessage approveCompany(HttpSession session, String companyId) {

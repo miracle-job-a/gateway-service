@@ -340,7 +340,7 @@
 
                                 <!-- 이력서 생성 폼 시작 -->
                                 <div class="card mt-4 mb-4 p-4 col-11 post-form align-self-center">
-                                    <form th:action="@{'/v1/user/resume/update/' + ${resume.id}}" method="post" role="form" class="row align-self-center col-12">
+                                    <form th:action="@{'/v1/user/resume/update/' + ${resume.id}}" method="post" role="form" class="row align-self-center col-12" onsubmit="return validateForm()">
 
 
                                     <div class="card mt-3 p-3 col-12 post-form align-self-center">

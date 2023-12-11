@@ -1,0 +1,143 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+
+        if (errorMessage != null) {
+            alert(errorMessage);
+            // 이후 로직 추가 가능
+        }
+
+        /* 전화번호 정규식 */
+        window.onload = function() {
+            // 처음에 들어온 값을 적용하기 위해
+            var phoneElement = document.getElementById('phone');
+            if (phoneElement) {
+                phoneElement.value = phoneElement.value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+            }
+        }
+
+        // 처음에 들어온 값을 적용하기 위해
+        document.getElementById('phone').value = document.getElementById('phone').value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+
+
+
+        // 수정취소 (상세보기로 돌아가기)
+        function editBtn() {
+            window.location.href = '/v1/user/my-page/my-info/move';
+        }
+
+        // 뒤로가기
+        function goBack() {
+            window.history.back();
+        }
+
+    function enableEditing(){
+
+        $('#cancelBtn ').css('display', 'block');
+        $('#addressInputBtn').css('display', 'block');
+        $('#passwordCard').css('display', 'block');
+        $('#detailAddress').css('display', 'block');
+        $('#subAddress').css('display', 'block');
+        $('#phone').removeAttr('readonly');
+
+        $('.editStacks').css('display', 'inline-block');
+
+
+    }
+
+
+    </script>
+
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
+
+        <section class="latest-podcast-section" id="section_2">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <!-- 전체 박스 크기 -->
+                    <div class="col-lg-9 col-12">
+                        <div class="section-title-wrap mb-3">
+                            <h4 class="section-title">개인정보</h4>
+                        </div>
+
+                        <div class="row justify-content-center">
+                            <div class="row ">
+                                <div class="col-lg-3 col-12">
+                                    <div class="custom-block-icon-wrap">
+                                        <div class="custom-block-image-wrap custom-block-image-detail-page">
+                                            <img src="/images/niniz.png" class="custom-block-image img-fluid" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-9 col-12 ">
+                                    <div class="custom-block-info post-form">
+
+                                        <div class="col-10 mt-4 mx-auto">
+                                            <h2 class="mb-2 " th:text="${info.name}"></h2>
+                                        </div>
+
+                                        <div class="col-10 mt-3 mx-auto">
+                                            <label>생년월일</label>
+                                            <input type="date" readonly class="form-control-plaintext mt-2" id="birth" name="birth" th:value="${info.birth}">
+                                        </div>
+
+                                        <div class="col-10 mt-3 mx-auto">
+                                            <label>전화번호</label>
+                                            <input type="text" readonly class="form-control mt-2" id="phone" name="phone" th:value="${info.phone}" oninput="onInputPhone(this)" maxlength="13" />
+                                        </div>
+
+                                        <div class="col-10 mt-3 mx-auto">
+                                            <label>주소</label>
+                                            <input type="text" readonly class="form-control mt-2" id="address" name="address" th:value="${info.address}">
+                                        </div>
+
+                                        <div class="col-10 mt-3 mx-auto">
+                                            <label for="stack">보유한 기술 스택</label>
+                                            <div class="card mt-2 mb-4 p-4 col-12 post-form align-self-center">
+                                                <div id="stacks">
+                                                    <div th:each="stack : ${stacks}"  style="display: inline-block;">
+                                                        <label class="form-check-label bi-view-stacked" th:text="'  '+${stack.name}"></label>
+                                                        <br/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <input hidden type="text" name="photo" />
+
+
+                                        <div class="row col-12 my-5">
+                                            <div class="col-4">
+                                                <button type="button" class="form-control" id="back" onclick="goBack()">돌아가기</button>
+                                            </div>
+                                            <div class="col-4">
+
+                                            </div>
+                                            <div class="col-4">
+                                                <button type="button" class="form-control" id="edit" onclick="editBtn()">정보수정</button>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+</html>

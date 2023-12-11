@@ -5,184 +5,15 @@
 
 <div layout:fragment="content">
     <script th:inline="javascript">
-        var errorMessage = [[${errorMessage}]];
 
-        if (errorMessage != null) {
-            alert(errorMessage);
-            // 이후 로직 추가 가능
-        }
 
-        /* 비밀번호 체크 */
-        $(document).ready(function () {
-
-            $('#inputPw').keyup(function () {
-                checkPassword();
-            });
-
-            $('#pwConfirm').keyup(function () {
-                checkPasswordConfirmation();
-            });
-
-            $('#termsAgree').change(function () {
-            });
-
-            function checkPassword() {
-                var password = $('#inputPw').val();
-
-                // 비밀번호가 6자리 이상이고, 특수문자가 최소 1개 이상 포함되어 있는지 확인
-                var passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/;
-
-                if (!passwordRegex.test(password)) {
-                    $('#checkPw').css("color", "grey").html('<b>알파벳 포함 숫자 6자리 이상, 특수문자 1개 포함해주세요.</b>');
-                    $('#pwConfirm').prop("disabled", true);
-                } else {
-                    $('#checkPw').css("color", "#660099").html('<b>사용가능</b>');
-                    $('#pwConfirm').prop("disabled", false);
-                    checkPasswordConfirmation();
-                }
-            }
-
-            function checkPasswordConfirmation() {
-                var password = $('#inputPw').val();
-                var confirmPassword = $('#pwConfirm').val();
-
-                if (confirmPassword === "") {
-                    $('#pwConfirmMsg').css("color", "grey").html('<b>비밀번호 확인을 입력해주세요.</b>');
-                    return;
-                }
-
-                if (password === confirmPassword) {
-                    $('#pwConfirmMsg').css("color", "#660099").html('<b>암호 일치</b>');
-                } else {
-                    $('#pwConfirmMsg').css("color", "grey").html('<b>암호가 일치하지 않습니다.</b>');
-
-                }
-            }
-        });
-
-        /* 사업자번호 정규식 적용 */
-        $(document).ready(function () {
-            $('#bno').on('input', function () {
-                this.value = this.value
-                    .replace(/[^0-9]/g, '')
-                    .replace(/(\d{3})(\d{2})(\d{5})/, "$1-$2-$3");
-            });
-        });
-
-    // 수정취소 (상세보기로 돌아가기)
-        function cancelEditing(button) {
-            var resumeId = button.getAttribute('data-delete-id');
-            var confirmResult = confirm("수정 취소 하시겠습니까?")
-
-            if (confirmResult){
-                window.location.href = '/v1/user/resume/detail/' + resumeId;
-            } else {
-
-            }
+        function infoBtn(){
+            window.location.href = '/v1/company/info/move';
         }
 
         // 뒤로가기
         function goBack() {
             window.history.back();
-        }
-
-    function enableEditing(){
-
-        $('#cancelBtn ').css('display', 'block');
-        $('#submitBtn').css('display', 'block');
-
-        $('#editBtn').css('display', 'none');
-        $('#back').css('display', 'none');
-        /*$('.question').removeAttr('readonly').removeClass('form-control-plaintext').addClass('form-control');*/
-
-        var pwdDiv = document.getElementById("pwd");
-        var passwordInput = document.getElementById("password");
-        var confirmPwdInput = document.getElementById("confirmPwd");
-
-        if (pwdDiv.style.display === "none") {
-            // 숨겨진 경우 나타내기
-            pwdDiv.style.display = "block";
-            passwordInput.style.display = "block";
-            confirmPwdInput.style.display = "block";
-        } else {
-            // 나타난 경우 숨기기
-            pwdDiv.style.display = "none";
-            passwordInput.style.display = "none";
-            confirmPwdInput.style.display = "none";
-        }
-
-    }
-
-        function validateSpecialCharacters() {
-            var inputValues = [
-                document.getElementById('email').value,
-                document.getElementById('birth').value,
-                document.getElementById('phone').value,
-                document.getElementById('address').value,
-            ];
-
-            for (var i = 0; i < inputValues.length; i++) {
-                if (inputValues[i].includes('<') || inputValues[i].includes('>') || inputValues[i].includes(';')
-                    || inputValues[i].includes('/') || inputValues[i].includes('\\')) {
-                    // 특수 문자가 포함된 경우 경고 메시지 표시하고 false 반환
-                    alert('입력란에 >, <, ;, /, \\, 특수기호는 입력할 수 없습니다.');
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        function validateForm(){
-
-            // 빈칸 경고
-            var careerInput = document.getElementById('email');
-            if (careerInput.value.trim() === '') {
-                alert('이메일 입력이 필요합니다.');
-                event.preventDefault();
-                return false;
-            }
-
-            var careerInput = document.getElementById('phone');
-            if (careerInput.value.trim() === '') {
-                alert('전화번호 입력이 필요합니다.');
-                event.preventDefault();
-                return false;
-            }
-
-            var careerInput = document.getElementById('birth');
-            if (careerInput.value.trim() === '') {
-                alert('생년월일 입력이 필요합니다.');
-                event.preventDefault();
-                return false;
-            }
-
-            var careerInput = document.getElementById('address');
-            if (careerInput.value.trim() === '') {
-                alert('주소 입력이 필요합니다.');
-                event.preventDefault();
-                return false;
-            }
-
-            var stackCheckboxes = document.querySelectorAll('input[name="stackIdSet"]:checked');
-            if (stackCheckboxes.length === 0) {
-                alert('보유한 기술 스택을 하나 이상 선택해주세요.');
-                return false;
-            }
-
-
-            if (!validateSpecialCharacters()) {
-                event.preventDefault();
-                return false;
-            }
-
-            // 모든 조건이 충족되면 true 반환
-            return true;
-
-        }
-
-        function infoBtn(){
-            window.location.href = '/v1/company/edit-info';
         }
 
     </script>
@@ -240,7 +71,7 @@
 
                                         <div class="col-10 mt-3 mx-auto">
                                             <label for="introduction">기업 소개</label>
-                                            <textarea class="form-control" name="introduction"
+                                            <textarea readonly class="form-control" name="introduction"
                                                       placeholder="기업 소개 글 입니다." required rows="10"
                                                       minlength="100" th:text="${info.introduction}"></textarea>
                                         </div>

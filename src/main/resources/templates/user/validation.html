@@ -5,6 +5,14 @@
 
 <div layout:fragment="content">
 
+    <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+
+        if (errorMessage != null) {
+            alert(errorMessage);
+            // 이후 로직 추가 가능
+        }
+    </script>
     <script>
         // 뒤로가기
         function goBack() {
@@ -33,10 +41,22 @@
                                         <div class="col-10 my-8 mx-auto">
                                         <h3 class="mb-5 ">정보확인</h3>
                                         </div>
+                                        <form action="/v1/user/my-page/my-info/validation" method="post" role="form" >
 
-                                        <div class="col-10 my-3 mx-auto" id="pwd" >
-                                            <label>비밀번호를 입력해주세요.</label>
-                                            <input type="password" readonly class="form-control my-4" id="password" name="password" required/>
+                                        <div class="col-lg-10 col-12 my-2 mx-auto">
+                                            <div class="form-floating">
+                                                <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*"
+                                                       class="form-control" placeholder="Email address" required>
+                                                <label for="email">계정 이메일</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-10 col-12 my-2 mx-auto">
+                                            <div class="form-floating">
+                                                <input type="password" name="password" id="password" class="form-control"
+                                                       placeholder="password" required>
+                                                <label for="password">비밀번호</label>
+                                            </div>
                                         </div>
 
                                         <div class="row col-12 my-5">
@@ -47,10 +67,11 @@
 
                                             </div>
                                             <div class="col-4">
-                                                <button type="submit" class="form-control" id="submitBtn">수정완료</button>
+                                                <button type="submit" class="form-control" id="submitBtn">확인</button>
                                             </div>
                                         </div>
 
+                                        </form>
 
                                     </div>
                                 </div>

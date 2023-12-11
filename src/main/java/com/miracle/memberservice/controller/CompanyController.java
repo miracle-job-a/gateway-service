@@ -9,6 +9,7 @@ import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,11 +37,11 @@ public class CompanyController {
     }
 
     @GetMapping("/post/list/{strNum}")
-    public String postList(HttpSession session, Model model, @PathVariable int strNum, @RequestParam(required = false, defaultValue = "") String sort) {
+    public String postList(HttpSession session, Model model, @PathVariable int strNum, @RequestParam(required = false, defaultValue = "") String sort, @RequestParam(required = false) String errorMessage) {
         PageMoveWithMessage pmwm = companyService.postList(session, strNum, strNum + 4, sort);
         model.addAttribute("strNum", strNum);
         model.addAttribute("postPage", pmwm.getData());
-        model.addAttribute("errorMessage", pmwm.getErrorMessage());
+        model.addAttribute("errorMessage", errorMessage);
         if (Strings.isBlank(sort)) sort = "latest";
         model.addAttribute("sort", sort);
         return pmwm.getPageName();
@@ -48,7 +49,11 @@ public class CompanyController {
 
     // 공고 생성 폼 이동
     @GetMapping("/post/form")
-    public String postFormPage(HttpSession session, Model model) {
+    public String postFormPage(RedirectAttributes redirectAttributes, HttpSession session, Model model) {
+        if(!companyService.statusCompany(session)) {
+            redirectAttributes.addAttribute("errorMessage", "현재 가입 승인 전입니다. \n관리자 승인 이전에 공고 생성은 불가합니다.");
+            return "redirect:/v1/company/post/list/1";
+        }
         PageMoveWithMessage pmwm = companyService.formPost(session, null, null);
         Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
         model.addAttribute("info", pmwm.getData());
@@ -60,7 +65,7 @@ public class CompanyController {
     @GetMapping("/post/detail")
     public String postDetail(HttpSession session, Model model, @RequestParam(name = "id") Long postId, @RequestParam String postType) {
         PageMoveWithMessage pmwm = companyService.getPostDetail(session, postId, postType, null);
-        PageMoveWithMessage info = companyService.formPost(session, null, null);
+        PageMoveWithMessage pmwm2 = companyService.formPost(session, null, null);
 
         PostResponseDto data = (PostResponseDto) pmwm.getData();
 
@@ -70,7 +75,7 @@ public class CompanyController {
 
         model.addAttribute("postType", postType);
         model.addAttribute("postId", postId);
-        model.addAttribute("info", info.getData());
+        model.addAttribute("info", pmwm2.getData());
         model.addAttribute("detail", data);
         model.addAttribute("jobs", jobs);
         model.addAttribute("stacks", stacks);
@@ -99,7 +104,11 @@ public class CompanyController {
     }
 
     @GetMapping("/post/{postType}/form")
-    public String postForm(HttpSession session, Model model, @PathVariable String postType) {
+    public String postForm(RedirectAttributes redirectAttributes, HttpSession session, Model model, @PathVariable String postType) {
+        if(!companyService.statusCompany(session)) {
+            redirectAttributes.addAttribute("errorMessage", "현재 가입 승인 전입니다. \n관리자 승인 이전에 공고 생성은 불가합니다.");
+            return "redirect:/v1/company/post/list/1";
+        }
         PageMoveWithMessage pmwm = companyService.formPost(session, postType, null);
         Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
         model.addAttribute("info", pmwm.getData());
@@ -144,7 +153,7 @@ public class CompanyController {
     }
 
     @GetMapping("/post/applicant/{startPage}")
-    public String applicantList(@PathVariable int startPage, @RequestParam Long postId, @RequestParam(required = false, defaultValue = "SUBMIT_DATE_DESC") String sort, HttpSession session, Model model) {
+    public String applicantList(@PathVariable int startPage, @RequestParam Long postId, @RequestParam(required = false, defaultValue = "SUBMIT_DATE_ASC") String sort, HttpSession session, Model model) {
         PageMoveWithMessage pmwm = userService.applicantList(session, postId, sort, startPage);
         model.addAttribute("applicantList", pmwm.getData());
         model.addAttribute("strNum", startPage);
@@ -164,7 +173,7 @@ public class CompanyController {
     }
 
     //기업정보 상세보기 (임시)
-    @GetMapping("/company-info")
+    @GetMapping("/info")
     public String getCompanyInfo(HttpSession session, Model model) {
         PageMoveWithMessage pmwm = companyService.getCompanyInfo(session);
         model.addAttribute("info", pmwm.getData());
@@ -172,24 +181,41 @@ public class CompanyController {
     }
 
     // 수정페이지 전 이동
-    @GetMapping("/edit-info")
+    @GetMapping("/info/move")
     public String companyMdfy(){ return "company/validation"; }
 
     // 수정페이지 요청
-    @PostMapping("/info-check")
-    public String checkCompanyInfo(HttpSession session, @ModelAttribute CompanyLoginRequestDto requestDto) {
+    @PostMapping("/info/validation")
+    public String checkCompanyInfo(HttpSession session,@ModelAttribute CompanyLoginRequestDto requestDto, String password) {
         boolean checked = companyService.checkCompanyInfo(session, requestDto);
         if (checked) {
-            return "redirect:/v1/company/modify";
+            session.setAttribute("pwd", password);
+            return "redirect:/v1/company/info/modify";
         } else {
             return "/error/500";
         }
     }
 
-    @GetMapping("/modify")
+    @GetMapping("/info/modify")
     public String modifyCompanyInfo(HttpSession session, Model model) {
         PageMoveWithMessage pmwm = companyService.modifyCompanyInfo(session);
         model.addAttribute("info", pmwm.getData());
         return pmwm.getPageName();
     }
+
+
+
+    @PostMapping("/info/update")
+    public String updateCompanyInfo(HttpSession session, @ModelAttribute CompanyInfoRequestDto requestDto) {
+        if (requestDto.getPassword() == null || requestDto.getPassword().isEmpty()) {
+            String password = (String) session.getAttribute("pwd");
+            requestDto.setPassword(password);
+        }
+        PageMoveWithMessage pmwm = companyService.updateCompanyInfo(session, requestDto);
+        return pmwm.getPageName();
+    }
+
+
+
+
 }
