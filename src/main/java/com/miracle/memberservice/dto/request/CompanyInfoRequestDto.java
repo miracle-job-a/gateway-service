@@ -16,10 +16,10 @@ public class CompanyInfoRequestDto {
     private final String introduction;
     private final String address;
     @Setter
-    private String password;
+    private String pwd;
 
     @Builder
-    public CompanyInfoRequestDto(String name, String ceoName, int employeeNum, String sector, String photo, String introduction, String address, String detailAddress, String password) {
+    public CompanyInfoRequestDto(String name, String ceoName, int employeeNum, String sector, String photo, String introduction, String address, String detailAddress, String pwd) {
         this.name = name;
         this.ceoName = ceoName;
         this.employeeNum = employeeNum;
@@ -27,7 +27,7 @@ public class CompanyInfoRequestDto {
         this.photo = photo;
         this.introduction = introduction;
         this.address = address + " " + detailAddress;
-        this.password = password;
+        this.pwd = pwd;
     }
 
 }

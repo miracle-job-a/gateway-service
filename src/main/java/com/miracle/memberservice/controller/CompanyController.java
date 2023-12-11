@@ -9,8 +9,8 @@ import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +29,8 @@ public class CompanyController {
     private final CompanyService companyService;
     private final AdminService adminService;
     private final UserService userService;
+    @Value("${miracle.passwordChecker}")
+    private String passwordChecker;
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
@@ -186,10 +188,9 @@ public class CompanyController {
 
     // 수정페이지 요청
     @PostMapping("/info/validation")
-    public String checkCompanyInfo(HttpSession session,@ModelAttribute CompanyLoginRequestDto requestDto, String password) {
+    public String checkCompanyInfo(HttpSession session,@ModelAttribute CompanyLoginRequestDto requestDto) {
         boolean checked = companyService.checkCompanyInfo(session, requestDto);
         if (checked) {
-            session.setAttribute("pwd", password);
             return "redirect:/v1/company/info/modify";
         } else {
             return "/error/500";
@@ -207,9 +208,8 @@ public class CompanyController {
 
     @PostMapping("/info/update")
     public String updateCompanyInfo(HttpSession session, @ModelAttribute CompanyInfoRequestDto requestDto) {
-        if (requestDto.getPassword() == null || requestDto.getPassword().isEmpty()) {
-            String password = (String) session.getAttribute("pwd");
-            requestDto.setPassword(password);
+        if (requestDto.getPwd() == null || requestDto.getPwd().isEmpty()) {
+            requestDto.setPwd(passwordChecker);
         }
         PageMoveWithMessage pmwm = companyService.updateCompanyInfo(session, requestDto);
         return pmwm.getPageName();
