@@ -94,7 +94,7 @@ public class MyPageService {
                 .qnaList((List<QnaDto>) data.get("qnaList"))
                 .build();
 
-        return new PageMoveWithMessage("/user/submitted-coverLetter", letter);
+        return new PageMoveWithMessage("user/submitted-coverLetter", letter);
     }
 
     // 면접 생성
@@ -124,7 +124,7 @@ public class MyPageService {
         InterviewResponseDto interview = InterviewResponseDto.builder()
                 .qnaList((List<QnaDto>) data.get("qnaList")).build();
 
-        return new PageMoveWithMessage("/user/interview-detail", interview);
+        return new PageMoveWithMessage("user/interview-detail", interview);
     }
 
     // 면접 삭제

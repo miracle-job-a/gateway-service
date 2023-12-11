@@ -69,7 +69,7 @@ public class UserService {
 
 
         if (response.getHttpStatus() != 200)
-            return new PageMoveWithMessage("/user/resumes", response.getMessage());
+            return new PageMoveWithMessage("user/resumes", response.getMessage());
 
         Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
@@ -197,7 +197,7 @@ public class UserService {
                 .modifiedAt((String) data.get("modifiedAt"))
                 .qnaList((List<QnaDto>) data.get("qnaList")).build();
 
-        return new PageMoveWithMessage("/user/coverLetter-detail", letter);
+        return new PageMoveWithMessage("user/coverLetter-detail", letter);
     }
 
     public PageMoveWithMessage updateCoverLetter(HttpSession session, CoverLetterPostRequestDto requestDto, Long coverLetterId) {
