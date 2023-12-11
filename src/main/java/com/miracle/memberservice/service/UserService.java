@@ -219,9 +219,16 @@ public class UserService {
     public PageMoveWithMessage apply(HttpSession session, ApplicationLetterPostRequestDto dto, Long companyId) {
         Long userId = (Long) session.getAttribute("id");
 
+        if(applyStatus(session, dto.getPostId())!=200) return new PageMoveWithMessage("redirect:/v1/click/post/" + dto.getPostId() + "/detail?companyId=" + companyId + "&postType=" + dto.getPostType(), "공고가 마감되어 지원이 불가능합니다.", dto);
+
         ApiResponse response = ServiceCall.post(session, dto, Const.RequestHeader.USER, "/user/" + userId + "/application-letter");
 
         return new PageMoveWithMessage("redirect:/v1/click/post/" + dto.getPostId() + "/detail?companyId=" + companyId + "&postType=" + dto.getPostType(), response.getMessage(), dto);
+    }
+
+    private int applyStatus(HttpSession session, Long postId) {
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/post/" + postId);
+        return response.getHttpStatus();
     }
 
     public PageMoveWithMessage applicantList(HttpSession session, Long postId, String sort, int startPage) {
