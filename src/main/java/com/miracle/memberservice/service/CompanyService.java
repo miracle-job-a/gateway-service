@@ -333,11 +333,11 @@ public class CompanyService {
         return new PageMoveWithMessage("company/modify-form", info);
     }
 
-    public PageMoveWithMessage updateCompanyInfo(HttpSession session, CompanyInfoRequestDto requestDto){
-     Long companyId = (Long) session.getAttribute("id");
-    ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.COMPANY, "/company/" + companyId);
+    public PageMoveWithMessage updateCompanyInfo(HttpSession session, CompanyInfoRequestDto requestDto) {
+        Long companyId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.COMPANY, "/company/" + companyId);
 
-     if (response.getHttpStatus() != 200) {
+        if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("redirect:/v1/company/info", response.getMessage());
         }
 
@@ -353,6 +353,42 @@ public class CompanyService {
             return new PageMoveWithMessage("admin/companyList", response.getMessage());
         } else {
             return new PageMoveWithMessage("redirect:/v1/admin/company/list/1/5");
+        }
+    }
+
+    public PageMoveWithMessage getPostCount(HttpSession session) {
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/posts/count");
+        if (response.getHttpStatus() != 200) {
+            return new PageMoveWithMessage("admin/main", response.getMessage());
+        } else {
+            Object responseData = response.getData();
+
+            if (responseData instanceof Map) {
+                Map<String, Integer> postCounts = (Map<String, Integer>) responseData;
+
+                List<List<Object>> chartData = new ArrayList<>();
+                chartData.add(Arrays.asList("Type", "Num"));
+
+                for (Map.Entry<String, Integer> entry : postCounts.entrySet()) {
+                    String type;
+                    switch (entry.getKey()) {
+                        case "countNormalPosts":
+                            type = "일반 공고";
+                            break;
+                        case "countMZPosts":
+                            type = "MZ 공고";
+                            break;
+                        default:
+                            type = entry.getKey();
+                    }
+
+                    chartData.add(Arrays.asList(type, entry.getValue()));
+                }
+
+                return new PageMoveWithMessage("admin/postChart", chartData);
+            } else {
+                return new PageMoveWithMessage("admin/main", "Unexpected data format");
+            }
         }
     }
 }
