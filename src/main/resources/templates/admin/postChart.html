@@ -1,0 +1,55 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            /*<![CDATA[*/
+            var chartData = /*[[${chartData}]]*/ null;
+            /*]]>*/
+
+            var data = google.visualization.arrayToDataTable(chartData);
+            var options = {
+                title: '현재 진행 중인 공고 비율'
+            };
+            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+            chart.draw(data, options);
+        }
+
+    </script>
+
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
+
+        <section class="latest-podcast-section" id="section_2">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <!-- 전체 박스 크기 -->
+                    <div class="col-lg-9 col-12">
+                        <div class="section-title-wrap mb-5">
+                            <h4 class="section-title">전체 기업 공고 현황</h4>
+                        </div>
+
+                        <div class="row justify-content-center">
+                            <div style="margin-top: 5%" class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
+                                <div class="card p-4 mt-3 mb-3 col-6 post-form align-self-center" style="width: 900px; height: 500px;"
+                                     id="piechart"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+</html>
