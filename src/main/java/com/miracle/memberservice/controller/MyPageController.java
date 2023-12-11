@@ -43,9 +43,9 @@ public class MyPageController {
     }
 
     // 지원 이력서
-    @GetMapping("/apply-list/submitted-resume/{applicationLetterId}")
-    public String applyResume(HttpSession session, Model model, @PathVariable(required = false) Long applicationLetterId) {
-        PageMoveWithMessage pmwm = myPageService.resumeInApplicationLetterDetail(session, applicationLetterId);
+    @GetMapping("/apply-list/submitted-resume/{applicationLetterId}/{userId}")
+    public String applyResume(HttpSession session, Model model, @PathVariable(required = false) Long applicationLetterId, @PathVariable(required = false) Long userId) {
+        PageMoveWithMessage pmwm = myPageService.resumeInApplicationLetterDetail(session, applicationLetterId, userId);
 
         ResumeInApplicationLetterResponseDto responseDto = (ResumeInApplicationLetterResponseDto) pmwm.getData();
 
@@ -56,9 +56,9 @@ public class MyPageController {
     }
 
     // 지원 자소서
-    @GetMapping("/apply-list/submitted-coverLetter/{applicationLetterId}")
-    public String applyCoverLetter(HttpSession session, Model model, @PathVariable Long applicationLetterId) {
-        PageMoveWithMessage pmwm = myPageService.coverLetterInApplicationLetterDetail(session, applicationLetterId);
+    @GetMapping("/apply-list/submitted-coverLetter/{applicationLetterId}/{userId}")
+    public String applyCoverLetter(HttpSession session, Model model, @PathVariable Long applicationLetterId, @PathVariable(required = false) Long userId) {
+        PageMoveWithMessage pmwm = myPageService.coverLetterInApplicationLetterDetail(session, applicationLetterId, userId);
 
         model.addAttribute("letter", pmwm.getData());
         return pmwm.getPageName();

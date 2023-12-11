@@ -29,8 +29,8 @@ public class MyPageService {
     }
 
     // 지원 이력서 조회하기
-    public PageMoveWithMessage resumeInApplicationLetterDetail(HttpSession session, Long applicationLetterId) {
-        Long userId = (Long) session.getAttribute("id");
+    public PageMoveWithMessage resumeInApplicationLetterDetail(HttpSession session, Long applicationLetterId, Long userId) {
+        if(Objects.isNull(userId)) userId = (Long) session.getAttribute("id");
 
         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId + "/resume");
 
@@ -57,8 +57,9 @@ public class MyPageService {
     }
 
     // 지원 자소서 조회하기
-    public PageMoveWithMessage coverLetterInApplicationLetterDetail(HttpSession session, Long applicationLetterId) {
-        Long userId = (Long) session.getAttribute("id");
+    public PageMoveWithMessage coverLetterInApplicationLetterDetail(HttpSession session, Long applicationLetterId, Long userId) {
+        if(Objects.isNull(userId)) userId = (Long) session.getAttribute("id");
+
         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId + "/cover-letter");
 
         LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
