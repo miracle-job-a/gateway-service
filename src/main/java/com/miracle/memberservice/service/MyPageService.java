@@ -30,9 +30,13 @@ public class MyPageService {
 
     // 지원 이력서 조회하기
     public PageMoveWithMessage resumeInApplicationLetterDetail(HttpSession session, Long applicationLetterId, Long userId) {
-        if(Objects.isNull(userId)) userId = (Long) session.getAttribute("id");
-
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId + "/resume");
+        ApiResponse response;
+        if (Objects.nonNull(userId)) {
+            response = ServiceCall.getAnother(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId + "/resume", userId);
+        } else {
+            userId = (Long) session.getAttribute("id");
+            response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId + "/resume");
+        }
 
         LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
@@ -58,10 +62,13 @@ public class MyPageService {
 
     // 지원 자소서 조회하기
     public PageMoveWithMessage coverLetterInApplicationLetterDetail(HttpSession session, Long applicationLetterId, Long userId) {
-        if(Objects.isNull(userId)) userId = (Long) session.getAttribute("id");
-
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId + "/cover-letter");
-
+        ApiResponse response;
+        if (Objects.nonNull(userId)) {
+            response = ServiceCall.getAnother(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId + "/cover-letter", userId);
+        } else {
+            userId = (Long) session.getAttribute("id");
+            response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId + "/cover-letter");
+        }
         LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
         CoverLetterInApplicationLetterResponseDto letter = CoverLetterInApplicationLetterResponseDto.builder()
@@ -121,7 +128,7 @@ public class MyPageService {
     // 유저 정보 조회
     public PageMoveWithMessage userInfo(HttpSession session) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.get(session,Const.RequestHeader.USER, "/user/" + userId);
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId);
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("redirect:/v1", response.getMessage());
         Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
@@ -139,7 +146,7 @@ public class MyPageService {
     // 수정폼 접근 인증 api
     public PageMoveWithMessage validationUser(HttpSession session, LoginDto loginDto) {
         ApiResponse response = ServiceCall.post(session, loginDto, Const.RequestHeader.USER, "/user/login");
-        if (response.getHttpStatus() != 200){
+        if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("user/validation", response.getMessage());
         }
 
@@ -147,9 +154,9 @@ public class MyPageService {
     }
 
     // 수정폼 요청
-    public PageMoveWithMessage modifyUserInfo(HttpSession session){
+    public PageMoveWithMessage modifyUserInfo(HttpSession session) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.get(session,Const.RequestHeader.USER, "/user/" + userId);
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId);
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("redirect:/v1", response.getMessage());
         Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
@@ -166,7 +173,7 @@ public class MyPageService {
 
     public PageMoveWithMessage updateUserInfo(HttpSession session, UserUpdateInfoRequestDto requestDto) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.USER, "/user/" + userId );
+        ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.USER, "/user/" + userId);
         if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("user/modify-form", response.getMessage());
         }

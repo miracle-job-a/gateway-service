@@ -251,7 +251,7 @@ public class GuestController {
         model.addAttribute("companyId", companyId);
         model.addAttribute("info", postInfo.getData());
         model.addAttribute("detail", postDetail.getData());
-        model.addAttribute("jobs", jobs);
+        model.addAttribute("jobs", jobs.get(0).getName());
         model.addAttribute("stacks", stacks);
         return "guest/post-detail";
     }

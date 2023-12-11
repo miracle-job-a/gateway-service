@@ -153,7 +153,7 @@ public class CompanyController {
     }
 
     @GetMapping("/post/applicant/{startPage}")
-    public String applicantList(@PathVariable int startPage, @RequestParam Long postId, @RequestParam(required = false, defaultValue = "SUBMIT_DATE_ASC") String sort, HttpSession session, Model model) {
+    public String applicantList(@PathVariable int startPage, @RequestParam Long postId, @RequestParam(required = false, defaultValue = "SUBMIT_DATE_DESC") String sort, HttpSession session, Model model) {
         PageMoveWithMessage pmwm = userService.applicantList(session, postId, sort, startPage);
         model.addAttribute("applicantList", pmwm.getData());
         model.addAttribute("strNum", startPage);
