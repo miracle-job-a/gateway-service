@@ -1,9 +1,7 @@
 package com.miracle.memberservice.controller;
 
 import com.miracle.memberservice.dto.request.*;
-import com.miracle.memberservice.dto.response.JobResponseDto;
-import com.miracle.memberservice.dto.response.ResumeResponseDto;
-import com.miracle.memberservice.dto.response.StackResponseDto;
+import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.service.UserService;
@@ -40,9 +38,14 @@ public class UserController {
     public String createResume(HttpSession session, Model model, @RequestParam(required = false) String postId, @RequestParam(required = false) String companyId, @RequestParam(required = false) String postType) {
         PageMoveWithMessage pmwm = userService.formResume(session);
         Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
+
+        UserBaseInfoResponseDto data = (UserBaseInfoResponseDto) pmwm.getData();
+        List<StackResponseDto> stacks = adminService.getStacks(session, data.getStackIdSet());
+
         model.addAttribute("info", pmwm.getData());
         model.addAttribute("jobs", allJobsAndStacks.get("jobs"));
         model.addAttribute("stacks", allJobsAndStacks.get("stacks"));
+        model.addAttribute("stackIdSet", stacks);
         model.addAttribute("postId", postId);
         model.addAttribute("companyId", companyId);
         model.addAttribute("postType", postType);
