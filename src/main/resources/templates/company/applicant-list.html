@@ -49,11 +49,11 @@
         }
 
         function resumeClick(applicationLetterId, userId) {
-            window.location.href = '/v1/user/my-page/apply-list/submitted-resume/' + applicationLetterId + '/' + userId;
+            window.location.href = '/v1/user/my-page/apply-list/submitted-resume/' + applicationLetterId + '?userId=' + userId;
         }
 
         function coverLetterClick(applicationLetterId, userId) {
-            window.location.href = '/v1/user/my-page/apply-list/submitted-coverLetter/' + applicationLetterId + '/' + userId;
+            window.location.href = '/v1/user/my-page/apply-list/submitted-coverLetter/' + applicationLetterId + '?userId=' + userId;
         }
 
     </script>

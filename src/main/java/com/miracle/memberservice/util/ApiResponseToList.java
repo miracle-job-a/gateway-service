@@ -325,7 +325,7 @@ public class ApiResponseToList {
 
                     dtos.add(ApplicantListResponseDto.builder()
                             .applicationLetterId(applicationLetterId.longValue())
-                            .userId(userId.longValue())
+                            .userId(userId.longValue()) //TODO
                             .submitDate(String.valueOf(letter.get("submitDate")))
                             .address(String.valueOf(letter.get("address")))
                             .resumeTitle(String.valueOf(letter.get("resumeTitle")))

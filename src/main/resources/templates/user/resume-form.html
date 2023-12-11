@@ -321,7 +321,7 @@
                                                         <input class="form-check-input" type="checkbox" id="stack"
                                                                name="stackIdSet"
                                                                th:value="${stack.id}"
-                                                               th:checked="${info.stackIdSet != null and info.stackIdSet.contains(stack.id)}"/>
+                                                               th:checked="${stackIdSet != null and stackIdSet.contains(stack)}"/>
                                                         <label class="form-check-label" th:text="${stack.name}"></label>
                                                     </div>
                                                 </div>
