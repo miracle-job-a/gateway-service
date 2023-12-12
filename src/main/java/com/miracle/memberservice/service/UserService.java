@@ -227,7 +227,7 @@ public class UserService {
     }
 
     private int applyStatus(HttpSession session, Long postId) {
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/post/" + postId);
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/posts/" + postId);
         return response.getHttpStatus();
     }
 
