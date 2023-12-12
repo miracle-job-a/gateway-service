@@ -319,13 +319,16 @@ public class ApiResponseToList {
             if (!page.isEmpty()) {
                 for (Map<String, Object> letter : page) {
                     Integer applicationLetterId = (Integer) letter.get("applicationLetterId");
+                    Integer userId = (Integer) letter.get("userId");
 
                     dtos.add(ApplicantListResponseDto.builder()
                             .applicationLetterId(applicationLetterId.longValue())
+                            .userId(userId.longValue()) //TODO
                             .submitDate(String.valueOf(letter.get("submitDate")))
                             .address(String.valueOf(letter.get("address")))
                             .resumeTitle(String.valueOf(letter.get("resumeTitle")))
                             .name(String.valueOf(letter.get("name")))
+                            .email(String.valueOf(letter.get("email")))
                             .build());
                 }
                 pageList.add(dtos);

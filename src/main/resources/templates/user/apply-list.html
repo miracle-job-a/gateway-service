@@ -5,9 +5,41 @@
 
 <div layout:fragment="content">
     <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+
+        if (errorMessage != null) {
+            alert(errorMessage);
+            // 이후 로직 추가 가능
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
             // 페이지 로딩 시 초기 상태 설정
             initializePage();
+
+            // 모달관련 기능 (applicationLetterId 값 복사)
+            var changeStatusButton = document.querySelector('[data-bs-target="#myModal"]');
+            var letterId = document.getElementById('letterId').value;
+            var appIdInput = document.querySelector('[name="appId"]');
+
+            changeStatusButton.addEventListener('click', function() {
+                appIdInput.value = letterId;
+            });
+
+            var submitButton = document.querySelector('.modal-footer .btn-warning');
+            var appIdInput = document.querySelector('[name="appId"]');
+            var applicationStatusSelect = document.querySelector('[name="applicationStatus"]');
+
+            submitButton.addEventListener('click', function() {
+                var applicationLetterId = appIdInput.value;
+                var applicationStatus = applicationStatusSelect.value;
+
+                if (applicationStatus) {
+                    var url = '/v1/user/my-page/apply-list/update/' + applicationLetterId + '/' + applicationStatus;
+                    window.location.href = url;
+                } else {
+                    alert("진행 상태를 선택해 주세요.");
+                }
+            });
         });
 
         function initializePage() {
@@ -45,6 +77,7 @@
             let id = button.id;
             location.href = "/v1/user/my-page/apply-list/1?sort=" + id;
         }
+
 
     </script>
     <main>
@@ -127,10 +160,48 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- 버튼 부 -->
+                                <div class="d-flex flex-column ms-auto">
+                                    <button type="button" class="btn btn-outline-secondary" th:id="${letters.applicationLetterId}" name="delete">지원취소</button>
+                                    <button type="button" class="btn btn-outline-secondary mt-2" data-bs-toggle="modal" data-bs-target="#myModal" >진행상태 변경</button>
+                                </div>
                             </div>
                         </div>
                     </div>
 
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="myModal" tabindex="-2"
+                         aria-labelledby="exampleModalLabel" aria-hidden="true"
+                         data-bs-backdrop="false">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">진행상태 변경</h5>
+                                </div>
+                                <div class="modal-body container-fluid">
+                                    <div class="row align-self-center">
+                                        <div class="col-9 m-2 align-self-center mx-auto">
+                                            <select class="form-select" name="applicationStatus">
+                                                <option selected disabled>진행상태를 선택해 주세요.</option>
+                                                <option name="applicationStatus" value="IN_PROGRESS">진행중</option>
+                                                <option name="applicationStatus" value="PASS">합격</option>
+                                                <option name="applicationStatus" value="FAIL">불합격</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-ourline-secondary"
+                                            data-bs-dismiss="modal">취소
+                                    </button>
+                                    <input type="hidden" name="appId" />
+                                    <button type="button" class="btn btn-warning">변경</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="col-lg-4 col-12 mx-auto">
                         <nav aria-label="Page navigation example">
@@ -207,6 +278,17 @@
                     } else {
                         // id가 0이 아니면 일반적인 이동
                         window.location.href = '/v1/user/my-page/interview/' + applicationLetterId + "/" + interviewId;
+                    }
+                });
+            });
+
+            /* 지원취소(삭제) */
+            document.querySelectorAll('[name="delete"]').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var applicationLetterId = button.id;
+                    var confirmDelete = confirm("정말로 지원을 취소하시겠습니까?\n이 작업은 되돌릴 수 없습니다.\n(저장했던 공고, 면접 기록이 삭제됩니다.)");
+                    if (confirmDelete) {
+                        window.location.href = '/v1/user/my-page/apply-list/delete/' + applicationLetterId;
                     }
                 });
             });

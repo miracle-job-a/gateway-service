@@ -5,6 +5,14 @@
 
 <div layout:fragment="content">
 
+    <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+
+        if (errorMessage != null) {
+            alert(errorMessage);
+            // 이후 로직 추가 가능
+        }
+    </script>
     <script>
         // 뒤로가기
         function goBack() {
@@ -33,7 +41,7 @@
                                         <div class="col-10 my-8 mx-auto">
                                         <h3 class="mb-5 ">정보확인</h3>
                                         </div>
-                                        <form action="/v1/company/info-check" method="post" role="form" >
+                                        <form action="/v1/company/info/validation" method="post" role="form" >
 
                                         <div class="col-lg-10 col-12 my-2 mx-auto">
                                             <div class="form-floating">
@@ -59,7 +67,7 @@
 
                                             </div>
                                             <div class="col-4">
-                                                <button type="submit" class="form-control" id="submitBtn">수정완료</button>
+                                                <button type="submit" class="form-control" id="submitBtn">확인</button>
                                             </div>
                                         </div>
 

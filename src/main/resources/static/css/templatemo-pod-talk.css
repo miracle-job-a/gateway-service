@@ -21,6 +21,7 @@ https://templatemo.com/tm-584-pod-talk
   --primary-color:                #660099;
   --secondary-color:              #000000;
   --section-bg-color:             #fbf0ff;
+  --nav-bg-color: #660099;
   --custom-btn-bg-color:          #660099;
   --custom-btn-bg-hover-color:    #aa00ff;
   --dark-color:                   #000000;
@@ -264,6 +265,20 @@ main {
 
 .site-header h2 {
   color: var(--white-color);
+}
+
+.site-header button {
+  background: var(--custom-btn-bg-color);
+  border: 2px solid transparent;
+  border-radius: var(--border-radius-large);
+  color: var(--white-color);
+  font-family: var(--title-font-family);
+  font-size: var(--p-font-size);
+  font-weight: var(--font-weight-semibold);
+  line-height: normal;
+  transition: all 0.3s;
+  padding: 10px 10px;
+  margin-top: 10px;
 }
 
 

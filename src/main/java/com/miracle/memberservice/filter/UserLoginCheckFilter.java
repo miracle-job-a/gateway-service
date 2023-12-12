@@ -24,10 +24,20 @@ public class UserLoginCheckFilter implements Filter {
         if (isLoginCheckPath(requestURI)) {
             System.out.println("인증 체크 로직 실행 : " + requestURI);
             HttpSession session = httpRequest.getSession(false);
-            if (session == null || session.getAttribute("name") == null) {
-                System.out.println("미 인증 사용자 요청");
-                httpResponse.sendRedirect("/v1/user/login-form");
-                return; // 미인증 사용자는 다음으로 진행하지 않고 끝낸다.
+            if (requestURI.contains("/v1/user/my-page/apply-list/submitted-coverLetter/") || requestURI.contains("/v1/user/my-page/apply-list/submitted-resume/")) {
+                if (session.getAttribute("bno") == null) {
+                    if (session.getAttribute("name") == null) {
+                        System.out.println("미 인증 사용자 요청");
+                        httpResponse.sendRedirect("/v1/user/login-form");
+                        return; // 미인증 사용자는 다음으로 진행하지 않고 끝낸다.
+                    }
+                }
+            }else{
+                if (session == null || session.getAttribute("name") == null) {
+                    System.out.println("미 인증 사용자 요청");
+                    httpResponse.sendRedirect("/v1/user/login-form");
+                    return; // 미인증 사용자는 다음으로 진행하지 않고 끝낸다.
+                }
             }
         }
         /* 다음 단계로 넘어간다. */

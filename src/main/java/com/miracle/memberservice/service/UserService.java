@@ -70,7 +70,7 @@ public class UserService {
 
 
         if (response.getHttpStatus() != 200)
-            return new PageMoveWithMessage("/user/resumes", response.getMessage());
+            return new PageMoveWithMessage("user/resumes", response.getMessage());
 
         Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
@@ -80,6 +80,7 @@ public class UserService {
                 .phone(data.get("phone"))
                 .birth(data.get("birth"))
                 .address(data.get("address"))
+                .stackIdSet(data.get("stackIdSet"))
                 .build();
 
         return new PageMoveWithMessage("user/resume-form", info);
@@ -197,7 +198,7 @@ public class UserService {
                 .modifiedAt((String) data.get("modifiedAt"))
                 .qnaList((List<QnaDto>) data.get("qnaList")).build();
 
-        return new PageMoveWithMessage("/user/coverLetter-detail", letter);
+        return new PageMoveWithMessage("user/coverLetter-detail", letter);
     }
 
     public PageMoveWithMessage updateCoverLetter(HttpSession session, CoverLetterPostRequestDto requestDto, Long coverLetterId) {
@@ -219,9 +220,16 @@ public class UserService {
     public PageMoveWithMessage apply(HttpSession session, ApplicationLetterPostRequestDto dto, Long companyId) {
         Long userId = (Long) session.getAttribute("id");
 
+        if(applyStatus(session, dto.getPostId())!=200) return new PageMoveWithMessage("redirect:/v1/click/post/" + dto.getPostId() + "/detail?companyId=" + companyId + "&postType=" + dto.getPostType(), "공고가 마감되어 지원이 불가능합니다.", dto);
+
         ApiResponse response = ServiceCall.post(session, dto, Const.RequestHeader.USER, "/user/" + userId + "/application-letter");
 
         return new PageMoveWithMessage("redirect:/v1/click/post/" + dto.getPostId() + "/detail?companyId=" + companyId + "&postType=" + dto.getPostType(), response.getMessage(), dto);
+    }
+
+    private int applyStatus(HttpSession session, Long postId) {
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/posts/" + postId);
+        return response.getHttpStatus();
     }
 
     public PageMoveWithMessage applicantList(HttpSession session, Long postId, String sort, int startPage) {

@@ -199,7 +199,7 @@
                                 <div class="row">
                                     <div class="col-4 mt-2 ">
                                         <div class="mb-1">
-                                            <label for="endDate">마감일</label><label class="text-danger">     *필수</label>
+                                            <label for="endDate">마감일</label><label class="text-danger">     *필수(분(minute)은 등록되지 않습니다. 예)12:06:12->12:00:00)</label>
                                         </div>
                                         <input type="datetime-local" name="endDate" id="endDate"
                                                class="form-control" placeholder="마감일" required=""/>
@@ -371,12 +371,12 @@
                                     </div>
                                 </div>
 
-                                <h5 class="mb-4 mt-4" style="display: inline-block;">자기소개서 질문</h5>
+                                <h5 class="mb-4 mt-4" style="display: inline-block;">자기소개서 질문</h5><label class="text-danger"> *하나 이상 문항을 입력해주세요.</label>
                                 <button class="btn m-lg-3" type="button" onclick="add_item()">+</button>
                                 <br>
 
                                 <div class="col-12 mb-4" id="pre_set">
-                                    <input type="text" class="form-control" id="questionList" name="questionList" value="">
+                                    <input type="text" class="form-control" id="questionList" name="questionList" required value="">
                                     <input type="button" class="form-control" value="삭제" onclick="remove_item(this)">
                                 </div>
 

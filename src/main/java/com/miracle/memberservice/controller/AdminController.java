@@ -152,4 +152,11 @@ public class AdminController {
         PageMoveWithMessage pmwm = companyService.approveCompany(session, companyId);
         return pmwm.getPageName();
     }
+
+    @GetMapping("/posts")
+    public String getPostCount(HttpSession session, Model model) {
+        PageMoveWithMessage pmwm = companyService.getPostCount(session);
+        model.addAttribute("chartData", pmwm.getData());
+        return pmwm.getPageName();
+    }
 }

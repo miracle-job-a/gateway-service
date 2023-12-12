@@ -41,9 +41,27 @@ public class ServiceCall {
                 .onErrorResume(handleError());
     }
 
+    private static Mono<ApiResponse> anotherHeaders(WebClient.RequestHeadersSpec<?> request, HttpSession httpSession, String serviceType, String userId) {
+        String capitalizeFirstLetter = capitalizeFirstLetter(serviceType);
+        MiracleTokenKey key = new MiracleTokenKey(httpSession);
+
+        return request
+                .header(Const.RequestHeader.MIRACLE, key.getHashcode())
+                .header(Const.RequestHeader.SESSION_ID, key.getSessionId())
+                .header(capitalizeFirstLetter + Const.RequestHeader.HEADER_ID, userId)
+                .retrieve()
+                .bodyToMono(ApiResponse.class)
+                .onErrorResume(handleError());
+    }
+
     public static ApiResponse get(HttpSession httpSession, String serviceType, String url) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()), httpSession, serviceType).block();
+    }
+
+    public static ApiResponse getAnother(HttpSession httpSession, String serviceType, String url, Long userId) {
+        return anotherHeaders(createWebClientBuilder(serviceType).build().get()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()), httpSession, serviceType, String.valueOf(userId)).block();
     }
 
     public static ApiResponse post(HttpSession httpSession, Object dto, String serviceType, String url) {
@@ -64,6 +82,11 @@ public class ServiceCall {
     public static ApiResponse put(HttpSession httpSession, Object dto, String serviceType, String url) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().put()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()).bodyValue(dto), httpSession, serviceType).block();
+    }
+
+    public static ApiResponse putParam(HttpSession httpSession, String serviceType, String url, String name, String value){
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().put()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam(name, value).build()), httpSession, serviceType).block();
     }
 
     public static ApiResponse putModifyParam(HttpSession httpSession, String serviceType, String url, String stackId, String modifiedName) {
@@ -104,11 +127,6 @@ public class ServiceCall {
     public static ApiResponse getParamListWithToday(HttpSession httpSession, String serviceType, String url, int strNum, int endNum, boolean today) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).queryParam("today", today).build()), httpSession, serviceType).block();
-    }
-
-    public static ApiResponse getUserParamList(HttpSession httpSession, String serviceType, String url, int strNum, int endNum) {
-        return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
-                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("startPage", strNum).queryParam("endPage", endNum).queryParam("pageSize", 5).build()), httpSession, serviceType).block();
     }
 
     public static ApiResponse getUserParamListSort(HttpSession httpSession, String serviceType, String url, int strNum, int endNum, String sort) {
