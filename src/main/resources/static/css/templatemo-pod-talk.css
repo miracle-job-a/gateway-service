@@ -39,7 +39,7 @@ https://templatemo.com/tm-584-pod-talk
   --h5-font-size:                 24px;
   --h6-font-size:                 22px;
   --p-font-size:                  16px;
-  --menu-font-size:               14px;
+  --menu-font-size:               16px;
 
   --border-radius-large:          100px;
   --border-radius-medium:         20px;
@@ -250,6 +250,24 @@ main {
   color: var(--white-color);
 }
 
+.custom-border-option-btn {
+  background: transparent;
+  border: 2px solid var(--custom-btn-bg-color);
+  border-radius: var(--border-radius-small);
+  color: var(--custom-btn-bg-color);
+  font-weight: var(--font-weight-semibold);
+  transition: all 0.3s;
+}
+
+.custom-border-option-btn:hover {
+  background: var(--custom-btn-bg-color); /* 변경사항: 배경색을 설정하세요 */
+  border: 2px solid var(--custom-btn-bg-color);
+  border-radius: var(--border-radius-small);
+  color: var(--white-color); /* 변경사항: 텍스트 색상을 변경하세요 */
+  font-weight: var(--font-weight-semibold);
+}
+
+
 
 /*---------------------------------------
   SITE HEADER              
@@ -326,7 +344,7 @@ main {
   color: var(--primary-color);
   font-family: var(--title-font-family); 
   font-size: var(--menu-font-size);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   position: relative;
