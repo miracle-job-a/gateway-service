@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -227,5 +228,21 @@ public class UserService {
         ApiResponse response = ServiceCall.getUserParamListSort(session, Const.RequestHeader.USER, "/post/" + postId + "/applicant/list", startPage, startPage + 4, sort);
 
         return new PageMoveWithMessage("company/applicant-list", ApiResponseToList.applicantList(response.getData()));
+    }
+
+    public PageMoveWithMessage getUserJoinCountByMonth(HttpSession session, LocalDate date) {
+        ApiResponse response = ServiceCall.getParamList(session, Const.RequestHeader.USER, "/user", date);
+
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("admin/main", response.getMessage());
+
+        Map<Integer, Long> userJoinCountByMonth = ApiResponseToList.getUserJoinCountByMonth((List<List<LinkedHashMap<String, Object>>>) response.getData());
+        List<List<Object>> chartData = new ArrayList<>();
+
+        for (Map.Entry<Integer, Long> entry : userJoinCountByMonth.entrySet()) {
+            if (entry.getValue() == null || entry.getValue() == 0) chartData.add(Arrays.asList(entry.getKey(), 0));
+            chartData.add(Arrays.asList(entry.getKey(), entry.getValue()));
+        }
+
+        return new PageMoveWithMessage("admin/user-join-count", userJoinCountByMonth);
     }
 }
