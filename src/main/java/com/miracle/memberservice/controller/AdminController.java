@@ -150,9 +150,9 @@ public class AdminController {
         return pmwm.getPageName();
     }
 
-    @GetMapping("/posts/today")
-    public String getTodayPostCount(HttpSession session, Model model) {
-        PageMoveWithMessage pmwm = companyService.getTodayPostCount(session);
+    @GetMapping("/posts/{year}/today")
+    public String getTodayPostCount(@PathVariable int year, HttpSession session, Model model) {
+        PageMoveWithMessage pmwm = companyService.getTodayPostCount(year, session);
         model.addAttribute("chartData", pmwm.getData());
         return pmwm.getPageName();
     }
