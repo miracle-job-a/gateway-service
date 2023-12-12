@@ -2,22 +2,25 @@ package com.miracle.memberservice.service;
 
 import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.*;
-import com.miracle.memberservice.util.ApiResponseToList;
-import com.miracle.memberservice.util.Const;
-import com.miracle.memberservice.util.PageMoveWithMessage;
-import com.miracle.memberservice.util.ServiceCall;
+import com.miracle.memberservice.util.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CompanyService {
+
+    private final S3Method s3Method;
 
     public PageMoveWithMessage mainPage(HttpSession session) {
         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/main");
@@ -39,13 +42,14 @@ public class CompanyService {
         return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
     }
 
-    public PageMoveWithMessage join(CompanyJoinDto companyJoinDto, HttpSession session) {
+    public PageMoveWithMessage join(CompanyJoinDto companyJoinDto, HttpSession session, MultipartFile photo) throws IOException {
 
         ApiResponse response = ServiceCall.post(session, companyJoinDto, Const.RequestHeader.COMPANY, "/company/signup");
 
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("guest/company-join", response.getMessage());
 
+        s3Method.uploadCompanyFile(photo, Const.RequestHeader.COMPANY, companyJoinDto.getBno());
         return new PageMoveWithMessage("guest/company-login");
     }
 
@@ -89,7 +93,7 @@ public class CompanyService {
     }
 
     // 확인 용도
-    public Boolean statusCompany(HttpSession session){
+    public Boolean statusCompany(HttpSession session) {
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse apiResponse = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/status");
         return (Boolean) apiResponse.getData();

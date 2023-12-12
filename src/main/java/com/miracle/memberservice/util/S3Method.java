@@ -28,6 +28,14 @@ public class S3Method {
         amazonS3Client.putObject(bucket, type + "/" + id, file.getInputStream(), objectMetadata);
     }
 
+    public void uploadCompanyFile(MultipartFile file, String type, String bno) throws IOException {
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType(file.getContentType());
+        objectMetadata.setContentLength(file.getSize());
+
+        amazonS3Client.putObject(bucket, type + "/" + bno, file.getInputStream(), objectMetadata);
+    }
+
     public void deleteFile(String type, Long id) {
         amazonS3Client.deleteObject(bucket, type + "/" + id);
     }
