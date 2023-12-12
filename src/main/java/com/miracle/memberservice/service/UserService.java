@@ -247,7 +247,6 @@ public class UserService {
         List<List<Object>> chartData = new ArrayList<>();
 
         for (Map.Entry<Integer, Long> entry : userJoinCountByMonth.entrySet()) {
-            if (entry.getValue() == null || entry.getValue() == 0) chartData.add(Arrays.asList(entry.getKey(), 0));
             chartData.add(Arrays.asList(entry.getKey(), entry.getValue()));
         }
 

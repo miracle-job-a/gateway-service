@@ -57,7 +57,6 @@ public class AdminController {
     @GetMapping("/user/join-count")
     public String getUserJoinCountByMonth(HttpSession session, Model model) {
         PageMoveWithMessage pmwm = userService.getUserJoinCountByMonth(session, LocalDate.now());
-        System.out.println("pmwm.getData() : " + pmwm.getData());
         model.addAttribute("chartData", pmwm.getData());
 
         return pmwm.getPageName();
