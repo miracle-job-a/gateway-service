@@ -166,7 +166,7 @@ strong {
 
 .section-title {
   background: var(--section-bg-color);
-  border-radius: var(--border-radius-large);
+  border-radius: var(--border-radius-small);
   display: inline-block;
   position: relative;
   z-index: 2;
@@ -323,7 +323,7 @@ main {
 
 .navbar-nav .nav-link {
   display: inline-block;
-  color: var(--section-bg-color);
+  color: var(--primary-color);
   font-family: var(--title-font-family); 
   font-size: var(--menu-font-size);
   font-weight: var(--font-weight-medium);
@@ -613,7 +613,7 @@ main {
 }
 
 .carousel-item {
-  max-height: 230px;
+  max-height: 250px;
   width: 100%; /* 너비를 요소의 전체 너비로 설정 */
   object-fit: cover; /* 이미지가 요소를 덮도록 설정 */
   object-position: center center; /* 이미지의 중앙이 항상 보이도록 설정 */
@@ -625,18 +625,21 @@ main {
 -----------------------------------------*/
 .custom-block {
   border: 2px solid var(--primary-color);
-  border-radius: var(--border-radius-medium);
+  border-radius: var(--border-radius-small);
   position: relative;
   overflow: hidden;
-  padding: 30px;
+  padding: 15px;
   transition: all 0.3s ease;
+
 }
 
 .custom-block:hover {
   background: var(--white-color);
+  border-radius: var(--border-radius-small);
   box-shadow: 0 1rem 3rem rgba(0,0,0,.175);
   border-color: transparent;
   transform: translateY(-3px);
+
 }
 
 .custom-block-info {
@@ -656,7 +659,7 @@ main {
 }
 
 .custom-block-image {
-  border-radius: var(--border-radius-medium);
+  border-radius: var(--border-radius-small);
   display: block;
   width: 112px;
   height: 112px;

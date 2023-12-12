@@ -223,7 +223,7 @@
                      th:id="'postPage'+${postListStat.index}">
 
 
-                    <div class="col-lg-4 col-12 mb-4 mb-lg-0" th:each="post, postStat : ${postList}">
+                    <div class="col-lg-4 col-12 my-4 mb-lg-0" th:each="post, postStat : ${postList}">
                         <div class="custom-block custom-block-full mb-2" >
                             <div class="custom-block-image-wrap">
                                 <a th:href="@{/v1/click/post/{postId}/detail(companyId=${post.companyId}, postId=${post.id}, postType=${post.postType})}">
@@ -255,7 +255,7 @@
                                 </a>
 
                                 <hr>
-                                <h5 class="mb-0" th:text="${post.title}"></h5>
+                                <h6 class="mb-0" th:text="${post.title}"></h6>
 
                                 <div class="custom-block-bottom d-flex justify-content-between mt-2">
                                     <a class="bi-person me-1">
