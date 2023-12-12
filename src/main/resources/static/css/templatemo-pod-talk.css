@@ -496,9 +496,9 @@ main {
 .hero-section {
   background-image: linear-gradient(#cf82f5, #FFFFFF);
   background-repeat: no-repeat;
-  background-size: 108% 76%;
+  background-size: 120% 76%;
   background-position: top;
-  padding-top: 200px;
+  padding-top: 100px;
 }
 
 .owl-carousel {
@@ -610,6 +610,13 @@ main {
 .owl-theme .owl-dots .owl-dot.active span, 
 .owl-theme .owl-dots .owl-dot:hover span {
   background: var(--secondary-color);
+}
+
+.carousel-item {
+  max-height: 230px;
+  width: 100%; /* 너비를 요소의 전체 너비로 설정 */
+  object-fit: cover; /* 이미지가 요소를 덮도록 설정 */
+  object-position: center center; /* 이미지의 중앙이 항상 보이도록 설정 */
 }
 
 
@@ -1276,7 +1283,7 @@ main {
 
 @media screen and (max-width: 1240px) {
 	.hero-section {
-	  background-size: 116%;
+	  background-size: 100%;
 	  /* T o o p l a t e . c o m   C u s t o m i z e d */
 	}
 }
@@ -1307,7 +1314,7 @@ main {
   }
   
   .hero-section {
-	  background-size: 160% 66%; 
+	  background-size: 160% 66%;
 	  /* T o o p l a t e . c o m   C u s t o m i z e d */
 	}
 
