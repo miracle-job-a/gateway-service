@@ -270,6 +270,18 @@
 
             return true;
         }
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('preview').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                document.getElementById('preview').src = "";
+            }
+        }
     </script>
     <main>
         <header class="site-header d-flex flex-column justify-content-center align-items-center">
@@ -305,7 +317,6 @@
                                     </div>
                                 </div>
 
-                                <!-- 이메일 인증 번호 입력 -->
                                 <div class="col-lg-4 col-md-4 col-12">
                                     <div class="form-floating">
                                         <input type="text" name="authentication" id="authentication"
@@ -315,14 +326,15 @@
                                                 class="text-danger">*</span></label>
                                     </div>
                                 </div>
+
                                 <div class="col-lg-2 col-md-2 col-12">
                                     <div class="form-floating">
                                         <button type="button" class="custom-btn" disabled id="authenticationButton">인증확인<span
                                                 class="text-danger">*</span></button>
                                     </div>
                                 </div>
+                                <!-- 이메일 인증 번호 입력 -->
 
-                                <div class="col-12 pt-3"></div>
 
                                 <!-- 비밀번호 -->
                                 <div class="col-lg-12 col-md-5 col-12">
@@ -438,11 +450,14 @@
                                         <div class="input-group">
                                             <input type="file" class="form-control" name="photo" id="imageInput"
                                                    accept="image/jpeg,image/png" aria-describedby="imageInputHelp"
-                                                   required>
+                                                   required onchange="readURL(this);">
                                         </div>
                                         <small id="imageInputHelp" class="form-text text-muted">jpeg, png 이미지만 업로드
                                             가능합니다.</small>
                                     </div>
+                                </div>
+                                <div class="col-lg-6 col-12 pt-1 pb-1">
+                                    <img id="preview" style="height: 192px; width: 204px;"/>
                                 </div>
 
                                 <div class="col-lg-8 col-md-8 col-12 mt-2">

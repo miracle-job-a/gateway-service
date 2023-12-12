@@ -193,7 +193,7 @@ public class CompanyController {
         if (checked) {
             return "redirect:/v1/company/info/modify";
         } else {
-            return "/error/500";
+            return "error/500";
         }
     }
 
