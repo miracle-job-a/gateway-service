@@ -8,10 +8,12 @@ public class TokenRequestDto {
     private final Long id;
     private final String email;
     private final String memberType;
+    private final String token;
 
     public TokenRequestDto() {
         this.id = null;
         this.email = null;
         this.memberType = null;
+        this.token = null;
     }
 }

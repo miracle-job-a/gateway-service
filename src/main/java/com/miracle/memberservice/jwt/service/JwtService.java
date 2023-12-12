@@ -31,6 +31,15 @@ public class JwtService {
         return new AccessToken(accessToken);
     }
 
+    public boolean validateToken(Long id, String memberType, String email, String token) {
+        Objects.requireNonNull(id, "Id is null");
+        Objects.requireNonNull(memberType, "Member type is null");
+        Objects.requireNonNull(email, "Email is null");
+
+        String subject = memberType + ":" + email;
+        return jwtProvider.validateToken(id, subject, token);
+    }
+
     public AccessToken refreshToken(Long id, String subject) {
         String refreshToken = jwtRepository.get(subject).orElse(new RefreshToken("")).getToken();
         String refreshedAccessToken = jwtProvider.refreshAccessToken(id, subject, refreshToken);

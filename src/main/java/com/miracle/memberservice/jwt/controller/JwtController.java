@@ -19,11 +19,22 @@ public class JwtController {
     @PostMapping("/create")
     public ResponseEntity<AccessToken> createToken(@RequestBody TokenRequestDto dto) {
         Long id = dto.getId();
-        String email = dto.getEmail();
         String memberType = dto.getMemberType();
+        String email = dto.getEmail();
 
-        AccessToken token = jwtService.createToken(id, email, memberType);
-        return ResponseEntity.ok(token);
+        AccessToken token = jwtService.createToken(id, memberType, email);
+        return ResponseEntity.status(HttpStatus.CREATED).body(token);
+    }
+
+    @PostMapping("/validate")
+    public ResponseEntity<Boolean> validateToken(@RequestBody TokenRequestDto dto) {
+        Long id = dto.getId();
+        String memberType = dto.getMemberType();
+        String email = dto.getEmail();
+        String token = dto.getToken();
+
+        Boolean valid = jwtService.validateToken(id, memberType, email, token);
+        return ResponseEntity.ok(valid);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
