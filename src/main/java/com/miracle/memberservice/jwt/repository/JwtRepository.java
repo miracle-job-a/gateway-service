@@ -1,4 +1,4 @@
-package com.miracle.memberservice.repository;
+package com.miracle.memberservice.jwt.repository;
 
 import com.miracle.memberservice.jwt.dto.RefreshTokenDto;
 import org.springframework.stereotype.Repository;

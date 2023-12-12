@@ -1,6 +1,6 @@
 package com.miracle.memberservice.jwt;
 
-import com.miracle.memberservice.exception.InvalidTokenException;
+import com.miracle.memberservice.jwt.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

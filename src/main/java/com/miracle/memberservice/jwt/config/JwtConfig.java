@@ -1,5 +1,6 @@
-package com.miracle.memberservice.jwt;
+package com.miracle.memberservice.jwt.config;
 
+import com.miracle.memberservice.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

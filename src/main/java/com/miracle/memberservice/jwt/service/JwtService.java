@@ -1,9 +1,9 @@
-package com.miracle.memberservice.service;
+package com.miracle.memberservice.jwt.service;
 
 import com.miracle.memberservice.jwt.JwtProvider;
 import com.miracle.memberservice.jwt.dto.AccessTokenDto;
 import com.miracle.memberservice.jwt.dto.RefreshTokenDto;
-import com.miracle.memberservice.repository.JwtRepository;
+import com.miracle.memberservice.jwt.repository.JwtRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -5,6 +5,7 @@ import com.miracle.memberservice.dto.response.ApplicationLetterResponseDto;
 import com.miracle.memberservice.dto.response.JobResponseDto;
 import com.miracle.memberservice.dto.response.PostResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;
+import com.miracle.memberservice.jwt.service.JwtService;
 import com.miracle.memberservice.jwt.dto.AccessTokenDto;
 import com.miracle.memberservice.service.*;
 import com.miracle.memberservice.util.Const;
