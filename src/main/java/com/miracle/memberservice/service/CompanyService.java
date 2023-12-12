@@ -2,16 +2,14 @@ package com.miracle.memberservice.service;
 
 import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.*;
-import com.miracle.memberservice.util.ApiResponseToList;
-import com.miracle.memberservice.util.Const;
-import com.miracle.memberservice.util.PageMoveWithMessage;
-import com.miracle.memberservice.util.ServiceCall;
+import com.miracle.memberservice.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -270,7 +268,6 @@ public class CompanyService {
     public PageMoveWithMessage getCompanyListToday(HttpSession session, int strNum, int endNum, boolean today) {
 
         ApiResponse response = ServiceCall.getParamListWithToday(session, Const.RequestHeader.COMPANY, "/company/list", strNum, endNum, today);
-
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("error/500", response.getMessage());
 
         List<List<ManagePostsResponseDto>> postList = ApiResponseToList.postList(response.getData(), session);
@@ -391,8 +388,32 @@ public class CompanyService {
 
                 return new PageMoveWithMessage("admin/postChart", chartData);
             } else {
-                return new PageMoveWithMessage("admin/main", "Unexpected data format");
+                return new PageMoveWithMessage("admin/main", response.getMessage());
             }
+        }
+    }
+
+    public PageMoveWithMessage getTodayPostCount(int year, HttpSession session) {
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/posts/" + year + "/today");
+
+        if (response.getHttpStatus() != 200) {
+            return new PageMoveWithMessage("admin/main", response.getMessage());
+        } else {
+            List<Map<String, Object>> postData = (List<Map<String, Object>>) response.getData();
+
+            Map<Integer, Integer> monthCounts = new HashMap<>();
+
+            for (Map<String, Object> post : postData) {
+                LocalDateTime createdAt = LocalDateTime.parse((CharSequence) post.get("createdAt"));
+                int month = createdAt.getMonthValue();
+                monthCounts.put(month, monthCounts.getOrDefault(month, 0) + 1);
+            }
+
+            List<List<Integer>> formattedData = new ArrayList<>();
+            for (int i = 1; i <= 12; i++) {
+                formattedData.add(List.of(i, monthCounts.getOrDefault(i, 0)));
+            }
+            return new PageMoveWithMessage("admin/todayPostChart", formattedData);
         }
     }
 }
