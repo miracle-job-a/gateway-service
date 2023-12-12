@@ -44,6 +44,7 @@ public class JwtProvider {
                 .setIssuedAt(now)
                 .setExpiration(expirationDate)
                 .claim("id", id)
+                .claim("rft", createRefreshToken(id, subject))
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
@@ -84,7 +85,7 @@ public class JwtProvider {
 
     public String refreshAccessToken(Long id, String subject, String refreshToken) {
         if (validateToken(id, subject, refreshToken)) {
-            return createRefreshToken(id, subject);
+            return createAccessToken(id, subject);
         }
 
         throw new InvalidTokenException();

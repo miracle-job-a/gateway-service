@@ -1,13 +1,14 @@
 package com.miracle.memberservice.jwt.service;
 
 import com.miracle.memberservice.jwt.JwtProvider;
-import com.miracle.memberservice.jwt.dto.AccessTokenDto;
-import com.miracle.memberservice.jwt.dto.RefreshTokenDto;
+import com.miracle.memberservice.jwt.domain.AccessToken;
+import com.miracle.memberservice.jwt.domain.RefreshToken;
 import com.miracle.memberservice.jwt.repository.JwtRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -16,19 +17,23 @@ public class JwtService {
     private final JwtRepository jwtRepository;
     private final JwtProvider jwtProvider;
 
-    public AccessTokenDto createToken(Long id, String memberType, String email) {
+    public AccessToken createToken(Long id, String memberType, String email) {
+        Objects.requireNonNull(id, "Id is null");
+        Objects.requireNonNull(memberType, "Member type is null");
+        Objects.requireNonNull(email, "Email is null");
+
         String subject = memberType + ":" + email;
         Map<String, String> tokens = jwtProvider.createTokens(id, subject);
 
         String accessToken = tokens.get("accessToken");
         String refreshToken = tokens.get("refreshToken");
-        jwtRepository.save(subject, new RefreshTokenDto(refreshToken));
-        return new AccessTokenDto(accessToken);
+        jwtRepository.save(subject, new RefreshToken(refreshToken));
+        return new AccessToken(accessToken);
     }
 
-    public AccessTokenDto refreshToken(Long id, String subject) {
-        String refreshToken = jwtRepository.get(subject).orElse(new RefreshTokenDto("")).getToken();
+    public AccessToken refreshToken(Long id, String subject) {
+        String refreshToken = jwtRepository.get(subject).orElse(new RefreshToken("")).getToken();
         String refreshedAccessToken = jwtProvider.refreshAccessToken(id, subject, refreshToken);
-        return new AccessTokenDto(refreshedAccessToken);
+        return new AccessToken(refreshedAccessToken);
     }
 }

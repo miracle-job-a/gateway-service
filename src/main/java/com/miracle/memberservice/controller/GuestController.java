@@ -5,8 +5,7 @@ import com.miracle.memberservice.dto.response.ApplicationLetterResponseDto;
 import com.miracle.memberservice.dto.response.JobResponseDto;
 import com.miracle.memberservice.dto.response.PostResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;
-import com.miracle.memberservice.jwt.service.JwtService;
-import com.miracle.memberservice.jwt.dto.AccessTokenDto;
+import com.miracle.memberservice.jwt.domain.AccessToken;
 import com.miracle.memberservice.service.*;
 import com.miracle.memberservice.util.Const;
 import com.miracle.memberservice.util.PageMoveWithMessage;
@@ -36,7 +35,7 @@ public class GuestController {
     private final CompanyService companyService;
     private final EmailService emailService;
     private final AdminService adminService;
-    private final JwtService jwtService;
+    private final TokenService tokenService;
 
     @GetMapping
     public String index(HttpSession session, Model model) {
@@ -161,7 +160,7 @@ public class GuestController {
     }
 
     private void addJwtInCookie(Long id, String memberType, String email, HttpServletResponse response) {
-        AccessTokenDto tokenDto = jwtService.createToken(id, memberType, email);
+        AccessToken tokenDto = tokenService.createToken(id, memberType, email);
         Cookie cookie = new Cookie("token", tokenDto.getToken());
         cookie.setMaxAge(60);
         cookie.setPath("/");
