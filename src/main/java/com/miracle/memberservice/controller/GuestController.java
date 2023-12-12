@@ -5,10 +5,9 @@ import com.miracle.memberservice.dto.response.ApplicationLetterResponseDto;
 import com.miracle.memberservice.dto.response.JobResponseDto;
 import com.miracle.memberservice.dto.response.PostResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;
-import com.miracle.memberservice.service.AdminService;
-import com.miracle.memberservice.service.CompanyService;
-import com.miracle.memberservice.service.EmailService;
-import com.miracle.memberservice.service.UserService;
+import com.miracle.memberservice.jwt.dto.AccessTokenDto;
+import com.miracle.memberservice.service.*;
+import com.miracle.memberservice.util.Const;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -34,6 +35,7 @@ public class GuestController {
     private final CompanyService companyService;
     private final EmailService emailService;
     private final AdminService adminService;
+    private final JwtService jwtService;
 
     @GetMapping
     public String index(HttpSession session, Model model) {
@@ -99,7 +101,7 @@ public class GuestController {
 
     //로그인 API
     @PostMapping("/company/login")
-    public String companyLogin(@ModelAttribute LoginDto loginDto, Model model, HttpSession session) {
+    public String companyLogin(@ModelAttribute LoginDto loginDto, Model model, HttpSession session, HttpServletResponse response) {
         PageMoveWithMessage pmwm = companyService.login(loginDto, session);
         String pageName = pmwm.getPageName();
 
@@ -107,6 +109,8 @@ public class GuestController {
             session.setAttribute("id", pmwm.getId());
             session.setAttribute("email", pmwm.getEmail());
             session.setAttribute("bno", pmwm.getNameOrBno());
+
+            addJwtInCookie(loginDto, response, Const.RequestHeader.COMPANY);
         }
 
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
@@ -114,12 +118,14 @@ public class GuestController {
     }
 
     @PostMapping("/user/login")
-    public String userLogin(RedirectAttributes redirectAttributes, @ModelAttribute LoginDto loginDto, Model model, HttpSession session) {
+    public String userLogin(RedirectAttributes redirectAttributes, @ModelAttribute LoginDto loginDto, Model model, HttpSession session, HttpServletResponse response) {
         PageMoveWithMessage pmwm = userService.login(loginDto, session);
         if (pmwm.getId() != null) {
             session.setAttribute("id", pmwm.getId());
             session.setAttribute("email", pmwm.getEmail());
             session.setAttribute("name", pmwm.getNameOrBno());
+
+            addJwtInCookie(loginDto, response, Const.RequestHeader.USER);
         }
         if (Objects.nonNull(loginDto.getPostId())) {
             redirectAttributes.addAttribute("companyId", loginDto.getCompanyId());
@@ -131,17 +137,28 @@ public class GuestController {
     }
 
     @PostMapping("/admin/login")
-    public String adminLogin(@ModelAttribute LoginDto loginDto, Model model, HttpSession session) {
+    public String adminLogin(@ModelAttribute LoginDto loginDto, Model model, HttpSession session, HttpServletResponse response) {
         PageMoveWithMessage pmwm = adminService.login(loginDto, session);
         String pageName = pmwm.getPageName();
 
         if (pmwm.getId() != null) {
             session.setAttribute("id", pmwm.getId());
             session.setAttribute("email", pmwm.getEmail());
+
+            addJwtInCookie(loginDto, response, Const.RequestHeader.ADMIN);
         }
 
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pageName;
+    }
+
+    private void addJwtInCookie(LoginDto loginDto, HttpServletResponse response, String memberType) {
+        AccessTokenDto tokenDto = jwtService.createToken(loginDto.getEmail(), loginDto.getPassword(), memberType);
+        Cookie cookie = new Cookie("token", tokenDto.getToken());
+        cookie.setMaxAge(60);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
     }
 
     @GetMapping("/user/email/duplicate/{email}")
