@@ -105,12 +105,14 @@ public class GuestController {
         PageMoveWithMessage pmwm = companyService.login(loginDto, session);
         String pageName = pmwm.getPageName();
 
-        if (pmwm.getId() != null) {
-            session.setAttribute("id", pmwm.getId());
-            session.setAttribute("email", pmwm.getEmail());
+        Long id = pmwm.getId();
+        if (id != null) {
+            String email = pmwm.getEmail();
+            session.setAttribute("id", id);
+            session.setAttribute("email", email);
             session.setAttribute("bno", pmwm.getNameOrBno());
 
-            addJwtInCookie(loginDto, response, Const.RequestHeader.COMPANY);
+            addJwtInCookie(id, Const.RequestHeader.COMPANY, email, response);
         }
 
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
@@ -120,12 +122,15 @@ public class GuestController {
     @PostMapping("/user/login")
     public String userLogin(RedirectAttributes redirectAttributes, @ModelAttribute LoginDto loginDto, Model model, HttpSession session, HttpServletResponse response) {
         PageMoveWithMessage pmwm = userService.login(loginDto, session);
-        if (pmwm.getId() != null) {
-            session.setAttribute("id", pmwm.getId());
-            session.setAttribute("email", pmwm.getEmail());
+
+        Long id = pmwm.getId();
+        if (id != null) {
+            String email = pmwm.getEmail();
+            session.setAttribute("id", id);
+            session.setAttribute("email", email);
             session.setAttribute("name", pmwm.getNameOrBno());
 
-            addJwtInCookie(loginDto, response, Const.RequestHeader.USER);
+            addJwtInCookie(id, Const.RequestHeader.USER, email, response);
         }
         if (Objects.nonNull(loginDto.getPostId())) {
             redirectAttributes.addAttribute("companyId", loginDto.getCompanyId());
@@ -141,19 +146,21 @@ public class GuestController {
         PageMoveWithMessage pmwm = adminService.login(loginDto, session);
         String pageName = pmwm.getPageName();
 
-        if (pmwm.getId() != null) {
-            session.setAttribute("id", pmwm.getId());
-            session.setAttribute("email", pmwm.getEmail());
+        Long id = pmwm.getId();
+        if (id != null) {
+            String email = pmwm.getEmail();
+            session.setAttribute("id", id);
+            session.setAttribute("email", email);
 
-            addJwtInCookie(loginDto, response, Const.RequestHeader.ADMIN);
+            addJwtInCookie(id, Const.RequestHeader.ADMIN, email, response);
         }
 
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pageName;
     }
 
-    private void addJwtInCookie(LoginDto loginDto, HttpServletResponse response, String memberType) {
-        AccessTokenDto tokenDto = jwtService.createToken(loginDto.getEmail(), loginDto.getPassword(), memberType);
+    private void addJwtInCookie(Long id, String memberType, String email, HttpServletResponse response) {
+        AccessTokenDto tokenDto = jwtService.createToken(id, memberType, email);
         Cookie cookie = new Cookie("token", tokenDto.getToken());
         cookie.setMaxAge(60);
         cookie.setPath("/");

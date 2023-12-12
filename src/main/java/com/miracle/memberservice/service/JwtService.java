@@ -16,9 +16,9 @@ public class JwtService {
     private final JwtRepository jwtRepository;
     private final JwtProvider jwtProvider;
 
-    public AccessTokenDto createToken(String email, String password, String memberType) {
-        String subject = memberType + ":" + email + ":" + password;
-        Map<String, String> tokens = jwtProvider.createTokens(subject);
+    public AccessTokenDto createToken(Long id, String memberType, String email) {
+        String subject = memberType + ":" + email;
+        Map<String, String> tokens = jwtProvider.createTokens(id, subject);
 
         String accessToken = tokens.get("accessToken");
         String refreshToken = tokens.get("refreshToken");
@@ -26,9 +26,9 @@ public class JwtService {
         return new AccessTokenDto(accessToken);
     }
 
-    public AccessTokenDto refreshToken(String subject) {
+    public AccessTokenDto refreshToken(Long id, String subject) {
         String refreshToken = jwtRepository.get(subject).orElse(new RefreshTokenDto("")).getToken();
-        String refreshedAccessToken = jwtProvider.refreshAccessToken(refreshToken);
+        String refreshedAccessToken = jwtProvider.refreshAccessToken(id, subject, refreshToken);
         return new AccessTokenDto(refreshedAccessToken);
     }
 }
