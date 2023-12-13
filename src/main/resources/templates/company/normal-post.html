@@ -273,19 +273,17 @@
                                                    class="form-control" placeholder="재직인원" disabled
                                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"/>
                                         </div>
-
-                                        <div class="col-8 mt-2">
-                                            <div class="mb-1">
-                                                <label for="photo">기업사진</label>
+                                        <div class="col-lg-4 col-12">
+                                            <div class="custom-block-icon-wrap">
+                                                <div class="custom-block-image-wrap custom-block-image-detail-page">
+                                                    <img th:src="${info.photo}" class="custom-block-image img-fluid" alt="">
+                                                </div>
                                             </div>
-                                            <input type="text" name="photo" id="photo" th:value="${info.photo}"
-                                                   class="form-control" placeholder="기업사진" disabled/>
                                         </div>
+
                                     </div>
 
                                 </div>
-
-                                <h5 class="mb-4 mt-4">소개</h5>
                                 <!--
                                     기업소개(기업테이블) : introduction
                                     주요업무 : mainTask

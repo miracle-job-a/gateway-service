@@ -1,5 +1,7 @@
-package com.miracle.memberservice.filter;
+package com.miracle.memberservice.config;
 
+import com.miracle.memberservice.filter.CompanyLoginCheckFilter;
+import com.miracle.memberservice.filter.UserLoginCheckFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
