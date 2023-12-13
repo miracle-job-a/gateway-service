@@ -14,9 +14,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -52,7 +54,7 @@ public class CompanyController {
     // 공고 생성 폼 이동
     @GetMapping("/post/form")
     public String postFormPage(RedirectAttributes redirectAttributes, HttpSession session, Model model) {
-        if(!companyService.statusCompany(session)) {
+        if (!companyService.statusCompany(session)) {
             redirectAttributes.addAttribute("errorMessage", "현재 가입 승인 전입니다. \n관리자 승인 이전에 공고 생성은 불가합니다.");
             return "redirect:/v1/company/post/list/1";
         }
@@ -107,7 +109,7 @@ public class CompanyController {
 
     @GetMapping("/post/{postType}/form")
     public String postForm(RedirectAttributes redirectAttributes, HttpSession session, Model model, @PathVariable String postType) {
-        if(!companyService.statusCompany(session)) {
+        if (!companyService.statusCompany(session)) {
             redirectAttributes.addAttribute("errorMessage", "현재 가입 승인 전입니다. \n관리자 승인 이전에 공고 생성은 불가합니다.");
             return "redirect:/v1/company/post/list/1";
         }
@@ -184,16 +186,20 @@ public class CompanyController {
 
     // 수정페이지 전 이동
     @GetMapping("/info/move")
-    public String companyMdfy(){ return "company/validation"; }
+    public String companyMdfy(@RequestParam(required = false) String errorMessage, Model model) {
+        model.addAttribute("errorMessage", errorMessage);
+        return "company/validation";
+    }
 
     // 수정페이지 요청
     @PostMapping("/info/validation")
-    public String checkCompanyInfo(HttpSession session,@ModelAttribute CompanyLoginRequestDto requestDto) {
+    public String checkCompanyInfo(HttpSession session, @ModelAttribute CompanyLoginRequestDto requestDto, RedirectAttributes redirectAttributes) {
         boolean checked = companyService.checkCompanyInfo(session, requestDto);
         if (checked) {
             return "redirect:/v1/company/info/modify";
         } else {
-            return "error/500";
+            redirectAttributes.addAttribute("errorMessage", "로그인 정보가 일치하지 않습니다. ");
+            return "redirect:/v1/company/info/move";
         }
     }
 
@@ -205,17 +211,14 @@ public class CompanyController {
     }
 
 
-
     @PostMapping("/info/update")
-    public String updateCompanyInfo(HttpSession session, @ModelAttribute CompanyInfoRequestDto requestDto) {
+    public String updateCompanyInfo(HttpSession session, @ModelAttribute CompanyInfoRequestDto requestDto, @RequestParam MultipartFile photo) throws IOException {
         if (requestDto.getPwd() == null || requestDto.getPwd().isEmpty()) {
             requestDto.setPwd(passwordChecker);
         }
-        PageMoveWithMessage pmwm = companyService.updateCompanyInfo(session, requestDto);
+        PageMoveWithMessage pmwm = companyService.updateCompanyInfo(session, requestDto, photo);
         return pmwm.getPageName();
     }
-
-
 
 
 }
