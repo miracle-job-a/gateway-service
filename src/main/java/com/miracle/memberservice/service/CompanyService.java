@@ -5,6 +5,7 @@ import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.util.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,7 +50,7 @@ public class CompanyService {
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("guest/company-join", response.getMessage());
 
-        s3Method.uploadCompanyFile(photo, Const.RequestHeader.COMPANY, companyJoinDto.getBno());
+        s3Method.uploadCompanyFile(photo, companyJoinDto.getBno());
         return new PageMoveWithMessage("guest/company-login");
     }
 
@@ -289,18 +290,20 @@ public class CompanyService {
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("error/500", response.getMessage());
 
         LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        String photo = (String) data.get("photo");
         CompanyPageResponseDto info = CompanyPageResponseDto.builder()
                 .companyId((Integer) data.get("companyId"))
                 .approveStatus((Boolean) data.get("approveStatus"))
                 .name((String) data.get("name"))
                 .ceoName((String) data.get("ceoName"))
-                .photo((String) data.get("photo"))
+                .photo(photo)
                 .employeeNum((Integer) data.get("employeeNum"))
                 .address((String) data.get("address"))
                 .introduction((String) data.get("introduction"))
                 .sector((String) data.get("sector"))
                 .bnoStatus((Boolean) data.get("bnoStatus"))
                 .countOpen((Integer) data.get("countOpen"))
+                .bno(photo)
                 .build();
 
         return new PageMoveWithMessage("company/company-info", info);
@@ -308,6 +311,7 @@ public class CompanyService {
     }
 
     public Boolean checkCompanyInfo(HttpSession session, CompanyLoginRequestDto requestDto) {
+        requestDto.setEmail((String) session.getAttribute("email"));
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.post(session, requestDto, Const.RequestHeader.COMPANY, "/company/" + companyId);
         if (response.getHttpStatus() != 200) {
@@ -325,29 +329,38 @@ public class CompanyService {
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("error/500", response.getMessage());
 
         LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        String photo = (String) data.get("photo");
         CompanyPageResponseDto info = CompanyPageResponseDto.builder()
                 .companyId((Integer) data.get("companyId"))
                 .approveStatus((Boolean) data.get("approveStatus"))
                 .name((String) data.get("name"))
                 .ceoName((String) data.get("ceoName"))
-                .photo((String) data.get("photo"))
+                .photo(photo)
                 .employeeNum((Integer) data.get("employeeNum"))
                 .address((String) data.get("address"))
                 .introduction((String) data.get("introduction"))
                 .sector((String) data.get("sector"))
                 .bnoStatus((Boolean) data.get("bnoStatus"))
                 .countOpen((Integer) data.get("countOpen"))
+                .bno(photo)
                 .build();
 
         return new PageMoveWithMessage("company/modify-form", info);
     }
 
-    public PageMoveWithMessage updateCompanyInfo(HttpSession session, CompanyInfoRequestDto requestDto) {
+    public PageMoveWithMessage updateCompanyInfo(HttpSession session, CompanyInfoRequestDto requestDto, MultipartFile photo) throws IOException {
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.COMPANY, "/company/" + companyId);
 
         if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("redirect:/v1/company/info", response.getMessage());
+        }
+
+        String bno = requestDto.getBno();
+        String originalFilename = photo.getOriginalFilename();
+        if (!Strings.isBlank(originalFilename)) {
+            s3Method.deleteFileCompany(bno);
+            s3Method.uploadCompanyFile(photo, bno);
         }
 
         return new PageMoveWithMessage("redirect:/v1/company/info");
