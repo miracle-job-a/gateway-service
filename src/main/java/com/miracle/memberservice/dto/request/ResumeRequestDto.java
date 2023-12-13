@@ -3,9 +3,10 @@ package com.miracle.memberservice.dto.request;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @ToString
@@ -36,11 +37,16 @@ public class ResumeRequestDto {
         this.open = open;
         this.jobIdSet = jobIdSet;
         this.stackIdSet = stackIdSet;
-        this.careerDetailList = careerDetailList;
-        this.projectList = projectList;
-        this.etcList = etcList;
+        this.careerDetailList = isNullCollection(careerDetailList);
+        this.projectList = isNullCollection(projectList);
+        this.etcList = isNullCollection(etcList);
         this.postId = postId;
         this.companyId = companyId;
         this.postType = postType;
+    }
+
+    private List<String> isNullCollection(List<String> list){
+        if(Objects.isNull(list)) return new ArrayList<>();
+        return list;
     }
 }

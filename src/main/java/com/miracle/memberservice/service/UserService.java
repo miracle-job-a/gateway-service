@@ -141,7 +141,7 @@ public class UserService {
         ResumeResponseDto info = ResumeResponseDto.builder()
                 .id(Long.valueOf((Integer) data.get("id")))
                 .title((String) data.get("title"))
-                .photo(s3Method.getUrl(Const.RequestHeader.RESUME, (String) data.get("photo")))
+                .photo((String) data.get("photo"))
                 .career((Integer) data.get("career"))
                 .birth((String) data.get("birth"))
                 .phone((String) data.get("phone"))
@@ -164,11 +164,20 @@ public class UserService {
         return new PageMoveWithMessage("redirect:/v1/user/resumes", response.getMessage());
     }
 
-    public PageMoveWithMessage updateResume(HttpSession session, ResumeRequestDto requestDto, Long resumeId) {
+    public PageMoveWithMessage updateResume(HttpSession session, ResumeRequestDto requestDto, Long resumeId, MultipartFile file) throws IOException {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.USER, "/user/" + userId + "/resume/" + resumeId);
+
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("redirect:/v1/user/resume/detail/" + resumeId, response.getMessage());
+
+        String photo = requestDto.getPhoto();
+        String originalFilename = file.getOriginalFilename();
+        if (!Strings.isBlank(originalFilename)) {
+            s3Method.deleteFile(Const.RequestHeader.RESUME, photo);
+            s3Method.uploadFile(file, Const.RequestHeader.RESUME, photo);
+        }
+
         return new PageMoveWithMessage("redirect:/v1/user/resume/detail/" + resumeId);
     }
 

@@ -108,8 +108,9 @@ public class UserController {
     public String updateResume(HttpSession session,
                                @PathVariable Long resumeId,
                                @ModelAttribute ResumeRequestDto requestDto,
-                               RedirectAttributes redirectAttributes) {
-        PageMoveWithMessage pmwm = userService.updateResume(session, requestDto, resumeId);
+                               RedirectAttributes redirectAttributes,
+                               @RequestParam MultipartFile file) throws IOException {
+        PageMoveWithMessage pmwm = userService.updateResume(session, requestDto, resumeId, file);
         redirectAttributes.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
