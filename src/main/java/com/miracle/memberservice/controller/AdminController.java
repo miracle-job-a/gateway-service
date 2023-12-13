@@ -159,9 +159,15 @@ public class AdminController {
         return pmwm.getPageName();
     }
 
-    @GetMapping("/posts/{year}/today")
-    public String getTodayPostCount(@PathVariable int year, HttpSession session, Model model) {
-        PageMoveWithMessage pmwm = companyService.getTodayPostCount(year, session);
+    @GetMapping("/posts/today")
+    public String getTodayPostCount(@RequestParam(name = "year", required = false, defaultValue = "0") int year,
+                                    @RequestParam(name = "month", required = false, defaultValue = "0") int month,
+                                    HttpSession session, Model model) {
+        if (year == 0) year = LocalDate.now().getYear();
+        if (month == 0) month = LocalDate.now().getMonthValue();
+        System.out.println(year);
+        System.out.println(month);
+        PageMoveWithMessage pmwm = companyService.getTodayPostCount(year, month, session);
         model.addAttribute("chartData", pmwm.getData());
         return pmwm.getPageName();
     }
