@@ -393,9 +393,9 @@ public class CompanyService {
         }
     }
 
-    public PageMoveWithMessage getTodayPostCount(int year, HttpSession session) {
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/posts/" + year + "/today");
-
+    public PageMoveWithMessage getTodayPostCount(int year, int month, HttpSession session) {
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/posts/" + year + "/" + month + "/today");
+        System.out.println(response);
         if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("admin/main", response.getMessage());
         } else {
@@ -405,8 +405,8 @@ public class CompanyService {
 
             for (Map<String, Object> post : postData) {
                 LocalDateTime createdAt = LocalDateTime.parse((CharSequence) post.get("createdAt"));
-                int month = createdAt.getMonthValue();
-                monthCounts.put(month, monthCounts.getOrDefault(month, 0) + 1);
+                int monthh = createdAt.getMonthValue();
+                monthCounts.put(monthh, monthCounts.getOrDefault(monthh, 0) + 1);
             }
 
             List<List<Integer>> formattedData = new ArrayList<>();
