@@ -1,22 +1,29 @@
 package com.miracle.memberservice.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.*;
-import com.miracle.memberservice.util.ApiResponseToList;
-import com.miracle.memberservice.util.Const;
-import com.miracle.memberservice.util.PageMoveWithMessage;
-import com.miracle.memberservice.util.ServiceCall;
+import com.miracle.memberservice.util.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserService {
+
+    private final S3Method s3Method;
 
     /**
      * 유저 회원가입 요청 API
@@ -85,14 +92,33 @@ public class UserService {
         return new PageMoveWithMessage("user/resume-form", info);
     }
 
-    public PageMoveWithMessage addResume(HttpSession session, ResumeRequestDto resumeRequestDto) {
+    public PageMoveWithMessage addResume(HttpSession session, ResumeRequestDto resumeRequestDto, MultipartFile photo) throws IOException {
         Long userId = (Long) session.getAttribute("id");
+
+        String fileName = nextNumberOfPhoto(userId);
+        resumeRequestDto.setPhoto(fileName);
+
         ApiResponse response = ServiceCall.post(session, resumeRequestDto, Const.RequestHeader.USER, "/user/" + userId + "/resume");
-        if (response.getHttpStatus() != 201)
+        if (response.getHttpStatus() != 201 || Objects.isNull(fileName))
             return new PageMoveWithMessage("redirect:/v1/user/resume/form", response.getMessage());
+
+        s3Method.uploadFile(photo, Const.RequestHeader.RESUME, fileName);
+
         if (Objects.nonNull(resumeRequestDto.getPostId()))
             return new PageMoveWithMessage("redirect:/v1/click/post/" + resumeRequestDto.getPostId() + "/detail", resumeRequestDto);
         return new PageMoveWithMessage("redirect:/v1/user/resumes");
+    }
+
+    private String nextNumberOfPhoto(Long userId) {
+        for (int i = 1; i < 6; i++) {
+            String fileName = userId + "_" + i;
+            try {
+                s3Method.getFile(Const.RequestHeader.RESUME, fileName);
+            } catch (AmazonS3Exception e) {
+                return fileName;
+            }
+        }
+        return null;
     }
 
     public PageMoveWithMessage resumeList(HttpSession session) {
@@ -115,7 +141,7 @@ public class UserService {
         ResumeResponseDto info = ResumeResponseDto.builder()
                 .id(Long.valueOf((Integer) data.get("id")))
                 .title((String) data.get("title"))
-                .photo((String) data.get("photo"))
+                .photo(s3Method.getUrl(Const.RequestHeader.RESUME, (String) data.get("photo")))
                 .career((Integer) data.get("career"))
                 .birth((String) data.get("birth"))
                 .phone((String) data.get("phone"))
@@ -219,7 +245,8 @@ public class UserService {
     public PageMoveWithMessage apply(HttpSession session, ApplicationLetterPostRequestDto dto, Long companyId) {
         Long userId = (Long) session.getAttribute("id");
 
-        if(applyStatus(session, dto.getPostId())!=200) return new PageMoveWithMessage("redirect:/v1/click/post/" + dto.getPostId() + "/detail?companyId=" + companyId + "&postType=" + dto.getPostType(), "공고가 마감되어 지원이 불가능합니다.", dto);
+        if (applyStatus(session, dto.getPostId()) != 200)
+            return new PageMoveWithMessage("redirect:/v1/click/post/" + dto.getPostId() + "/detail?companyId=" + companyId + "&postType=" + dto.getPostType(), "공고가 마감되어 지원이 불가능합니다.", dto);
 
         ApiResponse response = ServiceCall.post(session, dto, Const.RequestHeader.USER, "/user/" + userId + "/application-letter");
 
