@@ -26,8 +26,8 @@ public class CompanyService {
     public PageMoveWithMessage mainPage(HttpSession session) {
         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/main");
         Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
-
-        return new PageMoveWithMessage("redirect:/v1", ApiResponseToList.mainPage(session, data));
+        ApiResponseToList apiResponseToList = new ApiResponseToList(s3Method);
+        return new PageMoveWithMessage("redirect:/v1", apiResponseToList.mainPage(session, data));
     }
 
     public Object mainPageCompany(HttpSession session, Long companyId) {
