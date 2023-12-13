@@ -54,7 +54,7 @@ public class ApiResponseToList {
                     .companyId(companyId.longValue())
                     .postType((String) lhm.get("postType"))
                     .title((String) lhm.get("title"))
-                    .photo(s3Method.getUrlCompany((String) lhm.get("photo")))
+                    .photo(s3Method.getUrl(Const.RequestHeader.COMPANY, (String) lhm.get("photo")))
                     .endDate(divideTime((String) lhm.get("endDate")))
                     .workAddress((String) lhm.get("workAddress"))
                     .jobIdSet(jobDetail)
@@ -184,7 +184,7 @@ public class ApiResponseToList {
                             .career((Integer) dto.get("career"))
                             .job(jobDetail)
                             .name((String) dto.get("name"))
-                            .photo(s3Method.getUrlCompany((String) dto.get("photo")))
+                            .photo(s3Method.getUrl(Const.RequestHeader.COMPANY, (String) dto.get("photo")))
                             .build());
                 }
                 pageList.add(dtos);

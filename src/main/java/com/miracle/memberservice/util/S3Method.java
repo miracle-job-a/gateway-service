@@ -20,35 +20,23 @@ public class S3Method {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public void uploadFileResume(MultipartFile file, Long id) throws IOException {
+    public void uploadFile(MultipartFile file, String type, String name) throws IOException {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(file.getContentType());
         objectMetadata.setContentLength(file.getSize());
 
-        amazonS3Client.putObject(bucket, Const.RequestHeader.RESUME + "/" + id, file.getInputStream(), objectMetadata);
+        amazonS3Client.putObject(bucket, type + "/" + name, file.getInputStream(), objectMetadata);
     }
 
-    public void uploadCompanyFile(MultipartFile file, String bno) throws IOException {
-        ObjectMetadata objectMetadata = new ObjectMetadata();
-        objectMetadata.setContentType(file.getContentType());
-        objectMetadata.setContentLength(file.getSize());
-
-        amazonS3Client.putObject(bucket, Const.RequestHeader.COMPANY + "/" + bno, file.getInputStream(), objectMetadata);
+    public void deleteFile(String type, String name) {
+        amazonS3Client.deleteObject(bucket, type + "/" + name);
     }
 
-    public void deleteFileResume(Long id) {
-        amazonS3Client.deleteObject(bucket, Const.RequestHeader.RESUME + "/" + id);
+    public String getUrl(String type, String name) {
+        return amazonS3.getUrl(bucket, type + "/" + name).toString();
     }
 
-    public void deleteFileCompany(String bno) {
-        amazonS3Client.deleteObject(bucket, Const.RequestHeader.COMPANY + "/" + bno);
-    }
-
-    public String getUrlResume(Long id) {
-        return amazonS3.getUrl(bucket, Const.RequestHeader.RESUME + "/" + id).toString();
-    }
-
-    public String getUrlCompany(String bno) {
-        return amazonS3.getUrl(bucket, Const.RequestHeader.COMPANY + "/" + bno).toString();
+    public void getFile(String type, String name) {
+        amazonS3.getObject(bucket, type + "/" + name);
     }
 }

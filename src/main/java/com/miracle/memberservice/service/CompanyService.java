@@ -50,7 +50,7 @@ public class CompanyService {
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("guest/company-join", response.getMessage());
 
-        s3Method.uploadCompanyFile(photo, companyJoinDto.getBno());
+        s3Method.uploadFile(photo, Const.RequestHeader.COMPANY, companyJoinDto.getBno());
         return new PageMoveWithMessage("guest/company-login");
     }
 
@@ -115,7 +115,7 @@ public class CompanyService {
         PostCommonDataResponseDto info = PostCommonDataResponseDto.builder()
                 .name(data.get("name"))
                 .ceoName(data.get("ceoName"))
-                .photo(s3Method.getUrlCompany((String) data.get("photo")))
+                .photo(s3Method.getUrl(Const.RequestHeader.COMPANY, (String) data.get("photo")))
                 .employeeNum(data.get("employeeNum"))
                 .address(data.get("address"))
                 .introduction(data.get("introduction"))
@@ -360,8 +360,8 @@ public class CompanyService {
         String bno = requestDto.getBno();
         String originalFilename = photo.getOriginalFilename();
         if (!Strings.isBlank(originalFilename)) {
-            s3Method.deleteFileCompany(bno);
-            s3Method.uploadCompanyFile(photo, bno);
+            s3Method.deleteFile(Const.RequestHeader.COMPANY, bno);
+            s3Method.uploadFile(photo, Const.RequestHeader.COMPANY, bno);
         }
 
         return new PageMoveWithMessage("redirect:/v1/company/info");
