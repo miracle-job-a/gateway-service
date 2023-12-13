@@ -18,11 +18,11 @@ public class CompanyJoinDto {
     private final String introduction;
     private final int employeeNum;
 
-    public CompanyJoinDto(String email, String name, String password, MultipartFile photo, String bno, String ceoName, String sector, String address, String detailAddress, String introduction, int employeeNum) {
+    public CompanyJoinDto(String email, String name, String password, String bno, String ceoName, String sector, String address, String detailAddress, String introduction, int employeeNum) {
         this.email = email;
         this.name = name;
         this.password = password;
-        this.photo = photo.getOriginalFilename();
+        this.photo = bno;
         this.bno = bno;
         this.ceoName = ceoName;
         this.sector = sector;

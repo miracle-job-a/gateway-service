@@ -20,27 +20,35 @@ public class S3Method {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public void uploadFile(MultipartFile file, String type, Long id) throws IOException {
+    public void uploadFileResume(MultipartFile file, Long id) throws IOException {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(file.getContentType());
         objectMetadata.setContentLength(file.getSize());
 
-        amazonS3Client.putObject(bucket, type + "/" + id, file.getInputStream(), objectMetadata);
+        amazonS3Client.putObject(bucket, Const.RequestHeader.RESUME + "/" + id, file.getInputStream(), objectMetadata);
     }
 
-    public void uploadCompanyFile(MultipartFile file, String type, String bno) throws IOException {
+    public void uploadCompanyFile(MultipartFile file, String bno) throws IOException {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(file.getContentType());
         objectMetadata.setContentLength(file.getSize());
 
-        amazonS3Client.putObject(bucket, type + "/" + bno, file.getInputStream(), objectMetadata);
+        amazonS3Client.putObject(bucket, Const.RequestHeader.COMPANY + "/" + bno, file.getInputStream(), objectMetadata);
     }
 
-    public void deleteFile(String type, Long id) {
-        amazonS3Client.deleteObject(bucket, type + "/" + id);
+    public void deleteFileResume(Long id) {
+        amazonS3Client.deleteObject(bucket, Const.RequestHeader.RESUME + "/" + id);
     }
 
-    public String getUrl(String type, Long id) {
-        return amazonS3.getUrl(bucket, type + "/" + id).toString();
+    public void deleteFileCompany(String bno) {
+        amazonS3Client.deleteObject(bucket, Const.RequestHeader.COMPANY + "/" + bno);
+    }
+
+    public String getUrlResume(Long id) {
+        return amazonS3.getUrl(bucket, Const.RequestHeader.RESUME + "/" + id).toString();
+    }
+
+    public String getUrlCompany(String bno) {
+        return amazonS3.getUrl(bucket, Const.RequestHeader.COMPANY + "/" + bno).toString();
     }
 }
