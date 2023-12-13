@@ -115,7 +115,7 @@ public class CompanyService {
         PostCommonDataResponseDto info = PostCommonDataResponseDto.builder()
                 .name(data.get("name"))
                 .ceoName(data.get("ceoName"))
-                .photo(data.get("photo"))
+                .photo(s3Method.getUrlCompany((String) data.get("photo")))
                 .employeeNum(data.get("employeeNum"))
                 .address(data.get("address"))
                 .introduction(data.get("introduction"))
