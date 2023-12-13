@@ -189,6 +189,7 @@
             $('#career_title').removeAttr('readonly');
             $('.editStacks').css('display', 'inline-block');
             $('.editJobs').css('display', 'inline-block');
+            $('#warning').css('display', 'block');
             $('#jobs').each(function () {
                 $(this).css('display', 'none');
             });
@@ -238,7 +239,7 @@
             // 빈칸 경고
             var careerInput = document.getElementById('careerCal');
             if (careerInput.value.trim() === '') {
-                alert('경력기간 계산이 필요합니다.');
+                alert('경력기간 계산 버튼을 눌러주세요.');
                 event.preventDefault();
                 return false;
             }
@@ -319,8 +320,8 @@
                                         <div class="row">
                                             <input type="file" id="fileInput" name="file" class="mt-3"
                                                    style="position:absolute;z-index:2; color: transparent;display:none;"
-                                                   required
                                                    onchange="readURL(this);"/>
+
                                             <input type="hidden" name="photo" th:value="${resume.photo}"/>
                                             <div class="col-lg-4 col-12 d-flex align-items-center justify-content-center">
                                                 <div class="custom-block-icon-wrap d-flex align-items-center">
@@ -384,6 +385,7 @@
                                                 </div>
 
                                             </div>
+                                            <label id="warning" style="display: none" class="text-warning">(새로운 사진이 적용되는데 시간이 다소 소요될 수 있습니다.)</label>
                                         </div>
 
                                     </div>
@@ -507,8 +509,8 @@
                                             </div>
                                             <select class="form-select" aria-label="Default select example" id="open"
                                                     name="open" th:field="${resume.open}" disabled>
-                                                <option th:value="true" th:selected="${resume.open} == true">공개</option>
-                                                <option th:value="false" th:selected="${resume.open} == false">비공개
+                                                <option th:value="true" th:selected="${resume.open == true}">공개</option>
+                                                <option th:value="false" th:selected="${resume.open == false}">비공개
                                                 </option>
                                             </select>
                                         </div>
