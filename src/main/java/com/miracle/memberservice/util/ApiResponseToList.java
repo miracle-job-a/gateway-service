@@ -5,10 +5,8 @@ import com.miracle.memberservice.dto.response.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -508,5 +506,21 @@ public class ApiResponseToList {
             }
         }
         return pageList;
+    }
+
+    public static Map<Integer, Long> getUserJoinCountByMonth(List<List<LinkedHashMap<String, Object>>> data) {
+        Map<Integer, Long> userJoinCountByMonth = new HashMap<>();
+
+        for (int i = 1; i <= 12; i++) {
+            userJoinCountByMonth.put(i, 0L);
+        }
+
+        data.stream()
+                .flatMap(List::stream)
+                .map(user -> (String) user.get("joinDate"))
+                .map(joinDate -> LocalDate.parse(joinDate).getMonthValue())
+                .forEach(month -> userJoinCountByMonth.merge(month, 1L, Long::sum));
+
+        return userJoinCountByMonth;
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -219,9 +220,16 @@ public class UserService {
     public PageMoveWithMessage apply(HttpSession session, ApplicationLetterPostRequestDto dto, Long companyId) {
         Long userId = (Long) session.getAttribute("id");
 
+        if(applyStatus(session, dto.getPostId())!=200) return new PageMoveWithMessage("redirect:/v1/click/post/" + dto.getPostId() + "/detail?companyId=" + companyId + "&postType=" + dto.getPostType(), "공고가 마감되어 지원이 불가능합니다.", dto);
+
         ApiResponse response = ServiceCall.post(session, dto, Const.RequestHeader.USER, "/user/" + userId + "/application-letter");
 
         return new PageMoveWithMessage("redirect:/v1/click/post/" + dto.getPostId() + "/detail?companyId=" + companyId + "&postType=" + dto.getPostType(), response.getMessage(), dto);
+    }
+
+    private int applyStatus(HttpSession session, Long postId) {
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/posts/" + postId);
+        return response.getHttpStatus();
     }
 
     public PageMoveWithMessage applicantList(HttpSession session, Long postId, String sort, int startPage) {
@@ -230,5 +238,18 @@ public class UserService {
         return new PageMoveWithMessage("company/applicant-list", ApiResponseToList.applicantList(response.getData()));
     }
 
+    public PageMoveWithMessage getUserJoinCountByMonth(HttpSession session, LocalDate date) {
+        ApiResponse response = ServiceCall.getParamList(session, Const.RequestHeader.USER, "/user", date);
 
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("admin/main", response.getMessage());
+
+        Map<Integer, Long> userJoinCountByMonth = ApiResponseToList.getUserJoinCountByMonth((List<List<LinkedHashMap<String, Object>>>) response.getData());
+        List<List<Object>> chartData = new ArrayList<>();
+
+        for (Map.Entry<Integer, Long> entry : userJoinCountByMonth.entrySet()) {
+            chartData.add(Arrays.asList(entry.getKey(), entry.getValue()));
+        }
+
+        return new PageMoveWithMessage("admin/user-join-count", userJoinCountByMonth);
+    }
 }

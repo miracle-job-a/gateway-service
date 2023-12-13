@@ -39,7 +39,7 @@ https://templatemo.com/tm-584-pod-talk
   --h5-font-size:                 24px;
   --h6-font-size:                 22px;
   --p-font-size:                  16px;
-  --menu-font-size:               14px;
+  --menu-font-size:               16px;
 
   --border-radius-large:          100px;
   --border-radius-medium:         20px;
@@ -166,7 +166,7 @@ strong {
 
 .section-title {
   background: var(--section-bg-color);
-  border-radius: var(--border-radius-large);
+  border-radius: var(--border-radius-small);
   display: inline-block;
   position: relative;
   z-index: 2;
@@ -250,6 +250,24 @@ main {
   color: var(--white-color);
 }
 
+.custom-border-option-btn {
+  background: transparent;
+  border: 2px solid var(--custom-btn-bg-color);
+  border-radius: var(--border-radius-small);
+  color: var(--custom-btn-bg-color);
+  font-weight: var(--font-weight-semibold);
+  transition: all 0.3s;
+}
+
+.custom-border-option-btn:hover {
+  background: var(--custom-btn-bg-color); /* 변경사항: 배경색을 설정하세요 */
+  border: 2px solid var(--custom-btn-bg-color);
+  border-radius: var(--border-radius-small);
+  color: var(--white-color); /* 변경사항: 텍스트 색상을 변경하세요 */
+  font-weight: var(--font-weight-semibold);
+}
+
+
 
 /*---------------------------------------
   SITE HEADER              
@@ -323,10 +341,10 @@ main {
 
 .navbar-nav .nav-link {
   display: inline-block;
-  color: var(--section-bg-color);
+  color: var(--primary-color);
   font-family: var(--title-font-family); 
   font-size: var(--menu-font-size);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   position: relative;
@@ -496,9 +514,9 @@ main {
 .hero-section {
   background-image: linear-gradient(#cf82f5, #FFFFFF);
   background-repeat: no-repeat;
-  background-size: 108% 76%;
+  background-size: 120% 76%;
   background-position: top;
-  padding-top: 200px;
+  padding-top: 100px;
 }
 
 .owl-carousel {
@@ -612,24 +630,34 @@ main {
   background: var(--secondary-color);
 }
 
+.carousel-item {
+  max-height: 250px;
+  width: 100%; /* 너비를 요소의 전체 너비로 설정 */
+  object-fit: cover; /* 이미지가 요소를 덮도록 설정 */
+  object-position: center center; /* 이미지의 중앙이 항상 보이도록 설정 */
+}
+
 
 /*---------------------------------------
   CUSTOM BLOCK              
 -----------------------------------------*/
 .custom-block {
   border: 2px solid var(--primary-color);
-  border-radius: var(--border-radius-medium);
+  border-radius: var(--border-radius-small);
   position: relative;
   overflow: hidden;
-  padding: 30px;
+  padding: 15px;
   transition: all 0.3s ease;
+
 }
 
 .custom-block:hover {
   background: var(--white-color);
+  border-radius: var(--border-radius-small);
   box-shadow: 0 1rem 3rem rgba(0,0,0,.175);
   border-color: transparent;
   transform: translateY(-3px);
+
 }
 
 .custom-block-info {
@@ -649,7 +677,7 @@ main {
 }
 
 .custom-block-image {
-  border-radius: var(--border-radius-medium);
+  border-radius: var(--border-radius-small);
   display: block;
   width: 112px;
   height: 112px;
@@ -1276,7 +1304,7 @@ main {
 
 @media screen and (max-width: 1240px) {
 	.hero-section {
-	  background-size: 116%;
+	  background-size: 100%;
 	  /* T o o p l a t e . c o m   C u s t o m i z e d */
 	}
 }
@@ -1307,7 +1335,7 @@ main {
   }
   
   .hero-section {
-	  background-size: 160% 66%; 
+	  background-size: 160% 66%;
 	  /* T o o p l a t e . c o m   C u s t o m i z e d */
 	}
 
