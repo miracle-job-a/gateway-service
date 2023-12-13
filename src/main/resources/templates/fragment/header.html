@@ -3,9 +3,7 @@
   <header class="header" th:fragment="commonHeader">
    <nav class="navbar navbar-expand-lg" style="height: 120px;">
     <div class="container">
-     <!--<a class="navbar-brand me-lg-5 me-0" href="/v1">
-      <img src="/images/pod-talk-logo.png" class="logo-image img-fluid" alt="Job-a logo-image">
-     </a>-->
+
      <div class="col-lg-2 col-md-3 col-sm-2 col-3 my-3">
       <a class="navbar-brand" href="/v1">
        <img src="/images/pod-talk-logo.png" class="logo-image img-fluid" alt="Job-a logo-image" style="width: 190px;">
@@ -20,20 +18,20 @@
 
      <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-lg-auto">
-       <li class="nav-item my-auto">
+       <li class="nav-item mx-1 my-auto">
         <a class="nav-link" href="/v1/search/posts/1">채용공고</a>
        </li>
 
        <li class="nav-item my-auto">
-        <a class="nav-link" href="/v1/user/resumes">이력서</a>
+        <a class="nav-link mx-1" href="/v1/user/resumes">이력서</a>
        </li>
 
        <li class="nav-item my-auto">
-        <a class="nav-link" href="/v1/user/cover-letters/1">자기소개서</a>
+        <a class="nav-link mx-1" href="/v1/user/cover-letters/1">자기소개서</a>
        </li>
 
        <li class="nav-item dropdown my-auto">
-        <a class="nav-link dropdown-toggle" href="/v1/user/my-page/apply-list" id="navbarLightDropdownMenuLink" role="button"
+        <a class="nav-link dropdown-toggle mx-1" href="/v1/user/my-page/apply-list" id="navbarLightDropdownMenuLink" role="button"
            data-bs-toggle="dropdown" aria-expanded="false">마이페이지</a>
 
         <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink">
@@ -43,8 +41,8 @@
        </li>
 
        <div class="m-auto">
-        <a th:if="${session.id!=null}" href="/v1/user/logout" class="login-btn">로그아웃</a>
-        <a th:if="${session.id==null}" href="/v1/user/login-form" class="login-btn">로그인</a>
+        <a th:if="${session.id!=null}" href="/v1/user/logout" class="login-btn mx-1">로그아웃</a>
+        <a th:if="${session.id==null}" href="/v1/user/login-form" class="login-btn mx-1">로그인</a>
        </div>
       </ul>
 

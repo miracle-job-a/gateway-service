@@ -185,6 +185,8 @@
             $('#career_start_date').removeAttr('readonly');
             $('#career_end_date').removeAttr('readonly');
             $('#career_title').removeAttr('readonly');
+            $('#project').removeAttr('readonly');
+            $('#etc').removeAttr('readonly');
             $('.editStacks').css('display', 'inline-block');
             $('.editJobs').css('display', 'inline-block');
             $('#jobs').each(function () {
@@ -287,58 +289,50 @@
                         </div>
 
                         <div class="row justify-content-center">
-                            <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
+                            <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form mb-5">
 
                                 <!-- 유저의 기본 정보 -->
-                                <div class="card mt-4 p-4 col-11 post-form align-self-center">
+                                <div class="card mt-4 col-11 post-form align-self-center">
                                     <div class="row">
                                         <div class="col-lg-4 col-12 ps-5 pe-5 align-self-auto">
                                             <img src="/images/niniz.png" class="rounded float-start" alt="templatemo pod talk">
                                         </div>
-                                        <!--<div class="col-lg-2 col-12 align-self-auto"></div>-->
-                                        <div class="col-lg-6 col-12 ps-5 pe-5 align-self-center">
+
+                                        <!-- info -->
+                                        <div class="col-lg-6 col-12 ps-5 pe-5 align-self-center mx-auto">
 
                                             <div class="mb-3 row">
-                                                <label for="name" class="col-sm-3 col-form-label">이름</label>
-                                                <div class="col-sm-9">
-                                                    <input type="text" readonly class="form-control-plaintext text-center"
-                                                           style="font-size: 18px;"
-                                                           id="name" th:value="${info.name}">
+                                                <label for="name" class="col-sm-3 col-4 col-form-label mx-auto">이름</label>
+                                                <div class="col-sm-9 col-8 mx-auto">
+                                                    <input type="text" readonly="" class="form-control-plaintext text-center mx-auto" style="font-size: 18px;" id="name" value="죠르디">
                                                 </div>
                                             </div>
 
                                             <div class="mb-3 row">
-                                                <label for="email" class="col-sm-3 col-form-label">이메일</label>
-                                                <div class="col-sm-9">
-                                                    <input type="email" readonly class="form-control-plaintext text-center"
-                                                           style="font-size: 18px;"
-                                                           id="email" th:value="${info.email}">
+                                                <label for="email" class="col-sm-3 col-4 col-form-label mx-auto">이메일</label>
+                                                <div class="col-sm-9 col-12 mx-auto">
+                                                    <input type="email" readonly="" class="form-control-plaintext text-center mx-auto" style="font-size: 18px;" id="email" value="hame112l@ru2132u.kr">
                                                 </div>
                                             </div>
 
                                             <div class="mb-3 row">
-                                                <label for="birth" class="col-sm-3 col-form-label">생년월일</label>
-                                                <div class="col-sm-9">
-                                                    <input type="date" readonly class="form-control-plaintext text-center"
-                                                           style="font-size: 18px;"
-                                                           id="birth" th:value="${info.birth}">
+                                                <label for="birth" class="col-sm-3 col-4 col-form-label mx-auto">생년월일</label>
+                                                <div class="col-sm-9 col-8 mx-auto">
+                                                    <input type="text" readonly="" class="form-control-plaintext text-center" style="font-size: 18px;" id="birth" value="2010-09-09">
                                                 </div>
                                             </div>
 
                                             <div class="mb-3 row">
-                                                <label for="phone" class="col-sm-3 col-form-label">전화번호</label>
-                                                <div class="col-sm-9">
-                                                    <input type="tel" readonly class="form-control-plaintext text-center"
-                                                           id="phone" th:value="${info.phone}">
+                                                <label for="phone" class="col-sm-3 col-4 col-form-label mx-auto">전화번호</label>
+                                                <div class="col-sm-9 col-8 mx-auto">
+                                                    <input type="tel" readonly="" class="form-control-plaintext text-center" id="phone" value="01012341234">
                                                 </div>
                                             </div>
 
                                             <div class="mb-3 row">
-                                                <label for="address" class="col-sm-3 col-form-label">주소</label>
-                                                <div class="col-sm-9">
-                                                    <input type="tel" readonly class="form-control-plaintext text-center"
-                                                           style="font-size: 18px;"
-                                                           id="address" th:value="${info.address}">
+                                                <label for="address" class="col-sm-3 col-4 col-form-label mx-auto">주소</label>
+                                                <div class="col-sm-9 col-8 mx-auto">
+                                                    <input type="tel" readonly="" class="form-control-plaintext text-center" style="font-size: 18px;" id="address" value="서울 강동구 동남로 493 211 ">
                                                 </div>
                                             </div>
 
@@ -348,11 +342,11 @@
                                 </div>
 
                                 <!-- 이력서 생성 폼 시작 -->
-                                <div class="card mt-4 mb-4 p-4 col-11 post-form align-self-center">
+                                <div class="card mb-4 col-11 post-form align-self-center">
                                     <form th:action="@{'/v1/user/resume/update/' + ${resume.id}}" method="post" role="form" class="row align-self-center col-12" onsubmit="return validateForm()">
 
 
-                                    <div class="card mt-3 p-3 col-12 post-form align-self-center">
+                                    <div class="card px-3 col-12 post-form align-self-center">
                                         <div class="col-12 mt-1">
                                             <div class="mb-1">
                                                 <label for="title" >제목</label>
@@ -465,7 +459,7 @@
 
 
 
-                                        <div class="row col-12">
+                                        <div class="row col-12 mx-auto">
                                             <div class="col-4 pt-4 m-auto justify-content-center">
                                                 <button type="button"  class="form-control" id="editBtn" onclick="enableEditing()">수정하기</button>
                                                 <button type="submit" class="form-control" id="submitEdit" onclick="validateForm()" style="display:none;">수정완료</button>
