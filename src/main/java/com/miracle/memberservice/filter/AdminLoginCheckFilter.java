@@ -21,13 +21,15 @@ public class AdminLoginCheckFilter implements Filter {
 
         System.out.println("인증 체크 필터 시작");
 
-        if (isLoginCheckPath(requestURI)) {
+        if (!requestURI.equals("/v1/admin/login") && !requestURI.equals("/v1/admin/login-form") && isLoginCheckPath(requestURI)) {
             System.out.println("인증 체크 로직 실행 : " + requestURI);
             HttpSession session = httpRequest.getSession(false);
-            if (session == null || session.getAttribute("name") == null) {
-                System.out.println("미 인증 사용자 요청");
-                httpResponse.sendRedirect("/v1/index");
-                return; // 미인증 사용자는 다음으로 진행하지 않고 끝낸다.
+            if (session == null || session.getAttribute("bno") == null && session.getAttribute("name") == null) {
+                if (session.getAttribute("id") == null || session.getAttribute("email") == null) {
+                    System.out.println("미 인증 사용자 요청");
+                    httpResponse.sendRedirect("/v1/admin/login-form");
+                    return; // 미인증 사용자는 다음으로 진행하지 않고 끝낸다.
+                }
             }
         }
         /* 다음 단계로 넘어간다. */
@@ -40,6 +42,5 @@ public class AdminLoginCheckFilter implements Filter {
     */
     private boolean isLoginCheckPath(String requestURI) {
         return PatternMatchUtils.simpleMatch(whitelist, requestURI);
-
     }
 }
