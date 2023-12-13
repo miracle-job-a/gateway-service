@@ -165,8 +165,6 @@ public class AdminController {
                                     HttpSession session, Model model) {
         if (year == 0) year = LocalDate.now().getYear();
         if (month == 0) month = LocalDate.now().getMonthValue();
-        System.out.println(year);
-        System.out.println(month);
         PageMoveWithMessage pmwm = companyService.getTodayPostCount(year, month, session);
         model.addAttribute("chartData", pmwm.getData());
         return pmwm.getPageName();
