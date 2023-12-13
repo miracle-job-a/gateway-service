@@ -89,6 +89,35 @@
                         <div class="row post-form col-md-11 col-12 mx-auto">
                             <div class="card-body align-self-center mx-auto">
                                 <div class="col-12 mx-auto my-3">
+                                    <h6 class="mb-3">기술스택</h6>
+                                    <div th:if="${stacks != null}">
+                                        <div th:each="stack : ${stacks}" id="stacks" style="display: inline-block;">
+                                            <span class="badge bg-secondary m-1 badge-large" th:text="${stack.name}"></span>
+                                            <br/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row col-12 mx-auto my-4">
+                                    <hr>
+                                    <div class="col-6">
+                                        <h6> <small>경력</small></h6>
+                                        <input type="number" name="career" id="career" class="form-control-plaintext"
+                                               placeholder="경력(년)" th:value="${detail.career}" readonly
+                                               oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"/>
+                                    </div>
+                                    <div class="col-6">
+                                        <h6> <small>마감일</small></h6>
+                                        <div class="col-12">
+                                            <input type="datetime-local" name="endDate" id="endDate"
+                                                   class="form-control-plaintext" placeholder="마감일" th:value="${detail.endDate}"
+                                                   readonly required/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mx-auto my-3">
+                                    <hr>
                                     <h6>직무</h6>
                                     <div th:if="${jobs != null}">
                                         <div id="jobs">
@@ -99,70 +128,11 @@
                                     </div>
                                 </div>
 
-                                <div class="col-12 mx-auto my-3">
-                                    <hr>
-                                    <h6 class="mb-3">기술스택</h6>
-                                    <div th:if="${stacks != null}">
-                                        <div th:each="stack : ${stacks}" id="stacks" style="display: inline-block;">
-                                            <span class="badge bg-secondary m-1" th:text="${stack.name}"></span>
-                                            <br/>
-                                        </div>
-                                    </div>
+                                <div class="col-12 mx-auto my-4">
+                                    <h6>주요업무</h6>
+                                    <textarea class="form-control-plaintext" id="ddd" name="mainTask"
+                                              th:text="${detail.mainTask}" readonly></textarea>
                                 </div>
-
-                                <div class="col-12 mx-auto my-3">
-                                    <hr>
-                                    <h6></h6>
-                                </div>
-
-                                <!--<div class="col-2">
-                                            <h4>마감일</h4>
-                                        </div>
-                                        <div class="col-4">
-                                            <input type="datetime-local" name="endDate" id="endDate"
-                                                   class="form-control-plaintext" placeholder="마감일" th:value="${detail.endDate}"
-                                                   readonly required/>
-                                        </div>-->
-                                <div class="col-2">
-                                    <h4>경력</h4>
-                                </div>
-                                <div class="col-2">
-                                    <input type="number" name="career" id="career" class="form-control-plaintext"
-                                           placeholder="경력(년)" th:value="${detail.career}" readonly
-                                           oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"/>
-                                </div>
-                                <!--<div class="col-4 mt-1 ">
-                                    <div class="mb-1">
-                                        <label for="endDate">마감일</label>
-                                    </div>
-                                    <input type="datetime-local" name="endDate" id="endDate"
-                                           class="form-control" placeholder="마감일" th:value="${detail.endDate}"
-                                           readonly required/>
-                                </div>
-                                <div class="col-4 mt-2">
-                                    <div class="mb-1">
-                                        <label for="career">경력</label>
-                                    </div>
-                                    <input type="number" name="career" id="career" class="form-control"
-                                           placeholder="경력(년)" th:value="${detail.career}" readonly
-                                           oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"/>
-                                </div>-->
-                            </div>
-
-
-
-                                <!--<div class="col-8 mt-2">
-                                    <div class="mb-1">
-                                        <label for="jobId">직무</label>
-                                    </div>
-                                    <div th:if="${jobs != null}">
-                                        <div id="jobs" style="display: inline-block;">
-                                            <label class="form-check-label bi-person-workspace"
-                                                   th:text="'  '+${jobs}"></label>
-                                            <br/>
-                                        </div>
-                                    </div>
-                                </div>-->
 
 
 
@@ -234,13 +204,7 @@
                                               th:value="${info.introduction}" th:text="${info.introduction}"
                                               readonly></textarea>
                                 </div>
-                                <div class="col-8 mt-2">
-                                    <div class="mb-1">
-                                        <label for="mainTask">주요업무</label>
-                                    </div>
-                                    <textarea class="form-control" rows="3" id="mainTask" name="mainTask"
-                                              th:text="${detail.mainTask}" readonly></textarea>
-                                </div>
+
                                 <div class="col-8 mt-2">
                                     <div class="mb-1">
                                         <label for="workCondition">근무조건</label>
