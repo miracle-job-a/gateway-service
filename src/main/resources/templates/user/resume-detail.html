@@ -25,7 +25,15 @@
                 html += '</div>';
 
                 document.getElementById('field1').insertAdjacentHTML('beforeend', html);
+
             });
+
+            // 전화번호
+            var phoneInput = document.getElementById('phone');
+            var rawPhoneNumber = phoneInput.value;
+
+            var formattedPhoneNumber = rawPhoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+            phoneInput.value = formattedPhoneNumber;
 
             // 최초 로드 시 경력 정보 계산 및 출력
             calculateAndSetCareer();
@@ -96,6 +104,9 @@
             }
             if (months > 0) {
                 result += " " + months + "개월";
+            }
+            if (years === 0 || months === 0) {
+                return "신입"
             }
             return result.trim();
         }
@@ -318,8 +329,6 @@
                                                 <label for="phone" class="col-sm-3 col-form-label">전화번호</label>
                                                 <div class="col-sm-9">
                                                     <input type="tel" readonly class="form-control-plaintext text-center"
-                                                           pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}"
-                                                           style="font-size: 18px;"
                                                            id="phone" th:value="${info.phone}">
                                                 </div>
                                             </div>
@@ -352,7 +361,7 @@
                                                    class="form-control" placeholder="이력서 제목" th:value="${resume.title}" required="" />
                                         </div>
 
-                                            <div class="mb-1">
+                                            <div class="my-2">
                                                 <label for="job">개발 가능한 직무</label>
                                             </div>
                                             <div th:each="job : ${totalJobs}" class="editJobs" style="display: none;">

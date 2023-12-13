@@ -93,7 +93,7 @@
                     </h5>
                     <!-- 목록 1칸 -->
                     <div th:each="letterPage, letterPageStat : ${letterList}" th:id="'postPage'+${letterPageStat.index}" class="col-lg-10 col-12 mb-4 mb-lg-2">
-                        <div class="custom-block d-flex" th:each="letter, letterStat : ${letterPage}">
+                        <div class="custom-block d-flex mb-2" th:each="letter, letterStat : ${letterPage}">
                             <div class="custom-block-info">
                                 <h5 class="mb-2">
                                     <a th:href="@{'/v1/user/cover-letter/detail/' + ${letter.id}}" th:text="${letter.title}"></a>
