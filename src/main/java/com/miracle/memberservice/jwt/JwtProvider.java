@@ -44,7 +44,6 @@ public class JwtProvider {
                 .setIssuedAt(now)
                 .setExpiration(expirationDate)
                 .claim("id", id)
-                .claim("rft", createRefreshToken(id, subject))
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
