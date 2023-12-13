@@ -290,15 +290,40 @@
                                     </div>
                                 </div>
 
-                                <!-- 유저이름 -->
-                                <div class="col-lg-5 col-md-5 col-12">
+                                <!-- 전화번호 -->
+                                <div class="col-lg-4 col-md-4 col-12">
                                     <div class="form-floating">
-                                        <input type="text" name="name" id="name" class="form-control"
-                                               placeholder="이름" required="">
-                                        <label for="floatingInput">이름<span class="text-danger">*</span></label>
+                                        <input type="text" name="phone" id="phoneNumber" class="form-control"
+                                               placeholder="전화번호" required="" oninput="onInputPhone(this)"
+                                               maxlength="14">
+                                        <label for="phoneNumber">전화번호<span class="text-danger">*</span></label>
                                     </div>
                                 </div>
-                                <div class="col-lg-7 col-md-7 col-12"></div>
+                                <div class="col-lg-2 col-md-2 col-12">
+                                    <div class="form-floating">
+                                        <button type="button" id="phoneNumberButton" class="btn">인증하기<span class="text-danger">*</span></button>
+                                    </div>
+                                </div>
+
+                                <!-- 전화번호 인증 입력 -->
+                                <div class="col-lg-4 col-md-4 col-12">
+                                    <div class="form-floating">
+                                        <input type="text" name="phoneValidation"
+                                               class="form-control"
+                                               placeholder="인증전화번호" required="" id="confirmCode" disabled>
+                                        <label for="confirmCode" id="phoneValidationLabel">인증번호 입력<span
+                                                class="text-danger">*</span></label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-12">
+                                    <div class="form-floating">
+                                        <button type="button" id="confirmCodeButton"
+                                                class="btn" disabled>인증확인<span class="text-danger">*</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+
 
 
                                 <!-- 생년월일 -->
@@ -310,22 +335,18 @@
                                     </div>
                                 </div>
 
-
-                                <!-- 전화번호 -->
+                                <!-- 유저이름 -->
                                 <div class="col-lg-5 col-md-5 col-12">
                                     <div class="form-floating">
-                                        <input type="text" name="phone" id="phone" class="form-control"
-                                               placeholder="전화번호" required="" oninput="onInputPhone(this)"
-                                               maxlength="14">
-                                        <label for="floatingInput">전화번호<span class="text-danger">*</span></label>
+                                        <input type="text" name="name" id="name" class="form-control"
+                                               placeholder="이름" required="">
+                                        <label for="floatingInput">이름<span class="text-danger">*</span></label>
                                     </div>
                                 </div>
-                                <div class="col-lg-2 col-md-2 col-12">
 
-                                </div>
 
                                 <!-- 주소 -->
-                                <div class="col-lg-5 col-md-5 col-12">
+                                <div class="col-lg-4 col-md-4 col-12">
                                     <div class="form-floating">
                                         <input type="text" name="address" id="address" class="form-control"
                                                placeholder="address" readonly required="">
@@ -333,7 +354,7 @@
                                         <label for="floatingInput">주소입력<span class="text-danger">*</span></label>
                                     </div>
                                 </div>
-                                <div class="col-lg-5 col-md-5 col-12">
+                                <div class="col-lg-4 col-md-4 col-12">
                                     <div class="form-floating">
                                         <input type="text" name="detailAddress" id="detailAddress" class="form-control"
                                                placeholder="address" required="">
@@ -399,6 +420,76 @@
 
 
     </main>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import {initializeApp} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import {getAnalytics} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithPhoneNumber, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyCXluBKXBrihziX_rN1Z-5LX06mEmRJadI",
+            authDomain: "job-a-9841f.firebaseapp.com",
+            projectId: "job-a-9841f",
+            storageBucket: "job-a-9841f.appspot.com",
+            messagingSenderId: "915882627362",
+            appId: "1:915882627362:web:5a39b8aa8b4719d5f7957b",
+            measurementId: "G-JHCHPZ8ZTX"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+
+        const provider = new GoogleAuthProvider();
+
+        const auth = getAuth();
+
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'phoneNumberButton', {
+            'size': 'invisible',
+            'callback': (response) => {
+                // reCAPTCHA solved, allow signInWithPhoneNumber.
+                onSignInSubmit();
+            }
+        });
+
+        document.getElementById('phoneNumberButton').addEventListener('click', (event) => {
+            event.preventDefault();
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const appVerifier = window.recaptchaVerifier;
+            const auth = getAuth();
+            signInWithPhoneNumber(auth, '+82' + phoneNumber, appVerifier)
+                .then((confirmationResult) => {
+                    // SMS sent. Prompt user to type the code from the message, then sign the
+                    // user in with confirmationResult.confirm(code).
+                    window.confirmationResult = confirmationResult;
+                    console.log(confirmationResult)
+                    // ...
+                }).catch((error) => {
+
+                // Error; SMS not sent
+                // ...
+            });
+        })
+        document.getElementById('confirmCodeButton').addEventListener('click', (event) => {
+            event.preventDefault();
+            const code = document.getElementById('confirmCode').value;
+            confirmationResult.confirm(code).then((result) => {
+                // User signed in successfully.
+                const user = result.user;
+                // ...
+
+            }).catch((error) => {
+                // User couldn't sign in (bad verification code?)
+                // ...
+
+            });
+        })
+    </script>
 </div>
 </html>
