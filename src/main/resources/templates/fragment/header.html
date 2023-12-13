@@ -1,32 +1,38 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
   <header class="header" th:fragment="commonHeader">
-   <nav class="navbar navbar-expand-lg">
+   <nav class="navbar navbar-expand-lg" style="height: 120px;">
     <div class="container">
-     <a class="navbar-brand me-lg-5 me-0" href="/v1">
-      <img src="/images/pod-talk-logo.png" class="logo-image img-fluid" alt="templatemo pod talk">
-     </a>
+     <!--<a class="navbar-brand me-lg-5 me-0" href="/v1">
+      <img src="/images/pod-talk-logo.png" class="logo-image img-fluid" alt="Job-a logo-image">
+     </a>-->
+     <div class="col-lg-2 col-md-3 col-sm-2 col-3 my-3">
+      <a class="navbar-brand" href="/v1">
+       <img src="/images/pod-talk-logo.png" class="logo-image img-fluid" alt="Job-a logo-image" style="width: 190px;">
+      </a>
+     </div>
 
-     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+     <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
      </button>
 
+
      <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-lg-auto">
-       <li class="nav-item">
+       <li class="nav-item my-auto">
         <a class="nav-link" href="/v1/search/posts/1">채용공고</a>
        </li>
 
-       <li class="nav-item">
+       <li class="nav-item my-auto">
         <a class="nav-link" href="/v1/user/resumes">이력서</a>
        </li>
 
-       <li class="nav-item">
+       <li class="nav-item my-auto">
         <a class="nav-link" href="/v1/user/cover-letters/1">자기소개서</a>
        </li>
 
-       <li class="nav-item dropdown">
+       <li class="nav-item dropdown my-auto">
         <a class="nav-link dropdown-toggle" href="/v1/user/my-page/apply-list" id="navbarLightDropdownMenuLink" role="button"
            data-bs-toggle="dropdown" aria-expanded="false">마이페이지</a>
 
@@ -36,9 +42,9 @@
         </ul>
        </li>
 
-       <div class="ms-4">
-        <a th:if="${session.id!=null}" href="/v1/user/logout" class="btn custom-btn custom-border-btn smoothscroll">로그아웃</a>
-        <a th:if="${session.id==null}" href="/v1/user/login-form" class="btn custom-btn custom-border-btn smoothscroll">로그인</a>
+       <div class="m-auto">
+        <a th:if="${session.id!=null}" href="/v1/user/logout" class="login-btn">로그아웃</a>
+        <a th:if="${session.id==null}" href="/v1/user/login-form" class="login-btn">로그인</a>
        </div>
       </ul>
 
