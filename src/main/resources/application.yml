@@ -5,7 +5,3 @@ spring:
     active: prod
   config:
     import: optional:configserver:http://miracle:1234@3.36.100.180:60010
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
