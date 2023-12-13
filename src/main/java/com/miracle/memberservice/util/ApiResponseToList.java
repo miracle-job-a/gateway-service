@@ -145,7 +145,7 @@ public class ApiResponseToList {
         return pageList;
     }
 
-    public static List<List<ConditionalSearchPostResponseDto>> searchPosts(Object object, HttpSession session) {
+    public List<List<ConditionalSearchPostResponseDto>> searchPosts(Object object, HttpSession session) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
         List<List<ConditionalSearchPostResponseDto>> pageList = new ArrayList<>();
 
@@ -184,7 +184,7 @@ public class ApiResponseToList {
                             .career((Integer) dto.get("career"))
                             .job(jobDetail)
                             .name((String) dto.get("name"))
-                            .photo((String) dto.get("photo"))
+                            .photo(s3Method.getUrlCompany((String) dto.get("photo")))
                             .build());
                 }
                 pageList.add(dtos);

@@ -227,7 +227,7 @@
                         <div class="custom-block custom-block-full mb-2" >
                             <div class="custom-block-image-wrap">
                                 <a th:href="@{/v1/click/post/{postId}/detail(companyId=${post.companyId}, postId=${post.id}, postType=${post.postType})}">
-                                    <img src="/images/podcast/27670664_7369753.jpg" class="custom-block-image img-fluid"
+                                    <img th:src="${post.photo}" class="custom-block-image img-fluid"
                                          alt="">
                                 </a>
                             </div>

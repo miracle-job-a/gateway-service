@@ -233,7 +233,8 @@ public class CompanyService {
         ApiResponse response = ServiceCall.postParam(session, dto, Const.RequestHeader.COMPANY, "/company/posts/search", strNum, endNum);
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("redirect:/v1", response.getMessage());
 
-        List<List<ConditionalSearchPostResponseDto>> searchPosts = ApiResponseToList.searchPosts(response.getData(), session);
+        ApiResponseToList apiResponseToList = new ApiResponseToList(s3Method);
+        List<List<ConditionalSearchPostResponseDto>> searchPosts = apiResponseToList.searchPosts(response.getData(), session);
 
         return new PageMoveWithMessage("guest/search-post", searchPosts);
     }
