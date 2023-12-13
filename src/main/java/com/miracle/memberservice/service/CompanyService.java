@@ -351,7 +351,7 @@ public class CompanyService {
         if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("admin/main", response.getMessage());
         } else if (response.getData() instanceof Boolean && (Boolean) response.getData() == false) {
-            return new PageMoveWithMessage("admin/companyList", response.getMessage());
+            return new PageMoveWithMessage("admin/company-list", response.getMessage());
         } else {
             return new PageMoveWithMessage("redirect:/v1/admin/company/list/1/5");
         }
@@ -386,7 +386,7 @@ public class CompanyService {
                     chartData.add(Arrays.asList(type, entry.getValue()));
                 }
 
-                return new PageMoveWithMessage("admin/postChart", chartData);
+                return new PageMoveWithMessage("admin/post-chart", chartData);
             } else {
                 return new PageMoveWithMessage("admin/main", response.getMessage());
             }
@@ -395,7 +395,6 @@ public class CompanyService {
 
     public PageMoveWithMessage getTodayPostCount(int year, int month, HttpSession session) {
         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/posts/" + year + "/" + month + "/today");
-        System.out.println(response);
         if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("admin/main", response.getMessage());
         } else {
@@ -413,7 +412,7 @@ public class CompanyService {
             for (int i = 1; i <= 12; i++) {
                 formattedData.add(List.of(i, monthCounts.getOrDefault(i, 0)));
             }
-            return new PageMoveWithMessage("admin/todayPostChart", formattedData);
+            return new PageMoveWithMessage("admin/today-post-chart", formattedData);
         }
     }
 }
