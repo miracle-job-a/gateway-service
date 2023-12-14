@@ -17,9 +17,9 @@ https://templatemo.com/tm-584-pod-talk
   CUSTOM PROPERTIES ( VARIABLES )             
 -----------------------------------------*/
 :root {
-  --white-color:                  #ffffff;
+  --white-color: #ffffff;
   --primary-color:                #660099;
-  --secondary-color:              #000000;
+  --secondary-color: #000000;
   --section-bg-color:             #fbf0ff;
   --nav-bg-color: #660099;
   --custom-btn-bg-color:          #660099;
@@ -49,7 +49,7 @@ https://templatemo.com/tm-584-pod-talk
   --font-weight-normal:           400;
   --font-weight-medium:           500;
   --font-weight-semibold:         600;
-  --font-weight-bold:             700;
+  --font-weight-bold:             900;
 }
 
 body {
@@ -144,6 +144,15 @@ strong {
   color: var(--white-color);
 }
 
+h4.display-6 {
+  font-weight: 900;
+}
+
+.badge-large {
+  font-size: 1.1em;
+  padding: 0.5em 1em;
+
+}
 
 /*---------------------------------------
   SECTION               
@@ -228,6 +237,32 @@ main {
   margin-top: 10px;
 }
 
+.login-btn {
+  background: transparent;
+  border: 2px solid #4c006b;
+  border-radius: var(--border-radius-large);
+  color: var(--primary-color);
+  font-family: var(--title-font-family);
+  font-size: var(--p-font-size);
+  font-weight: var(--font-weight-semibold);
+  line-height: normal;
+  transition: all 0.3s;
+  padding: 10px 10px;
+}
+
+.login-btn:hover {
+  background: var(--primary-color);
+  border: 2px solid #660099;
+  border-radius: var(--border-radius-large);
+  color: var(--white-color);
+  font-family: var(--title-font-family);
+  font-size: var(--p-font-size);
+  font-weight: var(--font-weight-semibold);
+  line-height: normal;
+  transition: all 0.3s;
+  padding: 10px 10px;
+}
+
 .custom-btn:hover {
   background: var(--custom-btn-bg-hover-color);
   color: var(--white-color);
@@ -267,13 +302,39 @@ main {
   font-weight: var(--font-weight-semibold);
 }
 
+.confirm-btn {
+  background: transparent;
+  border: 2px solid #4c006b;
+  border-radius: var(--border-radius-large);
+  color: var(--primary-color);
+  font-family: var(--title-font-family);
+  font-size: var(--p-font-size);
+  font-weight: var(--font-weight-semibold);
+  line-height: normal;
+  transition: all 0.3s;
+  padding: 10px 10px;
+}
+
+.confirm-btn:hover {
+  background: var(--primary-color);
+  border: 2px solid #660099;
+  border-radius: var(--border-radius-large);
+  color: var(--white-color);
+  font-family: var(--title-font-family);
+  font-size: var(--p-font-size);
+  font-weight: var(--font-weight-semibold);
+  line-height: normal;
+  transition: all 0.3s;
+  padding: 10px 10px;
+}
+
 
 
 /*---------------------------------------
   SITE HEADER              
 -----------------------------------------*/
 .site-header {
-  background-image:  linear-gradient(#cf82f5, #FFFFFF);
+  background-image:  linear-gradient(#FFFFFF, #FFFFFF);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -344,7 +405,7 @@ main {
   color: var(--primary-color);
   font-family: var(--title-font-family); 
   font-size: var(--menu-font-size);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   position: relative;
@@ -359,7 +420,12 @@ main {
 
 .navbar-nav .nav-link.active, 
 .navbar-nav .nav-link:hover {
-  color: var(--secondary-color);
+  background-color: var(--primary-color);
+  border: 2px solid #660099;
+  border-radius: var(--border-radius-large);
+  color: var(--white-color);
+  line-height: normal;
+  transition: all 0.3s;
 }
 
 .navbar .dropdown-menu {
@@ -389,7 +455,7 @@ main {
 
 .navbar .dropdown-item {
   display: inline-block;
-  color: var(--p-bg-color);
+  color: var(--primary-color);
   font-family: var(--title-font-family); 
   font-size: var(--menu-font-size);
   font-weight: var(--font-weight-medium);
@@ -493,7 +559,7 @@ main {
   position: absolute;
   right: 0;
   left: 0;
-  background: var(--white-color);
+  background: var(--primary-color);
   width: 30px;
   height: 2px;
   content: '';
@@ -507,12 +573,17 @@ main {
   top: 8px;
 }
 
+.navbar-background {
+  background-color: var(--primary-color);
+  border-radius: var(--border-radius-medium);
+
+}
 
 /*---------------------------------------
   CAROUSEL        
 -----------------------------------------*/
 .hero-section {
-  background-image: linear-gradient(#cf82f5, #FFFFFF);
+  background-image: linear-gradient(#FFFFFF, #FFFFFF);
   background-repeat: no-repeat;
   background-size: 120% 76%;
   background-position: top;
@@ -832,6 +903,28 @@ main {
 
 .custom-block-overlay-info {
   padding: 15px 20px 20px 20px;
+}
+
+/* 주소 넘치는 부분 정리 */
+.bi-pin-map > .text-black {
+  display: block;
+  max-width: 230px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+h6.my-1 {
+  display: block;
+  max-width: 240px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.custom-card-border {
+  border: 1px solid #6c757d;
+  border-radius: var(--border-radius-small);
 }
 
 
@@ -1192,12 +1285,15 @@ main {
   SITE FOOTER              
 -----------------------------------------*/
 .site-footer {
-  background-image: linear-gradient(#FFFFFF, #cf82f5);
+ /* background-image: linear-gradient(#cf82f5, #660099);*/
+  /* 시안1 단색 스타일 */
+  background-image: linear-gradient(#F9F1FE, #F9F1FE);
+  /* 시안2 배경색 없음 */
+  /*border-top: 3px solid #660099;
+  background-image: var(--white-color);*/
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  margin-top: 30px;
-  padding-top: 50px;
   padding-bottom: 100px;
 }
 
@@ -1208,7 +1304,10 @@ main {
 
 .site-footer-title,
 .site-footer p {
-  color: var(--white-color);
+  /*시안 1*/
+  /*color: var(--white-color);*/
+  /*시안 2*/
+  color: var(--primary-color);
 }
 
 .site-footer p strong {
@@ -1266,7 +1365,12 @@ main {
 }
 
 .social-icon-link {
-  background: var(--secondary-color);
+  /* 시안 1 배경색 있을 때 */
+  /*background: var(--white-color);
+  border-radius: var(--border-radius-large);
+  color: var(--secondary-color);*/
+  /* 시안 2 배경색 없음 */
+  background: var(--primary-color);
   border-radius: var(--border-radius-large);
   color: var(--white-color);
   font-size: var(--p-font-size);
@@ -1280,8 +1384,8 @@ main {
 }
 
 .social-icon-link:hover {
-  background: var(--primary-color);
-  color: var(--white-color);
+  background: var(--white-color);
+  color: var(--primary-color);
 }
 
 
@@ -1298,7 +1402,8 @@ main {
 
 @media screen and (min-width: 1600px) {
   .site-footer {
-    padding-top: 250px;
+    margin-top: 40px;
+    padding-top: 60px;
   }
 }
 
@@ -1346,12 +1451,17 @@ main {
 
   .navbar-nav {
     background-color: var(--primary-color);
-    border-radius: var(--border-radius-medium);
+    border-radius: var(--border-radius-small);
+    color: var(--primary-color);
+    font-family: var(--title-font-family);
+    font-size: var(--menu-font-size);
+    font-weight: var(--font-weight-bold);
     padding: 30px;
   }
 
   .navbar-nav .nav-link {
     padding: 5px 0;
+    color: var(--white-color);
   }
 
   .navbar-nav .dropdown-menu {
@@ -1373,7 +1483,8 @@ main {
   }
 
   .nav-tabs .nav-link {
-    font-size: var(--copyright-font-size);
+    font-size: var(--title-font-family);
+    color: var(--white-color);
     padding: 10px;
   }
 
@@ -1382,13 +1493,33 @@ main {
   }
 
   .site-footer {
-    margin-top: -200px;
-    padding-top: 200px;
+    margin-top: -50px;
+    padding-top: 50px;
     padding-bottom: 100px;
+  }
+
+  .login-btn {
+    background: transparent;
+    border: 2px solid #ffffff;
+    border-radius: var(--border-radius-large);
+    color: var(--white-color);
+    font-family: var(--title-font-family);
+    font-size: var(--p-font-size);
+    font-weight: var(--font-weight-semibold);
+    line-height: normal;
+    transition: all 0.3s;
+    padding: 10px 10px;
+
+  }
+
+  .navbar-nav .login-btn-container {
+    margin: auto 0 auto auto; /* 왼쪽 정렬 */
   }
 }
 
-@media screen and (max-width: 540px) {
+
+
+@media screen and (max-width: 576px) {
 	.hero-section {
   		background-size: 180% 65%;
 		/* T o o p l a t e . c o m   C u s t o m i z e d */
@@ -1402,6 +1533,23 @@ main {
     margin-top: 10px;
     margin-bottom: 10px;
   }
+
+  .logo-image {
+    width: 120px; /* 또는 원하는 크기로 조절 */
+  }
+
+  .navbar-nav {
+    background-color: var(--primary-color);
+    border-radius: var(--border-radius-small);
+    color: var(--white-color);
+    font-family: var(--title-font-family);
+    font-size: var(--menu-font-size);
+    font-weight: var(--font-weight-bold);
+    padding: 30px;
+  }
+
+
+
 }
 
 @media screen and (max-width: 480px) {
