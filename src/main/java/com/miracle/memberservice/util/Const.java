@@ -15,6 +15,7 @@ public abstract class Const {
         public static final String USER = "user";
         public static final String COMPANY = "company";
         public static final String ADMIN = "admin";
+        public static final String RESUME = "resume";
 
     }
 }

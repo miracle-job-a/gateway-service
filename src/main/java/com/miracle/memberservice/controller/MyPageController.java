@@ -187,4 +187,10 @@ public class MyPageController {
         PageMoveWithMessage pmwm = myPageService.updateUserInfo(session, requestDto);
         return pmwm.getPageName();
     }
+
+    @GetMapping("/signout")
+    public String signoutUser(HttpSession session){
+        PageMoveWithMessage pmwm = myPageService.signoutUser(session);
+        return pmwm.getPageName();
+    }
 }

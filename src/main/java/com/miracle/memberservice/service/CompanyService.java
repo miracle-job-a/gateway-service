@@ -3,25 +3,31 @@ package com.miracle.memberservice.service;
 import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.util.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CompanyService {
+
+    private final S3Method s3Method;
 
     public PageMoveWithMessage mainPage(HttpSession session) {
         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/main");
         Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
-
-        return new PageMoveWithMessage("redirect:/v1", ApiResponseToList.mainPage(session, data));
+        ApiResponseToList apiResponseToList = new ApiResponseToList(s3Method);
+        return new PageMoveWithMessage("redirect:/v1", apiResponseToList.mainPage(session, data));
     }
 
     public Object mainPageCompany(HttpSession session, Long companyId) {
@@ -37,13 +43,14 @@ public class CompanyService {
         return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
     }
 
-    public PageMoveWithMessage join(CompanyJoinDto companyJoinDto, HttpSession session) {
+    public PageMoveWithMessage join(CompanyJoinDto companyJoinDto, HttpSession session, MultipartFile photo) throws IOException {
 
         ApiResponse response = ServiceCall.post(session, companyJoinDto, Const.RequestHeader.COMPANY, "/company/signup");
 
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("guest/company-join", response.getMessage());
 
+        s3Method.uploadFile(photo, Const.RequestHeader.COMPANY, companyJoinDto.getBno());
         return new PageMoveWithMessage("guest/company-login");
     }
 
@@ -87,7 +94,7 @@ public class CompanyService {
     }
 
     // 확인 용도
-    public Boolean statusCompany(HttpSession session){
+    public Boolean statusCompany(HttpSession session) {
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse apiResponse = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/status");
         return (Boolean) apiResponse.getData();
@@ -108,7 +115,7 @@ public class CompanyService {
         PostCommonDataResponseDto info = PostCommonDataResponseDto.builder()
                 .name(data.get("name"))
                 .ceoName(data.get("ceoName"))
-                .photo(data.get("photo"))
+                .photo(s3Method.getUrl(Const.RequestHeader.COMPANY, (String) data.get("photo")))
                 .employeeNum(data.get("employeeNum"))
                 .address(data.get("address"))
                 .introduction(data.get("introduction"))
@@ -226,7 +233,8 @@ public class CompanyService {
         ApiResponse response = ServiceCall.postParam(session, dto, Const.RequestHeader.COMPANY, "/company/posts/search", strNum, endNum);
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("redirect:/v1", response.getMessage());
 
-        List<List<ConditionalSearchPostResponseDto>> searchPosts = ApiResponseToList.searchPosts(response.getData(), session);
+        ApiResponseToList apiResponseToList = new ApiResponseToList(s3Method);
+        List<List<ConditionalSearchPostResponseDto>> searchPosts = apiResponseToList.searchPosts(response.getData(), session);
 
         return new PageMoveWithMessage("guest/search-post", searchPosts);
     }
@@ -282,18 +290,20 @@ public class CompanyService {
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("error/500", response.getMessage());
 
         LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        String photo = (String) data.get("photo");
         CompanyPageResponseDto info = CompanyPageResponseDto.builder()
                 .companyId((Integer) data.get("companyId"))
                 .approveStatus((Boolean) data.get("approveStatus"))
                 .name((String) data.get("name"))
                 .ceoName((String) data.get("ceoName"))
-                .photo((String) data.get("photo"))
+                .photo(photo)
                 .employeeNum((Integer) data.get("employeeNum"))
                 .address((String) data.get("address"))
                 .introduction((String) data.get("introduction"))
                 .sector((String) data.get("sector"))
                 .bnoStatus((Boolean) data.get("bnoStatus"))
                 .countOpen((Integer) data.get("countOpen"))
+                .bno(photo)
                 .build();
 
         return new PageMoveWithMessage("company/company-info", info);
@@ -301,6 +311,7 @@ public class CompanyService {
     }
 
     public Boolean checkCompanyInfo(HttpSession session, CompanyLoginRequestDto requestDto) {
+        requestDto.setEmail((String) session.getAttribute("email"));
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.post(session, requestDto, Const.RequestHeader.COMPANY, "/company/" + companyId);
         if (response.getHttpStatus() != 200) {
@@ -318,29 +329,38 @@ public class CompanyService {
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("error/500", response.getMessage());
 
         LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        String photo = (String) data.get("photo");
         CompanyPageResponseDto info = CompanyPageResponseDto.builder()
                 .companyId((Integer) data.get("companyId"))
                 .approveStatus((Boolean) data.get("approveStatus"))
                 .name((String) data.get("name"))
                 .ceoName((String) data.get("ceoName"))
-                .photo((String) data.get("photo"))
+                .photo(photo)
                 .employeeNum((Integer) data.get("employeeNum"))
                 .address((String) data.get("address"))
                 .introduction((String) data.get("introduction"))
                 .sector((String) data.get("sector"))
                 .bnoStatus((Boolean) data.get("bnoStatus"))
                 .countOpen((Integer) data.get("countOpen"))
+                .bno(photo)
                 .build();
 
         return new PageMoveWithMessage("company/modify-form", info);
     }
 
-    public PageMoveWithMessage updateCompanyInfo(HttpSession session, CompanyInfoRequestDto requestDto) {
+    public PageMoveWithMessage updateCompanyInfo(HttpSession session, CompanyInfoRequestDto requestDto, MultipartFile photo) throws IOException {
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.COMPANY, "/company/" + companyId);
 
         if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("redirect:/v1/company/info", response.getMessage());
+        }
+
+        String bno = requestDto.getBno();
+        String originalFilename = photo.getOriginalFilename();
+        if (!Strings.isBlank(originalFilename)) {
+            s3Method.deleteFile(Const.RequestHeader.COMPANY, bno);
+            s3Method.uploadFile(photo, Const.RequestHeader.COMPANY, bno);
         }
 
         return new PageMoveWithMessage("redirect:/v1/company/info");
@@ -416,4 +436,14 @@ public class CompanyService {
         }
     }
 
+    public PageMoveWithMessage signoutCompany(HttpSession session) {
+        Long companyId = (Long) session.getAttribute("id");
+        String bno = (String) session.getAttribute("bno");
+        ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.COMPANY, "/company/" + companyId);
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("redirect:/v1/company/info");
+
+        s3Method.deleteFile(Const.RequestHeader.COMPANY, bno);
+        session.invalidate();
+        return new PageMoveWithMessage("redirect:/v1");
+    }
 }
