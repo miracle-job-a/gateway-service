@@ -2,7 +2,9 @@ package com.miracle.memberservice.util;
 
 import com.miracle.memberservice.dto.request.JobRequestDto;
 import com.miracle.memberservice.dto.response.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
@@ -11,9 +13,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Configuration
+@RequiredArgsConstructor
 public class ApiResponseToList {
 
-    public static Map<String, List<MainPagePostsResponseDto>> mainPage(HttpSession session, Map<String, Object> data) {
+    private final S3Method s3Method;
+
+    public Map<String, List<MainPagePostsResponseDto>> mainPage(HttpSession session, Map<String, Object> data) {
         List<LinkedHashMap<String, Object>> deadlineResponse = (ArrayList<LinkedHashMap<String, Object>>) data.get("deadline");
         List<LinkedHashMap<String, Object>> newestResponse = (ArrayList<LinkedHashMap<String, Object>>) data.get("newest");
 
@@ -23,7 +29,7 @@ public class ApiResponseToList {
         return Map.of("deadline", deadline, "newest", newest);
     }
 
-    private static List<MainPagePostsResponseDto> mainPageComposition(HttpSession session, List<LinkedHashMap<String, Object>> response) {
+    private List<MainPagePostsResponseDto> mainPageComposition(HttpSession session, List<LinkedHashMap<String, Object>> response) {
         List<MainPagePostsResponseDto> dtos = new ArrayList<>();
         for (LinkedHashMap<String, Object> lhm : response) {
             Integer id = (Integer) lhm.get("id");
@@ -47,7 +53,7 @@ public class ApiResponseToList {
                     .companyId(companyId.longValue())
                     .postType((String) lhm.get("postType"))
                     .title((String) lhm.get("title"))
-                    .photo((String) lhm.get("photo"))
+                    .photo(s3Method.getUrl(Const.RequestHeader.COMPANY, (String) lhm.get("photo")))
                     .endDate(divideTime((String) lhm.get("endDate")))
                     .workAddress((String) lhm.get("workAddress"))
                     .jobIdSet(jobDetail)
@@ -138,7 +144,7 @@ public class ApiResponseToList {
         return pageList;
     }
 
-    public static List<List<ConditionalSearchPostResponseDto>> searchPosts(Object object, HttpSession session) {
+    public List<List<ConditionalSearchPostResponseDto>> searchPosts(Object object, HttpSession session) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
         List<List<ConditionalSearchPostResponseDto>> pageList = new ArrayList<>();
 
@@ -177,7 +183,7 @@ public class ApiResponseToList {
                             .career((Integer) dto.get("career"))
                             .job(jobDetail)
                             .name((String) dto.get("name"))
-                            .photo((String) dto.get("photo"))
+                            .photo(s3Method.getUrl(Const.RequestHeader.COMPANY, (String) dto.get("photo")))
                             .build());
                 }
                 pageList.add(dtos);

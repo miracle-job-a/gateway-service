@@ -181,7 +181,29 @@
 
         }
 
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#originalPhoto').css("display", "none");
+                    $('#newPhoto').css("display", "block");
+                    document.getElementById('preview').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                document.getElementById('preview').src = "";
+            }
+        }
 
+        function signoutCompany() {
+            var confirmResult = confirm("회원 탈퇴하시겠습니까?")
+
+            if (confirmResult) {
+                if(confirm(`정말로 탈퇴하시겠습니까?`)){
+                    location.href='/v1/company/signout';
+                }
+            }
+        }
     </script>
 
     <main>
@@ -197,13 +219,18 @@
                             <h4 class="section-title">기업정보</h4>
                         </div>
 
-                        <form action="/v1/company/info/update" method="post" role="form" >
+                        <form action="/v1/company/info/update" method="post" role="form" enctype="multipart/form-data">
                         <div class="row justify-content-center">
                             <div class="row ">
                                 <div class="col-lg-4 col-12">
                                     <div class="custom-block-icon-wrap">
-                                        <div class="custom-block-image-wrap custom-block-image-detail-page">
-                                            <img src="/images/ryon.jpg" class="custom-block-image img-fluid" alt="">
+                                        <div class="custom-block-image-wrap custom-block-image-detail-page" id="originalPhoto">
+                                            <img th:src="'https://miracle-job-a.s3.ap-northeast-2.amazonaws.com/company/'+${info.bno}" class="custom-block-image img-fluid" alt="">
+                                        </div>
+                                    </div>
+                                    <div class="custom-block-icon-wrap">
+                                        <div class="custom-block-image-wrap custom-block-image-detail-page" id="newPhoto" style="display:none;">
+                                            <img id="preview" class="custom-block-image img-fluid"/>
                                         </div>
                                     </div>
                                 </div>
@@ -236,9 +263,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- 임시 사진 데이터.. -->
-                                        <input hidden type="text" name="photo" value="임시데이터 입니다.">
-
                                         <div class="col-10 mt-3 mx-auto">
                                             <label>대표자</label>
                                             <input type="text" class="form-control mt-2" id="ceoName" name="ceoName" placeholder="" th:value="${info.ceoName}">
@@ -247,6 +271,12 @@
                                         <div class="col-10 mt-3 mx-auto">
                                             <label>업종</label>
                                             <input type="text" class="form-control mt-2" id="sector" name="sector" th:value="${info.sector}">
+                                        </div>
+
+                                        <div class="col-10 mt-3 mx-auto">
+                                            <label>사진</label><label class="text-warning">(새로운 사진이 적용되는데 시간이 다소 소요될 수 있습니다.)</label>
+                                            <input type="file" class="form-control mt-2" id="photo" name="photo" th:value="${info.photo}" onchange="readURL(this);"/>
+                                            <input type="hidden" class="form-control mt-2" id="bno" name="bno" th:value="${info.bno}"/>
                                         </div>
 
                                         <div class="col-10 mt-3 mx-auto">
@@ -291,7 +321,9 @@
 
                                             </div>
                                             <div class="col-4">
-
+                                                <button type="button" class="form-control" id="signoutBtn"
+                                                        onclick="signoutCompany()">회원 탈퇴하기
+                                                </button>
                                             </div>
                                             <div class="col-4">
                                                 <button type="submit" class="form-control" onclick="validateForm()">정보수정</button>

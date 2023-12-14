@@ -17,10 +17,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -91,8 +93,8 @@ public class GuestController {
     }
 
     @PostMapping("/company/join")
-    public String companyJoin(@ModelAttribute CompanyJoinDto companyJoinDto, Model model, HttpSession session) {
-        PageMoveWithMessage pmwm = companyService.join(companyJoinDto, session);
+    public String companyJoin(@ModelAttribute CompanyJoinDto companyJoinDto, Model model, HttpSession session, @RequestParam MultipartFile photo) throws IOException {
+        PageMoveWithMessage pmwm = companyService.join(companyJoinDto, session, photo);
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }

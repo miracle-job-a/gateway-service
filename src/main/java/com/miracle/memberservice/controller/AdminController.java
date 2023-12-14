@@ -1,8 +1,8 @@
 package com.miracle.memberservice.controller;
 
 import com.miracle.memberservice.dto.response.CompanyListResponseDto;
-import com.miracle.memberservice.dto.response.UserJoinListResponseDto;
 import com.miracle.memberservice.dto.response.StackAndJobResponseDto;
+import com.miracle.memberservice.dto.response.UserJoinListResponseDto;
 import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.service.UserService;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+import java.time.YearMonth;
 
 @Controller
 @RequestMapping("/v1/admin")
@@ -183,5 +183,29 @@ public class AdminController {
         PageMoveWithMessage pmwm = companyService.getPostCount(session);
         model.addAttribute("chartData", pmwm.getData());
         return pmwm.getPageName();
+    }
+
+    @GetMapping("/posts/today")
+    public String getTodayPostCount(@RequestParam(name = "year", required = false, defaultValue = "0") int year,
+                                    @RequestParam(name = "month", required = false, defaultValue = "0") int month,
+                                    HttpSession session, Model model) {
+        if (year == 0) year = LocalDate.now().getYear();
+        if (month == 0) month = LocalDate.now().getMonthValue();
+        int daysInMonth = YearMonth.of(year, month).lengthOfMonth();
+        PageMoveWithMessage pmwm = companyService.getTodayPostCount(year, month, session);
+        model.addAttribute("chartData", pmwm.getData());
+        model.addAttribute("year", year);
+        model.addAttribute("month", month);
+        model.addAttribute("daysInMonth", daysInMonth);
+        return pmwm.getPageName();
+    }
+
+    @ResponseBody
+    @GetMapping("/posts/day")
+    public ResponseEntity<Map<String,Object>> getReloadTodayPostCount(@RequestParam(name = "year") int year, @RequestParam(name = "month") int month, HttpSession session) {
+        PageMoveWithMessage pmwm = companyService.getTodayPostCount(year, month, session);
+        Map<String,Object> map = new HashMap<>();
+        map.put("chartData", pmwm.getData());
+        return ResponseEntity.status(HttpStatus.OK).body(map);
     }
 }
