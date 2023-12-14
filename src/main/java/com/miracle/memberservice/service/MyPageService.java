@@ -200,4 +200,13 @@ public class MyPageService {
         return new PageMoveWithMessage("redirect:/v1/user/my-page/my-info");
     }
 
+    public PageMoveWithMessage signoutUser(HttpSession session){
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.USER, "/user/" + userId);
+        if(response.getHttpStatus()!=200) return new PageMoveWithMessage("redirect:/v1/user/my-page/my-info");
+
+        session.invalidate();
+        return new PageMoveWithMessage("redirect:/v1");
+    }
+
 }

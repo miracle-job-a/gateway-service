@@ -129,6 +129,17 @@
             }
         }
 
+        function signoutUser() {
+            var confirmResult = confirm("회원 탈퇴하시겠습니까?")
+
+            if (confirmResult) {
+                if(confirm(`정말로 탈퇴하시겠습니까?
+작성하신 이력서와 자소서, 지원한 내역 모두 삭제됩니다.`)){
+                    location.href='/v1/user/my-page/signout';
+                }
+            }
+        }
+
         function validateSpecialCharacters() {
             var inputValues = [
                 document.getElementById('email').value,
@@ -290,7 +301,9 @@
                                                 </button>
                                             </div>
                                             <div class="col-4">
-
+                                                <button type="button" class="form-control" id="signoutBtn"
+                                                        onclick="signoutUser()">회원 탈퇴하기
+                                                </button>
                                             </div>
                                             <div class="col-4">
 
