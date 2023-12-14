@@ -82,29 +82,26 @@
             </div>
 
             <!-- Modal -->
-            <div class="modal modal-backdrop-dark fade" id="myModal" tabindex="-2"
-                 aria-labelledby="exampleModalLabel" aria-hidden="true"
-                 data-bs-backdrop="false">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title text-center" id="exampleModalLabel">환영합니다.</h5>
+            <div class="modal modal-backdrop-dark fade" id="myModal" tabindex="-2" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="false">
+                <div class="modal-dialog modal-dialog-centered mx-auto">
+                    <div class="modal-content mx-auto">
+                        <div class="modal-header text-center">
+                            <h5 class="modal-title mx-auto" id="exampleModalLabel">환영합니다.</h5>
                         </div>
-                        <div class="modal-body container-fluid">
-                            <div class="row align-self-center">
-                                <div class="col-9 m-2 align-self-center mx-auto">
-                                    <a href="/v1/user/join" class="btn custom-btn">유저 회원가입</a>
-                                </div>
+                        <div class="modal-body d-flex flex-column align-items-center">
+                            <div class="custom-card-border col-11 d-flex flex-column align-items-center">
+                                <label class="my-2 col-lg-8 col-12 mx-auto text-center">지금 바로 지원해보세요.</label>
+                                <a href="/v1/user/join" class="custom-btn my-1 col-5 text-center">유저 회원가입</a>
                             </div>
+
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-ourline-secondary"
-                                    data-bs-dismiss="modal">취소
-                            </button>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
                         </div>
                     </div>
                 </div>
             </div>
+
 
         </section>
 

@@ -163,8 +163,8 @@
 
                                 <!-- 버튼 부 -->
                                 <div class="d-flex flex-column ms-auto">
-                                    <button type="button" class="btn btn-outline-secondary" th:id="${letters.applicationLetterId}" name="delete">지원취소</button>
-                                    <button type="button" class="btn btn-outline-secondary mt-2" data-bs-toggle="modal" data-bs-target="#myModal" >진행상태 변경</button>
+                                    <button type="button" class="btn btn-outline-secondary rounded-4" th:id="${letters.applicationLetterId}" name="delete">지원취소</button>
+                                    <button type="button" class="custom-border-option-btn mt-2" data-bs-toggle="modal" data-bs-target="#myModal" >진행상태 변경</button>
                                 </div>
                             </div>
                         </div>
@@ -193,11 +193,11 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-ourline-secondary"
+                                    <button type="button" class="btn"
                                             data-bs-dismiss="modal">취소
                                     </button>
                                     <input type="hidden" name="appId" />
-                                    <button type="button" class="btn btn-warning">변경</button>
+                                    <button type="button" class="custom-border-option-btn">변경</button>
                                 </div>
                             </div>
                         </div>
