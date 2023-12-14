@@ -31,13 +31,8 @@ public class JwtService {
         return new AccessToken(accessToken);
     }
 
-    public boolean validateToken(Long id, String memberType, String email, String token) {
-        Objects.requireNonNull(id, "Id is null");
-        Objects.requireNonNull(memberType, "Member type is null");
-        Objects.requireNonNull(email, "Email is null");
-
-        String subject = memberType + ":" + email;
-        return jwtProvider.validateToken(id, subject, token);
+    public boolean validateToken(String token) {
+        return jwtProvider.validateToken(token);
     }
 
     public AccessToken refreshToken(Long id, String subject) {

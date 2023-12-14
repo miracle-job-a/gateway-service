@@ -63,7 +63,7 @@ public class JwtProvider {
                 .compact();
     }
 
-    public boolean validateToken(Long id, String subject, String token) {
+    public boolean validateToken(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(key)
@@ -71,19 +71,17 @@ public class JwtProvider {
                     .parseClaimsJws(token)
                     .getBody();
 
-            Long parsedId = claims.get("id", Long.class);
-            String parsedSub = claims.getSubject();
             Date expirationDate = claims.getExpiration();
             Date now = new Date();
 
-            return Objects.equals(parsedId, id) && Objects.equals(parsedSub, subject) && now.before(expirationDate);
+            return now.before(expirationDate);
         } catch (Exception e) {
             return false;
         }
     }
 
     public String refreshAccessToken(Long id, String subject, String refreshToken) {
-        if (validateToken(id, subject, refreshToken)) {
+        if (validateToken(refreshToken)) {
             return createAccessToken(id, subject);
         }
 

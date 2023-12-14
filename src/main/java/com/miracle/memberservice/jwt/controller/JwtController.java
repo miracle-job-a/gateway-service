@@ -27,13 +27,9 @@ public class JwtController {
     }
 
     @PostMapping("/validate")
-    public ResponseEntity<Boolean> validateToken(@RequestBody TokenRequestDto dto) {
-        Long id = dto.getId();
-        String memberType = dto.getMemberType();
-        String email = dto.getEmail();
-        String token = dto.getToken();
-
-        Boolean valid = jwtService.validateToken(id, memberType, email, token);
+    public ResponseEntity<Boolean> validateToken(@RequestBody AccessToken accessToken) {
+        String token = accessToken.getToken();
+        Boolean valid = jwtService.validateToken(token);
         return ResponseEntity.ok(valid);
     }
 
