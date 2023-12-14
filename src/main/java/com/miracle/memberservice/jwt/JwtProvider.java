@@ -27,9 +27,9 @@ public class JwtProvider {
         this.refreshTokenValidityInSeconds = refreshTokenValidityInSeconds;
     }
 
-    public Map<String, String> createTokens(Long id, String subject) {
-        String accessToken = createAccessToken(id, subject);
-        String refreshToken = createRefreshToken(id, subject);
+    public Map<String, String> createTokens(String subject, Map<String, Object> claims) {
+        String accessToken = createAccessToken(subject, claims);
+        String refreshToken = createRefreshToken(subject, claims);
 
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
@@ -37,36 +37,36 @@ public class JwtProvider {
         return tokens;
     }
 
-    public String createAccessToken(Long id, String subject) {
+    public String createAccessToken(String subject, Map<String, Object> claims) {
         LocalDateTime localDateTime = LocalDateTime.now();
         Date now = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
         Date expirationDate = Date.from(localDateTime.plusSeconds(accessTokenValidityInSeconds).atZone(ZoneId.systemDefault()).toInstant());
 
-        JwtBuilder jwtBuilder = baseJwtBuilder(id, subject);
+        JwtBuilder jwtBuilder = baseJwtBuilder(subject, claims);
         return jwtBuilder
                 .setIssuedAt(now)
                 .setExpiration(expirationDate)
                 .compact();
     }
 
-    public String createRefreshToken(Long id, String subject) {
+    public String createRefreshToken(String subject, Map<String, Object> claims) {
         LocalDateTime localDateTime = LocalDateTime.now();
         Date now = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
         Date expirationDate = Date.from(localDateTime.plusSeconds(refreshTokenValidityInSeconds).atZone(ZoneId.systemDefault()).toInstant());
 
-        JwtBuilder jwtBuilder = baseJwtBuilder(id, subject);
+        JwtBuilder jwtBuilder = baseJwtBuilder(subject, claims);
         return jwtBuilder
                 .setIssuedAt(now)
                 .setExpiration(expirationDate)
                 .compact();
     }
 
-    private JwtBuilder baseJwtBuilder(Long id, String subject) {
+    private JwtBuilder baseJwtBuilder(String subject, Map<String, Object> claims) {
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setSubject(subject)
-                .claim("id", id)
-                .signWith(key, SignatureAlgorithm.HS512);
+                .signWith(key, SignatureAlgorithm.HS512)
+                .addClaims(claims);
     }
 
     public boolean validateToken(String token) {
@@ -86,9 +86,9 @@ public class JwtProvider {
         }
     }
 
-    public String refreshAccessToken(Long id, String subject, String refreshToken) {
+    public String refreshAccessToken(String refreshToken, String subject, Map<String, Object> claims) {
         if (validateToken(refreshToken)) {
-            return createAccessToken(id, subject);
+            return createAccessToken(subject, claims);
         }
 
         throw new InvalidTokenException();

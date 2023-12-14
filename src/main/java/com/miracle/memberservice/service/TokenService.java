@@ -2,18 +2,20 @@ package com.miracle.memberservice.service;
 
 import com.miracle.memberservice.jwt.domain.AccessToken;
 
+import java.util.Map;
+
 public interface TokenService {
 
     /**
      * Create access-token
      *
-     * @param clientId   Client ID
      * @param memberType Client type in (user, company, admin)
      * @param email      Client email
+     * @param claims     Claims to add
      * @return Return access-token
      * @author chocola
      */
-    AccessToken createToken(Long clientId, String memberType, String email);
+    AccessToken createToken(String memberType, String email, Map<String, Object> claims);
 
     /**
      * Validate token

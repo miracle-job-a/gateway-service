@@ -5,6 +5,8 @@ import com.miracle.memberservice.jwt.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @RequiredArgsConstructor
 @Service
 public class TokenServiceImpl implements TokenService {
@@ -12,8 +14,8 @@ public class TokenServiceImpl implements TokenService {
     private final JwtService jwtService;
 
     @Override
-    public AccessToken createToken(Long clientId, String memberType, String email) {
-        return jwtService.createToken(clientId, memberType, email);
+    public AccessToken createToken(String memberType, String email, Map<String, Object> claims) {
+        return jwtService.createToken(memberType, email, claims);
     }
 
     @Override

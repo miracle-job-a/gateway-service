@@ -4,10 +4,14 @@ import com.miracle.memberservice.dto.response.ApiResponse;
 import com.miracle.memberservice.jwt.domain.AccessToken;
 import com.miracle.memberservice.jwt.dto.TokenRequestDto;
 import com.miracle.memberservice.jwt.service.JwtService;
+import com.miracle.memberservice.util.Const;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/v1/jwt")
@@ -21,8 +25,17 @@ public class JwtController {
         Long id = dto.getId();
         String memberType = dto.getMemberType();
         String email = dto.getEmail();
+        String bno = dto.getBno();
 
-        AccessToken token = jwtService.createToken(id, memberType, email);
+        AccessToken token;
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("id", id);
+
+        if (Const.RequestHeader.COMPANY.equals(memberType)) {
+            claims.put("bno", bno);
+        }
+
+        token = jwtService.createToken(memberType, email, claims);
         return ResponseEntity.status(HttpStatus.CREATED).body(token);
     }
 

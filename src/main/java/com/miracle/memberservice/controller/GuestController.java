@@ -108,11 +108,12 @@ public class GuestController {
         Long id = pmwm.getId();
         if (id != null) {
             String email = pmwm.getEmail();
+            String bno = pmwm.getNameOrBno();
             session.setAttribute("id", id);
             session.setAttribute("email", email);
-            session.setAttribute("bno", pmwm.getNameOrBno());
+            session.setAttribute("bno", bno);
 
-            addJwtInCookie(id, Const.RequestHeader.COMPANY, email, response);
+            addJwtInCookie(response, Const.RequestHeader.COMPANY, email, Map.of("id", id, "bno", bno));
         }
 
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
@@ -130,7 +131,7 @@ public class GuestController {
             session.setAttribute("email", email);
             session.setAttribute("name", pmwm.getNameOrBno());
 
-            addJwtInCookie(id, Const.RequestHeader.USER, email, response);
+            addJwtInCookie(response, Const.RequestHeader.USER, email, Map.of("id", id));
         }
         if (Objects.nonNull(loginDto.getPostId())) {
             redirectAttributes.addAttribute("companyId", loginDto.getCompanyId());
@@ -152,15 +153,15 @@ public class GuestController {
             session.setAttribute("id", id);
             session.setAttribute("email", email);
 
-            addJwtInCookie(id, Const.RequestHeader.ADMIN, email, response);
+            addJwtInCookie(response, Const.RequestHeader.ADMIN, email, Map.of("id", id));
         }
 
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pageName;
     }
 
-    private void addJwtInCookie(Long id, String memberType, String email, HttpServletResponse response) {
-        AccessToken tokenDto = tokenService.createToken(id, memberType, email);
+    private void addJwtInCookie(HttpServletResponse response, String memberType, String email, Map<String, Object> claims) {
+        AccessToken tokenDto = tokenService.createToken(memberType, email, claims);
         Cookie cookie = new Cookie("token", tokenDto.getToken());
         cookie.setMaxAge(60);
         cookie.setPath("/");

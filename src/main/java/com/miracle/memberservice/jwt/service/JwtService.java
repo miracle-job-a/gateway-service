@@ -17,13 +17,12 @@ public class JwtService {
     private final JwtRepository jwtRepository;
     private final JwtProvider jwtProvider;
 
-    public AccessToken createToken(Long id, String memberType, String email) {
-        Objects.requireNonNull(id, "Id is null");
+    public AccessToken createToken(String memberType, String email, Map<String, Object> claims) {
         Objects.requireNonNull(memberType, "Member type is null");
         Objects.requireNonNull(email, "Email is null");
 
         String subject = memberType + ":" + email;
-        Map<String, String> tokens = jwtProvider.createTokens(id, subject);
+        Map<String, String> tokens = jwtProvider.createTokens(subject, claims);
 
         String accessToken = tokens.get("accessToken");
         String refreshToken = tokens.get("refreshToken");
@@ -35,9 +34,9 @@ public class JwtService {
         return jwtProvider.validateToken(token);
     }
 
-    public AccessToken refreshToken(Long id, String subject) {
+    public AccessToken refreshToken(String subject, Map<String, Object> claims) {
         String refreshToken = jwtRepository.get(subject).orElse(new RefreshToken("")).getToken();
-        String refreshedAccessToken = jwtProvider.refreshAccessToken(id, subject, refreshToken);
+        String refreshedAccessToken = jwtProvider.refreshAccessToken(refreshToken, subject, claims);
         return new AccessToken(refreshedAccessToken);
     }
 }
