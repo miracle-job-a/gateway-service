@@ -18,12 +18,13 @@
                 var title = detail.title;
 
                 // 동적으로 HTML 생성 또는 추가 작업 수행
-                var html = '<div class="input-group m-1 career">';
+                var html = '<div class="input-group my-1 career mx-auto">';
                 html += '<input type="date" readonly class="form-control" name="career_start_date_' + index + '" value="' + startDateStr + '" />';
                 html += '<input type="date" readonly class="form-control" name="career_end_date_' + index + '" value="' + endDateStr + '" />';
                 html += '<input type="text" readonly class="form-control" name="career_title_' + index + '" value="' + title + '" />';
-                html += '<input type="hidden" name="careerDetailList" value="' + startDateStr + ' ' + endDateStr + ' ' + title + '" />';
                 html += '</div>';
+                html += '<input type="hidden" name="careerDetailList" value="' + startDateStr + ' ' + endDateStr + ' ' + title + '" />';
+
 
                 document.getElementById('field1').insertAdjacentHTML('beforeend', html);
 
@@ -144,7 +145,7 @@
             var resumeId = button.getAttribute('data-delete-id');
             var confirmResult = confirm("수정 취소 하시겠습니까?")
 
-            if (confirmResult) {
+            if (confirmResult){
                 window.location.href = '/v1/user/resume/detail/' + resumeId;
             } else {
 
@@ -172,7 +173,7 @@
             window.history.back();
         }
 
-        function enableEditing() {
+        function enableEditing(){
             $('.btn').removeClass('visually-hidden');
             $('#submitEdit').css('display', 'block');
             $('#cancelBtn').css('display', 'block');
@@ -187,15 +188,15 @@
             $('#career_start_date').removeAttr('readonly');
             $('#career_end_date').removeAttr('readonly');
             $('#career_title').removeAttr('readonly');
+            $('#project').removeAttr('readonly');
+            $('#etc').removeAttr('readonly');
             $('.editStacks').css('display', 'inline-block');
             $('.editJobs').css('display', 'inline-block');
-            $('#warning').css('display', 'block');
-            $('#jobs').each(function () {
-                $(this).css('display', 'none');
-            });
-            $('#stacks').each(function () {
-                $(this).css('display', 'none');
-            });
+            $('#jobHr').css('display', 'inline-block');
+            $('#jobLabel').css('display', 'inline-block');
+            $('#stackHr').css('display', 'inline-block');
+            $('#stackLabel').css('display', 'inline-block');
+
             $('.bi-person-workspace').prev('input[type="checkbox"]').prop('checked', true);
             $('.pre_set input[type="date"], .pre_set input[type="text"]').removeAttr('readonly');
             $('#item2 input[type="text"]').removeAttr('readonly');
@@ -214,10 +215,10 @@
                 document.getElementById('education').value,
                 document.getElementById('gitLink').value,
                 document.getElementById('career_title').value,
-                ...Array.from(document.getElementsByClassName('project')).map(function (element) {
+                ...Array.from(document.getElementsByClassName('project')).map(function(element) {
                     return element.value;
                 }),
-                ...Array.from(document.getElementsByClassName('etc')).map(function (element) {
+                ...Array.from(document.getElementsByClassName('etc')).map(function(element) {
                     return element.value;
                 })
             ];
@@ -234,7 +235,7 @@
             return true;
         }
 
-        function validateForm() {
+        function validateForm(){
 
             // 빈칸 경고
             var careerInput = document.getElementById('careerCal');
@@ -298,262 +299,257 @@
                 <div class="row justify-content-center">
                     <!-- 전체 박스 크기 -->
                     <div class="col-lg-9 col-12">
-                        <div class="section-title-wrap mb-5">
+                        <div class="section-title-wrap mb-3">
                             <h4 class="section-title">이력서</h4>
                         </div>
 
-                        <form th:action="@{'/v1/user/resume/update/' + ${resume.id}}" method="post"
-                              role="form" class="row align-self-center col-12"
-                              onsubmit="return validateForm()" enctype="multipart/form-data">
+                        <div class="row justify-content-center">
+                            <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form mb-5">
 
-                            <div class="row justify-content-center">
-                                <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
-
-                                    <div class="card mt-4 p-4 col-11 post-form align-self-center">
-                                        <label for="title">제목</label>
-                                        <input type="text" readonly name="title" id="title"
-                                               class="form-control" placeholder="이력서 제목" th:value="${resume.title}"
-                                               required=""/>
-                                    </div>
+                                <form th:action="@{'/v1/user/resume/update/' + ${resume.id}}" method="post"
+                                      role="form" onsubmit="return validateForm()" enctype="multipart/form-data">
                                     <!-- 유저의 기본 정보 -->
-                                    <div class="card mt-4 p-4 col-11 post-form align-self-center">
+                                    <div class="card mt-4 col-11 post-form align-self-center mx-auto">
                                         <div class="row">
-                                            <input type="file" id="fileInput" name="file" class="mt-3"
-                                                   style="position:absolute;z-index:2; color: transparent;display:none;"
-                                                   onchange="readURL(this);"/>
+                                            <!-- s3 사진 적용 부분-->
 
-                                            <input type="hidden" name="photo" th:value="${resume.photo}"/>
+
+                                            <!--<input type="hidden" name="photo" th:value="${resume.photo}"/>
                                             <div class="col-lg-4 col-12 d-flex align-items-center justify-content-center">
-                                                <div class="custom-block-icon-wrap d-flex align-items-center">
+                                                <div class="custom-block-icon-wrap col-12 d-flex align-items-center">
                                                     <div class="custom-block-image-wrap custom-block-image-detail-page d-flex align-items-center" >
                                                         <img th:src="'https://miracle-job-a.s3.ap-northeast-2.amazonaws.com/resume/'+${resume.photo}"
                                                              class="custom-block-image img-fluid" alt="" id="originalPhoto">
                                                         <img id="preview" class="custom-block-image img-fluid" style="display:none;"/>
                                                     </div>
                                                 </div>
-                                            </div>
-
-                                            <!--<div class="col-lg-2 col-12 align-self-auto"></div>-->
-                                            <div class="col-lg-6 col-12 ps-5 pe-5 align-self-center">
-
-                                                <div class="mb-3 row">
-                                                    <label for="name" class="col-sm-3 col-form-label">이름</label>
-                                                    <div class="col-sm-9">
-                                                        <input type="text" readonly
-                                                               class="form-control-plaintext text-center"
-                                                               style="font-size: 18px;"
-                                                               id="name" th:value="${info.name}">
-                                                    </div>
+                                                <div class="col-md-4 col-12 mx-auto">
+                                                    <input type="file" id="fileInput" name="file" class="mt-3"
+                                                           style="position:absolute;z-index:2; color: transparent;display:none;"
+                                                           onchange="readURL(this);"/>
                                                 </div>
+                                            </div>-->
 
-                                                <div class="mb-3 row">
-                                                    <label for="email" class="col-sm-3 col-form-label">이메일</label>
-                                                    <div class="col-sm-9">
-                                                        <input type="email" readonly
-                                                               class="form-control-plaintext text-center"
-                                                               style="font-size: 18px;"
-                                                               id="email" th:value="${info.email}">
-                                                    </div>
-                                                </div>
-
-                                                <div class="mb-3 row">
-                                                    <label for="birth" class="col-sm-3 col-form-label">생년월일</label>
-                                                    <div class="col-sm-9">
-                                                        <input type="date" readonly
-                                                               class="form-control-plaintext text-center"
-                                                               style="font-size: 18px;"
-                                                               id="birth" th:value="${info.birth}">
-                                                    </div>
-                                                </div>
-
-                                            <div class="mb-3 row">
-                                                <label for="phone" class="col-sm-3 col-form-label">전화번호</label>
-                                                <div class="col-sm-9">
-                                                    <input type="tel" readonly class="form-control-plaintext text-center"
-                                                           id="phone" th:value="${info.phone}">
+                                            <input type="hidden" name="photo" th:value="${resume.photo}"/>
+                                            <div class="col-lg-4 col-12 px-2 align-self-auto">
+                                                <input type="file" id="fileInput" name="file" class="my-1"
+                                                       style="display:none;"
+                                                       required
+                                                       onchange="readURL(this);"/>
+                                                <div class="custom-block-image-wrap custom-block-image-detail-page d-flex align-items-center">
+                                                    <img th:src="'https://miracle-job-a.s3.ap-northeast-2.amazonaws.com/resume/'+${resume.photo}"
+                                                         class="custom-block-image img-fluid" alt="" id="originalPhoto">
+                                                    <img id="preview" class="custom-block-image img-fluid" style="display:none;">
                                                 </div>
                                             </div>
 
+                                            <!-- <div class="col-lg-4 col-12 ps-5 pe-5 align-self-auto">
+                                                <img src="/images/niniz.png" class="rounded float-start" alt="templatemo pod talk">
+                                            </div> -->
+
+                                            <!-- info -->
+                                            <div class="col-lg-8 col-12 ps-5 pe-5 align-self-center mx-auto">
+
                                                 <div class="mb-3 row">
-                                                    <label for="address" class="col-sm-3 col-form-label">주소</label>
-                                                    <div class="col-sm-9">
-                                                        <input type="tel" readonly
-                                                               class="form-control-plaintext text-center"
-                                                               style="font-size: 18px;"
-                                                               id="address" th:value="${info.address}">
+                                                    <label for="name" class="col-sm-3 col-4 col-form-label mx-auto">이름</label>
+                                                    <div class="col-sm-9 col-8 mx-auto">
+                                                        <input type="text" readonly="" class="form-control-plaintext text-center mx-auto" style="font-size: 18px;" id="name" th:value="${info.name}">
+                                                    </div>
+                                                </div>
+
+                                                <div class="mb-3 row">
+                                                    <label for="email" class="col-sm-3 col-3 col-form-label mx-auto">이메일</label>
+                                                    <div class="col-sm-9 col-9 mx-auto">
+                                                        <input type="email" readonly="" class="form-control-plaintext text-center mx-auto" style="font-size: 18px;" id="email" th:value="${info.email}">
+                                                    </div>
+                                                </div>
+
+                                                <div class="mb-3 row">
+                                                    <label for="birth" class="col-sm-3 col-4 col-form-label mx-auto">생년월일</label>
+                                                    <div class="col-sm-9 col-8 mx-auto">
+                                                        <input type="text" readonly="" class="form-control-plaintext text-center" style="font-size: 18px;" id="birth" th:value="${info.birth}">
+                                                    </div>
+                                                </div>
+
+                                                <div class="mb-3 row">
+                                                    <label for="phone" class="col-sm-3 col-4 col-form-label mx-auto">전화번호</label>
+                                                    <div class="col-sm-9 col-8 mx-auto">
+                                                        <input type="tel" readonly="" class="form-control-plaintext text-center" id="phone" th:value="${info.phone}">
+                                                    </div>
+                                                </div>
+
+                                                <div class="mb-3 row">
+                                                    <label for="address" class="col-sm-3 col-4 col-form-label mx-auto">주소</label>
+                                                    <div class="col-sm-9 col-8 mx-auto">
+                                                        <input type="tel" readonly="" class="form-control-plaintext text-center" style="font-size: 18px;" id="address" th:value="${info.address}">
                                                     </div>
                                                 </div>
 
                                             </div>
-                                            <label id="warning" style="display: none" class="text-warning">(새로운 사진이 적용되는데 시간이 다소 소요될 수 있습니다.)</label>
                                         </div>
-
+                                        <label id="warning" style="display: none" class="text-warning">(새로운 사진이 적용되는데 시간이 다소 소요될 수 있습니다.)</label>
+                                        <hr>
                                     </div>
 
                                     <!-- 이력서 생성 폼 시작 -->
-                                    <div class="card mt-4 mb-4 p-4 col-11 post-form align-self-center">
+                                    <div class="card mb-4 col-11 post-form align-self-center mx-auto">
 
-
-                                        <div class="card mt-3 p-3 col-12 post-form align-self-center">
-                                            <div class="mb-1">
-                                                <label for="job">개발 가능한 직무</label>
-                                            </div>
-                                            <div th:each="job : ${totalJobs}" class="editJobs" style="display: none;">
-                                                <input class="form-check-input" type="checkbox" th:id="'job'+${job.id}"
-                                                       name="jobIdSet"
-                                                       th:value="${job.id}" th:checked="${jobs.contains(job)}" checked/>
-                                                <label class="form-check-label" th:text="${job.name}"></label>
-                                                <br/>
-                                            </div>
-                                            <div id="jobs">
-                                                <div th:each="job : ${jobs}" style="display: inline-block;">
-                                                    <label class="form-check-label bi-person-workspace"
-                                                           th:text="'  '+${job.name}"></label>
-                                                    <br/>
+                                        <div class="card px-3 col-12 post-form align-self-center">
+                                            <div class="col-12 mt-1">
+                                                <div class="mb-1">
+                                                    <label for="title" >제목</label>
                                                 </div>
+                                                <input type="text" readonly name="title" id="title"
+                                                       class="form-control" placeholder="이력서 제목" th:value="${resume.title}" required="" />
                                             </div>
-                                        </div>
-                                        <div class="card mt-3 p-3 col-12 post-form align-self-center">
-                                            <div class="mb-1">
-                                                <label for="stack">보유한 기술 스택</label>
-                                            </div>
-                                            <div th:each="stack : ${totalStacks}" class="editStacks"
-                                                 style="display: none;">
-                                                <input class="form-check-input" type="checkbox"
-                                                       th:id="'stack'+${stack.id}"
-                                                       name="stackIdSet"
-                                                       th:value="${stack.id}" th:checked="${stacks.contains(stack)}"
-                                                       checked/>
-                                                <label class="form-check-label" th:text="${stack.name}"></label>
-                                                <br/>
-                                            </div>
-                                            <div id="stacks">
-                                                <div th:each="stack : ${stacks}" style="display: inline-block;">
-                                                    <label class="form-check-label bi-view-stacked"
-                                                           th:text="'  '+${stack.name}"></label>
-                                                    <br/>
+
+                                            <div class="col-12 mt-3">
+                                                <div class="mb-1">
+                                                    <label for="education">최종학력</label>
                                                 </div>
+                                                <input type="text" readonly name="education" id="education"
+                                                       class="form-control" placeholder="최종학력을 기입해주세요." th:value="${resume.education}" required="" />
                                             </div>
-                                        </div>
-                                        <div class="col-12 mt-2">
-                                            <h6></h6>
-                                        </div>
-                                        <div class="col-12 mt-2">
-                                            <div class="mb-1">
-                                                <label for="education">최종학력</label>
+                                            <div class="col-12 mt-3">
+                                                <div class="mb-1">
+                                                    <label for="gitLink">GitHub 주소</label>
+                                                </div>
+                                                <input type="url" readonly class="form-control" id="gitLink" name="gitLink" placeholder="http://www.github.com" th:value="${resume.gitLink}" size="30" required>
                                             </div>
-                                            <input type="text" readonly name="education" id="education"
-                                                   class="form-control" placeholder="최종학력을 기입해주세요."
-                                                   th:value="${resume.education}" required=""/>
-                                        </div>
-                                        <div class="col-12 mt-2">
-                                            <div class="mb-1">
-                                                <label for="gitLink">GitHub 주소</label>
-                                            </div>
-                                            <input type="url" readonly class="form-control" id="gitLink" name="gitLink"
-                                                   placeholder="http://www.github.com" th:value="${resume.gitLink}"
-                                                   size="30" required>
-                                        </div>
 
-                                        <div class="card mt-3 p-3 col-12 post-form align-self-center" id="item1">
-                                            <div class="mb-1">
-                                                <label for="careerDetail">경력사항</label>
-                                                <button class="btn m-2 visually-hidden" type="button"
-                                                        onclick="calculateAndSetCareer()">경력기간 계산
-                                                </button>
-                                                <input type="text" readonly class="form-control mt-2" name="careerNum"
-                                                       id="careerInput" th:value="'총 경력 : '+${resume.career}"/>
-                                                <input type="hidden" name="career" id="careerCal"
-                                                       th:value="${resume.career}"/>
-                                            </div>
-                                            <div class="pre_set" id="pre_set1">
-                                                <div class="field" id="field1"></div>
-                                            </div>
-                                        </div>
-                                        <input type="hidden" id="careerList" th:value="${resume.careerDetailList}"/>
-
-                                        <!-- 프로젝트 -->
-                                        <div class="card mt-3 p-3 col-12 post-form align-self-center" id="item2">
-                                            <div class="mb-1">
-                                                <label for="projectList">프로젝트</label>
-                                            </div>
-                                            <div class="pre_set" id="pre_set2">
-                                                <div th:each="project, iterStat : ${resume.projectList}">
-                                                    <div class="input-group m-1">
-                                                        <input type="text" readonly class="form-control" id="project"
-                                                               name="projectList" th:value="${project}"/>
+                                            <div class="card mt-3 col-12 mx-auto">
+                                                <div class="my-2 col-12">
+                                                    <label for="job">개발가능 직무</label>
+                                                </div>
+                                                <div class="custom-card-border row my-1 py-2 px-1 ">
+                                                    <div class="row mx-auto">
+                                                        <div th:each="job : ${totalJobs}" class="editJobs form-check col-md-4 col-6 mx-auto" style="display: none;">
+                                                            <input class="form-check-input" type="checkbox" th:id="'job'+${job.id}"
+                                                                   name="jobIdSet"
+                                                                   th:value="${job.id}" th:checked="${jobs.contains(job)}" checked/>
+                                                            <label class="form-check-label" th:text="${job.name}"></label>
+                                                            <br/>
+                                                        </div>
+                                                        <div class="col-12" id="jobHr" style="display: none;"><hr></div>
+                                                        <div class="col-12" id="jobLabel" style="display: none;">
+                                                            <label class="my-2">이력서에 기입되었던 직무</label>
+                                                        </div>
+                                                        <div th:each="job : ${jobs}" id="jobs" class="col-md-4 col-12" style="display: inline-block;">
+                                                            <label class="form-check-label bi-person-workspace" th:text="'  '+${job.name}"></label>
+                                                            <br/>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <!-- 기타사항 -->
-                                        <div class="card mt-3 mb-3 p-3 col-12 post-form align-self-center" id="item3">
-                                            <div class="mb-1">
-                                                <label for="etcList">기타사항</label>
-                                            </div>
-                                            <div class="pre_set" id="pre_set3">
-                                                <div th:each="etc, iterStat : ${resume.etcList}">
-                                                    <div class="input-group m-1">
-                                                        <input type="text" readonly class="form-control" id="etc"
-                                                               name="etcList" th:value="${etc}"/>
+                                            <div class="card mt-3 col-12 mx-auto">
+                                                <div class="my-2 col-12">
+                                                    <label for="stack">기술스택</label>
+                                                </div>
+                                                <div class="custom-card-border row my-1 py-2 px-1 ">
+                                                    <div class="row mx-auto">
+                                                        <div th:each="stack : ${totalStacks}" class="editStacks form-check col-md-3 col-6 mx-auto" style="display: none;">
+                                                            <input class="form-check-input" type="checkbox" th:id="'stack'+${stack.id}"
+                                                                   name="stackIdSet"
+                                                                   th:value="${stack.id}" th:checked="${stacks.contains(stack)}" checked/>
+                                                            <label class="form-check-label" th:text="${stack.name}"></label>
+                                                            <br/>
+                                                        </div>
+                                                        <div class="col-12" id="stackHr" style="display: none;"><hr></div>
+                                                        <div class="col-12" id="stackLabel" style="display: none;">
+                                                            <label class="my-2">이력서에 기입되었던 기술스택</label>
+                                                        </div>
+                                                        <div th:each="stack : ${stacks}" id="stacks" class="col-md-3 col-6 " style="display: inline-block;">
+                                                            <label class="form-check-label bi-view-stacked " th:text="'  '+${stack.name}"></label>
+                                                            <br/>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+
+
+                                            <div class="card mt-4 col-12 mx-auto" id="item1">
+                                                <div class="mb-1 col-12">
+                                                    <label for="careerCal">경력사항</label>
+                                                    <button class="btn m-2 rounded-pill visually-hidden" type="button" onclick="calculateAndSetCareer()">경력기간 계산</button>
+                                                    <input type="text" readonly class="form-control mt-2" name="careerNum" id="careerInput" th:value="'총 경력 : '+${resume.career}" />
+                                                    <input type="hidden" name="career" id="careerCal" th:value="${resume.career}"/>
+                                                </div>
+                                                <div class="pre_set" id="pre_set1">
+                                                    <div class="field" id="field1"></div>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" id="careerList" th:value="${resume.careerDetailList}" />
+
+                                            <!-- 프로젝트 -->
+                                            <div class="card mt-3 col-12 align-self-center" id="item2">
+                                                <div class="mb-1 col-12">
+                                                    <label for="projectList">프로젝트</label>
+                                                </div>
+                                                <div class="pre_set" id="pre_set2">
+                                                    <div th:each="project, iterStat : ${resume.projectList}">
+                                                        <div class="input-group my-1">
+                                                            <input type="text" readonly class="form-control" id="project" name="projectList" th:value="${project}" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- 기타사항 -->
+                                            <div class="card my-3 col-12 align-self-center" id="item3">
+                                                <div class="mb-1 col-12">
+                                                    <label for="etcList">기타사항</label>
+                                                </div>
+                                                <div class="pre_set" id="pre_set3">
+                                                    <div th:each="etc, iterStat : ${resume.etcList}">
+                                                        <div class="input-group my-1">
+                                                            <input type="text" readonly class="form-control" id="etc" name="etcList" th:value="${etc}" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="col-12 mt-2 mb-4">
+                                                <hr>
+                                                <div class="mb-1 col-12">
+                                                    <label for="open">이력서 공개여부</label>
+                                                </div>
+                                                <select class="form-select" aria-label="Default select example" id="open" name="open" th:field="${resume.open}" disabled>
+                                                    <option th:value="true" th:selected="${resume.open} == true">공개</option>
+                                                    <option th:value="false" th:selected="${resume.open} == false">비공개</option>
+                                                </select>
+                                            </div>
+
+
+
+                                            <div class="row col-12 mx-auto">
+                                                <div class="col-4 pt-4 m-auto justify-content-center">
+                                                    <button type="button" class="form-control" th:attr="data-delete-id=${resume.id}" id="cancelBtn" onclick="cancelEditing(this)" style="display:none;">취소</button>
+                                                    <button type="button" class="form-control" id="back" onclick="goBack()">돌아가기</button>
+                                                </div>
+                                                <div class="col-4 pt-4 m-auto justify-content-center">
+                                                    <button type="button" class="form-control" th:attr="data-resume-id=${resume.id}" onclick="confirmDelete(this)">삭제하기</button>
+                                                </div>
+                                                <div class="col-4 pt-4 m-auto justify-content-center">
+                                                    <button type="button"  class="form-control" id="editBtn" onclick="enableEditing()">수정하기</button>
+                                                    <button type="submit" class="form-control" id="submitEdit" onclick="validateForm()" style="display:none;">수정완료</button>
+                                                </div>
+                                            </div>
                                         </div>
-
-
-                                        <div class="col-12 mt-2 mb-4">
-                                            <div class="mb-1">
-                                                <label for="open">이력서 공개여부</label>
-                                            </div>
-                                            <select class="form-select" aria-label="Default select example" id="open"
-                                                    name="open" th:field="${resume.open}" disabled>
-                                                <option th:value="true" th:selected="${resume.open == true}">공개</option>
-                                                <option th:value="false" th:selected="${resume.open == false}">비공개
-                                                </option>
-                                            </select>
-                                        </div>
-
-
-                                        <div class="row col-12">
-                                            <div class="col-4 pt-4 m-auto justify-content-center">
-                                                <button type="button" class="form-control" id="editBtn"
-                                                        onclick="enableEditing()">수정하기
-                                                </button>
-                                                <button type="submit" class="form-control" id="submitEdit"
-                                                        onclick="validateForm()" style="display:none;">수정완료
-                                                </button>
-                                            </div>
-                                            <div class="col-4 pt-4 m-auto justify-content-center">
-                                                <button type="button" class="form-control"
-                                                        th:attr="data-resume-id=${resume.id}"
-                                                        onclick="confirmDelete(this)">삭제하기
-                                                </button>
-                                            </div>
-                                            <div class="col-4 pt-4 m-auto justify-content-center">
-                                                <button type="button" class="form-control"
-                                                        th:attr="data-delete-id=${resume.id}" id="cancelBtn"
-                                                        onclick="cancelEditing(this)" style="display:none;">취소
-                                                </button>
-                                                <button type="button" class="form-control" id="back" onclick="goBack()">
-                                                    돌아가기
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-
-                                </div>
+                                </form>
                             </div>
-                        </form>
-                    </div>
 
+
+                        </div>
+                    </div>
                 </div>
+
             </div>
-        </section>
-    </main>
+</div>
+</section>
+</main>
 </div>
 
 </html>
