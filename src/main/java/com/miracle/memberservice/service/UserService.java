@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -238,18 +239,30 @@ public class UserService {
         return new PageMoveWithMessage("company/applicant-list", ApiResponseToList.applicantList(response.getData()));
     }
 
-    public PageMoveWithMessage getUserJoinCountByMonth(HttpSession session, LocalDate date) {
-        ApiResponse response = ServiceCall.getParamList(session, Const.RequestHeader.USER, "/user", date);
+    public PageMoveWithMessage getUserJoinCountByDay(HttpSession session, int year, int month) {
+        ApiResponse response = ServiceCall.getParamListForCount(session, Const.RequestHeader.USER, "/user");
+        if (response.getHttpStatus() != 200) {
+            return new PageMoveWithMessage("admin/main", response.getMessage());
+        }
 
-        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("admin/main", response.getMessage());
+        List<List<LinkedHashMap<String, Object>>> userData = (List<List<LinkedHashMap<String, Object>>>) response.getData();
 
-        Map<Integer, Long> userJoinCountByMonth = ApiResponseToList.getUserJoinCountByMonth((List<List<LinkedHashMap<String, Object>>>) response.getData());
+        List<LinkedHashMap<String, Object>> filteredUserData = userData.stream()
+                .flatMap(List::stream)
+                .filter(user -> {
+                    String joinDate = (String) user.get("joinDate");
+                    LocalDate userJoinDate = LocalDate.parse(joinDate);
+                    return userJoinDate.getYear() == year && userJoinDate.getMonthValue() == month;
+                })
+                .collect(Collectors.toList());
+
+        Map<Integer, Long> userJoinCountByDay = ApiResponseToList.getUserJoinCountByDay(Collections.singletonList(filteredUserData), year, month);
+
         List<List<Object>> chartData = new ArrayList<>();
-
-        for (Map.Entry<Integer, Long> entry : userJoinCountByMonth.entrySet()) {
+        for (Map.Entry<Integer, Long> entry : userJoinCountByDay.entrySet()) {
             chartData.add(Arrays.asList(entry.getKey(), entry.getValue()));
         }
 
-        return new PageMoveWithMessage("admin/user-join-count", userJoinCountByMonth);
+        return new PageMoveWithMessage("admin/user-join-count", userJoinCountByDay);
     }
 }
