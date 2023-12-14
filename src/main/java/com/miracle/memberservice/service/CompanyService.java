@@ -394,25 +394,26 @@ public class CompanyService {
     }
 
     public PageMoveWithMessage getTodayPostCount(int year, int month, HttpSession session) {
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/posts/" + year + "/" + month + "/today");
+        ApiResponse response = ServiceCall.getParams(session, Const.RequestHeader.COMPANY, "/company/posts/today", year, month);
         if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("admin/main", response.getMessage());
         } else {
             List<Map<String, Object>> postData = (List<Map<String, Object>>) response.getData();
 
-            Map<Integer, Integer> monthCounts = new HashMap<>();
+            Map<Integer, Integer> dayCounts = new HashMap<>();
 
             for (Map<String, Object> post : postData) {
                 LocalDateTime createdAt = LocalDateTime.parse((CharSequence) post.get("createdAt"));
-                int monthh = createdAt.getMonthValue();
-                monthCounts.put(monthh, monthCounts.getOrDefault(monthh, 0) + 1);
+                int dayOfMonth = createdAt.getDayOfMonth();
+                dayCounts.put(dayOfMonth, dayCounts.getOrDefault(dayOfMonth, 0) + 1);
             }
 
             List<List<Integer>> formattedData = new ArrayList<>();
-            for (int i = 1; i <= 12; i++) {
-                formattedData.add(List.of(i, monthCounts.getOrDefault(i, 0)));
+            for (int i = 1; i <= 31; i++) {
+                formattedData.add(List.of(i, dayCounts.getOrDefault(i, 0)));
             }
             return new PageMoveWithMessage("admin/today-post-chart", formattedData);
         }
     }
+
 }
