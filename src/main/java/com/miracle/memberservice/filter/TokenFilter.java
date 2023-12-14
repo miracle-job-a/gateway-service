@@ -6,7 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.springframework.util.AntPathMatcher;
 
-import javax.servlet.*;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -15,7 +17,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-public class TokenFilter implements Filter {
+public class TokenFilter extends HttpFilter {
 
     private static final String HEADER_AUTHORIZATION = "Authorization";
 
@@ -29,15 +31,15 @@ public class TokenFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        httpServletRequest = request;
+        httpServletResponse = response;
+
         String uri = httpServletRequest.getRequestURI();
         if (isExcluded(uri)) {
             chain.doFilter(request, response);
             return;
         }
-
-        httpServletRequest = (HttpServletRequest) request;
-        httpServletResponse = (HttpServletResponse) response;
 
         String bearerToken = getBearerToken();
         if (!tokenService.validateToken(bearerToken)) {
