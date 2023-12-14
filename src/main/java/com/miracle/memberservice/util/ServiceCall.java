@@ -59,6 +59,11 @@ public class ServiceCall {
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()), httpSession, serviceType).block();
     }
 
+    public static ApiResponse getParams(HttpSession httpSession, String serviceType, String url, int year, int month) {
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("year", year).queryParam("month", month).build()), httpSession, serviceType).block();
+    }
+
     public static ApiResponse getAnother(HttpSession httpSession, String serviceType, String url, Long userId) {
         return anotherHeaders(createWebClientBuilder(serviceType).build().get()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()), httpSession, serviceType, String.valueOf(userId)).block();
@@ -165,7 +170,8 @@ public class ServiceCall {
             case Const.RequestHeader.USER:
                 return "3.36.113.249:60001";
             case Const.RequestHeader.COMPANY:
-                return "13.125.211.61:60002";
+//                return "13.125.211.61:60002";
+                return "localhost:60002";
 
             case Const.RequestHeader.ADMIN:
                 return "3.36.98.12:60003";

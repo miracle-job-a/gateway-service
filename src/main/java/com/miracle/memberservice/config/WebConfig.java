@@ -1,5 +1,6 @@
 package com.miracle.memberservice.config;
 
+import com.miracle.memberservice.filter.AdminLoginCheckFilter;
 import com.miracle.memberservice.filter.CompanyLoginCheckFilter;
 import com.miracle.memberservice.filter.UserLoginCheckFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -36,7 +37,7 @@ public class WebConfig {
     public FilterRegistrationBean adminLogFilter() {
         FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<Filter>();
 
-        filterRegistrationBean.setFilter(new CompanyLoginCheckFilter()); // LogFilter 등록
+        filterRegistrationBean.setFilter(new AdminLoginCheckFilter()); // LogFilter 등록
         filterRegistrationBean.setOrder(3);
         filterRegistrationBean.addUrlPatterns("/v1/admin/*");
         return filterRegistrationBean;

@@ -371,7 +371,7 @@ public class CompanyService {
         if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("admin/main", response.getMessage());
         } else if (response.getData() instanceof Boolean && (Boolean) response.getData() == false) {
-            return new PageMoveWithMessage("admin/companyList", response.getMessage());
+            return new PageMoveWithMessage("admin/company-list", response.getMessage());
         } else {
             return new PageMoveWithMessage("redirect:/v1/admin/company/list/1/5");
         }
@@ -406,34 +406,33 @@ public class CompanyService {
                     chartData.add(Arrays.asList(type, entry.getValue()));
                 }
 
-                return new PageMoveWithMessage("admin/postChart", chartData);
+                return new PageMoveWithMessage("admin/post-chart", chartData);
             } else {
                 return new PageMoveWithMessage("admin/main", response.getMessage());
             }
         }
     }
 
-    public PageMoveWithMessage getTodayPostCount(int year, HttpSession session) {
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/posts/" + year + "/today");
-
+    public PageMoveWithMessage getTodayPostCount(int year, int month, HttpSession session) {
+        ApiResponse response = ServiceCall.getParams(session, Const.RequestHeader.COMPANY, "/company/posts/today", year, month);
         if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("admin/main", response.getMessage());
         } else {
             List<Map<String, Object>> postData = (List<Map<String, Object>>) response.getData();
 
-            Map<Integer, Integer> monthCounts = new HashMap<>();
+            Map<Integer, Integer> dayCounts = new HashMap<>();
 
             for (Map<String, Object> post : postData) {
                 LocalDateTime createdAt = LocalDateTime.parse((CharSequence) post.get("createdAt"));
-                int month = createdAt.getMonthValue();
-                monthCounts.put(month, monthCounts.getOrDefault(month, 0) + 1);
+                int dayOfMonth = createdAt.getDayOfMonth();
+                dayCounts.put(dayOfMonth, dayCounts.getOrDefault(dayOfMonth, 0) + 1);
             }
 
             List<List<Integer>> formattedData = new ArrayList<>();
-            for (int i = 1; i <= 12; i++) {
-                formattedData.add(List.of(i, monthCounts.getOrDefault(i, 0)));
+            for (int i = 1; i <= 31; i++) {
+                formattedData.add(List.of(i, dayCounts.getOrDefault(i, 0)));
             }
-            return new PageMoveWithMessage("admin/todayPostChart", formattedData);
+            return new PageMoveWithMessage("admin/today-post-chart", formattedData);
         }
     }
 
