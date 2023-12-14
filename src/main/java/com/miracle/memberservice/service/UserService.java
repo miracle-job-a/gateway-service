@@ -148,6 +148,7 @@ public class UserService {
                 .phone((String) data.get("phone"))
                 .education((String) data.get("education"))
                 .gitLink((String) data.get("gitLink"))
+                .open((Boolean) data.get("open"))
                 .jobIdSet((ArrayList<Integer>) data.get("jobIdSet"))
                 .stackIdSet((ArrayList<Integer>) data.get("stackIdSet"))
                 .careerDetailList((List<String>) data.get("careerDetailList"))
