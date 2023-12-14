@@ -71,7 +71,7 @@ public class MyPageService {
                 .userStackIdSet((ArrayList<Integer>) data.get("userStackIdSet"))
                 .userEducation((String) data.get("userEducation"))
                 .userGitLink((String) data.get("userGitLink"))
-                .photo(s3Method.getUrl(Const.RequestHeader.RESUME, (String) data.get("photo")))
+                .photo(s3Method.getUrl(Const.RequestHeader.RESUME, (String) data.get("userPhoto")))
                 .userCareerDetailList((List<String>) data.get("userCareerDetailList"))
                 .userProjectList((List<String>) data.get("userProjectList"))
                 .userEtcList((List<String>) data.get("userEtcList"))
