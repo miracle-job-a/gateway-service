@@ -220,5 +220,9 @@ public class CompanyController {
         return pmwm.getPageName();
     }
 
-
+    @GetMapping("/signout")
+    public String signoutCompany(HttpSession session) {
+        PageMoveWithMessage pmwm = companyService.signoutCompany(session);
+        return pmwm.getPageName();
+    }
 }

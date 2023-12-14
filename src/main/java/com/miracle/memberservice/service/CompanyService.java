@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -436,5 +435,16 @@ public class CompanyService {
             }
             return new PageMoveWithMessage("admin/todayPostChart", formattedData);
         }
+    }
+
+    public PageMoveWithMessage signoutCompany(HttpSession session) {
+        Long companyId = (Long) session.getAttribute("id");
+        String bno = (String) session.getAttribute("bno");
+        ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.COMPANY, "/company/" + companyId);
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("redirect:/v1/company/info");
+
+        s3Method.deleteFile(Const.RequestHeader.COMPANY, bno);
+        session.invalidate();
+        return new PageMoveWithMessage("redirect:/v1");
     }
 }

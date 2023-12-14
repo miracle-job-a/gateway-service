@@ -194,6 +194,16 @@
                 document.getElementById('preview').src = "";
             }
         }
+
+        function signoutCompany() {
+            var confirmResult = confirm("회원 탈퇴하시겠습니까?")
+
+            if (confirmResult) {
+                if(confirm(`정말로 탈퇴하시겠습니까?`)){
+                    location.href='/v1/company/signout';
+                }
+            }
+        }
     </script>
 
     <main>
@@ -311,7 +321,9 @@
 
                                             </div>
                                             <div class="col-4">
-
+                                                <button type="button" class="form-control" id="signoutBtn"
+                                                        onclick="signoutCompany()">회원 탈퇴하기
+                                                </button>
                                             </div>
                                             <div class="col-4">
                                                 <button type="submit" class="form-control" onclick="validateForm()">정보수정</button>
