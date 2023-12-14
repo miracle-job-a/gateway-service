@@ -129,21 +129,21 @@
             <div class="container">
                 <div class="row justify-content-center">
                     <!-- 전체 박스 크기 -->
-                    <div class="col-lg-9 col-12">
-                        <div class="section-title-wrap mb-5">
+                    <div class="col-lg-9 col-12 mb-5">
+                        <div class="section-title-wrap mb-3">
                             <h4 class="section-title">자기소개서</h4>
                         </div>
 
-                        <div class="row justify-content-center">
+                        <div class="row justify-content-center mb-5">
                             <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
 
                                 <!-- 자기소개서 생성 폼 시작 -->
                                 <div class="card mt-5 mb-4 p-4 col-11 post-form align-self-center">
                                     <form th:action="@{/v1/user/cover-letter/update}" method="post" role="form" class="row align-self-center col-12" onsubmit="return validateForm()">
 
-                                        <div class="col-12 mt-2">
+                                        <div class="col-12">
                                             <div class="mb-1">
-                                                <label for="title">자기소개서 제목</label>
+                                                <label for="title">제목</label>
                                             </div>
                                             <input type="text" readonly name="title" id="title"
                                                    class="form-control" placeholder="자기소개서 제목" required="" th:value="${coverLetter.title}"/>
