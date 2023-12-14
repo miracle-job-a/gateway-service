@@ -2,6 +2,7 @@ package com.miracle.memberservice.jwt;
 
 import com.miracle.memberservice.jwt.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -9,7 +10,10 @@ import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Base64;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JwtProvider {
 
@@ -38,13 +42,10 @@ public class JwtProvider {
         Date now = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
         Date expirationDate = Date.from(localDateTime.plusSeconds(accessTokenValidityInSeconds).atZone(ZoneId.systemDefault()).toInstant());
 
-        return Jwts.builder()
-                .setHeaderParam("typ", "JWT")
-                .setSubject(subject)
+        JwtBuilder jwtBuilder = baseJwtBuilder(id, subject);
+        return jwtBuilder
                 .setIssuedAt(now)
                 .setExpiration(expirationDate)
-                .claim("id", id)
-                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 
@@ -53,14 +54,19 @@ public class JwtProvider {
         Date now = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
         Date expirationDate = Date.from(localDateTime.plusSeconds(refreshTokenValidityInSeconds).atZone(ZoneId.systemDefault()).toInstant());
 
+        JwtBuilder jwtBuilder = baseJwtBuilder(id, subject);
+        return jwtBuilder
+                .setIssuedAt(now)
+                .setExpiration(expirationDate)
+                .compact();
+    }
+
+    private JwtBuilder baseJwtBuilder(Long id, String subject) {
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setSubject(subject)
-                .setIssuedAt(now)
-                .setExpiration(expirationDate)
                 .claim("id", id)
-                .signWith(key, SignatureAlgorithm.HS512)
-                .compact();
+                .signWith(key, SignatureAlgorithm.HS512);
     }
 
     public boolean validateToken(String token) {
