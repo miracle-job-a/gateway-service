@@ -3,7 +3,6 @@ package com.miracle.memberservice.filter;
 import com.miracle.memberservice.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpStatus;
 import org.springframework.util.AntPathMatcher;
 
 import javax.servlet.FilterChain;
@@ -42,7 +41,7 @@ public class TokenFilter extends HttpFilter {
         }
 
         String bearerToken = getBearerToken();
-        if (!tokenService.validateToken(bearerToken)) {
+        if (bearerToken == null || !tokenService.validateToken(bearerToken)) {
             httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
@@ -59,14 +58,13 @@ public class TokenFilter extends HttpFilter {
         return false;
     }
 
-    private String getBearerToken() throws IOException {
+    private String getBearerToken() {
         String bearerToken = httpServletRequest.getHeader(HEADER_AUTHORIZATION);
 
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
 
-        httpServletResponse.sendError(HttpStatus.SC_UNAUTHORIZED);
         return null;
     }
 }
