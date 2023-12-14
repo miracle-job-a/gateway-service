@@ -224,6 +224,7 @@
                                     <h6>유의사항</h6>
                                     <textarea class="form-control-plaintext autoresize" rows="3" id="notice" name="notice"
                                               th:text="${detail.notice}" readonly></textarea>
+                                    <hr>
                                 </div>
 
 
@@ -241,7 +242,7 @@
                                 </div>
 
                                 <div th:if="${detail.postType eq 'MZ'}">
-                                    <h5 class="mb-4 mt-4" style="display: inline-block;">테스트 시작 날짜</h5>
+                                    <h5 class="mb-4 mt-1" style="display: inline-block;">테스트 시작 날짜</h5>
                                     <br>
                                     <input type="text" id="testStartDate" name="testStartDate"
                                            class="form-control" th:value="${detail.testStartDate}" disabled/>

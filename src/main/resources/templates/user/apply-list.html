@@ -137,7 +137,7 @@
                                                     <small><span class="badge bg-dark ms-1" th:text="${letters.job}" th:if="${letters.postType eq 'NORMAL'}"></span></small>
                                                 </div>
 
-                                                <h5 class="m-2 text-dark" th:text="${companyInfo.title}+' - '+${companyInfo.companyName}"></h5>
+                                                <h5 class="m-2 text-dark" th:text="${companyInfo.title}+' [ '+${companyInfo.companyName}+' ] '"></h5>
                                                 <div class="custom-block-bottom d-flex mt-3">
                                                     <input type="hidden" id="letterId" th:value="${letters.applicationLetterId}">
                                                     <input type="hidden" id="companyId" th:value="${companyInfo.companyId}">
