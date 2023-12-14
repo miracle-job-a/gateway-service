@@ -175,21 +175,11 @@ public class AdminController {
     }
 
     @ResponseBody
-    @GetMapping("/posts/today/test")
-    public ResponseEntity<Map<String,Object>> test(@RequestParam(name = "year", required = false, defaultValue = "0") int year,
-                                    @RequestParam(name = "month", required = false, defaultValue = "0") int month,
-                                    HttpSession session) {
-        if (year == 0) year = LocalDate.now().getYear();
-        if (month == 0) month = LocalDate.now().getMonthValue();
-        int daysInMonth = YearMonth.of(year, month).lengthOfMonth();
+    @GetMapping("/posts/day")
+    public ResponseEntity<Map<String,Object>> getReloadTodayPostCount(@RequestParam(name = "year") int year, @RequestParam(name = "month") int month, HttpSession session) {
         PageMoveWithMessage pmwm = companyService.getTodayPostCount(year, month, session);
-
         Map<String,Object> map = new HashMap<>();
-        map.put("chartData",pmwm.getData());
-        map.put("year", year);
-        map.put("month", month);
-        map.put("daysInMonth", daysInMonth);
-
+        map.put("chartData", pmwm.getData());
         return ResponseEntity.status(HttpStatus.OK).body(map);
     }
 }
