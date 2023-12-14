@@ -18,51 +18,6 @@ public class ApiResponseToList {
 
     private final S3Method s3Method;
 
-    public Map<String, List<MainPagePostsResponseDto>> mainPage(HttpSession session, Map<String, Object> data) {
-        List<LinkedHashMap<String, Object>> deadlineResponse = (ArrayList<LinkedHashMap<String, Object>>) data.get("deadline");
-        List<LinkedHashMap<String, Object>> newestResponse = (ArrayList<LinkedHashMap<String, Object>>) data.get("newest");
-
-        List<MainPagePostsResponseDto> deadline = mainPageComposition(session, deadlineResponse);
-        List<MainPagePostsResponseDto> newest = mainPageComposition(session, newestResponse);
-
-        return Map.of("deadline", deadline, "newest", newest);
-    }
-
-    private List<MainPagePostsResponseDto> mainPageComposition(HttpSession session, List<LinkedHashMap<String, Object>> response) {
-        List<MainPagePostsResponseDto> dtos = new ArrayList<>();
-        for (LinkedHashMap<String, Object> lhm : response) {
-            Integer id = (Integer) lhm.get("id");
-            Integer companyId = (Integer) lhm.get("companyId");
-            List<Integer> jobs = (ArrayList<Integer>) lhm.get("jobIdSet");
-            ApiResponse job;
-            try {
-                job = ServiceCall.post(session, new JobRequestDto(jobs), Const.RequestHeader.ADMIN, "/admin/jobs");
-            } catch (ClassCastException e) {
-                job = new ApiResponse(false);
-            }
-            String jobDetail;
-            if (job.getData() instanceof Boolean) {
-                jobDetail = null;
-            } else {
-                List<JobResponseDto> jobNames = ApiResponseToList.jobs(job.getData());
-                jobDetail = jobNames.get(0).getName();
-            }
-            dtos.add(MainPagePostsResponseDto.builder()
-                    .id(id.longValue())
-                    .companyId(companyId.longValue())
-                    .postType((String) lhm.get("postType"))
-                    .title((String) lhm.get("title"))
-                    .photo(s3Method.getUrl(Const.RequestHeader.COMPANY, (String) lhm.get("photo")))
-                    .endDate(divideTime((String) lhm.get("endDate")))
-                    .workAddress((String) lhm.get("workAddress"))
-                    .jobIdSet(jobDetail)
-                    .career((Integer) lhm.get("career"))
-                    .name((String) lhm.get("name"))
-                    .build());
-        }
-        return dtos;
-    }
-
     public static List<CompanyFaqResponseDto> faqList(Object object) {
         ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
 
@@ -143,54 +98,6 @@ public class ApiResponseToList {
         return pageList;
     }
 
-    public List<List<ConditionalSearchPostResponseDto>> searchPosts(Object object, HttpSession session) {
-        ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
-        List<List<ConditionalSearchPostResponseDto>> pageList = new ArrayList<>();
-
-        for (LinkedHashMap<String, Object> lhm : data) {
-            List<ConditionalSearchPostResponseDto> dtos = new ArrayList<>();
-            Integer numberOfElements = (Integer) lhm.get("numberOfElements");
-            if (numberOfElements > 0) {
-                ArrayList<LinkedHashMap<String, Object>> content = (ArrayList<LinkedHashMap<String, Object>>) lhm.get("content");
-                for (LinkedHashMap<String, Object> dto : content) {
-                    Integer id = (Integer) dto.get("id");
-                    Integer companyId = (Integer) dto.get("companyId");
-                    ArrayList<Integer> jobs = (ArrayList<Integer>) dto.get("jobIdSet");
-
-                    ApiResponse response;
-                    try {
-                        response = ServiceCall.post(session, new JobRequestDto(jobs), Const.RequestHeader.ADMIN, "/admin/jobs");
-                    } catch (ClassCastException e) {
-                        response = new ApiResponse(false);
-                    }
-                    String jobDetail;
-                    if (response.getData() instanceof Boolean) {
-                        jobDetail = null;
-                    } else {
-                        List<JobResponseDto> job = ApiResponseToList.jobs(response.getData());
-                        jobDetail = job.get(0).getName();
-                    }
-
-                    dtos.add(ConditionalSearchPostResponseDto.builder()
-                            .id(id.longValue())
-                            .companyId(companyId.longValue())
-                            .postType((String) dto.get("postType"))
-                            .closed((Boolean) dto.get("closed"))
-                            .title((String) dto.get("title"))
-                            .endDate(divideTime((String) dto.get("endDate")))
-                            .workAddress((String) dto.get("workAddress"))
-                            .career((Integer) dto.get("career"))
-                            .job(jobDetail)
-                            .name((String) dto.get("name"))
-                            .photo(s3Method.getUrl(Const.RequestHeader.COMPANY, (String) dto.get("photo")))
-                            .build());
-                }
-                pageList.add(dtos);
-            }
-        }
-        return pageList;
-    }
-
     public static List<List<TotalSearchPostResponseDto>> searchTotalPost(List<LinkedHashMap<String, Object>> data, HttpSession session) {
         List<List<TotalSearchPostResponseDto>> pageList = new ArrayList<>();
 
@@ -260,6 +167,7 @@ public class ApiResponseToList {
                     .jobIdSet((ArrayList<Integer>) lhm.get("jobIdSet"))
                     .modifiedAt((String) lhm.get("modifiedAt"))
                     .open((Boolean) lhm.get("open"))
+                    .photo((String) lhm.get("photo"))
                     .build());
         }
         return dtos;
@@ -444,7 +352,6 @@ public class ApiResponseToList {
         return dtos;
     }
 
-
     public static List<List<UserListResponseDto>> userList(Object object) {
         List<List<UserListResponseDto>> pageList = new ArrayList<>();
 
@@ -528,5 +435,98 @@ public class ApiResponseToList {
                 .forEach(month -> userJoinCountByMonth.merge(month, 1L, Long::sum));
 
         return userJoinCountByMonth;
+    }
+
+    public Map<String, List<MainPagePostsResponseDto>> mainPage(HttpSession session, Map<String, Object> data) {
+        List<LinkedHashMap<String, Object>> deadlineResponse = (ArrayList<LinkedHashMap<String, Object>>) data.get("deadline");
+        List<LinkedHashMap<String, Object>> newestResponse = (ArrayList<LinkedHashMap<String, Object>>) data.get("newest");
+
+        List<MainPagePostsResponseDto> deadline = mainPageComposition(session, deadlineResponse);
+        List<MainPagePostsResponseDto> newest = mainPageComposition(session, newestResponse);
+
+        return Map.of("deadline", deadline, "newest", newest);
+    }
+
+    private List<MainPagePostsResponseDto> mainPageComposition(HttpSession session, List<LinkedHashMap<String, Object>> response) {
+        List<MainPagePostsResponseDto> dtos = new ArrayList<>();
+        for (LinkedHashMap<String, Object> lhm : response) {
+            Integer id = (Integer) lhm.get("id");
+            Integer companyId = (Integer) lhm.get("companyId");
+            List<Integer> jobs = (ArrayList<Integer>) lhm.get("jobIdSet");
+            ApiResponse job;
+            try {
+                job = ServiceCall.post(session, new JobRequestDto(jobs), Const.RequestHeader.ADMIN, "/admin/jobs");
+            } catch (ClassCastException e) {
+                job = new ApiResponse(false);
+            }
+            String jobDetail;
+            if (job.getData() instanceof Boolean) {
+                jobDetail = null;
+            } else {
+                List<JobResponseDto> jobNames = ApiResponseToList.jobs(job.getData());
+                jobDetail = jobNames.get(0).getName();
+            }
+            dtos.add(MainPagePostsResponseDto.builder()
+                    .id(id.longValue())
+                    .companyId(companyId.longValue())
+                    .postType((String) lhm.get("postType"))
+                    .title((String) lhm.get("title"))
+                    .photo(s3Method.getUrl(Const.RequestHeader.COMPANY, (String) lhm.get("photo")))
+                    .endDate(divideTime((String) lhm.get("endDate")))
+                    .workAddress((String) lhm.get("workAddress"))
+                    .jobIdSet(jobDetail)
+                    .career((Integer) lhm.get("career"))
+                    .name((String) lhm.get("name"))
+                    .build());
+        }
+        return dtos;
+    }
+
+    public List<List<ConditionalSearchPostResponseDto>> searchPosts(Object object, HttpSession session) {
+        ArrayList<LinkedHashMap<String, Object>> data = (ArrayList<LinkedHashMap<String, Object>>) object;
+        List<List<ConditionalSearchPostResponseDto>> pageList = new ArrayList<>();
+
+        for (LinkedHashMap<String, Object> lhm : data) {
+            List<ConditionalSearchPostResponseDto> dtos = new ArrayList<>();
+            Integer numberOfElements = (Integer) lhm.get("numberOfElements");
+            if (numberOfElements > 0) {
+                ArrayList<LinkedHashMap<String, Object>> content = (ArrayList<LinkedHashMap<String, Object>>) lhm.get("content");
+                for (LinkedHashMap<String, Object> dto : content) {
+                    Integer id = (Integer) dto.get("id");
+                    Integer companyId = (Integer) dto.get("companyId");
+                    ArrayList<Integer> jobs = (ArrayList<Integer>) dto.get("jobIdSet");
+
+                    ApiResponse response;
+                    try {
+                        response = ServiceCall.post(session, new JobRequestDto(jobs), Const.RequestHeader.ADMIN, "/admin/jobs");
+                    } catch (ClassCastException e) {
+                        response = new ApiResponse(false);
+                    }
+                    String jobDetail;
+                    if (response.getData() instanceof Boolean) {
+                        jobDetail = null;
+                    } else {
+                        List<JobResponseDto> job = ApiResponseToList.jobs(response.getData());
+                        jobDetail = job.get(0).getName();
+                    }
+
+                    dtos.add(ConditionalSearchPostResponseDto.builder()
+                            .id(id.longValue())
+                            .companyId(companyId.longValue())
+                            .postType((String) dto.get("postType"))
+                            .closed((Boolean) dto.get("closed"))
+                            .title((String) dto.get("title"))
+                            .endDate(divideTime((String) dto.get("endDate")))
+                            .workAddress((String) dto.get("workAddress"))
+                            .career((Integer) dto.get("career"))
+                            .job(jobDetail)
+                            .name((String) dto.get("name"))
+                            .photo(s3Method.getUrl(Const.RequestHeader.COMPANY, (String) dto.get("photo")))
+                            .build());
+                }
+                pageList.add(dtos);
+            }
+        }
+        return pageList;
     }
 }
