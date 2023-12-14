@@ -9,31 +9,107 @@
         google.charts.load('current', {packages: ['corechart', 'line']});
         google.charts.setOnLoadCallback(drawBasic);
 
-            function drawBasic() {
-                /*<![CDATA[*/
-                var chartData = /*[[${chartData}]]*/ null;
-                /*]]>*/
-                var data = new google.visualization.DataTable();
-                data.addColumn('number', 'Date');
-                data.addColumn('number', '공고');
+        function drawBasic() {
+            /*<![CDATA[*/
+            var chartData = /*[[${chartData}]]*/ null;
+            /*]]>*/
+            console.log(chartData);
+            var data = new google.visualization.DataTable();
+            data.addColumn('number', 'Date');
+            data.addColumn('number', '공고');
+            data.addRows(chartData);
 
-                data.addRows(chartData);
+            var options = {
+                title: '일별 공고 등록 비율',
+                hAxis: {
+                    title: 'Date'
+                },
+                vAxis: {
+                    title: 'today posted'
+                }
+            };
 
-                var options = {
-                    title: '월별 공고 등록 비율',
-                    hAxis: {
-                        title: 'Month',
-                        ticks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+
+        function drawChart(chartData) {
+            var chartReloadData = chartData;
+            console.log(chartData);
+            var data = new google.visualization.DataTable();
+            data.addColumn('number', 'Date');
+            data.addColumn('number', '공고');
+            data.addRows(chartData);
+
+            var options = {
+                title: '일별 공고 등록 비율',
+                hAxis: {
+                    title: 'Date'
+                },
+                vAxis: {
+                    title: 'today posted'
+                }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+
+        async function changeYear() {
+            var selectYear = document.getElementById('year').value;
+            var selectMonth = document.getElementById('month').value;
+            console.log(selectYear);
+            console.log(selectMonth);
+            try {
+                var response = await fetch("/v1/admin/posts/today?year="+ encodeURIComponent(selectYear) +"&month=" + encodeURIComponent(selectMonth), {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
                     },
-                    vAxis: {
-                        title: 'posted today'
-                    }
-                };
+                });
 
-                var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-                chart.draw(data, options);
+                if (response.ok) {
+                    var responseData = await response.json();
+                    console.log('데이터->', responseData);
+
+                    var chartData = responseData.chartData;
+                    drawChart(chartData);
+                } else {
+                    console.error("changeYear FAIL. status: " + response.status);
+                }
+            } catch (error) {
+                console.error("changeYear 요청 중 오류 발생:", error);
             }
+        }
 
+        async function changeMonth() {
+
+            var selectYear = document.getElementById('year').value;
+            var selectMonth = document.getElementById('month').value;
+            console.log(selectYear);
+            console.log(selectMonth);
+
+            try {
+                var response = await fetch("/v1/admin/posts/today/test?year="+ encodeURIComponent(selectYear) +"&month=" + encodeURIComponent(selectMonth), {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                });
+
+                if (response.ok) {
+                    var responseData = await response.json();
+                    console.log('데이터->', responseData);
+
+                    var chartData = responseData.chartData;
+                    drawChart(chartData);
+                } else {
+                    console.error("changeMonth FAIL. status: " + response.status);
+                }
+            } catch (error) {
+                console.error("changeMonth 요청 중 오류 발생:", error);
+            }
+        }
 
     </script>
 
@@ -47,14 +123,20 @@
                     <!-- 전체 박스 크기 -->
                     <div class="col-lg-9 col-12">
                         <div class="section-title-wrap mb-5">
-                            <h4 class="section-title">금일 공고 현황</h4>
+                            <h4 class="section-title">금일 공고 등록 현황</h4>
                         </div>
-
+                        <select id="year" onchange="changeYear(this.value)" class="form-control col-lg-2 required">
+                            <th:block th:each="num : ${#numbers.sequence(2019, year)}">
+                                <option th:value="${num}" th:text="${num}" th:selected="${num} == ${year}"></option>
+                            </th:block>
+                        </select>
+                        <select id="month" onchange="changeMonth(this.value)" class="form-control col-lg-2 required">
+                            <th:block th:each="num : ${#numbers.sequence(1, month)}">
+                                <option th:value="${num}" th:text="${num}" th:selected="${num} == ${month}"></option>
+                            </th:block>
+                        </select>
                         <div class="row justify-content-center">
-                            <div style="margin-top: 5%" class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
-                                <div class="card p-4 mt-3 mb-3 col-6 post-form align-self-center" style="width: 700px; height: 400px;"
-                                     id="chart_div"></div>
-                            </div>
+                            <div class="card p-2 my-3 col-6 post-form align-self-center bg-white" style="width: 800px; height: 500px;" id="chart_div"></div>
                         </div>
                     </div>
 
@@ -63,5 +145,4 @@
         </section>
     </main>
 </div>
-
 </html>
