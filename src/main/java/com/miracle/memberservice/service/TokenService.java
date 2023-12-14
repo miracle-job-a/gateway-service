@@ -1,6 +1,6 @@
 package com.miracle.memberservice.service;
 
-import com.miracle.memberservice.jwt.domain.AccessToken;
+import com.miracle.memberservice.dto.token.AccessToken;
 
 import java.util.Map;
 
