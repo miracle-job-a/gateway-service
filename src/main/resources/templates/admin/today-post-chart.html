@@ -13,19 +13,34 @@
             /*<![CDATA[*/
             var chartData = /*[[${chartData}]]*/ null;
             /*]]>*/
-            console.log(chartData);
+            /*<![CDATA[*/
+            var daysInMonth = /*[[${daysInMonth}]]*/ null;
+            /*]]>*/
+
+            for (var i = 0; i < chartData.length; i++) {
+                chartData[i][1] = parseInt(chartData[i][1]);
+            }
+
             var data = new google.visualization.DataTable();
             data.addColumn('number', 'Date');
             data.addColumn('number', '공고');
             data.addRows(chartData);
 
+            var minYValue = Math.min.apply(null, chartData.map(function(row) {
+                return row[1];
+            }));
+
             var options = {
-                title: '일별 공고 등록 비율',
                 hAxis: {
-                    title: 'Date'
+                    title: 'Date',
+                    ticks: generateTicks(daysInMonth)
                 },
                 vAxis: {
-                    title: 'today posted'
+                    title: 'today posted',
+                    viewWindow: {
+                        min: minYValue >= 0 ? 0 : minYValue,
+                    },
+                    format: '0'
                 }
             };
 
@@ -34,20 +49,33 @@
         }
 
         function drawChart(chartData) {
-            var chartReloadData = chartData;
-            console.log(chartData);
+            /*<![CDATA[*/
+            var daysInMonth = /*[[${daysInMonth}]]*/ null;
+            /*]]>*/
+            for (var i = 0; i < chartData.length; i++) {
+                chartData[i][1] = parseInt(chartData[i][1]);
+            }
+
             var data = new google.visualization.DataTable();
             data.addColumn('number', 'Date');
             data.addColumn('number', '공고');
             data.addRows(chartData);
 
+            var minYValue = Math.min.apply(null, chartData.map(function(row) {
+                return row[1];
+            }));
+
             var options = {
-                title: '일별 공고 등록 비율',
                 hAxis: {
-                    title: 'Date'
+                    title: 'Date',
+                    ticks: generateTicks(daysInMonth)
                 },
                 vAxis: {
-                    title: 'today posted'
+                    title: 'today posted',
+                    viewWindow: {
+                        min: minYValue >= 0 ? 0 : minYValue,
+                    },
+                    format: '0'
                 }
             };
 
@@ -55,13 +83,20 @@
             chart.draw(data, options);
         }
 
+        function generateTicks(daysInMonth) {
+            var ticks = [];
+            for (var i = 1; i <= daysInMonth; i += 5) {
+                ticks.push(i);
+            }
+            return ticks;
+        }
+
         async function changeYear() {
             var selectYear = document.getElementById('year').value;
             var selectMonth = document.getElementById('month').value;
-            console.log(selectYear);
-            console.log(selectMonth);
+
             try {
-                var response = await fetch("/v1/admin/posts/today?year="+ encodeURIComponent(selectYear) +"&month=" + encodeURIComponent(selectMonth), {
+                var response = await fetch("/v1/admin/posts/day?year="+ encodeURIComponent(selectYear) +"&month=" + encodeURIComponent(selectMonth), {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded",
@@ -70,8 +105,6 @@
 
                 if (response.ok) {
                     var responseData = await response.json();
-                    console.log('데이터->', responseData);
-
                     var chartData = responseData.chartData;
                     drawChart(chartData);
                 } else {
@@ -83,14 +116,11 @@
         }
 
         async function changeMonth() {
-
             var selectYear = document.getElementById('year').value;
             var selectMonth = document.getElementById('month').value;
-            console.log(selectYear);
-            console.log(selectMonth);
 
             try {
-                var response = await fetch("/v1/admin/posts/today/test?year="+ encodeURIComponent(selectYear) +"&month=" + encodeURIComponent(selectMonth), {
+                var response = await fetch("/v1/admin/posts/day?year="+ encodeURIComponent(selectYear) +"&month=" + encodeURIComponent(selectMonth), {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded",
@@ -99,8 +129,6 @@
 
                 if (response.ok) {
                     var responseData = await response.json();
-                    console.log('데이터->', responseData);
-
                     var chartData = responseData.chartData;
                     drawChart(chartData);
                 } else {
@@ -125,24 +153,38 @@
                         <div class="section-title-wrap mb-5">
                             <h4 class="section-title">금일 공고 등록 현황</h4>
                         </div>
-                        <select id="year" onchange="changeYear(this.value)" class="form-control col-lg-2 required">
-                            <th:block th:each="num : ${#numbers.sequence(2019, year)}">
-                                <option th:value="${num}" th:text="${num}" th:selected="${num} == ${year}"></option>
-                            </th:block>
-                        </select>
-                        <select id="month" onchange="changeMonth(this.value)" class="form-control col-lg-2 required">
-                            <th:block th:each="num : ${#numbers.sequence(1, month)}">
-                                <option th:value="${num}" th:text="${num}" th:selected="${num} == ${month}"></option>
-                            </th:block>
-                        </select>
+                        <div class="row">
+                            <!-- Year select -->
+                            <div class="col-lg-2">
+                                <div class="select-wrapper">
+                                    <select id="year" onchange="changeYear(this.value)" class="form-control required">
+                                        <th:block th:each="num : ${#numbers.sequence(2019, year)}">
+                                            <option th:value="${num}" th:text="${num}" th:selected="${num} == ${year}"></option>
+                                        </th:block>
+                                    </select>
+                                    <div class="arrow-down"></div>
+                                </div>
+                            </div>
+                            <!-- Month select -->
+                            <div class="col-lg-2">
+                                <div class="select-wrapper">
+                                    <select id="month" onchange="changeMonth(this.value)" class="form-control required">
+                                        <th:block th:each="num : ${#numbers.sequence(1, month)}">
+                                            <option th:value="${num}" th:text="${num}" th:selected="${num} == ${month}"></option>
+                                        </th:block>
+                                    </select>
+                                    <div class="arrow-down"></div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row justify-content-center">
-                            <div class="card p-2 my-3 col-6 post-form align-self-center bg-white" style="width: 800px; height: 500px;" id="chart_div"></div>
+                            <div class="card p-2 my-3 col-6 post-form align-self-center bg-white" style="width: 1000px; height: 700px;" id="chart_div"></div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
+
     </main>
 </div>
 </html>
