@@ -1,25 +1,25 @@
 package com.miracle.memberservice.controller;
 
 import com.miracle.memberservice.dto.response.CompanyListResponseDto;
-import com.miracle.memberservice.dto.response.UserJoinListResponseDto;
 import com.miracle.memberservice.dto.response.StackAndJobResponseDto;
+import com.miracle.memberservice.dto.response.UserJoinListResponseDto;
 import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.HashMap;
 import java.util.List;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/v1/admin")
@@ -165,8 +165,31 @@ public class AdminController {
                                     HttpSession session, Model model) {
         if (year == 0) year = LocalDate.now().getYear();
         if (month == 0) month = LocalDate.now().getMonthValue();
+        int daysInMonth = YearMonth.of(year, month).lengthOfMonth();
         PageMoveWithMessage pmwm = companyService.getTodayPostCount(year, month, session);
         model.addAttribute("chartData", pmwm.getData());
+        model.addAttribute("year", year);
+        model.addAttribute("month", month);
+        model.addAttribute("daysInMonth", daysInMonth);
         return pmwm.getPageName();
+    }
+
+    @ResponseBody
+    @GetMapping("/posts/today/test")
+    public ResponseEntity<Map<String,Object>> test(@RequestParam(name = "year", required = false, defaultValue = "0") int year,
+                                    @RequestParam(name = "month", required = false, defaultValue = "0") int month,
+                                    HttpSession session) {
+        if (year == 0) year = LocalDate.now().getYear();
+        if (month == 0) month = LocalDate.now().getMonthValue();
+        int daysInMonth = YearMonth.of(year, month).lengthOfMonth();
+        PageMoveWithMessage pmwm = companyService.getTodayPostCount(year, month, session);
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("chartData",pmwm.getData());
+        map.put("year", year);
+        map.put("month", month);
+        map.put("daysInMonth", daysInMonth);
+
+        return ResponseEntity.status(HttpStatus.OK).body(map);
     }
 }
