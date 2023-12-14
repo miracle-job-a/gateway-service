@@ -1284,6 +1284,22 @@ main {
   color: var(--white-color);
 }
 
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.arrow-down {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--primary-color);
+}
 
 /*---------------------------------------
   RESPONSIVE STYLES               
