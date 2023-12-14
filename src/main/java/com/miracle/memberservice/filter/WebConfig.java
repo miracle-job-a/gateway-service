@@ -24,7 +24,8 @@ public class WebConfig {
                 "/v1/{user,company}/email/duplicate/{email}",
                 "/v1/email/authentication/{authentication}",
                 "/v1/search/{posts,total}/{strNum:\\d+}",
-                "/v1/click/post/{postId:\\d+}/detail"
+                "/v1/click/post/{postId:\\d+}/detail",
+                "/v1/jwt/**"
         );
 
         filterRegistrationBean.setFilter(tokenFilter);
