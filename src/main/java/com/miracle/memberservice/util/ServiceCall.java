@@ -17,7 +17,7 @@ import java.util.function.Function;
 
 public class ServiceCall {
 
-    private static final String BASE_URL = "https://";
+    private static final String BASE_URL = "http://";
     private static final String VERSION = "/v1";
 
     private static WebClient.Builder createWebClientBuilder(String serviceType) {
