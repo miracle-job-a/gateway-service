@@ -2,10 +2,8 @@ package com.miracle.memberservice.service;
 
 import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.*;
-import com.miracle.memberservice.util.ApiResponseToList;
-import com.miracle.memberservice.util.Const;
-import com.miracle.memberservice.util.PageMoveWithMessage;
-import com.miracle.memberservice.util.ServiceCall;
+import com.miracle.memberservice.util.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +14,10 @@ import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MyPageService {
 
+    private final S3Method s3Method;
     // 지원현황 목록 불러오기
     public PageMoveWithMessage applicationLetterList(HttpSession session, int startPage, String sort) {
         Long userId = (Long) session.getAttribute("id");
@@ -70,6 +70,7 @@ public class MyPageService {
                 .userStackIdSet((ArrayList<Integer>) data.get("userStackIdSet"))
                 .userEducation((String) data.get("userEducation"))
                 .userGitLink((String) data.get("userGitLink"))
+                .photo(s3Method.getUrl(Const.RequestHeader.RESUME, (String) data.get("photo")))
                 .userCareerDetailList((List<String>) data.get("userCareerDetailList"))
                 .userProjectList((List<String>) data.get("userProjectList"))
                 .userEtcList((List<String>) data.get("userEtcList"))
