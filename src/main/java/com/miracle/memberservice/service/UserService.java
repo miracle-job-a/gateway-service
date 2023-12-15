@@ -112,15 +112,16 @@ public class UserService {
     }
 
     private String nextNumberOfPhoto(Long userId) {
-        for (int i = 1; i < 6; i++) {
+        int i = 1;
+        while (true) {
             String fileName = userId + "_" + i;
             try {
                 s3Method.getFile(Const.RequestHeader.RESUME, fileName);
             } catch (AmazonS3Exception e) {
                 return fileName;
             }
+            i++;
         }
-        return null;
     }
 
     public PageMoveWithMessage resumeList(HttpSession session) {
