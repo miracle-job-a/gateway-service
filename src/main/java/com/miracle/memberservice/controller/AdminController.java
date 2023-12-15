@@ -16,10 +16,15 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import java.time.YearMonth;
 
 @Controller
 @RequestMapping("/v1/admin")
@@ -55,11 +60,32 @@ public class AdminController {
     }
 
     @GetMapping("/user/join-count")
-    public String getUserJoinCountByMonth(HttpSession session, Model model) {
-        PageMoveWithMessage pmwm = userService.getUserJoinCountByMonth(session, LocalDate.now());
+    public String getUserJoinCountByDay(
+            @RequestParam(name = "year", required = false, defaultValue = "0") int year,
+            @RequestParam(name = "month", required = false, defaultValue = "0") int month,
+            HttpSession session, Model model) {
+
+        if (year == 0) year = LocalDate.now().getYear();
+        if (month == 0) month = LocalDate.now().getMonthValue();
+
+        PageMoveWithMessage pmwm = userService.getUserJoinCountByDay(session, year, month);
         model.addAttribute("chartData", pmwm.getData());
+        model.addAttribute("year", year);
+        model.addAttribute("month", month);
 
         return pmwm.getPageName();
+    }
+
+    @ResponseBody
+    @GetMapping("/user/join-count/ajax")
+    public ResponseEntity<Map<String, Object>> getReloadUserJoinCountByDay(
+            @RequestParam(name = "year", required = false, defaultValue = "0") int year,
+            @RequestParam(name = "month", required = false, defaultValue = "0") int month,
+            HttpSession session) {
+        PageMoveWithMessage pmwm = userService.getUserJoinCountByDay(session, year, month);
+        Map<String, Object> map = new HashMap<>();
+        map.put("chartData", pmwm.getData());
+        return ResponseEntity.status(HttpStatus.OK).body(map);
     }
 
     @GetMapping("/logout")
