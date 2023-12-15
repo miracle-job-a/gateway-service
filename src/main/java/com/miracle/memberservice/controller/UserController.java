@@ -99,8 +99,8 @@ public class UserController {
     }
 
     @GetMapping("/resume/delete/{resumeId}")
-    public String deleteResume(HttpSession session, @PathVariable Long resumeId, @RequestParam(required = false) String photo) {
-        PageMoveWithMessage pmwm = userService.deleteResume(session, resumeId, photo);
+    public String deleteResume(HttpSession session, @PathVariable Long resumeId) {
+        PageMoveWithMessage pmwm = userService.deleteResume(session, resumeId);
         return pmwm.getPageName();
     }
 

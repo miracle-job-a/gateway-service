@@ -1,5 +1,6 @@
 package com.miracle.memberservice.service;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.util.*;
@@ -165,6 +166,7 @@ public class MyPageService {
 
     // 수정폼 접근 인증 api
     public PageMoveWithMessage validationUser(HttpSession session, LoginDto loginDto) {
+        loginDto.setEmail((String) session.getAttribute("email"));
         ApiResponse response = ServiceCall.post(session, loginDto, Const.RequestHeader.USER, "/user/login");
         if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("user/validation", response.getMessage());
@@ -213,8 +215,15 @@ public class MyPageService {
     }
 
     private void deleteResumePhotos(Long userId) {
-        for (int i = 1; i < 6; i++) {
-            s3Method.deleteFile(Const.RequestHeader.RESUME, userId + "_" + i);
+        int i = 1;
+        while (true) {
+            String fileName = userId + "_" + i;
+            if (s3Method.isExistFile(Const.RequestHeader.RESUME, fileName)) {
+                s3Method.deleteFile(Const.RequestHeader.RESUME, fileName);
+                i++;
+            } else {
+                break;
+            }
         }
     }
 

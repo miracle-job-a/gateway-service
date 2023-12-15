@@ -450,6 +450,49 @@ public class CompanyService {
         return new PageMoveWithMessage("redirect:/v1");
     }
 
+    public Object getStackChartData(HttpSession session, Long companyId) {
+        ApiResponse adminResponse = ServiceCall.get(session, Const.RequestHeader.ADMIN, "/admin/stacks");
+        if (adminResponse.getHttpStatus() != 200)
+            return null;
+
+        ApiResponse companyResponse = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/jobstacks");
+        if (companyResponse.getHttpStatus() != 200)
+            return null;
+
+        List<Map<String, Object>> adminDataList = (List<Map<String, Object>>) adminResponse.getData();
+        List<Map<String, Object>> companyDataList = (List<Map<String, Object>>) companyResponse.getData();
+
+        Map<Long, String> stackIdToNameMap = new HashMap<>();
+        Map<String, Integer> stackNameToCountMap = new HashMap<>();
+
+        for (Map<String, Object> adminData : adminDataList) {
+            Number stackId = (Number) adminData.get("id");
+            String stackName = (String) adminData.get("name");
+            stackIdToNameMap.put(stackId.longValue(), stackName);
+        }
+
+        for (Map<String, Object> companyData : companyDataList) {
+            List<Number> stackIdSet = (List<Number>) companyData.get("stackIdSet");
+
+            for (Number stackId : stackIdSet) {
+                String stackName = stackIdToNameMap.get(stackId.longValue());
+
+                stackNameToCountMap.put(stackName, stackNameToCountMap.getOrDefault(stackName, 0) + 1);
+            }
+        }
+
+        List<List<Object>> result = new ArrayList<>();
+        result.add(List.of("Stack", "num"));
+
+        for (Map.Entry<String, Integer> entry : stackNameToCountMap.entrySet()) {
+            String stackName = entry.getKey();
+            Integer count = entry.getValue();
+            result.add(List.of(stackName, count));
+        }
+
+        return result;
+    }
+
     public PageMoveWithMessage getCompanyJoinCountByDay(HttpSession session, int year, int month) {
         ApiResponse response = ServiceCall.getParamListWithTodayFalse(session, Const.RequestHeader.COMPANY, "/company/list", 1, 1);
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("admin/main", response.getMessage());

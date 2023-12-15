@@ -225,4 +225,11 @@ public class CompanyController {
         PageMoveWithMessage pmwm = companyService.signoutCompany(session);
         return pmwm.getPageName();
     }
+/*
+    @GetMapping("/posts/stacks")
+    public String getStackChartData(HttpSession session, Model model) {
+        PageMoveWithMessage pmwm = companyService.getStackChartData(session);
+        model.addAttribute("cartData", pmwm.getData());
+        return pmwm.getPageName();
+    }*/
 }

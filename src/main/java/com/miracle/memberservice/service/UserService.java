@@ -112,15 +112,16 @@ public class UserService {
     }
 
     private String nextNumberOfPhoto(Long userId) {
-        for (int i = 1; i < 6; i++) {
+        int i = 1;
+        while (true) {
             String fileName = userId + "_" + i;
             try {
                 s3Method.getFile(Const.RequestHeader.RESUME, fileName);
             } catch (AmazonS3Exception e) {
                 return fileName;
             }
+            i++;
         }
-        return null;
     }
 
     public PageMoveWithMessage resumeList(HttpSession session) {
@@ -160,11 +161,10 @@ public class UserService {
         return new PageMoveWithMessage("user/resume-detail", info);
     }
 
-    public PageMoveWithMessage deleteResume(HttpSession session, Long resumeId, String photo) {
+    public PageMoveWithMessage deleteResume(HttpSession session, Long resumeId) {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.USER, "/user/" + userId + "/resume/" + resumeId);
 
-        s3Method.deleteFile(Const.RequestHeader.RESUME, photo);
         return new PageMoveWithMessage("redirect:/v1/user/resumes", response.getMessage());
     }
 
