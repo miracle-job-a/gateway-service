@@ -166,6 +166,7 @@ public class MyPageService {
 
     // 수정폼 접근 인증 api
     public PageMoveWithMessage validationUser(HttpSession session, LoginDto loginDto) {
+        loginDto.setEmail((String) session.getAttribute("email"));
         ApiResponse response = ServiceCall.post(session, loginDto, Const.RequestHeader.USER, "/user/login");
         if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("user/validation", response.getMessage());
@@ -216,12 +217,13 @@ public class MyPageService {
     private void deleteResumePhotos(Long userId) {
         int i = 1;
         while (true) {
-            try {
-                s3Method.deleteFile(Const.RequestHeader.RESUME, userId + "_" + i);
-            } catch (AmazonS3Exception e) {
+            String fileName = userId + "_" + i;
+            if (s3Method.isExistFile(Const.RequestHeader.RESUME, fileName)) {
+                s3Method.deleteFile(Const.RequestHeader.RESUME, fileName);
+                i++;
+            } else {
                 break;
             }
-            i++;
         }
     }
 

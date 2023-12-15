@@ -39,4 +39,8 @@ public class S3Method {
     public void getFile(String type, String name) {
         amazonS3.getObject(bucket, type + "/" + name);
     }
+
+    public boolean isExistFile(String type, String name) {
+        return amazonS3Client.doesObjectExist(bucket, type + "/" + name);
+    }
 }
