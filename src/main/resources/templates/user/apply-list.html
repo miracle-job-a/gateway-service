@@ -4,6 +4,18 @@
         layout:decorate="~{layout/default_layout}" lang="ko">
 
 <div layout:fragment="content">
+    <style>
+        /* CSS */
+        .modal-backdrop-dark {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.5); /* 어두운 배경 색상 */
+            z-index: 1040; /* 모달보다 앞에 위치하도록 z-index 설정 */
+        }
+    </style>
     <script th:inline="javascript">
         var errorMessage = [[${errorMessage}]];
 
@@ -113,7 +125,7 @@
                     <!-- Thymeleaf 반복문을 사용하여 ArrayList 내의 객체들을 처리 -->
                     <div th:each="letterItem, letterItemStat : ${letter}" th:id="'postPage'+${letterItemStat.index}">
                         <div th:each="letters, lettersStat : ${letterItem}" class="col-lg-10 col-12 mb-4 mb-lg-2 mx-auto">
-                            <div class="custom-block d-flex">
+                            <div class="custom-block d-flex d-md-block flex-md-row">
                                 <div class="custom-block-info">
                                     <!-- th:with를 사용하여 현재 letter의 postId를 변수에 저장 -->
                                     <div th:with="currentPostId=${letters.postId}">

@@ -239,7 +239,7 @@ main {
 
 .login-btn {
   background: transparent;
-  border: 2px solid #4c006b;
+  border: 2px solid #660099;
   border-radius: var(--border-radius-large);
   color: var(--primary-color);
   font-family: var(--title-font-family);
@@ -469,7 +469,8 @@ main {
 .navbar .dropdown-item:focus, 
 .navbar .dropdown-item:hover {
   background: transparent;
-  color: var(--secondary-color);
+  color: var(--primary-color);
+  font-weight: var(--font-weight-bold);
 }
 
 .navbar .dropdown-toggle::after {
@@ -1485,7 +1486,7 @@ h6.my-2 {
     left: 10px;
     opacity: 1;
     pointer-events: auto;
-    max-width: 155px;
+    max-width: 200px;
     margin-top: 10px;
     margin-bottom: 15px;
   }
