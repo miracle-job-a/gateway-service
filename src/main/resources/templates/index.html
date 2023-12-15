@@ -96,8 +96,6 @@
                         <div class="col-md-2 d-none d-md-block"></div>
                         <div class="col-md-4 col-12">
                             <button th:if="${session.id==null}" type="button" class="btn custom-btn" data-bs-toggle="modal" data-bs-target="#myModal" >회원가입</button>
-                            <!--<a th:if="${session.id==null}" href="/v1/user/join" class="btn custom-btn smoothscroll">유저 회원가입</a>
-                            <a th:if="${session.id==null}" href="/v1/company/join" class="btn custom-btn smoothscroll ms-2">기업 회원가입</a>-->
                         </div>
                     </div>
                 </div>
@@ -116,7 +114,7 @@
                                 <a href="/v1/user/join" class="custom-btn mt-2 mb-4 col-5 text-center" style="width: 189px">
                                     유저 회원가입
                                 </a>
-                                <a href="#"><img src="/images/google-login.png" class="my-2" alt="" style="width: 189px"></a>
+                                <a id="googleLogin"><img src="/images/google-login.png" class="my-2" alt="" style="width: 189px"></a>
                             </div>
                             <div class="custom-card-border col-11 my-4 d-flex flex-column align-items-center">
                                 <label class="my-3 col-lg-8 col-12 mx-auto text-center">원하는 인재를 찾아보세요.</label>
@@ -337,6 +335,89 @@
         </section>
 
     </main>
+
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithPhoneNumber, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyCXluBKXBrihziX_rN1Z-5LX06mEmRJadI",
+            authDomain: "job-a-9841f.firebaseapp.com",
+            projectId: "job-a-9841f",
+            storageBucket: "job-a-9841f.appspot.com",
+            messagingSenderId: "915882627362",
+            appId: "1:915882627362:web:5a39b8aa8b4719d5f7957b",
+            measurementId: "G-JHCHPZ8ZTX"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+        const provider = new GoogleAuthProvider();
+
+        const auth = getAuth();
+        auth.languageCode = 'ko';
+
+
+        document.getElementById('googleLogin').addEventListener
+        ('click', () => {
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    // This gives you a Google Access Token. You can use it to access the Google API.
+                    const credential = GoogleAuthProvider.credentialFromResult(result);
+                    const token = credential.accessToken;
+                    // The signed-in user info.
+                    const user = result.user;
+                    // IdP data available using getAdditionalUserInfo(result)
+
+                    const googleDto = {
+                        uid: user.uid,
+                        email: user.email
+                    };
+                    // 다른 필요한 사용자 데이터 추가
+
+
+                    // ...
+                    fetch("http://localhost:60000/v1/user/validation?sso=google", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(googleDto),
+                    })
+                        .then(response => response.text())
+                        .then(data => {
+                            if (data == 'true') {
+                                location.href="/v1/user/loginwith?email="+googleDto.email+"&uid="+googleDto.uid;
+                            }
+                            location.replace("/v1/user/additional-info?sso=google&email="+googleDto.email+"&uid="+googleDto.uid);
+                        })
+                        .catch(error => {
+                            location.href="/error/404";
+                        });
+                }).catch((error) => {
+                // Handle Errors here.
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // The email of the user's account used.
+                const email = error.customData.email;
+                // The AuthCredential type that was used.
+                const credential = GoogleAuthProvider.credentialFromError(error);
+                // ...
+                location.href="/error/500";
+            });
+        })
+    </script>
+
 
 </div>
 </html>

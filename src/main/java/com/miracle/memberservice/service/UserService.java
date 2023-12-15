@@ -72,6 +72,18 @@ public class UserService {
         return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
     }
 
+    /* KADE : sso 가입 여부 확인 */
+    public Boolean checkEmail(HttpSession session, String email) {
+
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/check-email/" + email);
+
+        if (Boolean.TRUE.equals(response.getData()))
+            return Boolean.TRUE;
+
+        return Boolean.FALSE;
+    }
+
+
     public PageMoveWithMessage formResume(HttpSession session) {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/base-info");

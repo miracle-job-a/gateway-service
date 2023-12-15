@@ -12,6 +12,7 @@ import com.miracle.memberservice.service.UserService;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -36,6 +37,8 @@ public class GuestController {
     private final CompanyService companyService;
     private final EmailService emailService;
     private final AdminService adminService;
+    @Value("${miracle.passwordChecker}")
+    private String passwordChecker;
 
     @GetMapping
     public String index(HttpSession session, Model model) {
@@ -92,6 +95,75 @@ public class GuestController {
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
+
+    /* KADE : SSO(google) 로그인 */
+    @ResponseBody
+    @PostMapping("/user/validation")
+    public String userSsoLogin(@RequestParam String sso,
+                               @RequestBody UserSsoLoginRequestDto userSsoLoginRequestDto,
+                               HttpSession session) {
+
+        Boolean checkEmail = userService.checkEmail(session, sso+"#"+userSsoLoginRequestDto.getEmail());
+
+        //이미 가입되어 있다면
+        if (checkEmail) {
+            return "true";
+        }
+        //가입이 안되어 있다면 추가정보 입력으로
+        return "false";
+    }
+
+    @GetMapping("/user/additional-info")
+    public String moveToAdditionalInfo(@RequestParam String sso, @RequestParam String email,
+                                       @RequestParam String uid, Model model) {
+        model.addAttribute("sso", sso);
+        model.addAttribute("email", email);
+        model.addAttribute("uid", uid);
+        return "user/additional-info";
+    }
+
+    //추가정보 입력을 받아서
+    @PostMapping("/user/joinwith")
+    public String userSsoJoin(@RequestParam String sso,
+                              @ModelAttribute UserSsoLoginRequestDto userSsoLoginRequestDto,
+                              RedirectAttributes redirectAttributes,
+                              Model model, HttpSession session) {
+        //회원가입 진행 (DB에 저장)
+        UserJoinDto userJoinDto = new UserJoinDto(userSsoLoginRequestDto.getEmail(),
+                userSsoLoginRequestDto.getName(),
+                userSsoLoginRequestDto.getUid() + passwordChecker,
+                userSsoLoginRequestDto.getPhone(),
+                userSsoLoginRequestDto.getBirth(),
+                userSsoLoginRequestDto.getAddress(),
+                userSsoLoginRequestDto.getDetailAddress(),
+                userSsoLoginRequestDto.getSso());
+
+        PageMoveWithMessage pmwmByJoin = userService.join(userJoinDto, session);
+
+        //로그인 진행
+        LoginDto loginDto = new LoginDto(userSsoLoginRequestDto.getEmail(),
+                userSsoLoginRequestDto.getUid() + passwordChecker,
+                userSsoLoginRequestDto.getMemberType(),
+                userSsoLoginRequestDto.getPostId(),
+                userSsoLoginRequestDto.getCompanyId(),
+                userSsoLoginRequestDto.getPostType(),
+                userSsoLoginRequestDto.getSso());
+
+        PageMoveWithMessage pmwm = userService.login(loginDto, session);
+        if (pmwm.getId() != null) {
+            session.setAttribute("id", pmwm.getId());
+            session.setAttribute("email", pmwm.getEmail());
+            session.setAttribute("name", pmwm.getNameOrBno());
+        }
+        if (Objects.nonNull(loginDto.getPostId())) {
+            redirectAttributes.addAttribute("companyId", loginDto.getCompanyId());
+            redirectAttributes.addAttribute("postType", loginDto.getPostType());
+        }
+        String errorMessage = pmwm.getErrorMessage();
+        model.addAttribute("errorMessage", errorMessage);
+        return pmwm.getPageName();
+    }
+
 
     @PostMapping("/company/join")
     public String companyJoin(@ModelAttribute CompanyJoinDto companyJoinDto, Model model, HttpSession session, @RequestParam MultipartFile photo) throws IOException {
