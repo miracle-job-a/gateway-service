@@ -493,6 +493,49 @@ public class CompanyService {
         return result;
     }
 
+    public Object getJobChartData(HttpSession session, Long companyId) {
+        ApiResponse adminResponse = ServiceCall.get(session, Const.RequestHeader.ADMIN, "/admin/jobs");
+        if (adminResponse.getHttpStatus() != 200)
+            return null;
+
+        ApiResponse companyResponse = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/jobstacks");
+        if (companyResponse.getHttpStatus() != 200)
+            return null;
+
+        List<Map<String, Object>> adminDataList = (List<Map<String, Object>>) adminResponse.getData();
+        List<Map<String, Object>> companyDataList = (List<Map<String, Object>>) companyResponse.getData();
+
+        Map<Long, String> jobIdToNameMap = new HashMap<>();
+        Map<String, Integer> jobNameToCountMap = new HashMap<>();
+
+        for (Map<String, Object> adminData : adminDataList) {
+            Number jobId = (Number) adminData.get("id");
+            String jobName = (String) adminData.get("name");
+            jobIdToNameMap.put(jobId.longValue(), jobName);
+        }
+
+        for (Map<String, Object> companyData : companyDataList) {
+            List<Number> jobIdSet = (List<Number>) companyData.get("jobIdSet");
+
+            for (Number jobId : jobIdSet) {
+                String jobName = jobIdToNameMap.get(jobId.longValue());
+
+                jobNameToCountMap.put(jobName, jobNameToCountMap.getOrDefault(jobName, 0) + 1);
+            }
+        }
+
+        List<List<Object>> result = new ArrayList<>();
+        result.add(List.of("Job", "num"));
+
+        for (Map.Entry<String, Integer> entry : jobNameToCountMap.entrySet()) {
+            String jobName = entry.getKey();
+            Integer count = entry.getValue();
+            result.add(List.of(jobName, count));
+        }
+
+        return result;
+    }
+
     public PageMoveWithMessage getCompanyJoinCountByDay(HttpSession session, int year, int month) {
         ApiResponse response = ServiceCall.getParamListWithTodayFalse(session, Const.RequestHeader.COMPANY, "/company/list", 1, 1);
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("admin/main", response.getMessage());
