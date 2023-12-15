@@ -42,7 +42,23 @@
                 pieHole: 0.4,
             };
 
-            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+            var chart = new google.visualization.PieChart(document.getElementById('stackPiechart'));
+
+            chart.draw(data, options);
+        }
+
+        function jobDrawChart() {
+            /*<![CDATA[*/
+            var chartData = /*[[${jobChartData}]]*/ null;
+            /*]]>*/
+
+            var data = google.visualization.arrayToDataTable(chartData);
+
+            var options = {
+                pieHole: 0.4,
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('jobPiechart'));
 
             chart.draw(data, options);
         }
@@ -253,81 +269,80 @@
 
                     <div class="col-lg-12 col-12">
                         <div class="section-title-wrap mb-5">
-                            <h4 class="section-title">공고 수 정보</h4>
+                            <h3 class="section-title">공고 수 정보</h3>
                         </div>
                     </div>
 
                     <div class="row mx-auto">
-                        <div class="col-lg-4 col-12 mb-4 mb-lg-0">
-                            <div class="custom-block custom-block-full mb-2">
-                                <div class="custom-block-image-wrap">
-                                </div>
-
-                                <div class="custom-block-info">
-                                    <div class="d-flex justify-content-center">
-                                        <h5 class="mb-0 text-info">전체 공고 수</h5>
+                        <div onclick="window.location.href='/v1/company/post/list/1?sort=latest'" class="col-lg-4 col-12 mb-4 mb-lg-0" style="cursor: pointer;">
+                                <div class="custom-block custom-block-all mb-2">
+                                    <div class="custom-block-image-wrap"></div>
+                                    <div class="custom-block-info">
+                                        <div class="d-flex justify-content-center">
+                                            <h5 class="mb-0 text-info">전체 공고 수</h5>
+                                        </div>
+                                        <hr>
+                                        <div class="d-flex justify-content-center">
+                                            <h5 class="mb-0 text-secondary" th:text="${count.countAllPosts}"></h5>
+                                        </div>
                                     </div>
-                                    <hr>
-                                    <div class="d-flex justify-content-center">
-                                        <h5 class="mb-0 text-secondary" th:text="${count.countAllPosts}"></h5>
-                                    </div>
                                 </div>
-                            </div>
                         </div>
-                        <div class="col-lg-4 col-12 mb-4 mb-lg-0">
-                            <div class="custom-block custom-block-full mb-2">
-                                <div class="custom-block-image-wrap">
-                                </div>
-
-                                <div class="custom-block-info">
-                                    <div class="d-flex justify-content-center">
-                                        <h5 class="mb-0 text-success">진행중인 공고 수</h5>
+                        <div onclick="window.location.href='/v1/company/post/list/1?sort=open'" class="col-lg-4 col-12 mb-4 mb-lg-0" style="cursor: pointer;">
+                                <div class="custom-block custom-block-now mb-2">
+                                    <div class="custom-block-image-wrap"></div>
+                                    <div class="custom-block-info">
+                                        <div class="d-flex justify-content-center">
+                                            <h5 class="mb-0 text-success">진행중인 공고 수</h5>
+                                        </div>
+                                        <hr>
+                                        <div class="d-flex justify-content-center">
+                                            <h5 class="mb-0 text-secondary" th:text="${count.countOpen}"></h5>
+                                        </div>
                                     </div>
-                                    <hr>
-                                    <div class="d-flex justify-content-center">
-                                        <h5 class="mb-0 text-secondary" th:text="${count.countOpen}"></h5>
-                                    </div>
                                 </div>
-                            </div>
                         </div>
-                        <div class="col-lg-4 col-12 mb-4 mb-lg-0">
-                            <div class="custom-block custom-block-full mb-2">
-                                <div class="custom-block-image-wrap">
-                                </div>
-
-                                <div class="custom-block-info">
-                                    <div class="d-flex justify-content-center">
-                                        <h5 class="mb-0 text-warning">마감 공고 수</h5>
+                        <div onclick="window.location.href='/v1/company/post/list/1?sort=close'" class="col-lg-4 col-12 mb-4 mb-lg-0" style="cursor: pointer;">
+                                <div class="custom-block custom-block-end mb-2">
+                                    <div class="custom-block-image-wrap"></div>
+                                    <div class="custom-block-info">
+                                        <div class="d-flex justify-content-center">
+                                            <h5 class="mb-0 text-warning">마감된 공고 수</h5>
+                                        </div>
+                                        <hr>
+                                        <div class="d-flex justify-content-center">
+                                            <h5 class="mb-0 text-secondary" th:text="${count.countEndedPosts}"></h5>
+                                        </div>
                                     </div>
-                                    <hr>
-                                    <div class="d-flex justify-content-center">
-                                        <h5 class="mb-0 text-secondary" th:text="${count.countEndedPosts}"></h5>
-                                    </div>
                                 </div>
-                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row mx-auto mt-2">
+                <div class="row mx-auto mt-5">
 
                     <div class="col-lg-12 col-12">
-                        <div class="section-title-wrap mb-5">
-                            <h4 class="section-title">기업 인사이트</h4>
+                        <div class="section-title-wrap my-5">
+                            <h3 class="section-title">기업 인사이트</h3>
                         </div>
                     </div>
 
                     <div class="row mx-auto">
 
                         <div class="row justify-content-center">
-                            <div style="margin-top: 5%" class="card bg-outline-light bg-transparent text-dark shadow-lg col-6 post-form">
                                 <h4 class="section-title">현재 진행 중인 공고의 스택 비율</h4>
-                                <div th:if="${stackChartData}" class="card p-4 mt-3 mb-3 col-6 post-form align-self-center" style="width: 900px; height: 500px;" id="piechart"></div>
-                                <div th:unless="${stackChartData}">
-                                    <h5 class="mb-0 text-secondary">현재 진행 중인 공고가 없으므로</h5>
-                                    <h5 class="mb-0 text-secondary">차트를 불러올 수 없습니다.</h5>
+                                <div th:if="${stackChartData}" class="card p-4 mt-3 mb-3 col-6 post-form align-self-center" style="width: 900px; height: 500px;" id="stackPiechart"></div>
+                                <div th:unless="${stackChartData}" class="my-5 text-center">
+                                    <h5 class="text-secondary">현재 진행 중인 공고가 없으므로<br/>차트를 불러올 수 없습니다.</h5>
+<!--                                    <h5 class="text-secondary">차트를 불러올 수 없습니다.</h5>-->
                                 </div>
-                            </div>
+
+                                <h4 class="section-title">현재 진행 중인 공고의 직무 비율</h4>
+                                <div th:if="${jobChartData}" class="card p-4 mt-3 mb-3 col-6 post-form align-self-center" style="width: 900px; height: 500px;" id="jobPiechart"></div>
+                                <div th:unless="${jobChartData}" class="my-5 text-center">
+                                    <h5 class="text-secondary">현재 진행 중인 공고가 없으므로<br/>차트를 불러올 수 없습니다.</h5>
+<!--                                    <h5 class="text-secondary">차트를 불러올 수 없습니다.</h5>-->
+                                </div>
                         </div>
                     </div>
                 </div>
