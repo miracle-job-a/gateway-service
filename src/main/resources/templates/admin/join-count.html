@@ -11,25 +11,27 @@
 
     function drawBasic() {
       /*<![CDATA[*/
-      var chartData = /*[[${chartData}]]*/ null;
+      var userChartData = /*[[${userChartData}]]*/ null;
+      var companyChartData = /*[[${companyChartData}]]*/ null;
       /*]]>*/
 
-      if (chartData) {
+      if (userChartData && companyChartData) {
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Day');
+        data.addColumn('number', 'User');
         data.addColumn('number', 'Company');
 
         var dataArray = [];
-        for (var key in chartData) {
-          if (chartData.hasOwnProperty(key)) {
-            dataArray.push([key, chartData[key]]);
+        for (var key in userChartData) {
+          if (userChartData.hasOwnProperty(key) && companyChartData.hasOwnProperty(key)) {
+            dataArray.push([key, userChartData[key], companyChartData[key]]);
           }
         }
 
         data.addRows(dataArray);
 
         var options = {
-          title: 'Daily Company Join Count',
+          title: 'Daily Join Count',
           hAxis: {
             title: 'Day'
           },
@@ -50,25 +52,27 @@
       }
     }
 
-    function drawChart(chartData) {
-      for (var i = 0; i < chartData.length; i++) {
-        chartData[i][1] = parseInt(chartData[i][1]);
+    function drawChart(userChartData, companyChartData) {
+      for (var i = 0; i < userChartData.length; i++) {
+        userChartData[i][1] = parseInt(userChartData[i][1]);
+        companyChartData[i][1] = parseInt(companyChartData[i][1]);
       }
 
-      if (chartData) {
+      if (userChartData && companyChartData) {
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Day');
+        data.addColumn('number', 'User');
         data.addColumn('number', 'Company');
 
         var dataArray = [];
-        for (var i = 0; i < chartData.length; i++) {
-          dataArray.push([chartData[i][0].toString(), chartData[i][1]]);
+        for (var i = 0; i < userChartData.length; i++) {
+          dataArray.push([userChartData[i][0].toString(), userChartData[i][1], companyChartData[i][1]]);
         }
 
         data.addRows(dataArray);
 
         var options = {
-          title: 'Daily Company Join Count',
+          title: 'Daily Join Count',
           hAxis: {
             title: 'Day'
           },
@@ -104,7 +108,7 @@
       var selectedMonth = document.getElementById("month").value;
 
       try {
-        var response = await fetch("/v1/admin/company/join-count/ajax?year=" + encodeURIComponent(selectedYear) + "&month=" + encodeURIComponent(selectedMonth), {
+        var response = await fetch("/v1/admin/join-count/ajax?year=" + encodeURIComponent(selectedYear) + "&month=" + encodeURIComponent(selectedMonth), {
           method: "GET",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -114,10 +118,10 @@
         if (response.ok) {
           var responseData = await response.json();
 
-          // Convert map to array of arrays
-          var chartData = Object.entries(responseData.chartData);
+          var userChartData = Object.entries(responseData.userChartData);
+          var companyChartData = Object.entries(responseData.companyChartData);
 
-          drawChart(chartData);
+          drawChart(userChartData, companyChartData);
         } else {
           console.error("updateChartData FAIL. status : " + response.status);
         }
@@ -135,7 +139,7 @@
         <div class="row justify-content-center">
           <div class="col-lg-9 col-12">
             <div class="section-title-wrap mb-5">
-              <h4 class="section-title">일별 기업 회원가입 현황</h4>
+              <h4 class="section-title">일별 전체 회원가입 현황</h4>
             </div>
             <div class="row">
               <div class="col-lg-2">
@@ -157,10 +161,11 @@
                   </select>
                   <div class="arrow-down"></div>
                 </div>
+                </div>
               </div>
             </div>
             <div class="row justify-content-center">
-              <div class="card p-2 my-3 col-6 post-form align-self-center bg-white" style="width: 1000px; height: 700px;" id="chart_div"></div>
+              <div class="card p-2 col-6 post-form align-self-center bg-white" style="width: 1000px; height: 700px;" id="chart_div"></div>
             </div>
           </div>
         </div>
