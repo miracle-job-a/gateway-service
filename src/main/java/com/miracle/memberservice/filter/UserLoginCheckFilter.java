@@ -45,7 +45,7 @@ public class UserLoginCheckFilter implements Filter {
     }
 
     /*
-    whitelist에 해당하는 url인 경우 인증 체크 x
+    whitelist에 해당하는 url인 경우 인증 체크
     simpleMatch 	: 파라미터 문자열이 특정 패턴에 매칭되는지를 검사함.
     */
     private boolean isLoginCheckPath(String requestURI) {
