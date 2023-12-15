@@ -44,6 +44,7 @@ public class GuestController {
             Long id = (Long) session.getAttribute("id");
             model.addAttribute("count", companyService.mainPageCompany(session, id));
             model.addAttribute("stackChartData", companyService.getStackChartData(session, id));
+            model.addAttribute("jobChartData", companyService.getJobChartData(session, id));
         }
         model.addAttribute("map", pmwm.getData());
         return "index";
