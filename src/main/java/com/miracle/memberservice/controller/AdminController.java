@@ -175,7 +175,7 @@ public class AdminController {
     }
 
     @GetMapping("/stacks")
-    private String stackList(HttpSession session, Model model) {
+    private String getStackList(HttpSession session, Model model){
         PageMoveWithMessage pmwm = adminService.getAllStack(session);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
 
@@ -212,7 +212,7 @@ public class AdminController {
     }
 
     @GetMapping("/jobs")
-    private String jobList(HttpSession session, Model model) {
+    private String getJobList(HttpSession session, Model model){
         PageMoveWithMessage pmwm = adminService.getAllJob(session);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
 

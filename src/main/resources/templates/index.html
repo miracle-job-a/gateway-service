@@ -24,6 +24,29 @@
             // 이후 로직 추가 가능
         }
     </script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(stackDrawChart);
+        google.charts.setOnLoadCallback(jobDrawChart);
+
+        function stackDrawChart() {
+            /*<![CDATA[*/
+            var chartData = /*[[${stackChartData}]]*/ null;
+            /*]]>*/
+
+            var data = google.visualization.arrayToDataTable(chartData);
+
+            var options = {
+                pieHole: 0.4,
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+            chart.draw(data, options);
+        }
+    </script>
     <main>
         <section class="hero-section">
             <div class="container">
@@ -229,7 +252,7 @@
 
         <section class="trending-podcast-section section-padding" th:if="${session.bno!=null}">
             <div class="container">
-                <div class="rown mx-auto">
+                <div class="row mx-auto">
 
                     <div class="col-lg-12 col-12">
                         <div class="section-title-wrap mb-5">
@@ -283,6 +306,29 @@
                                     <div class="d-flex justify-content-center">
                                         <h5 class="mb-0 text-secondary" th:text="${count.countEndedPosts}"></h5>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mx-auto mt-2">
+
+                    <div class="col-lg-12 col-12">
+                        <div class="section-title-wrap mb-5">
+                            <h4 class="section-title">기업 인사이트</h4>
+                        </div>
+                    </div>
+
+                    <div class="row mx-auto">
+
+                        <div class="row justify-content-center">
+                            <div style="margin-top: 5%" class="card bg-outline-light bg-transparent text-dark shadow-lg col-6 post-form">
+                                <h4 class="section-title">현재 진행 중인 공고의 스택 비율</h4>
+                                <div th:if="${stackChartData}" class="card p-4 mt-3 mb-3 col-6 post-form align-self-center" style="width: 900px; height: 500px;" id="piechart"></div>
+                                <div th:unless="${stackChartData}">
+                                    <h5 class="mb-0 text-secondary">현재 진행 중인 공고가 없으므로</h5>
+                                    <h5 class="mb-0 text-secondary">차트를 불러올 수 없습니다.</h5>
                                 </div>
                             </div>
                         </div>
