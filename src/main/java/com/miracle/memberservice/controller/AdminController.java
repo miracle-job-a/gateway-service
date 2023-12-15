@@ -75,6 +75,36 @@ public class AdminController {
 
         return pmwm.getPageName();
     }
+  
+    @GetMapping("/company/join-count")
+    public String getCompanyJoinCountByMonth(
+            @RequestParam(name = "year", required = false, defaultValue = "0") int year,
+            @RequestParam(name = "month", required = false, defaultValue = "0") int month,
+            HttpSession session, Model model) {
+
+        if (year == 0) year = LocalDate.now().getYear();
+        if (month == 0) month = LocalDate.now().getMonthValue();
+
+        PageMoveWithMessage pmwm = companyService.getCompanyJoinCountByDay(session, year, month);
+        model.addAttribute("chartData", pmwm.getData());
+        model.addAttribute("year", year);
+        model.addAttribute("month", month);
+
+        return pmwm.getPageName();
+    }
+
+    @ResponseBody
+    @GetMapping("/company/join-count/ajax")
+    public ResponseEntity<Map<String, Object>> getReloadCompanyJoinCountByMonth(
+            @RequestParam(name = "year", required = false, defaultValue = "0") int year,
+            @RequestParam(name = "month", required = false, defaultValue = "0") int month,
+            HttpSession session) {
+
+        PageMoveWithMessage pmwm = companyService.getCompanyJoinCountByDay(session, year, month);
+        Map<String, Object> map = new HashMap<>();
+        map.put("chartData", pmwm.getData());
+        return ResponseEntity.status(HttpStatus.OK).body(map);
+    }
 
     @ResponseBody
     @GetMapping("/user/join-count/ajax")

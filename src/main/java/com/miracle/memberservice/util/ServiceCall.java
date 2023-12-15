@@ -162,6 +162,11 @@ public class ServiceCall {
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()), httpSession, serviceType).block();
     }
 
+    public static ApiResponse getParamListWithTodayFalse(HttpSession httpSession, String serviceType, String url, int strNum, int endNum) {
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).queryParam("today", false).build()), httpSession, serviceType).block();
+    }
+
     private static String port(String memberType) {
         switch (memberType) {
             case Const.RequestHeader.USER:
