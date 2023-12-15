@@ -4,6 +4,18 @@
         layout:decorate="~{layout/default_layout}" lang="ko">
 
 <div layout:fragment="content">
+    <style>
+        /* CSS */
+        .modal-backdrop-dark {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.5); /* 어두운 배경 색상 */
+            z-index: 1040; /* 모달보다 앞에 위치하도록 z-index 설정 */
+        }
+    </style>
     <script th:inline="javascript">
         var errorMessage = [[${errorMessage}]];
 
@@ -16,39 +28,105 @@
         <section class="hero-section">
             <div class="container">
                 <div class="row">
+                    <div class="col-lg-12 col-12 mt-3">
+                        <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-indicators">
+                                <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                                <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                                <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                            </div>
+                            <div class="carousel-inner rounded-2">
+                                <div class="carousel-item active">
+                                    <img src="/images/carousel/company1.jpg" class="d-block w-100" >
+                                    <div class="carousel-caption d-md-block">
+                                        <h5 class="text-light">개발자를 위한 앞서가는 채용 플랫폼</h5>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/images/carousel/company2.jpg" class="d-block w-100" >
+                                    <div class="carousel-caption d-md-block">
+                                        <h5 class="text-light">지금 바로 채용공고에 지원해 보세요.</h5>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="/images/carousel/company3.jpg" class="d-block w-100" >
+                                    <div class="carousel-caption d-md-block">
+                                        <h5 class="text-light">훌륭한 인재를 채용해 보세요.</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon text-light" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon text-light" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    </div>
 
-                    <div class="col-lg-12 col-12">
-                        <div class="text-center">
-                            <h1 class="text-black">개발자를 위한 앞서가는 채용 플랫폼</h1>
-
-                            <p class="text-black">For Developers. For Job Seekers.</p>
-
-                            <a th:if="${session.id==null}" href="/v1/user/join"
-                               class="btn custom-btn smoothscroll mt-3"> 유저 회원가입하기 </a>
-                            <a th:if="${session.id==null}" href="/v1/company/join"
-                               class="btn custom-btn smoothscroll mt-3"> 기업 회원가입하기 </a>
+                    <div class="row col-12 mt-1 text-end">
+                        <div class="col-2 d-none d-md-block"></div>
+                        <div class="col-2 d-none d-md-block"></div>
+                        <div class="col-2 d-none d-md-block"></div>
+                        <div class="col-md-2 d-none d-md-block"></div>
+                        <div class="col-md-4 col-12">
+                            <button th:if="${session.id==null}" type="button" class="btn custom-btn" data-bs-toggle="modal" data-bs-target="#myModal" >회원가입</button>
+                            <!--<a th:if="${session.id==null}" href="/v1/user/join" class="btn custom-btn smoothscroll">유저 회원가입</a>
+                            <a th:if="${session.id==null}" href="/v1/company/join" class="btn custom-btn smoothscroll ms-2">기업 회원가입</a>-->
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Modal -->
+            <div class="modal modal-backdrop-dark fade" id="myModal" tabindex="-2" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="false">
+                <div class="modal-dialog modal-dialog-centered mx-auto">
+                    <div class="modal-content mx-auto">
+                        <div class="modal-header text-center">
+                            <h5 class="modal-title mx-auto" id="exampleModalLabel">환영합니다.</h5>
+                        </div>
+                        <div class="modal-body d-flex flex-column align-items-center">
+                            <div class="custom-card-border col-11 my-4 d-flex flex-column align-items-center">
+                                <label class="my-3 col-lg-8 col-12 mx-auto text-center">지금 바로 지원해보세요.</label>
+                                <a href="/v1/user/join" class="custom-btn my-2 col-5 text-center" style="width: 189px">
+                                    유저 회원가입
+                                </a>
+                                <a href="#"><img src="/images/google-login.png" class="my-2" alt="" style="width: 189px"></a>
+                            </div>
+                            <div class="custom-card-border col-11 my-4 d-flex flex-column align-items-center">
+                                <label class="my-3 col-lg-8 col-12 mx-auto text-center">원하는 인재를 찾아보세요.</label>
+                                <a href="/v1/company/join" class="btn custom-btn mt-2 mb-4" style="width: 189px">기업 회원가입</a>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
         </section>
 
-        <section class="trending-podcast-section section-padding" th:if="${session.bno==null}">
-            <div class="container">
-                <div class="row">
 
+
+        <section class="trending-podcast-section mt-3" th:if="${session.bno==null}">
+            <div class="container">
+                <div class="row mx-auto">
                     <div class="col-lg-12 col-12">
-                        <div class="section-title-wrap mb-5">
+                        <div class="section-title-wrap mb-3">
                             <h4 class="section-title">최신 공고</h4>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-lg-4 col-12 mb-4 mb-lg-0" th:each="post, postStat : ${map.newest}">
-                            <div class="custom-block custom-block-full mb-2">
+                    <div class="row mx-auto">
+                        <div class="col-lg-4 col-12 mb-4 mb-lg-2 " th:each="post, postStat : ${map.newest}">
+                            <div class="custom-block custom-block-full mb-2 ">
                                 <div class="custom-block-image-wrap">
                                     <a th:href="@{/v1/click/post/{postId}/detail(companyId=${post.companyId}, postId=${post.id}, postType=${post.postType})}">
-                                        <img src="/images/podcast/27670664_7369753.jpg"
+                                        <img th:src="${post.photo}"
                                              class="custom-block-image img-fluid"
                                              alt="">
                                     </a>
@@ -57,25 +135,23 @@
                                 <div class="custom-block-info">
                                     <div class="d-flex justify-content-between">
                                         <div class="mb-2 d-inline-flex" th:if="${post.postType=='NORMAL'}">
-                                            <button class="badge" style="background-color: #717275"
-                                                    th:text="일반공고"></button>
+                                            <span class="badge bg-dark" th:text="일반공고"></span>
                                         </div>
                                         <div class="mb-2 d-inline-flex" th:if="${post.postType=='MZ'}">
-                                            <button class="badge" style="background-color: #0a53be"
-                                                    th:text="MZ공고"></button>
+                                            <span class="badge bg-primary" th:text="MZ공고"></span>
                                         </div>
                                         <a class="text-black " th:text="${post.name}">
                                         </a>
                                     </div>
-                                    <a class="bi-balloon me-1">
+                                    <a class="bi-pin-map me-1">
                                         <span class="text-black" th:text="${post.workAddress}"></span>
                                     </a>
-                                    <a class="d-flex justify-content-between me-1">
+                                    <a class="d-flex justify-content-between me-1 my-2">
                                         <span class="bi-clock-fill text-black" th:text="' 마감일: ~'+${post.endDate}"></span>
                                     </a>
 
                                     <hr>
-                                    <h5 class="mb-0" th:text="${post.title}"></h5>
+                                    <h6 class="my-1" th:text="${post.title}"></h6>
 
                                     <div class="custom-block-bottom d-flex justify-content-between mt-2">
                                         <a class="bi-person me-1">
@@ -93,22 +169,22 @@
             </div>
         </section>
 
-        <section class="trending-podcast-section section-padding" th:if="${session.bno==null}">
+        <section class="trending-podcast-section mt-3 mb-5" th:if="${session.bno==null}">
             <div class="container">
-                <div class="row">
+                <div class="row mx-auto">
 
                     <div class="col-lg-12 col-12">
-                        <div class="section-title-wrap mb-5">
+                        <div class="section-title-wrap mb-3">
                             <h4 class="section-title">마감임박 공고</h4>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-lg-4 col-12 mb-4 mb-lg-0" th:each="post, postStat : ${map.deadline}">
+                    <div class="row mx-auto">
+                        <div class="col-lg-4 col-12 mb-5 mb-lg-0" th:each="post, postStat : ${map.deadline}">
                             <div class="custom-block custom-block-full mb-2">
                                 <div class="custom-block-image-wrap">
                                     <a th:href="@{/v1/click/post/{postId}/detail(companyId=${post.companyId}, postId=${post.id}, postType=${post.postType})}">
-                                        <img src="/images/podcast/27670664_7369753.jpg"
+                                        <img th:src="${post.photo}"
                                              class="custom-block-image img-fluid"
                                              alt="">
                                     </a>
@@ -117,25 +193,23 @@
                                 <div class="custom-block-info">
                                     <div class="d-flex justify-content-between">
                                         <div class="mb-2 d-inline-flex" th:if="${post.postType=='NORMAL'}">
-                                            <button class="badge" style="background-color: #717275"
-                                                    th:text="일반공고"></button>
+                                            <span class="badge bg-secondary" th:text="일반공고"></span>
                                         </div>
                                         <div class="mb-2 d-inline-flex" th:if="${post.postType=='MZ'}">
-                                            <button class="badge" style="background-color: #0a53be"
-                                                    th:text="MZ공고"></button>
+                                            <span class="badge bg-primary" th:text="MZ공고"></span>
                                         </div>
-                                        <a class="text-black " th:text="${post.name}">
+                                        <a class="text-black" th:text="${post.name}">
                                         </a>
                                     </div>
-                                    <a class="bi-balloon me-1">
+                                    <a class="bi-pin-map me-1">
                                         <span class="text-black" th:text="${post.workAddress}"></span>
                                     </a>
-                                    <a class="d-flex justify-content-between me-1">
+                                    <a class="d-flex justify-content-between me-1 my-2">
                                         <span class="bi-clock-fill text-black" th:text="' 마감일: ~'+${post.endDate}"></span>
                                     </a>
 
                                     <hr>
-                                    <h5 class="mb-0" th:text="${post.title}"></h5>
+                                    <h6 class="my-2" th:text="${post.title}"></h6>
 
                                     <div class="custom-block-bottom d-flex justify-content-between mt-2">
                                         <a class="bi-person me-1">
@@ -155,7 +229,7 @@
 
         <section class="trending-podcast-section section-padding" th:if="${session.bno!=null}">
             <div class="container">
-                <div class="row">
+                <div class="rown mx-auto">
 
                     <div class="col-lg-12 col-12">
                         <div class="section-title-wrap mb-5">
@@ -163,7 +237,7 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row mx-auto">
                         <div class="col-lg-4 col-12 mb-4 mb-lg-0">
                             <div class="custom-block custom-block-full mb-2">
                                 <div class="custom-block-image-wrap">
@@ -216,6 +290,7 @@
                 </div>
             </div>
         </section>
+
     </main>
 
 </div>

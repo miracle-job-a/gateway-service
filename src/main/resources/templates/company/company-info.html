@@ -36,7 +36,7 @@
                                 <div class="col-lg-4 col-12">
                                     <div class="custom-block-icon-wrap">
                                         <div class="custom-block-image-wrap custom-block-image-detail-page">
-                                            <img src="/images/ryon.jpg" class="custom-block-image img-fluid" alt="">
+                                            <img th:src="'https://miracle-job-a.s3.ap-northeast-2.amazonaws.com/company/'+${info.bno}" class="custom-block-image img-fluid" alt="">
                                         </div>
                                     </div>
                                 </div>
@@ -73,7 +73,7 @@
                                             <label for="introduction">기업 소개</label>
                                             <textarea readonly class="form-control" name="introduction"
                                                       placeholder="기업 소개 글 입니다." required rows="10"
-                                                      minlength="100" th:text="${info.introduction}"></textarea>
+                                                      minlength="20" th:text="${info.introduction}"></textarea>
                                         </div>
 
 

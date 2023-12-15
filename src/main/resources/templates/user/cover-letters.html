@@ -58,15 +58,15 @@
                 <div class="row justify-content-center">
 
                     <div class="col-lg-10 col-12">
-                        <div class="section-title-wrap mb-5">
+                        <div class="section-title-wrap mb-3">
                             <h4 class="section-title">나의 자기소개서</h4>
                         </div>
                     </div>
 
 
                     <div class="row col-lg-10 col-12 mb-4">
-                        <div class="col-auto">
-                            <button type="button" class="btn btn-primary" id="cover-letter">자기소개서 생성</button>
+                        <div class="col-auto my-2">
+                            <button type="button" class="custom-border-option-btn mx-1 my-auto" id="cover-letter">자기소개서 생성</button>
                             <div class="btn-group">
                                 <button id="MODIFIED_AT_DESC" type="button" th:class="${sort == 'MODIFIED_AT_DESC' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary'}"
                                         onclick="sort(this)">최근 작성일
@@ -78,7 +78,7 @@
                         </div>
                         <div class="col-auto">
                             <form action="/v1/user/cover-letters/1" method="get">
-                                <div class="input-group mb-3 ">
+                                <div class="input-group my-2 ">
                                     <input type="text" name="word" class="form-control" placeholder="Search">
                                     <button class="btn btn-outline-secondary" type="submit">Go</button>
                                 </div>
@@ -93,7 +93,7 @@
                     </h5>
                     <!-- 목록 1칸 -->
                     <div th:each="letterPage, letterPageStat : ${letterList}" th:id="'postPage'+${letterPageStat.index}" class="col-lg-10 col-12 mb-4 mb-lg-2">
-                        <div class="custom-block d-flex" th:each="letter, letterStat : ${letterPage}">
+                        <div class="custom-block d-flex mb-2" th:each="letter, letterStat : ${letterPage}">
                             <div class="custom-block-info">
                                 <h5 class="mb-2">
                                     <a th:href="@{'/v1/user/cover-letter/detail/' + ${letter.id}}" th:text="${letter.title}"></a>
@@ -106,8 +106,11 @@
 
                             <!-- 버튼 부 -->
                             <div class="d-flex flex-column ms-auto">
-                                <!-- 추후 th:attr="data-id=${resume.id}" button 내 추가하기 -->
-                                <button type="button" class="btn btn-outline-secondary" th:attr="data-letter-id=${letter.id}" onclick="confirmDelete(this)">삭제하기</button>                            </div>
+                                <button type="button" class="btn btn-outline-secondary" th:attr="data-letter-id=${letter.id}" onclick="confirmDelete(this)">
+                                    <span class="d-none d-sm-inline">삭제</span> <!-- 데스크탑에서 보이는 텍스트 -->
+                                    <span class="d-inline d-sm-none bi-trash"></span> <!-- 모바일에서 보이는 텍스트 -->
+                                </button>
+                            </div>
                         </div>
                     </div>
 

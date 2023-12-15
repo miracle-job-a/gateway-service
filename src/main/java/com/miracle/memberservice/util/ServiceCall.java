@@ -11,6 +11,8 @@ import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpSession;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.function.Function;
 
 public class ServiceCall {
@@ -55,6 +57,11 @@ public class ServiceCall {
     public static ApiResponse get(HttpSession httpSession, String serviceType, String url) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()), httpSession, serviceType).block();
+    }
+
+    public static ApiResponse getParams(HttpSession httpSession, String serviceType, String url, int year, int month) {
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("year", year).queryParam("month", month).build()), httpSession, serviceType).block();
     }
 
     public static ApiResponse getAnother(HttpSession httpSession, String serviceType, String url, Long userId) {
@@ -152,13 +159,18 @@ public class ServiceCall {
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).queryParam("today", today).build()), httpSession, serviceType).block();
     }
 
+    public static ApiResponse getParamList(HttpSession httpSession, String serviceType, String url, LocalDate date) {
+        String formattedDate = date.format(DateTimeFormatter.ISO_LOCAL_DATE);
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("date", formattedDate).build()), httpSession, serviceType).block();
+    }
+
     private static String port(String memberType) {
         switch (memberType) {
             case Const.RequestHeader.USER:
                 return "3.36.113.249:60001";
             case Const.RequestHeader.COMPANY:
                 return "13.125.211.61:60002";
-
             case Const.RequestHeader.ADMIN:
                 return "3.36.98.12:60003";
             default:

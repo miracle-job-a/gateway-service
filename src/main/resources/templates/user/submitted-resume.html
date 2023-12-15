@@ -16,6 +16,10 @@
 
             // 정수값을 년과 개월로 변환하는 함수
             function convertYearsMonths(value) {
+                if (value === 0) {
+                    return '신입';
+                }
+
                 var years = Math.floor(value / 12);
                 var months = value % 12;
 
@@ -33,6 +37,13 @@
             // 경력 값을 가져와서 변환하여 출력
             var convertedValue = convertYearsMonths(totalMonths);
             document.getElementById('userCareer').value = convertedValue;
+
+            // 전화번호
+            var phoneInput = document.getElementById('phone');
+            var rawPhoneNumber = phoneInput.value;
+
+            var formattedPhoneNumber = rawPhoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+            phoneInput.value = formattedPhoneNumber;
         });
     </script>
     <style>
@@ -65,7 +76,7 @@
                                     <div class="row">
 
                                         <div class="col-lg-4 col-12 px-5 my-auto align-self-auto">
-                                            <img src="/images/niniz.png" class="rounded float-start" alt="templatemo pod talk">
+                                            <img th:src="${resume.photo}" class="rounded float-start" alt="templatemo pod talk">
                                         </div>
 
                                         <div class="col-lg-8 col-12 px-5 m-auto align-self-center">
@@ -101,8 +112,6 @@
                                                 <label for="phone" class="col-sm-4 col-form-label">전화번호</label>
                                                 <div class="col-sm-8">
                                                     <input type="tel" readonly class="form-control-plaintext text-center"
-                                                           pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}"
-                                                           style="font-size: 18px;"
                                                            id="phone" th:value="${resume.userPhone}">
                                                 </div>
                                             </div>
@@ -146,7 +155,8 @@
                                             <label for="userJob">지원직군</label>
                                         </div>
                                         <div class="col-5">
-                                            <input type="text" readonly name="userJob" id="userJob" class="form-control-plaintext" th:value="${resume.userJob}"/>
+                                            <input type="text" readonly name="userJob" id="userJob" class="form-control-plaintext"
+                                                   th:value="${#strings.listJoin(resume.userJob, ', ')}"/>
                                         </div>
                                     </div>
 

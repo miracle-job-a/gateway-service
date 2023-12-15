@@ -1,22 +1,30 @@
 package com.miracle.memberservice.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.*;
-import com.miracle.memberservice.util.ApiResponseToList;
-import com.miracle.memberservice.util.Const;
-import com.miracle.memberservice.util.PageMoveWithMessage;
-import com.miracle.memberservice.util.ServiceCall;
+import com.miracle.memberservice.util.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
+import java.io.IOException;
 import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserService {
+
+    private final S3Method s3Method;
 
     /**
      * 유저 회원가입 요청 API
@@ -69,7 +77,7 @@ public class UserService {
 
 
         if (response.getHttpStatus() != 200)
-            return new PageMoveWithMessage("/user/resumes", response.getMessage());
+            return new PageMoveWithMessage("user/resumes", response.getMessage());
 
         Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
@@ -85,14 +93,33 @@ public class UserService {
         return new PageMoveWithMessage("user/resume-form", info);
     }
 
-    public PageMoveWithMessage addResume(HttpSession session, ResumeRequestDto resumeRequestDto) {
+    public PageMoveWithMessage addResume(HttpSession session, ResumeRequestDto resumeRequestDto, MultipartFile photo) throws IOException {
         Long userId = (Long) session.getAttribute("id");
+
+        String fileName = nextNumberOfPhoto(userId);
+        resumeRequestDto.setPhoto(fileName);
+
         ApiResponse response = ServiceCall.post(session, resumeRequestDto, Const.RequestHeader.USER, "/user/" + userId + "/resume");
-        if (response.getHttpStatus() != 201)
+        if (response.getHttpStatus() != 201 || Objects.isNull(fileName))
             return new PageMoveWithMessage("redirect:/v1/user/resume/form", response.getMessage());
+
+        s3Method.uploadFile(photo, Const.RequestHeader.RESUME, fileName);
+
         if (Objects.nonNull(resumeRequestDto.getPostId()))
             return new PageMoveWithMessage("redirect:/v1/click/post/" + resumeRequestDto.getPostId() + "/detail", resumeRequestDto);
         return new PageMoveWithMessage("redirect:/v1/user/resumes");
+    }
+
+    private String nextNumberOfPhoto(Long userId) {
+        for (int i = 1; i < 6; i++) {
+            String fileName = userId + "_" + i;
+            try {
+                s3Method.getFile(Const.RequestHeader.RESUME, fileName);
+            } catch (AmazonS3Exception e) {
+                return fileName;
+            }
+        }
+        return null;
     }
 
     public PageMoveWithMessage resumeList(HttpSession session) {
@@ -121,6 +148,7 @@ public class UserService {
                 .phone((String) data.get("phone"))
                 .education((String) data.get("education"))
                 .gitLink((String) data.get("gitLink"))
+                .open((Boolean) data.get("open"))
                 .jobIdSet((ArrayList<Integer>) data.get("jobIdSet"))
                 .stackIdSet((ArrayList<Integer>) data.get("stackIdSet"))
                 .careerDetailList((List<String>) data.get("careerDetailList"))
@@ -131,18 +159,28 @@ public class UserService {
         return new PageMoveWithMessage("user/resume-detail", info);
     }
 
-    public PageMoveWithMessage deleteResume(HttpSession session, Long resumeId) {
+    public PageMoveWithMessage deleteResume(HttpSession session, Long resumeId, String photo) {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.USER, "/user/" + userId + "/resume/" + resumeId);
 
+        s3Method.deleteFile(Const.RequestHeader.RESUME, photo);
         return new PageMoveWithMessage("redirect:/v1/user/resumes", response.getMessage());
     }
 
-    public PageMoveWithMessage updateResume(HttpSession session, ResumeRequestDto requestDto, Long resumeId) {
+    public PageMoveWithMessage updateResume(HttpSession session, ResumeRequestDto requestDto, Long resumeId, MultipartFile file) throws IOException {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.USER, "/user/" + userId + "/resume/" + resumeId);
+
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("redirect:/v1/user/resume/detail/" + resumeId, response.getMessage());
+
+        String photo = requestDto.getPhoto();
+        String originalFilename = file.getOriginalFilename();
+        if (!Strings.isBlank(originalFilename)) {
+            s3Method.deleteFile(Const.RequestHeader.RESUME, photo);
+            s3Method.uploadFile(file, Const.RequestHeader.RESUME, photo);
+        }
+
         return new PageMoveWithMessage("redirect:/v1/user/resume/detail/" + resumeId);
     }
 
@@ -197,7 +235,7 @@ public class UserService {
                 .modifiedAt((String) data.get("modifiedAt"))
                 .qnaList((List<QnaDto>) data.get("qnaList")).build();
 
-        return new PageMoveWithMessage("/user/coverLetter-detail", letter);
+        return new PageMoveWithMessage("user/coverLetter-detail", letter);
     }
 
     public PageMoveWithMessage updateCoverLetter(HttpSession session, CoverLetterPostRequestDto requestDto, Long coverLetterId) {
@@ -219,9 +257,17 @@ public class UserService {
     public PageMoveWithMessage apply(HttpSession session, ApplicationLetterPostRequestDto dto, Long companyId) {
         Long userId = (Long) session.getAttribute("id");
 
+        if (applyStatus(session, dto.getPostId()) != 200)
+            return new PageMoveWithMessage("redirect:/v1/click/post/" + dto.getPostId() + "/detail?companyId=" + companyId + "&postType=" + dto.getPostType(), "공고가 마감되어 지원이 불가능합니다.", dto);
+
         ApiResponse response = ServiceCall.post(session, dto, Const.RequestHeader.USER, "/user/" + userId + "/application-letter");
 
         return new PageMoveWithMessage("redirect:/v1/click/post/" + dto.getPostId() + "/detail?companyId=" + companyId + "&postType=" + dto.getPostType(), response.getMessage(), dto);
+    }
+
+    private int applyStatus(HttpSession session, Long postId) {
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/posts/" + postId);
+        return response.getHttpStatus();
     }
 
     public PageMoveWithMessage applicantList(HttpSession session, Long postId, String sort, int startPage) {
@@ -230,5 +276,18 @@ public class UserService {
         return new PageMoveWithMessage("company/applicant-list", ApiResponseToList.applicantList(response.getData()));
     }
 
+    public PageMoveWithMessage getUserJoinCountByMonth(HttpSession session, LocalDate date) {
+        ApiResponse response = ServiceCall.getParamList(session, Const.RequestHeader.USER, "/user", date);
 
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("admin/main", response.getMessage());
+
+        Map<Integer, Long> userJoinCountByMonth = ApiResponseToList.getUserJoinCountByMonth((List<List<LinkedHashMap<String, Object>>>) response.getData());
+        List<List<Object>> chartData = new ArrayList<>();
+
+        for (Map.Entry<Integer, Long> entry : userJoinCountByMonth.entrySet()) {
+            chartData.add(Arrays.asList(entry.getKey(), entry.getValue()));
+        }
+
+        return new PageMoveWithMessage("admin/user-join-count", userJoinCountByMonth);
+    }
 }
