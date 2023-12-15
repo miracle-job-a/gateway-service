@@ -1,5 +1,6 @@
 package com.miracle.memberservice.service;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.*;
 import com.miracle.memberservice.util.*;
@@ -213,8 +214,14 @@ public class MyPageService {
     }
 
     private void deleteResumePhotos(Long userId) {
-        for (int i = 1; i < 6; i++) {
-            s3Method.deleteFile(Const.RequestHeader.RESUME, userId + "_" + i);
+        int i = 1;
+        while (true) {
+            try {
+                s3Method.deleteFile(Const.RequestHeader.RESUME, userId + "_" + i);
+            } catch (AmazonS3Exception e) {
+                break;
+            }
+            i++;
         }
     }
 
