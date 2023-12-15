@@ -160,11 +160,10 @@ public class UserService {
         return new PageMoveWithMessage("user/resume-detail", info);
     }
 
-    public PageMoveWithMessage deleteResume(HttpSession session, Long resumeId, String photo) {
+    public PageMoveWithMessage deleteResume(HttpSession session, Long resumeId) {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.USER, "/user/" + userId + "/resume/" + resumeId);
 
-        s3Method.deleteFile(Const.RequestHeader.RESUME, photo);
         return new PageMoveWithMessage("redirect:/v1/user/resumes", response.getMessage());
     }
 
