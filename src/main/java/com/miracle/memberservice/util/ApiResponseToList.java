@@ -424,20 +424,22 @@ public class ApiResponseToList {
         return pageList;
     }
 
-    public static Map<Integer, Long> getUserJoinCountByMonth(List<List<LinkedHashMap<String, Object>>> data) {
-        Map<Integer, Long> userJoinCountByMonth = new HashMap<>();
+    public static Map<Integer, Long> getUserJoinCountByDay(List<List<LinkedHashMap<String, Object>>> data, int year, int month) {
+        int daysInMonth = YearMonth.of(year, month).lengthOfMonth();
 
-        for (int i = 1; i <= 12; i++) {
-            userJoinCountByMonth.put(i, 0L);
+        Map<Integer, Long> userJoinCountByDay = new HashMap<>();
+
+        for (int i = 1; i <= daysInMonth; i++) {
+            userJoinCountByDay.put(i, 0L);
         }
 
         data.stream()
                 .flatMap(List::stream)
                 .map(user -> (String) user.get("joinDate"))
-                .map(joinDate -> LocalDate.parse(joinDate).getMonthValue())
-                .forEach(month -> userJoinCountByMonth.merge(month, 1L, Long::sum));
+                .map(joinDate -> LocalDate.parse(joinDate).getDayOfMonth())
+                .forEach(day -> userJoinCountByDay.merge(day, 1L, Long::sum));
 
-        return userJoinCountByMonth;
+        return userJoinCountByDay;
     }
 
     public static Map<Integer, Long> getCompanyJoinCountByDay(List<List<LinkedHashMap<String, Object>>> data, int year, int month) {

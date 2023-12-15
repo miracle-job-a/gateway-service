@@ -11,8 +11,6 @@ import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpSession;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.function.Function;
 
 public class ServiceCall {
@@ -159,10 +157,9 @@ public class ServiceCall {
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).queryParam("today", today).build()), httpSession, serviceType).block();
     }
 
-    public static ApiResponse getParamList(HttpSession httpSession, String serviceType, String url, LocalDate date) {
-        String formattedDate = date.format(DateTimeFormatter.ISO_LOCAL_DATE);
+    public static ApiResponse getParamListForCount(HttpSession httpSession, String serviceType, String url) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
-                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("date", formattedDate).build()), httpSession, serviceType).block();
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()), httpSession, serviceType).block();
     }
 
     public static ApiResponse getParamListWithTodayFalse(HttpSession httpSession, String serviceType, String url, int strNum, int endNum) {
