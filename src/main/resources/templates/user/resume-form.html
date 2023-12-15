@@ -239,23 +239,15 @@
                                             </h6>
                                         </div>
 
-                                        <!-- <div class="col-lg-4 col-12 ps-5 pe-5 align-self-auto">
-                                            <img src="/images/niniz.png" class="rounded float-start" alt="templatemo pod talk">
-                                        </div> -->
-
-                                        <div class="col-lg-4 col-12 ps-5 pe-5 align-self-auto">
-                                            <input type="file" id="fileInput" name="file" class="mt-3"
-                                                   style="position:absolute;z-index:2; color: transparent"
-                                                   required
-                                                   onchange="readURL(this);"/>
-                                            <div class="custom-block-image-wrap row d-flex align-items-center">
+                                        <div class="col-lg-4 col-12 px-3 align-self-auto">
+                                            <div class="custom-block-image-wrap row d-flex align-items-center justify-content-center">
                                                 <div>
-                                                    <img id="preview" class="img-fluid" alt="">
+                                                    <img id="preview" class="img-fluid" alt="" style="width: 220px; height: auto; object-fit: cover;">
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div class="col-lg-8 col-12 ps-5 pe-5 align-self-center mx-auto">
+                                        <div class="col-lg-7 col-12 px-3 align-self-center mx-auto">
 
                                             <div class="mb-3 row">
                                                 <label for="name" class="col-sm-3 col-4 col-form-label mx-auto">이름</label>
@@ -291,6 +283,15 @@
                                                     <input type="tel" readonly="" class="form-control-plaintext text-center" style="font-size: 18px;" id="address" th:value="${info.address}">
                                                 </div>
                                             </div>
+
+                                            <div class="mb-3 row">
+                                                <label for="fileInput" class="col-sm-3 col-4 col-form-label mx-auto">사진추가</label>
+                                                <div class="col-sm-9 col-8 mx-auto d-flex justify-content-center">
+                                                    <input type="file" id="fileInput" name="file" style="display: none;" onchange="readURL(this);" required>
+                                                    <button onclick="document.getElementById('fileInput').click();" class="confirm-btn">파일 업로드</button>
+                                                </div>
+                                            </div>
+
 
                                         </div>
                                     </div>
