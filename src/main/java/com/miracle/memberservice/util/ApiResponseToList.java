@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -421,20 +424,41 @@ public class ApiResponseToList {
         return pageList;
     }
 
-    public static Map<Integer, Long> getUserJoinCountByMonth(List<List<LinkedHashMap<String, Object>>> data) {
-        Map<Integer, Long> userJoinCountByMonth = new HashMap<>();
+    public static Map<Integer, Long> getUserJoinCountByDay(List<List<LinkedHashMap<String, Object>>> data, int year, int month) {
+        int daysInMonth = YearMonth.of(year, month).lengthOfMonth();
 
-        for (int i = 1; i <= 12; i++) {
-            userJoinCountByMonth.put(i, 0L);
+        Map<Integer, Long> userJoinCountByDay = new HashMap<>();
+
+        for (int i = 1; i <= daysInMonth; i++) {
+            userJoinCountByDay.put(i, 0L);
         }
 
         data.stream()
                 .flatMap(List::stream)
                 .map(user -> (String) user.get("joinDate"))
-                .map(joinDate -> LocalDate.parse(joinDate).getMonthValue())
-                .forEach(month -> userJoinCountByMonth.merge(month, 1L, Long::sum));
+                .map(joinDate -> LocalDate.parse(joinDate).getDayOfMonth())
+                .forEach(day -> userJoinCountByDay.merge(day, 1L, Long::sum));
 
-        return userJoinCountByMonth;
+        return userJoinCountByDay;
+    }
+
+    public static Map<Integer, Long> getCompanyJoinCountByDay(List<List<LinkedHashMap<String, Object>>> data, int year, int month) {
+        int daysInMonth = YearMonth.of(year, month).lengthOfMonth();
+
+        Map<Integer, Long> companyJoinCountByDay = new HashMap<>();
+
+        for (int i = 1; i <= daysInMonth; i++) {
+            companyJoinCountByDay.put(i, 0L);
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        data.stream()
+                .flatMap(List::stream)
+                .map(company -> (String) company.get("createdAt"))
+                .map(createdAt -> LocalDateTime.parse(createdAt, formatter).toLocalDate().getDayOfMonth())
+                .forEach(day -> companyJoinCountByDay.merge(day, 1L, Long::sum));
+
+        return companyJoinCountByDay;
     }
 
     public Map<String, List<MainPagePostsResponseDto>> mainPage(HttpSession session, Map<String, Object> data) {

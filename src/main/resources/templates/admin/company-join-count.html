@@ -1,0 +1,171 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript" th:inline="javascript">
+    google.charts.load('current', {packages: ['corechart', 'line']});
+    google.charts.setOnLoadCallback(drawBasic);
+
+    function drawBasic() {
+      /*<![CDATA[*/
+      var chartData = /*[[${chartData}]]*/ null;
+      /*]]>*/
+
+      if (chartData) {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Day');
+        data.addColumn('number', 'Company');
+
+        var dataArray = [];
+        for (var key in chartData) {
+          if (chartData.hasOwnProperty(key)) {
+            dataArray.push([key, chartData[key]]);
+          }
+        }
+
+        data.addRows(dataArray);
+
+        var options = {
+          title: 'Daily Company Join Count',
+          hAxis: {
+            title: 'Day'
+          },
+          vAxis: {
+            title: 'the number of persons',
+            minValue: 0,
+            format: '0',
+            viewWindow: {
+              min: 0
+            }
+          }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      } else {
+        console.error('chartData is null or undefined');
+      }
+    }
+
+    function drawChart(chartData) {
+      for (var i = 0; i < chartData.length; i++) {
+        chartData[i][1] = parseInt(chartData[i][1]);
+      }
+
+      if (chartData) {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Day');
+        data.addColumn('number', 'Company');
+
+        var dataArray = [];
+        for (var i = 0; i < chartData.length; i++) {
+          dataArray.push([chartData[i][0].toString(), chartData[i][1]]);
+        }
+
+        data.addRows(dataArray);
+
+        var options = {
+          title: 'Daily Company Join Count',
+          hAxis: {
+            title: 'Day'
+          },
+          vAxis: {
+            title: 'the number of persons',
+            minValue: 0,
+            format: '0',
+            viewWindow: {
+              min: 0
+            }
+          }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      } else {
+        console.error('chartData is null or undefined');
+      }
+    }
+
+    async function updateYear(selectedYear) {
+      var selectedMonth = document.getElementById("month").value;
+      await updateChartData(selectedYear, selectedMonth);
+    }
+
+    async function updateMonth(selectedMonth) {
+      var selectedYear = document.getElementById("year").value;
+      await updateChartData(selectedYear, selectedMonth);
+    }
+
+    async function updateChartData() {
+      var selectedYear = document.getElementById("year").value;
+      var selectedMonth = document.getElementById("month").value;
+
+      try {
+        var response = await fetch("/v1/admin/company/join-count/ajax?year=" + encodeURIComponent(selectedYear) + "&month=" + encodeURIComponent(selectedMonth), {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        });
+
+        if (response.ok) {
+          var responseData = await response.json();
+
+          // Convert map to array of arrays
+          var chartData = Object.entries(responseData.chartData);
+
+          drawChart(chartData);
+        } else {
+          console.error("updateChartData FAIL. status : " + response.status);
+        }
+      } catch (error) {
+        console.error("updateChartData 요청 중 오류 발생 : ", error);
+      }
+    }
+  </script>
+  <main>
+    <header class="site-header d-flex flex-column justify-content-center align-items-center">
+    </header>
+
+    <section class="latest-podcast-section" id="section_2">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-9 col-12">
+            <div class="section-title-wrap mb-5">
+              <h4 class="section-title">일별 기업 회원가입 수</h4>
+            </div>
+            <div class="row">
+              <div class="col-lg-2">
+                <div class="select-wrapper">
+                  <select id="year" onchange="updateYear(this.value)" class="form-control required">
+                    <th:block th:each="num : ${#numbers.sequence(year - 4, year)}">
+                      <option th:value="${num}" th:text="${num}" th:selected="${num} == ${year}"></option>
+                    </th:block>
+                  </select>
+                  <div class="arrow-down"></div>
+                </div>
+              </div>
+              <div class="col-lg-2">
+                <div class="select-wrapper">
+                  <select id="month" onchange="updateMonth(this.value)" class="form-control required">
+                    <th:block th:each="num : ${#numbers.sequence(1, month)}">
+                      <option th:value="${num}" th:text="${num}" th:selected="${num} == ${month}"></option>
+                    </th:block>
+                  </select>
+                  <div class="arrow-down"></div>
+                </div>
+              </div>
+            </div>
+            <div class="row justify-content-center">
+              <div class="card p-2 my-3 col-6 post-form align-self-center bg-white" style="width: 1000px; height: 700px;" id="chart_div"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+</html>
