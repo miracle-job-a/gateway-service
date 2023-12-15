@@ -927,6 +927,23 @@ h6.my-2 {
   border-radius: var(--border-radius-small);
 }
 
+/* 진행 중인 공고 수 */
+.custom-block-now {
+  background-color: #e9f6ef;
+  border-color: transparent;
+}
+
+/* 전체 공고 수 */
+.custom-block-all {
+  background-color: #ecf7fc;
+  border-color: transparent;
+}
+
+/* 마감된 공고 수 */
+.custom-block-end {
+  background-color: #faf7e9;
+  border-color: transparent;
+}
 
 /*---------------------------------------
   PROIFLE BLOCK               
