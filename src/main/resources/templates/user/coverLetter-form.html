@@ -105,33 +105,30 @@
                             <h4 class="section-title">자기소개서 등록</h4>
                         </div>
 
-                        <div class="row justify-content-center">
-                            <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
+                        <div class="row justify-content-center mb-5">
+                            <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 mb-5 post-form">
 
                                 <!-- 자기소개서 생성 폼 시작 -->
-                                <div class="card mt-5 mb-4 p-4 col-11 post-form align-self-center">
+                                <div class="card mt-3 mb-4 p-1 col-12 post-form align-self-center">
                                     <form action="/v1/user/cover-letter/create" method="post" role="form" class="row align-self-center col-12" onsubmit="return validateForm()">
 
                                             <div class="col-12 mt-2">
                                                 <div class="mb-1">
-                                                    <label for="title">자기소개서 제목</label>
+                                                    <label for="title">제목</label>
                                                 </div>
                                                 <input type="text" name="title" id="title"
                                                        class="form-control" placeholder="자기소개서 제목" required="" />
                                             </div>
 
-                                            <div class="col-12 mt-2">
-                                                <h6></h6>
-                                            </div>
-                                            <div class="col-12 mt-2 ">
+                                            <div class="col-12 my-2 ">
                                                 <div class="justify-content-end">
                                                     <button type="button" class="btn" id="addButton" th:if="${postId==null}">추가</button>
                                                 </div>
                                             </div>
 
 
-                                        <div class="card mt-4 mb-4 p-4 col-12 post-form align-self-center" th:if="${postId==null}">
-                                            <div class="col-12 mt-3 mb-3 qna" id="QNA" >
+                                        <div class="card mt-2 mb-4 p-1 col-12 post-form align-self-center" th:if="${postId==null}">
+                                            <div class="col-12 my-3 qna" id="QNA" >
                                                 <div class="mb-1">
                                                     <label for="question">문항</label>
                                                 </div>
@@ -141,12 +138,12 @@
                                                     <label for="answer">내용</label>
                                                     <span id="charCount" class="text-secondary"></span>
                                                 </div>
-                                                <textarea class="form-control" rows="5" name="answer" id="answer" placeholder="내용을 입력해주세요." required="" style="resize: none"></textarea>
+                                                <textarea class="form-control" rows="8" name="answer" id="answer" placeholder="내용을 입력해주세요." required="" style="resize: none"></textarea>
                                             </div>
                                         </div>
                                         <div th:if="${detail!=null}">
-                                            <div class="card mt-4 mb-4 p-4 col-12 post-form align-self-center" th:each="question : ${detail.questionList}" th:if="${postId!=null && #lists.size(detail.questionList)!=0}">
-                                                <div class="col-12 mt-3 mb-3 qna" id="QNA" >
+                                            <div class="card mt-4 mb-4 p-1 col-12 post-form align-self-center" th:each="question : ${detail.questionList}" th:if="${postId!=null && #lists.size(detail.questionList)!=0}">
+                                                <div class="col-12 my-3 qna" id="QNA" >
                                                     <div class="mb-1">
                                                         <label for="question">문항</label>
                                                     </div>
@@ -161,7 +158,12 @@
                                             </div>
                                         </div>
 
-                                        <div class="row col-12">
+                                        <div class="row col-12 mx-auto">
+                                            <div class="col-4 pt-4 m-auto justify-content-center">
+                                                <button type="button" class="form-control rounded-pill" id="back" onclick="goBack()">돌아가기</button>
+                                            </div>
+                                            <div class="col-4 pt-4 m-auto justify-content-center">
+                                            </div>
                                             <div class="col-4 pt-4 m-auto justify-content-center">
                                                 <div th:if="${postId!=null}">
                                                     <input type="hidden" name="postId" th:value="${postId}">
@@ -169,11 +171,6 @@
                                                     <input type="hidden" name="postType" th:value="${postType}">
                                                 </div>
                                                 <button type="submit" class="form-control" onclick="validateForm()">등록하기</button>
-                                            </div>
-                                            <div class="col-4 pt-4 m-auto justify-content-center">
-                                            </div>
-                                            <div class="col-4 pt-4 m-auto justify-content-center">
-                                                <button type="button" class="form-control" id="back" onclick="goBack()">돌아가기</button>
                                             </div>
                                         </div>
                                     </form>

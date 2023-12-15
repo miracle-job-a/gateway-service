@@ -12,9 +12,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -449,12 +452,10 @@ public class CompanyService {
 
     public Object getStackChartData(HttpSession session, Long companyId) {
         ApiResponse adminResponse = ServiceCall.get(session, Const.RequestHeader.ADMIN, "/admin/stacks");
-        System.out.println(adminResponse);
         if (adminResponse.getHttpStatus() != 200)
             return null;
 
         ApiResponse companyResponse = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/jobstacks");
-        System.out.println(companyResponse);
         if (companyResponse.getHttpStatus() != 200)
             return null;
 
@@ -490,5 +491,32 @@ public class CompanyService {
         }
 
         return result;
+    }
+
+    public PageMoveWithMessage getCompanyJoinCountByDay(HttpSession session, int year, int month) {
+        ApiResponse response = ServiceCall.getParamListWithTodayFalse(session, Const.RequestHeader.COMPANY, "/company/list", 1, 1);
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("admin/main", response.getMessage());
+
+        List<Map<String, Object>> companyData = (List<Map<String, Object>>) response.getData();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        List<LinkedHashMap<String, Object>> filterCompanyData = companyData.stream()
+                .flatMap(map -> ((List<LinkedHashMap<String, Object>>) map.get("content")).stream())
+                .filter(company -> {
+                    String createdAt = (String) company.get("createdAt");
+                    LocalDateTime companyJoinDateTime = LocalDateTime.parse(createdAt, formatter);
+                    LocalDate companyJoinDate = companyJoinDateTime.toLocalDate();
+                    return companyJoinDate.getYear() == year && companyJoinDate.getMonthValue() == month;
+                })
+                .collect(Collectors.toList());
+
+        Map<Integer, Long> companyJoinCountByDay = ApiResponseToList.getCompanyJoinCountByDay(Collections.singletonList(filterCompanyData), year, month);
+
+        List<List<Object>> chartData = new ArrayList<>();
+        for (Map.Entry<Integer, Long> entry : companyJoinCountByDay.entrySet()) {
+            chartData.add(Arrays.asList(entry.getKey(), entry.getValue()));
+        }
+
+        return new PageMoveWithMessage("admin/company-join-count", companyJoinCountByDay);
     }
 }

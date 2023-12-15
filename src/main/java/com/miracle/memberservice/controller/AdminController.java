@@ -16,10 +16,16 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.time.YearMonth;
 
 @Controller
 @RequestMapping("/v1/admin")
@@ -31,7 +37,9 @@ public class AdminController {
     private final UserService userService;
 
     @GetMapping("/login")
-    private String adminLogin(){ return "admin/login"; }
+    private String adminLogin() {
+        return "admin/login";
+    }
 
     @GetMapping("/user/list/{strNum}/{endNum}")
     public String getUserList(@PathVariable int strNum, @PathVariable int endNum, HttpSession session, Model model) {
@@ -55,11 +63,104 @@ public class AdminController {
     }
 
     @GetMapping("/user/join-count")
-    public String getUserJoinCountByMonth(HttpSession session, Model model) {
-        PageMoveWithMessage pmwm = userService.getUserJoinCountByMonth(session, LocalDate.now());
+    public String getUserJoinCountByDay(
+            @RequestParam(name = "year", required = false, defaultValue = "0") int year,
+            @RequestParam(name = "month", required = false, defaultValue = "0") int month,
+            HttpSession session, Model model) {
+
+        if (year == 0) year = LocalDate.now().getYear();
+        if (month == 0) month = LocalDate.now().getMonthValue();
+
+        PageMoveWithMessage pmwm = userService.getUserJoinCountByDay(session, year, month);
         model.addAttribute("chartData", pmwm.getData());
+        model.addAttribute("year", year);
+        model.addAttribute("month", month);
 
         return pmwm.getPageName();
+    }
+
+    @ResponseBody
+    @GetMapping("/user/join-count/ajax")
+    public ResponseEntity<Map<String, Object>> getReloadUserJoinCountByDay(
+            @RequestParam(name = "year", required = false, defaultValue = "0") int year,
+            @RequestParam(name = "month", required = false, defaultValue = "0") int month,
+            HttpSession session) {
+        PageMoveWithMessage pmwm = userService.getUserJoinCountByDay(session, year, month);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("chartData", pmwm.getData());
+
+        return ResponseEntity.status(HttpStatus.OK).body(map);
+    }
+
+    @GetMapping("/company/join-count")
+    public String getCompanyJoinCountByMonth(
+            @RequestParam(name = "year", required = false, defaultValue = "0") int year,
+            @RequestParam(name = "month", required = false, defaultValue = "0") int month,
+            HttpSession session, Model model) {
+
+        if (year == 0) year = LocalDate.now().getYear();
+        if (month == 0) month = LocalDate.now().getMonthValue();
+
+        PageMoveWithMessage pmwm = companyService.getCompanyJoinCountByDay(session, year, month);
+
+        model.addAttribute("chartData", pmwm.getData());
+        model.addAttribute("year", year);
+        model.addAttribute("month", month);
+
+        return pmwm.getPageName();
+    }
+
+    @ResponseBody
+    @GetMapping("/company/join-count/ajax")
+    public ResponseEntity<Map<String, Object>> getReloadCompanyJoinCountByMonth(
+            @RequestParam(name = "year", required = false, defaultValue = "0") int year,
+            @RequestParam(name = "month", required = false, defaultValue = "0") int month,
+            HttpSession session) {
+
+        PageMoveWithMessage pmwm = companyService.getCompanyJoinCountByDay(session, year, month);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("chartData", pmwm.getData());
+
+        return ResponseEntity.status(HttpStatus.OK).body(map);
+    }
+
+    @GetMapping("/join-count")
+    public String getJoinCountByMonth(
+            @RequestParam(name = "year", required = false, defaultValue = "0") int year,
+            @RequestParam(name = "month", required = false, defaultValue = "0") int month,
+            HttpSession session, Model model) {
+
+        if (year == 0) year = LocalDate.now().getYear();
+        if (month == 0) month = LocalDate.now().getMonthValue();
+
+        PageMoveWithMessage pmwm1 = userService.getUserJoinCountByDay(session, year, month);
+        PageMoveWithMessage pmwm2 = companyService.getCompanyJoinCountByDay(session, year, month);
+
+        model.addAttribute("userChartData", pmwm1.getData());
+        model.addAttribute("companyChartData", pmwm2.getData());
+        model.addAttribute("year", year);
+        model.addAttribute("month", month);
+
+        return "admin/join-count";
+    }
+
+    @ResponseBody
+    @GetMapping("/join-count/ajax")
+    public ResponseEntity<Map<String, Object>> getReloadJoinCountByMonth(
+            @RequestParam(name = "year", required = false, defaultValue = "0") int year,
+            @RequestParam(name = "month", required = false, defaultValue = "0") int month,
+            HttpSession session) {
+
+        PageMoveWithMessage pmwm1 = userService.getUserJoinCountByDay(session, year, month);
+        PageMoveWithMessage pmwm2 = companyService.getCompanyJoinCountByDay(session, year, month);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("userChartData", pmwm1.getData());
+        map.put("companyChartData", pmwm2.getData());
+
+        return ResponseEntity.status(HttpStatus.OK).body(map);
     }
 
     @GetMapping("/logout")
@@ -83,7 +184,7 @@ public class AdminController {
     }
 
     @PostMapping("/register/stack")
-    private String registerStack(@RequestParam String stackName, Model model, HttpSession session){
+    private String registerStack(@RequestParam String stackName, Model model, HttpSession session) {
         PageMoveWithMessage pmwm = adminService.registerStack(session, stackName);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
 
@@ -92,7 +193,7 @@ public class AdminController {
     }
 
     @PostMapping("/stacks")
-    private String modifyStack(@RequestParam String stackId, @RequestParam String modifiedName, Model model, HttpSession session){
+    private String modifyStack(@RequestParam String stackId, @RequestParam String modifiedName, Model model, HttpSession session) {
         PageMoveWithMessage pmwm = adminService.modifyStack(session, stackId, modifiedName);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
         String errorMessage = pmwm.getErrorMessage();
@@ -102,7 +203,7 @@ public class AdminController {
     }
 
     @GetMapping("/search/stack")
-    private String searchStack(@RequestParam(required = false) String stackName, Model model, HttpSession session){
+    private String searchStack(@RequestParam(required = false) String stackName, Model model, HttpSession session) {
         PageMoveWithMessage pmwm = adminService.searchStack(session, stackName);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
 
@@ -120,7 +221,7 @@ public class AdminController {
     }
 
     @PostMapping("/register/job")
-    private String registerJob(@RequestParam String jobName, Model model, HttpSession session){
+    private String registerJob(@RequestParam String jobName, Model model, HttpSession session) {
         PageMoveWithMessage pmwm = adminService.registerJob(session, jobName);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
 
@@ -129,7 +230,7 @@ public class AdminController {
     }
 
     @PostMapping("/jobs")
-    private String modifyJob(@RequestParam String jodId, @RequestParam String modifiedName, Model model, HttpSession session){
+    private String modifyJob(@RequestParam String jodId, @RequestParam String modifiedName, Model model, HttpSession session) {
         PageMoveWithMessage pmwm = adminService.modifyJob(session, jodId, modifiedName);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
 
@@ -138,7 +239,7 @@ public class AdminController {
     }
 
     @GetMapping("/search/job")
-    private String searchJob(@RequestParam(required = false) String jobName, Model model, HttpSession session){
+    private String searchJob(@RequestParam(required = false) String jobName, Model model, HttpSession session) {
         PageMoveWithMessage pmwm = adminService.searchJob(session, jobName);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
 
@@ -176,9 +277,9 @@ public class AdminController {
 
     @ResponseBody
     @GetMapping("/posts/day")
-    public ResponseEntity<Map<String,Object>> getReloadTodayPostCount(@RequestParam(name = "year") int year, @RequestParam(name = "month") int month, HttpSession session) {
+    public ResponseEntity<Map<String, Object>> getReloadTodayPostCount(@RequestParam(name = "year") int year, @RequestParam(name = "month") int month, HttpSession session) {
         PageMoveWithMessage pmwm = companyService.getTodayPostCount(year, month, session);
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("chartData", pmwm.getData());
         return ResponseEntity.status(HttpStatus.OK).body(map);
     }

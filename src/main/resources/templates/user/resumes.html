@@ -18,11 +18,12 @@
 
         function confirmDelete(button) {
             var resumeId = button.getAttribute('data-resume-id');
+            var resumePhoto = button.getAttribute('data-resume-photo');
             var confirmResult = confirm("삭제하시겠습니까?");
 
             if (confirmResult) {
                 // 사용자가 확인을 선택한 경우
-                window.location.href = '/v1/user/resume/delete/' + resumeId;
+                window.location.href = '/v1/user/resume/delete/' + resumeId + '?photo=' + resumePhoto;
             } else {
                 // 사용자가 취소를 선택한 경우
                 // 아무 동작을 하지 않거나 필요한 작업 수행
@@ -38,7 +39,7 @@
 
         <section class="latest-podcast-section" id="section_2">
             <div class="container">
-                <div class="row justify-content-center">
+                <div class="row justify-content-center mb-5">
 
                     <div class="col-lg-10 col-12">
                         <div class="section-title-wrap mb-3">
@@ -62,7 +63,7 @@
                         이력서가 없습니다.
                     </h5>
                     <!-- 목록 1칸 -->
-                    <div class="col-12 mx-auto" >
+                    <div class="col-12 mb-5 mx-auto" >
                         <div th:each="resume : ${resumeList}" class="col-lg-10 col-12 mb-4 mb-lg-2 mx-auto">
                             <div class="custom-block d-flex">
                                 <div class="custom-block-info">
@@ -91,7 +92,7 @@
 
                                 <!-- 버튼 부 -->
                                 <div class="d-flex flex-column ms-auto">
-                                    <button type="button" class="btn btn-outline-secondary" th:attr="data-resume-id=${resume.id}" onclick="confirmDelete(this)">
+                                    <button type="button" class="btn btn-outline-secondary" th:attr="data-resume-id=${resume.id}, data-resume-photo=${resume.photo}" onclick="confirmDelete(this)">
                                         <span class="d-none d-sm-inline">삭제</span> <!-- 데스크탑에서 보이는 텍스트 -->
                                         <span class="d-inline d-sm-none bi-trash"></span> <!-- 모바일에서 보이는 텍스트 -->
                                     </button>

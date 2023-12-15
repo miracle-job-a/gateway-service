@@ -18,13 +18,15 @@ public class ResumeListResponseDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private final String modifiedAt;
     private final Boolean open;
+    private final String photo;
 
     @Builder
-    public ResumeListResponseDto(Long id, String title, ArrayList<Integer> jobIdSet, String modifiedAt, Boolean open) {
+    public ResumeListResponseDto(Long id, String title, ArrayList<Integer> jobIdSet, String modifiedAt, Boolean open, String photo) {
         this.id = id;
         this.title = title;
         this.jobIdSet = jobIdSet;
         this.modifiedAt = modifiedAt;
         this.open = open;
+        this.photo = photo;
     }
 }
