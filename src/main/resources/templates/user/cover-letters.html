@@ -116,7 +116,7 @@
 
                     <div class="col-lg-4 col-12 mx-auto">
                         <nav aria-label="Page navigation example">
-                            <ul class="pagination pagination-lg justify-content-center mt-5">
+                            <ul class="pagination pagination-lg justify-content-center mt-5" style="padding-top: 10px; padding-bottom: 10px;">
                                 <li class="page-item" th:if="${strNum>=5}">
                                     <a class="page-link" th:href="@{/v1/user/cover-letters/{strNum}(strNum=${strNum}-5, sort= ${sort})}"
                                        aria-label="Previous">

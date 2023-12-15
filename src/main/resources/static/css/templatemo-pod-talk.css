@@ -914,7 +914,7 @@ main {
   text-overflow: ellipsis;
 }
 
-h6.my-1 {
+h6.my-2 {
   display: block;
   max-width: 240px;
   white-space: nowrap;
@@ -1149,7 +1149,7 @@ h6.my-1 {
   font-size: var(--p-font-size);
   padding-top: 10px;
   padding-bottom: 10px;
-  padding-left: 20px;
+  /*padding-left: 20px;*/
   outline: none;
 }
 
