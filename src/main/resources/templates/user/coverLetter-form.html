@@ -79,7 +79,7 @@
 
             for (var i = 0; i < inputValues.length; i++) {
                 if (inputValues[i].includes('<') || inputValues[i].includes('>') || inputValues[i].includes(';')
-                    || inputValues[i].includes('/') || inputValues[i].includes('\\')) {
+                    || inputValues[i].includes('\\')) {
                     // 특수 문자가 포함된 경우 경고 메시지 표시하고 false 반환
                     alert('입력란에 >, <, ;, /, \\, 특수기호는 입력할 수 없습니다.');
                     return false;
