@@ -179,8 +179,7 @@ public class ServiceCall {
     private static String port(String memberType) {
         switch (memberType) {
             case Const.RequestHeader.USER:
-                /*return "3.36.113.249:60001";*/
-                return "localhost:60001";
+                return "3.36.113.249:60001";
             case Const.RequestHeader.COMPANY:
                 return "13.125.211.61:60002";
             case Const.RequestHeader.ADMIN:
