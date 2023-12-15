@@ -170,8 +170,7 @@ public class ServiceCall {
             case Const.RequestHeader.USER:
                 return "3.36.113.249:60001";
             case Const.RequestHeader.COMPANY:
-//                return "13.125.211.61:60002";
-                return "localhost:60002";
+                return "13.125.211.61:60002";
 
             case Const.RequestHeader.ADMIN:
                 return "3.36.98.12:60003";
