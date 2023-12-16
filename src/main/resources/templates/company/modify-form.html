@@ -222,7 +222,7 @@
                         <form action="/v1/company/info/update" method="post" role="form" enctype="multipart/form-data">
                         <div class="row justify-content-center">
                             <div class="row ">
-                                <div class="col-lg-4 col-12">
+                                <div class="col-lg-4 col-12 my-3">
                                     <div class="custom-block-icon-wrap">
                                         <div class="custom-block-image-wrap custom-block-image-detail-page" id="originalPhoto">
                                             <img th:src="'https://miracle-job-a.s3.ap-northeast-2.amazonaws.com/company/'+${info.bno}" class="custom-block-image img-fluid" alt="">
@@ -317,12 +317,12 @@
 
                                         <div class="row col-12 my-5">
                                             <div class="col-4">
-                                                <button type="button" class="form-control" id="back" onclick="goBack()">돌아가기</button>
+                                                <button type="button" class="form-control rounded-pill" id="back" onclick="goBack()">돌아가기</button>
 
                                             </div>
                                             <div class="col-4">
-                                                <button type="button" class="form-control" id="signoutBtn"
-                                                        onclick="signoutCompany()">회원 탈퇴하기
+                                                <button type="button" class="form-control rounded-pill" id="signoutBtn"
+                                                        onclick="signoutCompany()">회원탈퇴
                                                 </button>
                                             </div>
                                             <div class="col-4">

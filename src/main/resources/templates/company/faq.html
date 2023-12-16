@@ -16,6 +16,12 @@
 
             var question = document.getElementById('question').value;
             var answer = document.getElementById('answer').value;
+            var faqs = document.getElementsByClassName('custom-block').length;
+
+            if (faqs >= 10) {
+                alert('FAQ는 최대 10개까지만 등록 가능합니다.');
+                return false;
+            }
 
             if (question.includes('<') || question.includes('>')) {
                 alert('질문에 >, < 특수기호는 입력할 수 없습니다.');
@@ -37,90 +43,69 @@
 
         <section class="latest-podcast-section" id="section_2">
             <div class="container">
-                <div class="row justify-content-center">
-
-                    <div class="col-lg-10 col-12">
-                        <div class="section-title-wrap mb-5">
-                            <h4 class="section-title">FAQ 목록</h4>
-                        </div>
-                        <form action="/v1/company/faq/add" method="get" onsubmit="return validateForm()">
-
-                        <div class="row justify-content-center">
-                            <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
-                                <div class="card p-2 col-11 mt-5 align-self-center text-center">
-                                    <h6 class="text-danger">Faq 추가 시 하단으로 이동 / 삭제하려면 X버튼을 눌러주세요.</h6>
-                                </div>
-
-                                <div class="card p-4 col-11 mt-2 align-self-center post-form " th:each="faq, faqStat : ${faqList}">
-                                    <div class="col-12 mt-2 align-self-center">
-                                        <div class="d-flex justify-content-between ">
-                                            <div class="col-11 mb-2">
-                                                <button type="button" class="btn btn-outline-danger btn-primary" disabled>질문</button>
-                                            </div>
-                                            <div class="justify-content-end">
-                                                <a th:href="@{/v1/company/faq/delete/{id}(id=${faq.id})}" class="btn-secondary">
-                                                    <button type="button">X</button>
-                                                </a>
-                                            </div>
-                                        </div>
-
-                                        <input type="text" readonly id="question1"
-                                               class="form-control-plaintext" th:value="${faq.question}" />
-                                    </div>
-
-                                    <div class="col-12 mt-3 align-self-center">
-                                        <div class="mb-2">
-                                            <button type="button" class="btn btn-outline-danger" disabled>답</button>
-                                        </div>
-                                        <textarea readonly class="form-control-plaintext" rows="2"
-                                                  id="answer1" th:text="${faq.answer}" style="resize: none;"></textarea>
-                                        <input type="hidden" name="faqId" th:value="${faq.id}" />
-                                    </div>
-                                </div>
-
-                                <!-- 구분선 -->
-                                <div class="col-10 m-5 align-self-center">
-                                    <hr>
-                                </div>
-
-                                <!-- 질문 생성 -->
-                                <div class="card p-4 col-11 align-self-center post-form ">
-                                    <div class="col-12 mt-2 align-self-center">
-                                        <div class="mb-2">
-                                            <label for="question">질문</label>
-                                        </div>
-                                        <div class="form-floating">
-                                        <input type="text" name="question" id="question"
-                                               class="form-control"/>
-                                        <label for="floatingInput">질문 내용 입력</label>
-                                    </div>
-                                    </div>
-
-                                    <div class="col-12 mt-3 align-self-center">
-                                        <div class="mb-2">
-                                            <label for="answer">답</label>
-                                        </div>
-                                        <div class="form-floating">
-                                        <input type="text" class="form-control" id="answer" name="answer"></input>
-                                        <label for="floatingInput">답변 내용 입력</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <input type="hidden" name="companyId" th:value="${session.id}" />
-
-                                <div class="col-10 mt-4 align-self-center text-center">
-                                    <h5 class="text-secondary">자주하는 질문은 최대 10개 가지 등록가능합니다.</h5>
-                                </div>
-                                <div class="col-8 mb-5 align-self-center">
-                                    <button type="submit" class="form-control">등록하기</button>
-                                </div>
-
-                            </div>
-                        </div>
-                        </form>
-                    </div>
+                <div class="section-title-wrap col-8 mb-3 mx-auto">
+                    <h4 class="section-title">FAQ 관리</h4>
                 </div>
+
+                    <div class="row justify-content-center col-md-9 col-12 mb-5 mx-auto">
+                        <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-md-12 col-12 mt-1 mb-5">
+                            <form action="/v1/company/faq/add" method="get" class="row col-md-11 col-12 mx-auto" onsubmit="return validateForm()">
+                                <div class="card-body align-self-center mx-auto">
+                                    <div class="col-12 mt-3 mx-auto">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="my-3">
+                                                질문
+                                                <small class="text-danger" style="font-size: small">
+                                                    (문항은 최대 10개까지 등록 가능합니다.)
+                                                </small>
+                                            </h6>
+                                            <button class="custom-border-option-btn" type="submit">등록</button>
+                                        </div>
+                                        <input type="text" name="question" id="question" placeholder="질문내용 입력" class="form-control" required/>
+
+                                        <h6 class="mt-4 mb-3">답</h6>
+                                        <textarea type="text" class="form-control" rows="2" id="answer"
+                                                  name="answer" required></textarea>
+
+                                        <input type="hidden" name="companyId" th:value="${session.id}" />
+                                    </div>
+
+                                    <div class="col-12 mt-5 mx-auto">
+                                        <hr>
+                                    </div>
+
+                                    <div class="col-12 my-5 mx-auto">
+                                        <div th:if="${#lists.isEmpty(faqList)}" class="text-center">
+                                            <h6>등록된 내용이 없습니다. 위에 질문과 답을 등록해주세요.</h6>
+                                        </div>
+
+                                        <div class="row custom-block d-flex my-3" th:each="faq, faqStat : ${faqList}">
+                                            <div class="col-md-11 col-10 pt-2">
+                                                <span class="badge bg-dark my-2">질문</span>
+                                                <input type="text" readonly id="question1"
+                                                       class="form-control-plaintext mb-2" th:value="${faq.question}" />
+                                                <span class="badge bg-dark my-2">답변</span>
+                                                <textarea readonly class="form-control-plaintext autoresize"
+                                                          id="answer1" th:text="${faq.answer}" style="resize: none;"></textarea>
+                                                <input type="hidden" name="faqId" th:value="${faq.id}" />
+                                            </div>
+                                            <div class="col-md-1 col-1 m-auto">
+                                                <a th:href="@{/v1/company/faq/delete/{id}(id=${faq.id})}" >
+                                                    <button type="button" class="btn btn-outline-secondary">
+                                                        <span class="d-none d-sm-inline bi-trash"></span>
+                                                        <span class="d-inline d-sm-none bi-trash"></span>
+                                                    </button></a>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
             </div>
         </section>
 

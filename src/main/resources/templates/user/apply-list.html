@@ -125,7 +125,7 @@
                     <!-- Thymeleaf 반복문을 사용하여 ArrayList 내의 객체들을 처리 -->
                     <div th:each="letterItem, letterItemStat : ${letter}" th:id="'postPage'+${letterItemStat.index}">
                         <div th:each="letters, lettersStat : ${letterItem}" class="col-lg-10 col-12 mb-4 mb-lg-2 mx-auto">
-                            <div class="custom-block d-flex d-md-block flex-md-row">
+                            <div class="custom-block d-flex ">
                                 <div class="custom-block-info">
                                     <!-- th:with를 사용하여 현재 letter의 postId를 변수에 저장 -->
                                     <div th:with="currentPostId=${letters.postId}">
@@ -137,16 +137,18 @@
                                                         <i class="bi-clock-fill custom-icon" th:title="'지원일자 : ' + ${letters.submitDate.substring(0, 10)}"></i>
                                                         <span th:text="'지원일자 : ' + ${letters.submitDate}"></span>
                                                     </small>
-                                                    <small>
-                                                        <span th:if="${letters.postType eq 'MZ'}" class="badge bg-primary me-1">MZ 공고</span>
-                                                        <span th:if="${letters.postType eq 'NORMAL'}" class="badge bg-secondary me-1">일반 공고</span>
-                                                    </small>
-                                                    <small>
-                                                        <span th:if="${letters.applicationStatus eq 'IN_PROGRESS'}" class="badge bg-warning ms-1 me-1">진행중</span>
-                                                        <span th:if="${letters.applicationStatus eq 'PASS'}" class="badge bg-success ms-1 me-1">합격</span>
-                                                        <span th:if="${letters.applicationStatus eq 'FAIL'}" class="badge bg-secondary ms-1 me-1">불합격</span>
-                                                    </small>
-                                                    <small><span class="badge bg-dark ms-1" th:text="${letters.job}" th:if="${letters.postType eq 'NORMAL'}"></span></small>
+                                                    <div class="badge-wrap">
+                                                        <small>
+                                                            <span th:if="${letters.postType eq 'MZ'}" class="badge bg-primary mx-1">MZ 공고</span>
+                                                            <span th:if="${letters.postType eq 'NORMAL'}" class="badge bg-secondary mx-1">일반 공고</span>
+                                                        </small>
+                                                        <small>
+                                                            <span th:if="${letters.applicationStatus eq 'IN_PROGRESS'}" class="badge bg-warning mx-1">진행중</span>
+                                                            <span th:if="${letters.applicationStatus eq 'PASS'}" class="badge bg-success mx-1">합격</span>
+                                                            <span th:if="${letters.applicationStatus eq 'FAIL'}" class="badge bg-secondary mx-1">불합격</span>
+                                                        </small>
+                                                        <small><span class="badge bg-dark mx-1" th:text="${letters.job}" th:if="${letters.postType eq 'NORMAL'}"></span></small>
+                                                    </div>
                                                 </div>
 
                                                 <h5 class="m-2 text-dark" th:text="${companyInfo.title}+' - '+${companyInfo.companyName}"></h5>
@@ -175,7 +177,10 @@
 
                                 <!-- 버튼 부 -->
                                 <div class="d-flex flex-column ms-auto">
-                                    <button type="button" class="btn btn-outline-secondary" th:id="${letters.applicationLetterId}" name="delete">지원취소</button>
+                                    <button type="button" class="btn btn-outline-secondary" th:id="${letters.applicationLetterId}" name="delete">
+                                        <span class="d-none d-sm-inline">지원취소</span>
+                                        <span class="d-inline d-sm-done"></span>
+                                    </button>
                                     <button type="button" class="btn btn-outline-secondary mt-2" data-bs-toggle="modal" data-bs-target="#myModal" >진행상태 변경</button>
                                 </div>
                             </div>

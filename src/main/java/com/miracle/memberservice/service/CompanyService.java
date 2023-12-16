@@ -380,61 +380,37 @@ public class CompanyService {
         }
     }
 
-    public PageMoveWithMessage getPostCount(HttpSession session) {
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/posts/count");
-        if (response.getHttpStatus() != 200) {
-            return new PageMoveWithMessage("admin/main", response.getMessage());
-        } else {
-            Object responseData = response.getData();
-
-            if (responseData instanceof Map) {
-                Map<String, Integer> postCounts = (Map<String, Integer>) responseData;
-
-                List<List<Object>> chartData = new ArrayList<>();
-                chartData.add(Arrays.asList("Type", "Num"));
-
-                for (Map.Entry<String, Integer> entry : postCounts.entrySet()) {
-                    String type;
-                    switch (entry.getKey()) {
-                        case "countNormalPosts":
-                            type = "일반 공고";
-                            break;
-                        case "countMZPosts":
-                            type = "MZ 공고";
-                            break;
-                        default:
-                            type = entry.getKey();
-                    }
-
-                    chartData.add(Arrays.asList(type, entry.getValue()));
-                }
-
-                return new PageMoveWithMessage("admin/post-chart", chartData);
-            } else {
-                return new PageMoveWithMessage("admin/main", response.getMessage());
-            }
-        }
-    }
-
     public PageMoveWithMessage getTodayPostCount(int year, int month, HttpSession session) {
         ApiResponse response = ServiceCall.getParams(session, Const.RequestHeader.COMPANY, "/company/posts/today", year, month);
         if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("admin/main", response.getMessage());
         } else {
             List<Map<String, Object>> postData = (List<Map<String, Object>>) response.getData();
-
-            Map<Integer, Integer> dayCounts = new HashMap<>();
+            System.out.println(postData);
+            Map<Integer, List<Integer>> dayCounts = new HashMap<>();
 
             for (Map<String, Object> post : postData) {
                 LocalDateTime createdAt = LocalDateTime.parse((CharSequence) post.get("createdAt"));
                 int dayOfMonth = createdAt.getDayOfMonth();
-                dayCounts.put(dayOfMonth, dayCounts.getOrDefault(dayOfMonth, 0) + 1);
+
+                String postType = (String) post.get("postType");
+
+                dayCounts.putIfAbsent(dayOfMonth, new ArrayList<>(Arrays.asList(0, 0)));
+
+                List<Integer> countList = dayCounts.get(dayOfMonth);
+                if ("NORMAL".equals(postType)) {
+                    countList.set(1, countList.get(1) + 1);
+                } else if ("MZ".equals(postType)) {
+                    countList.set(0, countList.get(0) + 1);
+                }
             }
 
             List<List<Integer>> formattedData = new ArrayList<>();
             for (int i = 1; i <= 31; i++) {
-                formattedData.add(List.of(i, dayCounts.getOrDefault(i, 0)));
+                List<Integer> countList = dayCounts.getOrDefault(i, Arrays.asList(0, 0));
+                formattedData.add(Arrays.asList(i, countList.get(0), countList.get(1)));
             }
+            System.out.println(formattedData);
             return new PageMoveWithMessage("admin/today-post-chart", formattedData);
         }
     }
