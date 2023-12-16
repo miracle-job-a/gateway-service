@@ -6,22 +6,19 @@ import com.miracle.memberservice.dto.response.ApiResponse;
 import com.miracle.memberservice.dto.response.TokenDto;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpSession;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
 public class ServiceCall {
 
     private static final String BASE_URL = "http://";
     private static final String VERSION = "/v1";
+    public static final TokenDto tokenDto = new TokenDto();
 
     private static WebClient.Builder createWebClientBuilder(String serviceType) {
         return WebClient.builder()
@@ -32,7 +29,8 @@ public class ServiceCall {
     private static Mono<ApiResponse> addCommonHeaders(WebClient.RequestHeadersSpec<?> request, HttpSession httpSession, String serviceType) {
         String capitalizeFirstLetter = capitalizeFirstLetter(serviceType);
         MiracleTokenKey key = new MiracleTokenKey(httpSession);
-        String token = "Bearer " + createToken();
+
+        String tokenValidated = "Bearer " + tokenDto.getToken();
 
         return request
                 .header(Const.RequestHeader.MIRACLE, key.getHashcode())
@@ -40,7 +38,7 @@ public class ServiceCall {
                 .header(capitalizeFirstLetter + Const.RequestHeader.HEADER_ID, String.valueOf(httpSession.getAttribute(Const.RequestHeader.ID)))
                 .header(capitalizeFirstLetter + Const.RequestHeader.HEADER_EMAIL, (String) httpSession.getAttribute(Const.RequestHeader.EMAIL))
                 .header(capitalizeFirstLetter + Const.RequestHeader.HEADER_BNO, (String) httpSession.getAttribute(Const.RequestHeader.BNO))
-                .header(Const.RequestHeader.HEADER_AUTHORIZATION, token)
+                .header(Const.RequestHeader.HEADER_AUTHORIZATION, tokenValidated)
                 .retrieve()
                 .bodyToMono(ApiResponse.class)
                 .onErrorResume(handleError());
@@ -49,13 +47,14 @@ public class ServiceCall {
     private static Mono<ApiResponse> anotherHeaders(WebClient.RequestHeadersSpec<?> request, HttpSession httpSession, String serviceType, String userId) {
         String capitalizeFirstLetter = capitalizeFirstLetter(serviceType);
         MiracleTokenKey key = new MiracleTokenKey(httpSession);
-        String token = "Bearer " + createToken();
+
+        String tokenValidated = "Bearer " + tokenDto.getToken();
 
         return request
                 .header(Const.RequestHeader.MIRACLE, key.getHashcode())
                 .header(Const.RequestHeader.SESSION_ID, key.getSessionId())
                 .header(capitalizeFirstLetter + Const.RequestHeader.HEADER_ID, userId)
-                .header(capitalizeFirstLetter + Const.RequestHeader.HEADER_AUTHORIZATION, token)
+                .header(Const.RequestHeader.HEADER_AUTHORIZATION, tokenValidated)
                 .retrieve()
                 .bodyToMono(ApiResponse.class)
                 .onErrorResume(handleError());
@@ -209,18 +208,4 @@ public class ServiceCall {
         };
     }
 
-    private static String createToken() {
-        RestTemplate restTemplate = new RestTemplate();
-
-        Map<String, Boolean> map = new HashMap<>();
-        map.put("gateway", true);
-        ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity("http://13.125.220.223:60200/v1/jwt/create", map, String.class);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            TokenDto tokenDto = objectMapper.readValue(stringResponseEntity.getBody(), TokenDto.class);
-            return tokenDto.getToken();
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
