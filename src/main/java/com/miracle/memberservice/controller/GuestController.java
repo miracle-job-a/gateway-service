@@ -104,7 +104,7 @@ public class GuestController {
                                @RequestBody UserSsoLoginRequestDto userSsoLoginRequestDto,
                                HttpSession session) {
 
-        Boolean checkEmail = userService.checkEmail(session, sso+"#"+userSsoLoginRequestDto.getEmail());
+        Boolean checkEmail = userService.checkEmail(session, sso+"#"+userSsoLoginRequestDto.getEmail(), sso);
 
         //이미 가입되어 있다면
         if (checkEmail) {
