@@ -96,6 +96,15 @@ public class CompanyService {
         return new PageMoveWithMessage("company/post-list", postList);
     }
 
+    public PageMoveWithMessage postList(HttpSession session, Long companyId, int strNum, int endNum, String sort) {
+        ApiResponse response = ServiceCall.getParamList(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts", strNum, endNum, sort);
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("redirect:/v1", response.getMessage());
+
+        List<List<ManagePostsResponseDto>> postList = ApiResponseToList.postList(response.getData(), session);
+
+        return new PageMoveWithMessage("admin/post-popular", postList);
+    }
+
     // 확인 용도
     public Boolean statusCompany(HttpSession session) {
         Long companyId = (Long) session.getAttribute("id");
