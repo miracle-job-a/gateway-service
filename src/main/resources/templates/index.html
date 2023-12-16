@@ -413,8 +413,9 @@
                         .then(data => {
                             if (data == 'true') {
                                 location.href="/v1/user/loginwith?sso=google&email="+googleDto.email+"&uid="+googleDto.uid;
+                            }else{
+                                location.href="/v1/user/additional-info?sso=google&email="+googleDto.email+"&uid="+googleDto.uid;
                             }
-                            location.href="/v1/user/additional-info?sso=google&email="+googleDto.email+"&uid="+googleDto.uid;
                         })
                         .catch(error => {
                             location.href="/error/404";
