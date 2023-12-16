@@ -253,13 +253,6 @@ public class AdminController {
         return pmwm.getPageName();
     }
 
-    @GetMapping("/posts")
-    public String getPostCount(HttpSession session, Model model) {
-        PageMoveWithMessage pmwm = companyService.getPostCount(session);
-        model.addAttribute("chartData", pmwm.getData());
-        return pmwm.getPageName();
-    }
-
     @GetMapping("/posts/today")
     public String getTodayPostCount(@RequestParam(name = "year", required = false, defaultValue = "0") int year,
                                     @RequestParam(name = "month", required = false, defaultValue = "0") int month,
