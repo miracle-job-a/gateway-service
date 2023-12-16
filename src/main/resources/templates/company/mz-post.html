@@ -208,255 +208,209 @@
 
         <section class="latest-podcast-section" id="section_2">
             <div class="container">
-                <div class="section-title-wrap mb-5">
-                    <h4 class="section-title">공고 등록</h4>
+                <div class="section-title-wrap col-8 mb-3 mx-auto">
+                    <h4 class="section-title">MZ공고 등록</h4>
                 </div>
-                <div class="row justify-content-center">
-                    <div class="card bg-outline-light text-dark ">
-                        <form action="/v1/company/post/create" method="post" class="post-form" role="form" id="dateForm"
+                <div class="row justify-content-center col-md-9 col-12 mb-5 mx-auto">
+                    <div class="card bg-outline-light text-dark shadow-lg col-md-12 col-12 mt-1 mb-5">
+                        <form action="/v1/company/post/create" method="post" class="row col-md-11 col-12 mx-auto" role="form" id="dateForm"
                               onsubmit="return validateForm()">
-                            <div class="card-body">
+                            <div class="card-body align-self-center mx-auto">
 
-                                <div class="col-8">
-                                    <div class="mb-1">
-                                        <label for="title">공고 제목</label><label class="text-danger"> *필수</label>
-                                    </div>
-                                    <input type="text" name="title" id="title"
-                                           class="form-control" placeholder="공고제목" required=""/>
+                                <div class="col-12 mx-auto my-3">
+                                    <h6>공고 제목 <small class="text-danger" style="font-size: small"> *필수</small> </h6>
+                                    <input type="text" name="title" id="title" class="form-control" required />
                                 </div>
-                                <div class="row">
-                                    <div class="col-4 mt-2 ">
-                                        <div class="mb-1">
-                                            <label for="endDate">마감일</label><label class="text-danger"> *필수(분(minute)은 등록되지 않습니다. 예)12:06:12->12:00:00)</label>
-                                        </div>
-                                        <input type="datetime-local" name="endDate" id="endDate"
-                                               class="form-control" placeholder="마감일" required=""/>
+
+                                <div class="card mt-3 col-12 mx-auto">
+                                    <hr>
+                                    <div class="mb-1">
+                                        <h6>스택<small><span class="text-danger" style="font-size: small"> *한 개이상 필수 입니다.</span></small></h6>
                                     </div>
-                                    <div class="col-4 mt-2">
-                                        <div class="mb-1">
-                                            <label for="career">경력</label><label class="text-danger"> *필수</label>
+                                    <div class="custom-card-border row my-1 py-2 px-1"
+                                         data-bs-toggle="tooltip" data-bs-html="true"
+                                         title="우리 회사에서 사용하는 기술스택을 선택해 적절한 인재를 찾으세요.">
+                                        <div class="row mx-auto">
+                                            <div th:each="stack : ${stacks}" class="editJobs form-check col-md-3 col-6">
+                                                <input class="form-check-input" type="checkbox" id="stack" name="stackIdSet"
+                                                       th:value="${stack.id}"
+                                                       th:checked="${stackIdSet != null and stackIdSet.contains(stack)}"/>
+                                                <label class="form-check-label" th:text="${stack.name}"></label>
+                                            </div>
                                         </div>
+                                    </div>
+                                </div>
+
+                                <div class="row col-12 mx-auto my-4">
+                                    <hr class="mb-1">
+                                    <div class="col-4 mt-2">
+                                        <h6><small>경력<span class="text-danger" style="font-size: small"> *필수</span></small></h6>
                                         <input type="number" name="career" id="career" class="form-control"
                                                placeholder="경력(년)" required=""
                                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"/>
                                     </div>
+                                    <div class="col-8 mt-2">
+                                        <h6><small>마감일<span class="text-danger" style="font-size: small"> *필수(분(minute)은 등록되지 않습니다. 예)12:06:12->12:00:00)</span></small></h6>
+                                        <input type="datetime-local" name="endDate" id="endDate"
+                                               class="form-control" placeholder="마감일" required=""/>
+                                    </div>
                                 </div>
 
 
-                                <div class="col-8 mt-2">
+                                <div class="card mt-3 col-12 mx-auto">
+                                    <hr>
                                     <div class="mb-1">
-                                        <label for="jobId">직무</label><label class="text-danger"> *필수</label>
+                                        <h6>직무<small><span class="text-danger" style="font-size: small"> *필수</span></small></h6>
                                     </div>
-                                    <div th:each="job, jobStat : ${jobs}" style="display: inline-block;">
-                                        <input class="form-check-input" type="radio" id="job" name="jobIdSet"
-                                               th:value="${job.id}" required/>
-                                        <label class="form-check-label" th:text="${job.name}"></label>
+                                    <div class="custom-card-border row my-1 py-2 px-1 ">
+                                        <div class="row mx-auto">
+                                            <div th:each="job, jobStat : ${jobs}" class="editJobs form-check col-md-4 col-6">
+                                                <input class="form-check-input" type="radio" id="job"
+                                                       name="jobIdSet" th:value="${job.id}" required />
+                                                <label class="form-check-label" th:text="${job.name}"></label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
-
-                                <div class="col-8 mt-2">
-                                    <div class="mb-1">
-                                        <label for="stackId">요구스택</label><label class="text-danger"> *하나 이상 필수</label>
-                                    </div>
-                                    <div th:each="stack, stackStat : ${stacks}" style="display: inline-block;">
-                                        <input class="form-check-input" type="checkbox" id="stack" name="stackIdSet"
-                                               th:value="${stack.id}"/>
-                                        <label class="form-check-label" th:text="${stack.name}"></label>
-                                    </div>
-
+                                <div class="col-12 mx-auto my-4">
+                                    <h6>개발 툴<small><span class="text-danger" style="font-size: small"> * 필수</span></small></h6>
+                                    <input type="text" name="tool" id="tool" class="form-control" required>
                                 </div>
 
-
-                                <div class="col-8 mt-4">
-                                    <h4 class="mb-2">회사 정보</h4><label class="text-warning">*회사 정보 수정 필요 시 기업페이지에서 해주세요</label>
-                                    <!--
-                                     회사명 : name
-                                     대표자 : ceoName
-                                     재직인원 : employeeNum
-                                     근무주소(디폴트 회사 주소) : address
-                                     사진 : photo
-                                     -->
-                                    <div class="row">
-                                        <div class="col-4 mt-2">
-                                            <div class="mb-1">
-                                                <label for="name">회사명</label>
-                                            </div>
-                                            <input type="text" name="name" id="name" th:value="${info.name}"
-                                                   class="form-control" placeholder="회사명" disabled/>
-                                        </div>
-                                        <div class="col-4 mt-2">
-                                            <div class="mb-1">
-                                                <label for="ceoName">대표자명</label>
-                                            </div>
-                                            <input type="text" name="ceoName" id="ceoName" th:value="${info.ceoName}"
-                                                   class="form-control" placeholder="대표자명" disabled/>
-                                        </div>
-                                        <div class="col-4 mt-2">
-                                            <div class="mb-1">
-                                                <label for="employeeNum">재직인원</label>
-                                            </div>
-                                            <input type="number" name="employeeNum" id="employeeNum"
-                                                   th:value="${info.employeeNum}"
-                                                   class="form-control" placeholder="재직인원" disabled
-                                                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"/>
-                                        </div>
-
-                                        <div class="col-lg-4 col-12">
-                                            <div class="custom-block-icon-wrap">
-                                                <div class="custom-block-image-wrap custom-block-image-detail-page">
-                                                    <img th:src="${info.photo}" class="custom-block-image img-fluid" alt="">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
+                                <div class="col-12 mx-auto my-4">
+                                    <h6>주요업무 <small class="text-danger" style="font-size: small"> *필수</small> </h6>
+                                    <textarea class="form-control autoresize" rows="5" id="mainTask" name="mainTask" required></textarea>
                                 </div>
-                                <!--
-                                    기업소개(기업테이블) : introduction
-                                    주요업무 : mainTask
-                                    근무조건 : workCondition
-                                    자격요건 : qualification
-                                    개발 툴 : tool
-                                    복지 및 혜택 : benefit
-                                    우대 기술사항 : special_skill
-                                    채용절차 : process
-                                    유의사항 : notice
-                                    근무주소 : workAddress
-                                    테스트링크 : questionGit
-                                -->
-                                <div class="col-8 mt-2">
-                                    <div class="mb-1">
-                                        <label for="introduction">기업소개</label>
+
+                                <div class="col-12 mx-auto my-3">
+                                    <hr class="my-2">
+                                    <h6>근무조건 <small class="text-danger" style="font-size: small"> *필수</small> </h6>
+                                    <textarea class="form-control autoresize" rows="5" id="workCondition" name="workCondition" required></textarea>
+                                </div>
+
+                                <div class="col-12 mx-auto my-4">
+                                    <h6>자격요건</h6>
+                                    <textarea class="form-control autoresize" rows="5" id="qualification" name="qualification"></textarea>
+                                </div>
+
+                                <div class="col-12 mx-auto my-4">
+                                    <h6>우대 기술사항</h6>
+                                    <textarea class="form-control autoresize" rows="5" id="special_skill" name="specialSkill"></textarea>
+                                </div>
+
+                                <div class="col-12 mx-auto my-4">
+                                    <h6>복지 및 혜택</h6>
+                                    <textarea class="form-control autoresize" rows="5" id="benefit" name="benefit"></textarea>
+                                </div>
+
+                                <div class="col-12 mx-auto my-4">
+                                    <h6>채용절차</h6>
+                                    <textarea class="form-control autoresize mb-4" rows="5" id="process" name="process" required></textarea>
+                                    <hr>
+                                </div>
+
+                                <div class="col-12 mx-auto my-4">
+                                    <h6>회사정보<small class="text-secondary" style="font-size: small"> (정보수정 필요 시 기업 페이지에서 변경가능)</small></h6>
+                                    <div class="custom-block-icon-wrap my-2">
+                                        <img class="mx-auto img-fluid rounded-1 d-block" th:src="${info.photo}" name="photo" alt="company-img"/>
                                     </div>
-                                    <textarea class="form-control" rows="3" id="introduction" name="introduction"
+                                    <h6 class="my-2"><small>회사명</small></h6>
+                                    <input type="text" readonly name="name" id="name" th:value="${info.name}"
+                                           class="form-control-plaintext" placeholder="회사명" disabled/>
+
+                                    <h6 class="my-2"><small>대표자</small></h6>
+                                    <input type="text" readonly name="ceoName" id="ceoName" th:value="${info.ceoName}"
+                                           class="form-control-plaintext" placeholder="대표자명" disabled/>
+
+                                    <h6 class="my-2"><small>재직인원</small></h6>
+                                    <input type="number" readonly name="employeeNum" id="employeeNum"
+                                           th:value="${info.employeeNum}"
+                                           class="form-control-plaintext" placeholder="재직인원" disabled
+                                           oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"/>
+
+                                    <h6 class="my-4">기업소개</h6>
+                                    <textarea class="form-control autoresize" rows="5" id="introduction" name="introduction"
                                               th:value="${info.introduction}" th:text="${info.introduction}"
                                               readonly></textarea>
-                                </div>
-                                <div class="col-8 mt-2">
-                                    <div class="mb-1">
-                                        <label for="mainTask">주요업무</label><label class="text-danger"> *필수</label>
-                                    </div>
-                                    <textarea class="form-control" rows="3" id="mainTask" name="mainTask"
-                                              required></textarea>
-                                </div>
-                                <div class="col-8 mt-2">
-                                    <div class="mb-1">
-                                        <label for="workCondition">근무조건</label><label class="text-danger"> *필수</label>
-                                    </div>
-                                    <textarea class="form-control" rows="3" id="workCondition"
-                                              name="workCondition" required></textarea>
-                                </div>
-                                <div class="col-8 mt-2">
-                                    <div class="mb-1">
-                                        <label for="qualification">자격요건</label>
-                                    </div>
-                                    <textarea class="form-control" rows="3" id="qualification"
-                                              name="qualification"></textarea>
-                                </div>
-                                <div class="col-8 mt-2">
-                                    <div class="mb-1">
-                                        <label for="tool">개발 툴</label><label class="text-danger"> *필수</label>
-                                        <input type="text" name="tool" id="tool"
-                                               class="form-control" required="">
-                                    </div>
-                                </div>
-                                <div class="col-8 mt-2">
-                                    <div class="mb-1">
-                                        <label for="benefit">복지 및 혜택</label>
-                                    </div>
-                                    <textarea class="form-control" rows="3" id="benefit" name="benefit"></textarea>
-                                </div>
-                                <div class="col-8 mt-2">
-                                    <div class="mb-1">
-                                        <label for="special_skill">우대 기술사항</label>
-                                    </div>
-                                    <textarea class="form-control" rows="3" id="special_skill"
-                                              name="specialSkill"></textarea>
-                                </div>
-                                <div class="col-8 mt-2">
-                                    <div class="mb-1">
-                                        <label for="process">채용절차</label><label class="text-danger"> *필수</label>
-                                    </div>
-                                    <textarea class="form-control" rows="3" id="process" name="process"
-                                              required></textarea>
-                                </div>
-                                <div class="col-8 mt-2">
-                                    <div class="mb-1">
-                                        <label for="notice">유의사항</label>
-                                    </div>
-                                    <textarea class="form-control" rows="3" id="notice" name="notice"></textarea>
-                                </div>
-                                <div class="col-8 mt-2">
-                                    <div class="mb-1">
-                                        <label for="address">근무주소(세부주소 포함)</label><label class="text-danger">
-                                        *필수</label>
-                                    </div>
-                                    <input type="text" name="workAddress" id="address"
-                                           class="form-control mb-2" placeholder="근무주소" th:value="${info.address}"
-                                           required/>
-                                </div>
-                                <div class="col-8 mt-2">
-                                    <div class="form-floating">
-                                        <button type="button" class="custom-btn" id="addressInputBtn">주소변경</button>
+
+                                    <h6 class="my-4">근무지 주소
+                                        <small class="text-secondary" style="font-size: small">(세부주소 포함)</small>
+                                        <small class="text-danger" style="font-size: small">  *필수</small>
+                                    </h6>
+                                    <div class="input-group mb-4">
+                                        <input type="text" name="workAddress" id="address"
+                                               class="form-control" placeholder="근무주소" th:value="${info.address}" required/>
+                                        <button type="button" class="custom-border-option-btn" id="addressInputBtn">주소변경</button>
                                     </div>
                                 </div>
 
-                                <h5 class="mb-4 mt-4">MZ 질문</h5>
+                                <div class="col-12 mx-auto my-4">
+                                    <hr>
+                                    <h6>유의사항</h6>
+                                    <textarea class="form-control autoresize mb-4" rows="5" id="notice" name="notice"></textarea>
+                                    <hr>
+                                </div>
 
-                                <div class="col-8 mt-2">
-                                    <div class="mb-1">
-                                        <label for="testStartDate">테스트 시작일</label><label class="text-danger">
-                                        *필수(분(minute)은 등록되지 않습니다. 예)12:06:12->12:00:00)</label>
-                                    </div>
+                                <div class="col-12 mx-auto my-4">
+                                    <h6>MZ 질문</h6>
+                                    <h6 class="my-3"><small>테스트 시작일</small>
+                                        <span class="text-danger" style="font-size: small">
+                                            *필수(분(minute)은 등록되지 않습니다. 예)12:06:12->12:00:00)
+                                        </span>
+                                    </h6>
                                     <input type="datetime-local" name="testStartDate" id="testStartDate"
-                                           class="form-control" placeholder="test_start" required=""/>
-                                </div>
-                                <div class="col-8 mt-2">
-                                    <div class="mb-1">
-                                        <label for="testEndDate">테스트 종료일</label><label class="text-danger"> *필수(분(minute)은 등록되지 않습니다. 예)12:06:12->12:00:00)</label>
-                                    </div>
+                                           class="form-control mb-2" placeholder="test_start" required=""/>
+                                    <h6 class="my-3"><small>테스트 종료일</small>
+                                        <span class="text-danger" style="font-size: small">
+                                            *필수(분(minute)은 등록되지 않습니다. 예)12:06:12->12:00:00)
+                                        </span>
+                                    </h6>
                                     <input type="datetime-local" name="testEndDate" id="testEndDate"
-                                           class="form-control" placeholder="test_end" required=""/>
-                                </div>
-
-                                <!-- param 값 question 으로 동일하니 주의 ! -->
-                                <div class="col-8 mt-2">
-                                    <div class="mb-1">
-                                        <label for="questionGit">테스트 링크</label><label class="text-danger"> *필수</label>
-                                    </div>
+                                           class="form-control mb-2" placeholder="test_end" required=""/>
+                                    <h6 class="my-3"><small>테스트 링크</small>
+                                        <span class="text-danger" style="font-size: small">
+                                            *필수
+                                        </span>
+                                    </h6>
                                     <input type="url" name="questionList" id="questionGit"
-                                           class="form-control" placeholder="git 주소를 업로드 해주세요." required=""/>
+                                           class="form-control mb-2" placeholder="git 주소를 업로드 해주세요." required=""/>
                                 </div>
 
 
                                 <!-- Company_FAQ 의 질문(question) 컬럼명이 겹침 주의 ! -->
-                                <h5 class="mb-4 mt-4">자주하는 질문</h5><label class="text-warning">*FAQ 수정 필요 시 상단 faq바를 이용해주세요.</label>
-                                <div class="accordion" th:each="faq, faqStat : ${info.faqList}" id="accordionExample">
-                                    <div class="accordion-item mb-3">
-                                        <h2 class="accordion-header" th:id="'heading' + ${faqStat.index}">
-                                            <button class="accordion-button collapsed rounded" type="button"
-                                                    data-bs-toggle="collapse"
-                                                    th:data-bs-target="'#collapse' + ${faqStat.index}"
-                                                    aria-expanded="false"
-                                                    th:aria-controls="'collapse' + ${faqStat.index}">
-                                                <strong th:text="${faq.question}"></strong>
-                                            </button>
-                                        </h2>
-                                        <div th:id="'collapse' + ${faqStat.index}" class="accordion-collapse collapse"
-                                             th:aria-labelledby="'heading' + ${faqStat.index}">
-                                            <div class="accordion-body">
-                                                <strong th:text="${faq.answer}"></strong>
+                                <div class="col-12 mx-auto my-4">
+                                    <hr>
+                                    <h6 class="mt-2">자주하는 질문
+                                        <small class="text-secondary" style="font-size: small">
+                                            FAQ 수정 필요 시 상단 faq바를 이용해주세요.
+                                        </small>
+                                    </h6>
+                                    <div class="accordion" th:each="faq, faqStat : ${info.faqList}" id="accordionExample">
+                                        <div class="accordion-item mb-3">
+                                            <h2 class="accordion-header" th:id="'heading' + ${faqStat.index}">
+                                                <button class="accordion-button collapsed rounded" type="button"
+                                                        data-bs-toggle="collapse"
+                                                        th:data-bs-target="'#collapse' + ${faqStat.index}"
+                                                        aria-expanded="false"
+                                                        th:aria-controls="'collapse' + ${faqStat.index}">
+                                                    <strong th:text="${faq.question}"></strong>
+                                                </button>
+                                            </h2>
+                                            <div th:id="'collapse' + ${faqStat.index}" class="accordion-collapse collapse"
+                                                 th:aria-labelledby="'heading' + ${faqStat.index}">
+                                                <div class="accordion-body">
+                                                    <strong th:text="${faq.answer}"></strong>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-6 pt-4 m-auto">
-                                    <input type="hidden" name="postType" value="MZ"/>
-                                    <button type="submit" class="form-control">등록하기</button>
+                                <input type="hidden" name="postType" value="MZ"/>
+                                <div class="col-12 my-3 pt-4 d-flex justify-content-center ">
+                                    <button type="submit" class="custom-btn">등록하기</button>
                                 </div>
-
 
                             </div>
                         </form>
