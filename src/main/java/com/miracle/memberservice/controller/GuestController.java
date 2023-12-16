@@ -267,7 +267,7 @@ public class GuestController {
         AccessToken tokenDto = tokenService.createToken(memberType, email, claims);
         Objects.requireNonNull(tokenDto);
         Cookie cookie = new Cookie("token", tokenDto.getToken());
-        cookie.setMaxAge(300);
+        cookie.setMaxAge(18000);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
