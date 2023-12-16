@@ -18,9 +18,10 @@ public class CompanyPageResponseDto {
     private final String sector;
     private final Boolean bnoStatus;
     private final Integer countOpen;
+    private final String bno;
 
     @Builder
-    public CompanyPageResponseDto(Integer companyId, Boolean approveStatus, String name, String ceoName, String photo, Integer employeeNum, String address, String introduction, String sector, Boolean bnoStatus, Integer countOpen) {
+    public CompanyPageResponseDto(Integer companyId, Boolean approveStatus, String name, String ceoName, String photo, Integer employeeNum, String address, String introduction, String sector, Boolean bnoStatus, Integer countOpen, String bno) {
         this.companyId = companyId;
         this.approveStatus = approveStatus;
         this.name = name;
@@ -32,6 +33,7 @@ public class CompanyPageResponseDto {
         this.sector = sector;
         this.bnoStatus = bnoStatus;
         this.countOpen = countOpen;
+        this.bno = bno;
     }
 
 }

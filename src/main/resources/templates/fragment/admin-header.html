@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
   <header class="header" th:fragment="commonHeader">
-   <nav class="navbar navbar-expand-lg">
+   <nav class="navbar navbar-expand-lg" style="height: 100px;">
     <div class="container">
-     <a class="navbar-brand me-lg-5 me-0" href="/v1">
-      <img src="/images/pod-talk-logo.png" class="logo-image img-fluid" alt="templatemo pod talk">
-     </a>
 
-     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+     <div class="col-lg-2 col-md-3 col-sm-2 col-3 my-3">
+      <a class="navbar-brand pt-2" href="/v1">
+       <img src="/images/pod-talk-logo.png" class="logo-image img-fluid" alt="Job-a logo-image" style="width: 120px;">
+      </a>
+     </div>
+
+     <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
      </button>
@@ -15,34 +18,40 @@
      <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-lg-auto">
 
-       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarLightDropdownMenuLink" role="button"
+       <li class="nav-item dropdown my-auto">
+        <a class="nav-link dropdown-toggle mx-1"  id="navbarLightDropdownMenuLink" role="button"
            data-bs-toggle="dropdown" aria-expanded="false">인사이트</a>
         <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink">
-         <li><a class="dropdown-item" href="/v1/admin">가입한 회원</a></li>
-         <li><a class="dropdown-item" href="/v1/admin/posts">전체기업 공고현황</a></li>
+            <li><a class="dropdown-item" href="/v1/admin/user/join-count">일별 유저 회원가입 현황</a></li>
+            <li><a class="dropdown-item" href="/v1/admin/company/join-count">일별 기업 회원가입 현황</a></li>
+            <li><a class="dropdown-item" href="/v1/admin/join-count">일별 전체 회원가입 현황</a></li>
+            <li><a class="dropdown-item" href="/v1/admin/posts">전체 기업 공고 현황</a></li>
+            <li><a class="dropdown-item" href="/v1/admin/posts/today">금일 등록된 공고 현황</a></li>
         </ul>
        </li>
 
-       <li class="nav-item">
-        <a class="nav-link" href="/v1/admin/user/list/1/5">유저관리</a>
+       <li class="nav-item my-auto">
+        <a class="nav-link mx-1" href="/v1/admin/user/list/1/5">유저관리</a>
        </li>
 
-       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarLightDropdownMenuLink2" role="button"
+       <li class="nav-item dropdown my-auto">
+        <a class="nav-link dropdown-toggle mx-1" href="/v1/admin/stacks" id="navbarLightDropdownMenuLink2" role="button"
            data-bs-toggle="dropdown" aria-expanded="false">스택/직무관리</a>
         <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink">
          <li><a class="dropdown-item" href="/v1/admin/stacks">스택 관리</a></li>
          <li><a class="dropdown-item" href="/v1/admin/jobs">직무 관리</a></li>
         </ul>
        </li>
+
+       <div class="m-auto">
+        <a th:if="${session.id!=null}" href="/v1/admin/logout" class="login-btn mx-1">로그아웃</a>
+        <a th:if="${session.id==null}" href="/v1/admin/login-form" class="login-btn mx-1">로그인</a>
+       </div>
       </ul>
 
-      <div class="ms-4">
-       <a th:if="${session.id!=null}" href="/v1/admin/logout" class="btn custom-btn custom-border-btn smoothscroll">로그아웃</a>
-       <a th:if="${session.id==null}" href="/v1/admin/login-form" class="btn custom-btn custom-border-btn smoothscroll">로그인/회원가입</a>
-      </div>
+
      </div>
+
     </div>
    </nav>
   </header>

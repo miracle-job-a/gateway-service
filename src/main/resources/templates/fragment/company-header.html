@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
   <header class="header" th:fragment="commonHeader">
-   <nav class="navbar navbar-expand-lg">
+   <nav class="navbar navbar-expand-lg" style="height: 120px;">
     <div class="container">
-     <a class="navbar-brand me-lg-5 me-0" href="/v1">
-      <img src="/images/pod-talk-logo.png" class="logo-image img-fluid" alt="templatemo pod talk">
-     </a>
+
+     <div class="col-lg-2 col-md-3 col-sm-2 col-3 my-3">
+      <a class="navbar-brand" href="/v1">
+       <img src="/images/pod-talk-logo.png" class="logo-image img-fluid" alt="Job-a logo-image" style="width: 190px;">
+      </a>
+     </div>
 
      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -14,28 +17,25 @@
 
      <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-lg-auto">
-
-       <li class="nav-item">
+       <li class="nav-item mx-1 my-auto">
         <a class="nav-link" href="/v1/company/post/list/1">공고관리</a>
        </li>
 
-       <li class="nav-item">
-        <a class="nav-link" href="/v1/company/faq">FAQ</a>
+       <li class="nav-item my-auto">
+        <a class="nav-link mx-1" href="/v1/company/faq">FAQ</a>
        </li>
 
-       <li class="nav-item">
-        <a class="nav-link" href="/v1/company/info">기업페이지</a>
+       <li class="nav-item my-auto">
+        <a class="nav-link mx-1" href="/v1/company/info">기업페이지</a>
        </li>
 
-       <li class="nav-item">
-        <a th:if="${session.id!=null}" href="/v1/company/logout" class="btn custom-btn custom-border-btn smoothscroll">로그아웃</a>
-        <a th:if="${session.id==null}" href="/v1/company/login-form" class="btn custom-btn custom-border-btn smoothscroll">로그인/회원가입</a>
-       </li>
-
+       <div class="m-auto">
+        <a th:if="${session.id!=null}" href="/v1/company/logout" class="login-btn mx-1">로그아웃</a>
+        <a th:if="${session.id==null}" href="/v1/company/login-form" class="login-btn mx-1">로그인</a>
+       </div>
       </ul>
-
-
      </div>
+
     </div>
    </nav>
   </header>

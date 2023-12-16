@@ -19,13 +19,15 @@ public class AdminLoginCheckFilter extends HttpFilter {
 
         System.out.println("인증 체크 필터 시작");
 
-        if (isLoginCheckPath(requestURI)) {
+        if (!requestURI.equals("/v1/admin/login") && !requestURI.equals("/v1/admin/login-form") && isLoginCheckPath(requestURI)) {
             System.out.println("인증 체크 로직 실행 : " + requestURI);
             HttpSession session = request.getSession(false);
-            if (session == null || session.getAttribute("name") == null) {
-                System.out.println("미 인증 사용자 요청");
-                response.sendRedirect("/v1/index");
-                return; // 미인증 사용자는 다음으로 진행하지 않고 끝낸다.
+            if (session == null || session.getAttribute("bno") == null && session.getAttribute("name") == null) {
+                if (session.getAttribute("id") == null || session.getAttribute("email") == null) {
+                    System.out.println("미 인증 사용자 요청");
+                    response.sendRedirect("/v1/admin/login-form");
+                    return; // 미인증 사용자는 다음으로 진행하지 않고 끝낸다.
+                }
             }
         }
         /* 다음 단계로 넘어간다. */
@@ -33,11 +35,10 @@ public class AdminLoginCheckFilter extends HttpFilter {
     }
 
     /*
-    whitelist에 해당하는 url인 경우 인증 체크 x
+    whitelist에 해당하는 url인 경우 인증 체크
     simpleMatch 	: 파라미터 문자열이 특정 패턴에 매칭되는지를 검사함.
     */
     private boolean isLoginCheckPath(String requestURI) {
         return PatternMatchUtils.simpleMatch(whitelist, requestURI);
-
     }
 }

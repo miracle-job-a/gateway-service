@@ -1,50 +1,54 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-  <header class="header" th:fragment="commonHeader">
-   <nav class="navbar navbar-expand-lg">
-    <div class="container">
-     <a class="navbar-brand me-lg-5 me-0" href="/v1">
-      <img src="/images/pod-talk-logo.png" class="logo-image img-fluid" alt="templatemo pod talk">
-     </a>
+<header class="header" th:fragment="commonHeader">
+ <nav class="navbar navbar-expand-lg" style="height: 120px;">
+  <div class="container">
 
-     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-     </button>
+   <div class="col-lg-2 col-md-3 col-sm-2 col-3 my-3">
+    <a class="navbar-brand pt-2" href="/v1">
+     <img src="/images/pod-talk-logo.png" class="logo-image img-fluid" alt="Job-a logo-image" style="width: 120px;">
+    </a>
+   </div>
 
-     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-lg-auto">
-       <li class="nav-item">
-        <a class="nav-link" href="/v1/search/posts/1">채용공고</a>
-       </li>
+   <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+           aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+   </button>
 
-       <li class="nav-item">
-        <a class="nav-link" href="/v1/user/resumes">이력서</a>
-       </li>
 
-       <li class="nav-item">
-        <a class="nav-link" href="/v1/user/cover-letters/1">자기소개서</a>
-       </li>
+   <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav ms-lg-auto">
+     <li class="nav-item mx-1 my-auto">
+      <a class="nav-link" href="/v1/search/posts/1">채용공고</a>
+     </li>
 
-       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="/v1/user/my-page/apply-list" id="navbarLightDropdownMenuLink" role="button"
-           data-bs-toggle="dropdown" aria-expanded="false">마이페이지</a>
+     <li class="nav-item my-auto">
+      <a class="nav-link mx-1" href="/v1/user/resumes">이력서</a>
+     </li>
 
-        <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink">
-         <li><a class="dropdown-item" href="/v1/user/my-page/apply-list/1">내 지원 현황</a></li>
-         <li><a class="dropdown-item" href="/v1/user/my-page/my-info">개인정보</a></li>
-        </ul>
-       </li>
+     <li class="nav-item my-auto">
+      <a class="nav-link mx-1" href="/v1/user/cover-letters/1">자기소개서</a>
+     </li>
 
-       <div class="ms-4">
-        <a th:if="${session.id!=null}" href="/v1/user/logout" class="btn custom-btn custom-border-btn smoothscroll">로그아웃</a>
-        <a th:if="${session.id==null}" href="/v1/user/login-form" class="btn custom-btn custom-border-btn smoothscroll">로그인/회원가입</a>
-       </div>
+     <li class="nav-item dropdown my-auto">
+      <a class="nav-link dropdown-toggle mx-1" href="/v1/user/my-page/apply-list" id="navbarLightDropdownMenuLink" role="button"
+         data-bs-toggle="dropdown" aria-expanded="false">마이페이지</a>
+
+      <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink">
+       <li><a class="dropdown-item" href="/v1/user/my-page/apply-list/1">내 지원 현황</a></li>
+       <li><a class="dropdown-item" href="/v1/user/my-page/my-info">개인정보</a></li>
       </ul>
+     </li>
 
-
+     <div class="m-auto">
+      <a th:if="${session.id!=null}" href="/v1/user/logout" class="login-btn mx-1">로그아웃</a>
+      <a th:if="${session.id==null}" href="/v1/user/login-form" class="login-btn mx-1">로그인</a>
      </div>
-    </div>
-   </nav>
-  </header>
+    </ul>
+
+
+   </div>
+  </div>
+ </nav>
+</header>
 </html>

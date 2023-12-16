@@ -10,9 +10,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -53,8 +55,8 @@ public class UserController {
     }
 
     @PostMapping("/resume")
-    public String addResume(RedirectAttributes redirectAttributes, HttpSession session, ResumeRequestDto resumeRequestDto) {
-        PageMoveWithMessage pmwm = userService.addResume(session, resumeRequestDto);
+    public String addResume(RedirectAttributes redirectAttributes, HttpSession session, ResumeRequestDto resumeRequestDto, @RequestParam MultipartFile file) throws IOException {
+        PageMoveWithMessage pmwm = userService.addResume(session, resumeRequestDto, file);
         if (Objects.nonNull(resumeRequestDto.getPostId())) {
             redirectAttributes.addAttribute("companyId", resumeRequestDto.getCompanyId());
             redirectAttributes.addAttribute("postType", resumeRequestDto.getPostType());
@@ -106,8 +108,9 @@ public class UserController {
     public String updateResume(HttpSession session,
                                @PathVariable Long resumeId,
                                @ModelAttribute ResumeRequestDto requestDto,
-                               RedirectAttributes redirectAttributes) {
-        PageMoveWithMessage pmwm = userService.updateResume(session, requestDto, resumeId);
+                               RedirectAttributes redirectAttributes,
+                               @RequestParam MultipartFile file) throws IOException {
+        PageMoveWithMessage pmwm = userService.updateResume(session, requestDto, resumeId, file);
         redirectAttributes.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }

@@ -2,28 +2,35 @@ package com.miracle.memberservice.service;
 
 import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.*;
-import com.miracle.memberservice.util.ApiResponseToList;
-import com.miracle.memberservice.util.Const;
-import com.miracle.memberservice.util.PageMoveWithMessage;
-import com.miracle.memberservice.util.ServiceCall;
+import com.miracle.memberservice.util.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CompanyService {
+
+    private final S3Method s3Method;
 
     public PageMoveWithMessage mainPage(HttpSession session) {
         ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/main");
         Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
-
-        return new PageMoveWithMessage("redirect:/v1", ApiResponseToList.mainPage(session, data));
+        ApiResponseToList apiResponseToList = new ApiResponseToList(s3Method);
+        return new PageMoveWithMessage("redirect:/v1", apiResponseToList.mainPage(session, data));
     }
 
     public Object mainPageCompany(HttpSession session, Long companyId) {
@@ -39,13 +46,14 @@ public class CompanyService {
         return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
     }
 
-    public PageMoveWithMessage join(CompanyJoinDto companyJoinDto, HttpSession session) {
+    public PageMoveWithMessage join(CompanyJoinDto companyJoinDto, HttpSession session, MultipartFile photo) throws IOException {
 
         ApiResponse response = ServiceCall.post(session, companyJoinDto, Const.RequestHeader.COMPANY, "/company/signup");
 
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("guest/company-join", response.getMessage());
 
+        s3Method.uploadFile(photo, Const.RequestHeader.COMPANY, companyJoinDto.getBno());
         return new PageMoveWithMessage("guest/company-login");
     }
 
@@ -89,7 +97,7 @@ public class CompanyService {
     }
 
     // 확인 용도
-    public Boolean statusCompany(HttpSession session){
+    public Boolean statusCompany(HttpSession session) {
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse apiResponse = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/status");
         return (Boolean) apiResponse.getData();
@@ -110,7 +118,7 @@ public class CompanyService {
         PostCommonDataResponseDto info = PostCommonDataResponseDto.builder()
                 .name(data.get("name"))
                 .ceoName(data.get("ceoName"))
-                .photo(data.get("photo"))
+                .photo(s3Method.getUrl(Const.RequestHeader.COMPANY, (String) data.get("photo")))
                 .employeeNum(data.get("employeeNum"))
                 .address(data.get("address"))
                 .introduction(data.get("introduction"))
@@ -228,7 +236,8 @@ public class CompanyService {
         ApiResponse response = ServiceCall.postParam(session, dto, Const.RequestHeader.COMPANY, "/company/posts/search", strNum, endNum);
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("redirect:/v1", response.getMessage());
 
-        List<List<ConditionalSearchPostResponseDto>> searchPosts = ApiResponseToList.searchPosts(response.getData(), session);
+        ApiResponseToList apiResponseToList = new ApiResponseToList(s3Method);
+        List<List<ConditionalSearchPostResponseDto>> searchPosts = apiResponseToList.searchPosts(response.getData(), session);
 
         return new PageMoveWithMessage("guest/search-post", searchPosts);
     }
@@ -270,7 +279,6 @@ public class CompanyService {
     public PageMoveWithMessage getCompanyListToday(HttpSession session, int strNum, int endNum, boolean today) {
 
         ApiResponse response = ServiceCall.getParamListWithToday(session, Const.RequestHeader.COMPANY, "/company/list", strNum, endNum, today);
-
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("error/500", response.getMessage());
 
         List<List<ManagePostsResponseDto>> postList = ApiResponseToList.postList(response.getData(), session);
@@ -285,18 +293,20 @@ public class CompanyService {
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("error/500", response.getMessage());
 
         LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        String photo = (String) data.get("photo");
         CompanyPageResponseDto info = CompanyPageResponseDto.builder()
                 .companyId((Integer) data.get("companyId"))
                 .approveStatus((Boolean) data.get("approveStatus"))
                 .name((String) data.get("name"))
                 .ceoName((String) data.get("ceoName"))
-                .photo((String) data.get("photo"))
+                .photo(photo)
                 .employeeNum((Integer) data.get("employeeNum"))
                 .address((String) data.get("address"))
                 .introduction((String) data.get("introduction"))
                 .sector((String) data.get("sector"))
                 .bnoStatus((Boolean) data.get("bnoStatus"))
                 .countOpen((Integer) data.get("countOpen"))
+                .bno(photo)
                 .build();
 
         return new PageMoveWithMessage("company/company-info", info);
@@ -304,6 +314,7 @@ public class CompanyService {
     }
 
     public Boolean checkCompanyInfo(HttpSession session, CompanyLoginRequestDto requestDto) {
+        requestDto.setEmail((String) session.getAttribute("email"));
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.post(session, requestDto, Const.RequestHeader.COMPANY, "/company/" + companyId);
         if (response.getHttpStatus() != 200) {
@@ -321,29 +332,38 @@ public class CompanyService {
         if (response.getHttpStatus() != 200) return new PageMoveWithMessage("error/500", response.getMessage());
 
         LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+        String photo = (String) data.get("photo");
         CompanyPageResponseDto info = CompanyPageResponseDto.builder()
                 .companyId((Integer) data.get("companyId"))
                 .approveStatus((Boolean) data.get("approveStatus"))
                 .name((String) data.get("name"))
                 .ceoName((String) data.get("ceoName"))
-                .photo((String) data.get("photo"))
+                .photo(photo)
                 .employeeNum((Integer) data.get("employeeNum"))
                 .address((String) data.get("address"))
                 .introduction((String) data.get("introduction"))
                 .sector((String) data.get("sector"))
                 .bnoStatus((Boolean) data.get("bnoStatus"))
                 .countOpen((Integer) data.get("countOpen"))
+                .bno(photo)
                 .build();
 
         return new PageMoveWithMessage("company/modify-form", info);
     }
 
-    public PageMoveWithMessage updateCompanyInfo(HttpSession session, CompanyInfoRequestDto requestDto) {
+    public PageMoveWithMessage updateCompanyInfo(HttpSession session, CompanyInfoRequestDto requestDto, MultipartFile photo) throws IOException {
         Long companyId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.COMPANY, "/company/" + companyId);
 
         if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("redirect:/v1/company/info", response.getMessage());
+        }
+
+        String bno = requestDto.getBno();
+        String originalFilename = photo.getOriginalFilename();
+        if (!Strings.isBlank(originalFilename)) {
+            s3Method.deleteFile(Const.RequestHeader.COMPANY, bno);
+            s3Method.uploadFile(photo, Const.RequestHeader.COMPANY, bno);
         }
 
         return new PageMoveWithMessage("redirect:/v1/company/info");
@@ -354,7 +374,7 @@ public class CompanyService {
         if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("admin/main", response.getMessage());
         } else if (response.getData() instanceof Boolean && (Boolean) response.getData() == false) {
-            return new PageMoveWithMessage("admin/companyList", response.getMessage());
+            return new PageMoveWithMessage("admin/company-list", response.getMessage());
         } else {
             return new PageMoveWithMessage("redirect:/v1/admin/company/list/1/5");
         }
@@ -389,10 +409,157 @@ public class CompanyService {
                     chartData.add(Arrays.asList(type, entry.getValue()));
                 }
 
-                return new PageMoveWithMessage("admin/postChart", chartData);
+                return new PageMoveWithMessage("admin/post-chart", chartData);
             } else {
-                return new PageMoveWithMessage("admin/main", "Unexpected data format");
+                return new PageMoveWithMessage("admin/main", response.getMessage());
             }
         }
+    }
+
+    public PageMoveWithMessage getTodayPostCount(int year, int month, HttpSession session) {
+        ApiResponse response = ServiceCall.getParams(session, Const.RequestHeader.COMPANY, "/company/posts/today", year, month);
+        if (response.getHttpStatus() != 200) {
+            return new PageMoveWithMessage("admin/main", response.getMessage());
+        } else {
+            List<Map<String, Object>> postData = (List<Map<String, Object>>) response.getData();
+
+            Map<Integer, Integer> dayCounts = new HashMap<>();
+
+            for (Map<String, Object> post : postData) {
+                LocalDateTime createdAt = LocalDateTime.parse((CharSequence) post.get("createdAt"));
+                int dayOfMonth = createdAt.getDayOfMonth();
+                dayCounts.put(dayOfMonth, dayCounts.getOrDefault(dayOfMonth, 0) + 1);
+            }
+
+            List<List<Integer>> formattedData = new ArrayList<>();
+            for (int i = 1; i <= 31; i++) {
+                formattedData.add(List.of(i, dayCounts.getOrDefault(i, 0)));
+            }
+            return new PageMoveWithMessage("admin/today-post-chart", formattedData);
+        }
+    }
+
+    public PageMoveWithMessage signoutCompany(HttpSession session) {
+        Long companyId = (Long) session.getAttribute("id");
+        String bno = (String) session.getAttribute("bno");
+        ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.COMPANY, "/company/" + companyId);
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("redirect:/v1/company/info");
+
+        s3Method.deleteFile(Const.RequestHeader.COMPANY, bno);
+        session.invalidate();
+        return new PageMoveWithMessage("redirect:/v1");
+    }
+
+    public Object getStackChartData(HttpSession session, Long companyId) {
+        ApiResponse adminResponse = ServiceCall.get(session, Const.RequestHeader.ADMIN, "/admin/stacks");
+        if (adminResponse.getHttpStatus() != 200)
+            return null;
+
+        ApiResponse companyResponse = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/jobstacks");
+        if (companyResponse.getHttpStatus() != 200)
+            return null;
+
+        List<Map<String, Object>> adminDataList = (List<Map<String, Object>>) adminResponse.getData();
+        List<Map<String, Object>> companyDataList = (List<Map<String, Object>>) companyResponse.getData();
+
+        Map<Long, String> stackIdToNameMap = new HashMap<>();
+        Map<String, Integer> stackNameToCountMap = new HashMap<>();
+
+        for (Map<String, Object> adminData : adminDataList) {
+            Number stackId = (Number) adminData.get("id");
+            String stackName = (String) adminData.get("name");
+            stackIdToNameMap.put(stackId.longValue(), stackName);
+        }
+
+        for (Map<String, Object> companyData : companyDataList) {
+            List<Number> stackIdSet = (List<Number>) companyData.get("stackIdSet");
+
+            for (Number stackId : stackIdSet) {
+                String stackName = stackIdToNameMap.get(stackId.longValue());
+
+                stackNameToCountMap.put(stackName, stackNameToCountMap.getOrDefault(stackName, 0) + 1);
+            }
+        }
+
+        List<List<Object>> result = new ArrayList<>();
+        result.add(List.of("Stack", "num"));
+
+        for (Map.Entry<String, Integer> entry : stackNameToCountMap.entrySet()) {
+            String stackName = entry.getKey();
+            Integer count = entry.getValue();
+            result.add(List.of(stackName, count));
+        }
+
+        return result;
+    }
+
+    public Object getJobChartData(HttpSession session, Long companyId) {
+        ApiResponse adminResponse = ServiceCall.get(session, Const.RequestHeader.ADMIN, "/admin/jobs");
+        if (adminResponse.getHttpStatus() != 200)
+            return null;
+
+        ApiResponse companyResponse = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/jobstacks");
+        if (companyResponse.getHttpStatus() != 200)
+            return null;
+
+        List<Map<String, Object>> adminDataList = (List<Map<String, Object>>) adminResponse.getData();
+        List<Map<String, Object>> companyDataList = (List<Map<String, Object>>) companyResponse.getData();
+
+        Map<Long, String> jobIdToNameMap = new HashMap<>();
+        Map<String, Integer> jobNameToCountMap = new HashMap<>();
+
+        for (Map<String, Object> adminData : adminDataList) {
+            Number jobId = (Number) adminData.get("id");
+            String jobName = (String) adminData.get("name");
+            jobIdToNameMap.put(jobId.longValue(), jobName);
+        }
+
+        for (Map<String, Object> companyData : companyDataList) {
+            List<Number> jobIdSet = (List<Number>) companyData.get("jobIdSet");
+
+            for (Number jobId : jobIdSet) {
+                String jobName = jobIdToNameMap.get(jobId.longValue());
+
+                jobNameToCountMap.put(jobName, jobNameToCountMap.getOrDefault(jobName, 0) + 1);
+            }
+        }
+
+        List<List<Object>> result = new ArrayList<>();
+        result.add(List.of("Job", "num"));
+
+        for (Map.Entry<String, Integer> entry : jobNameToCountMap.entrySet()) {
+            String jobName = entry.getKey();
+            Integer count = entry.getValue();
+            result.add(List.of(jobName, count));
+        }
+
+        return result;
+    }
+
+    public PageMoveWithMessage getCompanyJoinCountByDay(HttpSession session, int year, int month) {
+        ApiResponse response = ServiceCall.getParamListWithTodayFalse(session, Const.RequestHeader.COMPANY, "/company/list", 1, 1);
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("admin/main", response.getMessage());
+
+        List<Map<String, Object>> companyData = (List<Map<String, Object>>) response.getData();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        List<LinkedHashMap<String, Object>> filterCompanyData = companyData.stream()
+                .flatMap(map -> ((List<LinkedHashMap<String, Object>>) map.get("content")).stream())
+                .filter(company -> {
+                    String createdAt = (String) company.get("createdAt");
+                    LocalDateTime companyJoinDateTime = LocalDateTime.parse(createdAt, formatter);
+                    LocalDate companyJoinDate = companyJoinDateTime.toLocalDate();
+                    return companyJoinDate.getYear() == year && companyJoinDate.getMonthValue() == month;
+                })
+                .collect(Collectors.toList());
+
+        Map<Integer, Long> companyJoinCountByDay = ApiResponseToList.getCompanyJoinCountByDay(Collections.singletonList(filterCompanyData), year, month);
+
+        List<List<Object>> chartData = new ArrayList<>();
+        for (Map.Entry<Integer, Long> entry : companyJoinCountByDay.entrySet()) {
+            chartData.add(Arrays.asList(entry.getKey(), entry.getValue()));
+        }
+
+        return new PageMoveWithMessage("admin/company-join-count", companyJoinCountByDay);
     }
 }

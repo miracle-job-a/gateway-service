@@ -1,11 +1,10 @@
 package com.miracle.memberservice.service;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.*;
-import com.miracle.memberservice.util.ApiResponseToList;
-import com.miracle.memberservice.util.Const;
-import com.miracle.memberservice.util.PageMoveWithMessage;
-import com.miracle.memberservice.util.ServiceCall;
+import com.miracle.memberservice.util.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,10 @@ import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MyPageService {
+
+    private final S3Method s3Method;
 
     // 지원현황 목록 불러오기
     public PageMoveWithMessage applicationLetterList(HttpSession session, int startPage, String sort) {
@@ -38,7 +40,7 @@ public class MyPageService {
     }
 
     // 지원상태 변경하기
-    public PageMoveWithMessage updateApplicationLetter(HttpSession session, Long applicationLetterId, String applicationStatus){
+    public PageMoveWithMessage updateApplicationLetter(HttpSession session, Long applicationLetterId, String applicationStatus) {
         Long userId = (Long) session.getAttribute("id");
         ApiResponse response = ServiceCall.putParam(session, Const.RequestHeader.USER,
                 "/user/" + userId + "/application-letter/" + applicationLetterId, "applicationStatus", applicationStatus);
@@ -70,6 +72,7 @@ public class MyPageService {
                 .userStackIdSet((ArrayList<Integer>) data.get("userStackIdSet"))
                 .userEducation((String) data.get("userEducation"))
                 .userGitLink((String) data.get("userGitLink"))
+                .photo(s3Method.getUrl(Const.RequestHeader.RESUME, (String) data.get("userPhoto")))
                 .userCareerDetailList((List<String>) data.get("userCareerDetailList"))
                 .userProjectList((List<String>) data.get("userProjectList"))
                 .userEtcList((List<String>) data.get("userEtcList"))
@@ -163,6 +166,7 @@ public class MyPageService {
 
     // 수정폼 접근 인증 api
     public PageMoveWithMessage validationUser(HttpSession session, LoginDto loginDto) {
+        loginDto.setEmail((String) session.getAttribute("email"));
         ApiResponse response = ServiceCall.post(session, loginDto, Const.RequestHeader.USER, "/user/login");
         if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("user/validation", response.getMessage());
@@ -197,6 +201,30 @@ public class MyPageService {
         }
         session.removeAttribute("password");
         return new PageMoveWithMessage("redirect:/v1/user/my-page/my-info");
+    }
+
+    public PageMoveWithMessage signoutUser(HttpSession session) {
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.USER, "/user/" + userId);
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("redirect:/v1/user/my-page/my-info");
+
+        deleteResumePhotos(userId);
+
+        session.invalidate();
+        return new PageMoveWithMessage("redirect:/v1");
+    }
+
+    private void deleteResumePhotos(Long userId) {
+        int i = 1;
+        while (true) {
+            String fileName = userId + "_" + i;
+            if (s3Method.isExistFile(Const.RequestHeader.RESUME, fileName)) {
+                s3Method.deleteFile(Const.RequestHeader.RESUME, fileName);
+                i++;
+            } else {
+                break;
+            }
+        }
     }
 
 }

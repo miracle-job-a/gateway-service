@@ -15,19 +15,20 @@ public class CompanyInfoRequestDto {
     private final String photo;
     private final String introduction;
     private final String address;
+    private final String bno;
     @Setter
     private String pwd;
 
     @Builder
-    public CompanyInfoRequestDto(String name, String ceoName, int employeeNum, String sector, String photo, String introduction, String address, String detailAddress, String pwd) {
+    public CompanyInfoRequestDto(String name, String ceoName, int employeeNum, String sector, String introduction, String address, String bno, String pwd) {
         this.name = name;
         this.ceoName = ceoName;
         this.employeeNum = employeeNum;
         this.sector = sector;
-        this.photo = photo;
+        this.photo = bno;
         this.introduction = introduction;
-        this.address = address + " " + detailAddress;
+        this.address = address;
+        this.bno = bno;
         this.pwd = pwd;
     }
-
 }
