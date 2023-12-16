@@ -5,10 +5,9 @@ import com.miracle.memberservice.dto.response.ApplicationLetterResponseDto;
 import com.miracle.memberservice.dto.response.JobResponseDto;
 import com.miracle.memberservice.dto.response.PostResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;
-import com.miracle.memberservice.service.AdminService;
-import com.miracle.memberservice.service.CompanyService;
-import com.miracle.memberservice.service.EmailService;
-import com.miracle.memberservice.service.UserService;
+import com.miracle.memberservice.dto.token.AccessToken;
+import com.miracle.memberservice.service.*;
+import com.miracle.memberservice.util.Const;
 import com.miracle.memberservice.util.PageMoveWithMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
@@ -37,6 +38,8 @@ public class GuestController {
     private final CompanyService companyService;
     private final EmailService emailService;
     private final AdminService adminService;
+    private final TokenService tokenService;
+
     @Value("${miracle.passwordChecker}")
     private String passwordChecker;
 
@@ -175,14 +178,19 @@ public class GuestController {
 
     //로그인 API
     @PostMapping("/company/login")
-    public String companyLogin(@ModelAttribute LoginDto loginDto, Model model, HttpSession session) {
+    public String companyLogin(@ModelAttribute LoginDto loginDto, Model model, HttpSession session, HttpServletResponse response) {
         PageMoveWithMessage pmwm = companyService.login(loginDto, session);
         String pageName = pmwm.getPageName();
 
-        if (pmwm.getId() != null) {
-            session.setAttribute("id", pmwm.getId());
-            session.setAttribute("email", pmwm.getEmail());
-            session.setAttribute("bno", pmwm.getNameOrBno());
+        Long id = pmwm.getId();
+        if (id != null) {
+            String email = pmwm.getEmail();
+            String bno = pmwm.getNameOrBno();
+            session.setAttribute("id", id);
+            session.setAttribute("email", email);
+            session.setAttribute("bno", bno);
+
+            addJwtInCookie(response, Const.RequestHeader.COMPANY, email, Map.of("id", id, "bno", bno));
         }
 
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
@@ -190,12 +198,17 @@ public class GuestController {
     }
 
     @PostMapping("/user/login")
-    public String userLogin(RedirectAttributes redirectAttributes, @ModelAttribute LoginDto loginDto, Model model, HttpSession session) {
+    public String userLogin(RedirectAttributes redirectAttributes, @ModelAttribute LoginDto loginDto, Model model, HttpSession session, HttpServletResponse response) {
         PageMoveWithMessage pmwm = userService.login(loginDto, session);
-        if (pmwm.getId() != null) {
-            session.setAttribute("id", pmwm.getId());
-            session.setAttribute("email", pmwm.getEmail());
+
+        Long id = pmwm.getId();
+        if (id != null) {
+            String email = pmwm.getEmail();
+            session.setAttribute("id", id);
+            session.setAttribute("email", email);
             session.setAttribute("name", pmwm.getNameOrBno());
+
+            addJwtInCookie(response, Const.RequestHeader.USER, email, Map.of("id", id));
         }
         if (Objects.nonNull(loginDto.getPostId())) {
             redirectAttributes.addAttribute("companyId", loginDto.getCompanyId());
@@ -207,17 +220,30 @@ public class GuestController {
     }
 
     @PostMapping("/admin/login")
-    public String adminLogin(@ModelAttribute LoginDto loginDto, Model model, HttpSession session) {
+    public String adminLogin(@ModelAttribute LoginDto loginDto, Model model, HttpSession session, HttpServletResponse response) {
         PageMoveWithMessage pmwm = adminService.login(loginDto, session);
         String pageName = pmwm.getPageName();
 
-        if (pmwm.getId() != null) {
-            session.setAttribute("id", pmwm.getId());
-            session.setAttribute("email", pmwm.getEmail());
+        Long id = pmwm.getId();
+        if (id != null) {
+            String email = pmwm.getEmail();
+            session.setAttribute("id", id);
+            session.setAttribute("email", email);
+
+            addJwtInCookie(response, Const.RequestHeader.ADMIN, email, Map.of("id", id));
         }
 
         model.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pageName;
+    }
+
+    private void addJwtInCookie(HttpServletResponse response, String memberType, String email, Map<String, Object> claims) {
+        AccessToken tokenDto = tokenService.createToken(memberType, email, claims);
+        Cookie cookie = new Cookie("token", tokenDto.getToken());
+        cookie.setMaxAge(60);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
     }
 
     @GetMapping("/user/email/duplicate/{email}")
