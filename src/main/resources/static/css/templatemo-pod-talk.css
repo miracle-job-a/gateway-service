@@ -946,6 +946,7 @@ h6.my-2 {
   border-color: transparent;
 }
 
+
 /*---------------------------------------
   PROIFLE BLOCK               
 -----------------------------------------*/
@@ -1563,7 +1564,7 @@ h6.my-2 {
     flex-direction: column;
   }
 
-  .custom-block .custom-block-top small:last-child {
+  .custom-block .custom-block-top small {
     margin-top: 10px;
     margin-bottom: 10px;
   }
@@ -1582,7 +1583,10 @@ h6.my-2 {
     padding: 30px;
   }
 
-
+  .badge-wrap {
+    display: flex;
+    flex-wrap: nowrap;
+  }
 
 }
 

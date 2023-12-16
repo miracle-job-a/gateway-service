@@ -15,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.util.*;
@@ -26,6 +28,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.YearMonth;
 import java.util.stream.Collectors;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/v1/admin")
@@ -164,8 +170,12 @@ public class AdminController {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpSession session) {
+    public String logout(HttpSession session, HttpServletResponse response) {
         session.invalidate();
+        Cookie cookie = new Cookie("token", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
         return "redirect:/v1";
     }
 
@@ -175,7 +185,7 @@ public class AdminController {
     }
 
     @GetMapping("/stacks")
-    private String getStackList(HttpSession session, Model model){
+    private String getStackList(HttpSession session, Model model) {
         PageMoveWithMessage pmwm = adminService.getAllStack(session);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
 
@@ -212,7 +222,7 @@ public class AdminController {
     }
 
     @GetMapping("/jobs")
-    private String getJobList(HttpSession session, Model model){
+    private String getJobList(HttpSession session, Model model) {
         PageMoveWithMessage pmwm = adminService.getAllJob(session);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
 
@@ -250,13 +260,6 @@ public class AdminController {
     @GetMapping("/approval/{companyId}")
     public String approveCompany(@PathVariable String companyId, HttpSession session) {
         PageMoveWithMessage pmwm = companyService.approveCompany(session, companyId);
-        return pmwm.getPageName();
-    }
-
-    @GetMapping("/posts")
-    public String getPostCount(HttpSession session, Model model) {
-        PageMoveWithMessage pmwm = companyService.getPostCount(session);
-        model.addAttribute("chartData", pmwm.getData());
         return pmwm.getPageName();
     }
 

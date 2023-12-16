@@ -130,7 +130,7 @@
                                 <a href="/v1/user/join" class="custom-btn mt-2 mb-4 col-5 text-center" style="width: 189px">
                                     유저 회원가입
                                 </a>
-                                <a id="googleLogin"><img src="/images/google-login.png" class="my-2" alt="" style="width: 189px"></a>
+                                <a id="googleLogin" style="cursor: pointer;"><img src="/images/google-login.png" class="my-2" alt="" style="width: 189px"></a>
                             </div>
                             <div class="custom-card-border col-11 my-4 d-flex flex-column align-items-center">
                                 <label class="my-3 col-lg-8 col-12 mx-auto text-center">원하는 인재를 찾아보세요.</label>
@@ -402,7 +402,7 @@
 
 
                     // ...
-                    fetch("http://localhost:60000/v1/user/validation?sso=google", {
+                    fetch("https://www.job-a.shop/v1/user/validation?sso=google", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -412,9 +412,10 @@
                         .then(response => response.text())
                         .then(data => {
                             if (data == 'true') {
-                                location.href="/v1/user/loginwith?email="+googleDto.email+"&uid="+googleDto.uid;
+                                location.href="/v1/user/loginwith?sso=google&email="+googleDto.email+"&uid="+googleDto.uid;
+                            }else{
+                                location.href="/v1/user/additional-info?sso=google&email="+googleDto.email+"&uid="+googleDto.uid;
                             }
-                            location.replace("/v1/user/additional-info?sso=google&email="+googleDto.email+"&uid="+googleDto.uid);
                         })
                         .catch(error => {
                             location.href="/error/404";
