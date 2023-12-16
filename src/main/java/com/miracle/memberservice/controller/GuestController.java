@@ -153,10 +153,10 @@ public class GuestController {
 
     //추가정보 입력을 받아서
     @PostMapping("/user/joinwith")
-    public String userSsoJoin(@RequestParam String sso,
-                              @ModelAttribute UserSsoLoginRequestDto userSsoLoginRequestDto,
-                              RedirectAttributes redirectAttributes,
-                              Model model, HttpSession session) {
+    public String userSsoJoin(
+            @ModelAttribute UserSsoLoginRequestDto userSsoLoginRequestDto,
+            RedirectAttributes redirectAttributes,
+            Model model, HttpSession session, HttpServletResponse response) {
         //회원가입 진행 (DB에 저장)
         UserJoinDto userJoinDto = new UserJoinDto(userSsoLoginRequestDto.getEmail(),
                 userSsoLoginRequestDto.getName(),
@@ -167,7 +167,7 @@ public class GuestController {
                 userSsoLoginRequestDto.getDetailAddress(),
                 userSsoLoginRequestDto.getSso());
 
-        PageMoveWithMessage pmwmByJoin = userService.join(userJoinDto, session);
+        userService.join(userJoinDto, session);
 
         //로그인 진행
         LoginDto loginDto = new LoginDto(userSsoLoginRequestDto.getEmail(),
@@ -179,10 +179,15 @@ public class GuestController {
                 userSsoLoginRequestDto.getSso());
 
         PageMoveWithMessage pmwm = userService.login(loginDto, session);
-        if (pmwm.getId() != null) {
-            session.setAttribute("id", pmwm.getId());
-            session.setAttribute("email", pmwm.getEmail());
-            session.setAttribute("name", pmwm.getNameOrBno());
+        Long id = pmwm.getId();
+        String name = pmwm.getNameOrBno();
+        if (id != null) {
+            String email = pmwm.getEmail();
+            session.setAttribute("id", id);
+            session.setAttribute("email", email);
+            session.setAttribute("name", name);
+
+            addJwtInCookie(response, Const.RequestHeader.USER, email, Map.of("id", id, "name", name));
         }
         if (Objects.nonNull(loginDto.getPostId())) {
             redirectAttributes.addAttribute("companyId", loginDto.getCompanyId());
@@ -195,9 +200,9 @@ public class GuestController {
 
     @GetMapping("/user/loginwith")
     public String userSsoLogin(@RequestParam String sso, @RequestParam String email, @RequestParam String uid,
-                              @ModelAttribute UserSsoLoginRequestDto userSsoLoginRequestDto,
-                              RedirectAttributes redirectAttributes,
-                              Model model, HttpSession session) {
+                               @ModelAttribute UserSsoLoginRequestDto userSsoLoginRequestDto,
+                               RedirectAttributes redirectAttributes,
+                               Model model, HttpSession session, HttpServletResponse response) {
         LoginDto loginDto = new LoginDto(email,
                 uid + passwordChecker,
                 userSsoLoginRequestDto.getMemberType(),
@@ -207,10 +212,14 @@ public class GuestController {
                 sso);
 
         PageMoveWithMessage pmwm = userService.login(loginDto, session);
-        if (pmwm.getId() != null) {
-            session.setAttribute("id", pmwm.getId());
-            session.setAttribute("email", pmwm.getEmail());
-            session.setAttribute("name", pmwm.getNameOrBno());
+        Long id = pmwm.getId();
+        String name = pmwm.getNameOrBno();
+        if (id != null) {
+            session.setAttribute("id", id);
+            session.setAttribute("email", email);
+            session.setAttribute("name", name);
+
+            addJwtInCookie(response, Const.RequestHeader.USER, email, Map.of("id", id, "name", name));
         }
         if (Objects.nonNull(loginDto.getPostId())) {
             redirectAttributes.addAttribute("companyId", loginDto.getCompanyId());
