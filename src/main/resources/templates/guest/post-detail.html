@@ -205,7 +205,7 @@
 
                                 <div class="row d-flex col-12 mx-auto mt-2 mb-4">
                                     <label>회사명</label>
-                                    <h6 class="my-1" th:text="${info.name}"></h6>
+                                    <h6 class="my-1" id="getCompanyName" th:text="${info.name}"></h6>
                                     <label class="mt-2">대표자</label>
                                     <h6 class="my-1" th:text="${info.ceoName}"></h6>
                                     <label class="mt-2">재직인원</label>
@@ -215,7 +215,8 @@
                                               th:value="${info.introduction}" th:text="${info.introduction}"
                                               readonly></textarea>
                                     <label class="mt-2">근무위치</label>
-                                    <h6 class="mt-1" th:text="${detail.workAddress}"></h6>
+                                    <h6 class="mt-1" id="getAddress" th:text="${detail.workAddress}"></h6>
+                                    <div id="map" style="width:712px;height:300px;"></div>
                                 </div>
 
                                 <div class="col-12 mx-auto my-4">
@@ -401,7 +402,50 @@
                 </div>
             </div>
         </section>
+        <script type="text/javascript"
+                src="//dapi.kakao.com/v2/maps/sdk.js?appkey=aa6e6d1d4d257f830137caee8c12d716&libraries=services,clusterer,drawing"></script>
 
+        <script>
+            var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+                mapOption = {
+                    center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                    level: 3 // 지도의 확대 레벨
+                };
+
+            // 지도를 생성합니다
+            var map = new kakao.maps.Map(mapContainer, mapOption);
+
+            // 주소-좌표 변환 객체를 생성합니다
+            var geocoder = new kakao.maps.services.Geocoder();
+
+            //회사명 및 주소 정보를 위 태그에서 가져오기
+            var address = document.getElementById('getAddress').textContent;
+            var companuName = document.getElementById('getCompanyName').textContent;
+            // 주소로 좌표를 검색합니다
+            geocoder.addressSearch(address, function (result, status) {
+
+                // 정상적으로 검색이 완료됐으면
+                if (status === kakao.maps.services.Status.OK) {
+
+                    var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+                    // 결과값으로 받은 위치를 마커로 표시합니다
+                    var marker = new kakao.maps.Marker({
+                        map: map,
+                        position: coords
+                    });
+
+                    // 인포윈도우로 장소에 대한 설명을 표시합니다
+                    var infowindow = new kakao.maps.InfoWindow({
+                        content: '<div style="width:150px;text-align:center;padding:6px 0;">'+companuName+'</div>'
+                    });
+                    infowindow.open(map, marker);
+
+                    // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+                    map.setCenter(coords);
+                }
+            });
+        </script>
 
     </main>
 </div>
