@@ -212,7 +212,7 @@
                                          data-bs-toggle="tooltip" data-bs-html="true"
                                     title="우리 회사에서 사용하는 기술스택을 선택해 적절한 인재를 찾으세요.">
                                         <div class="row mx-auto">
-                                            <div th:each="stack : ${stacks}" class="editJobs form-check col-md-3 col-6">
+                                            <div th:each="stack : ${stacks}" class="editStacks form-check col-md-3 col-6">
                                                 <input class="form-check-input" type="checkbox" id="stack" name="stackIdSet"
                                                        th:value="${stack.id}"
                                                        th:checked="${stackIdSet != null and stackIdSet.contains(stack)}"/>

@@ -231,7 +231,7 @@
                                          data-bs-toggle="tooltip" data-bs-html="true"
                                          title="우리 회사에서 사용하는 기술스택을 선택해 적절한 인재를 찾으세요.">
                                         <div class="row mx-auto">
-                                            <div th:each="stack : ${stacks}" class="editJobs form-check col-md-3 col-6">
+                                            <div th:each="stack : ${stacks}" class="editStacks form-check col-md-3 col-6">
                                                 <input class="form-check-input" type="checkbox" id="stack" name="stackIdSet"
                                                        th:value="${stack.id}"
                                                        th:checked="${stackIdSet != null and stackIdSet.contains(stack)}"/>
@@ -356,14 +356,14 @@
                                     <h6>MZ 질문</h6>
                                     <h6 class="my-3"><small>테스트 시작일</small>
                                         <span class="text-danger" style="font-size: small">
-                                            *필수(분(minute)은 등록되지 않습니다. 예)12:06:12->12:00:00)
+                                            *필수(분(minute)은 등록되지 않습니다. 예)12:06->12:00) / 시작일은 공고 마감일 이후 시점 등록가능
                                         </span>
                                     </h6>
                                     <input type="datetime-local" name="testStartDate" id="testStartDate"
                                            class="form-control mb-2" placeholder="test_start" required=""/>
                                     <h6 class="my-3"><small>테스트 종료일</small>
                                         <span class="text-danger" style="font-size: small">
-                                            *필수(분(minute)은 등록되지 않습니다. 예)12:06:12->12:00:00)
+                                            *필수(분(minute)은 등록되지 않습니다. 예)12:06->12:00)
                                         </span>
                                     </h6>
                                     <input type="datetime-local" name="testEndDate" id="testEndDate"
