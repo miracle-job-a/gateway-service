@@ -21,6 +21,7 @@ public class WebConfig {
         TokenFilter tokenFilter = new TokenFilter(tokenService);
         tokenFilter.addExcludeUriPattern(
                 "/v1",
+                "/v1/{user,company,admin}/logout",
                 "/v1/{user,company,admin}/login-form",
                 "/v1/{user,company}/join",
                 "/v1/company/bno",
