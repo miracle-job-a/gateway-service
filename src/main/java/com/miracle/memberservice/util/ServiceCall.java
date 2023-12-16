@@ -65,6 +65,11 @@ public class ServiceCall {
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()), httpSession, serviceType).block();
     }
 
+    public static ApiResponse getSso(HttpSession httpSession, String serviceType, String url, String sso) {
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("sso", sso).build()), httpSession, serviceType).block();
+    }
+
     public static ApiResponse getParams(HttpSession httpSession, String serviceType, String url, int year, int month) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("year", year).queryParam("month", month).build()), httpSession, serviceType).block();

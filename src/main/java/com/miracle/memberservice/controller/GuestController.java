@@ -132,7 +132,7 @@ public class GuestController {
                                @RequestBody UserSsoLoginRequestDto userSsoLoginRequestDto,
                                HttpSession session) {
 
-        Boolean checkEmail = userService.checkEmail(session, sso+"#"+userSsoLoginRequestDto.getEmail(), sso);
+        Boolean checkEmail = userService.checkEmail(session, userSsoLoginRequestDto.getEmail(), sso);
 
         //이미 가입되어 있다면
         if (checkEmail) {
@@ -177,6 +177,34 @@ public class GuestController {
                 userSsoLoginRequestDto.getCompanyId(),
                 userSsoLoginRequestDto.getPostType(),
                 userSsoLoginRequestDto.getSso());
+
+        PageMoveWithMessage pmwm = userService.login(loginDto, session);
+        if (pmwm.getId() != null) {
+            session.setAttribute("id", pmwm.getId());
+            session.setAttribute("email", pmwm.getEmail());
+            session.setAttribute("name", pmwm.getNameOrBno());
+        }
+        if (Objects.nonNull(loginDto.getPostId())) {
+            redirectAttributes.addAttribute("companyId", loginDto.getCompanyId());
+            redirectAttributes.addAttribute("postType", loginDto.getPostType());
+        }
+        String errorMessage = pmwm.getErrorMessage();
+        model.addAttribute("errorMessage", errorMessage);
+        return pmwm.getPageName();
+    }
+
+    @GetMapping("/user/loginwith")
+    public String userSsoLogin(@RequestParam String sso, @RequestParam String email, @RequestParam String uid,
+                              @ModelAttribute UserSsoLoginRequestDto userSsoLoginRequestDto,
+                              RedirectAttributes redirectAttributes,
+                              Model model, HttpSession session) {
+        LoginDto loginDto = new LoginDto(email,
+                uid + passwordChecker,
+                userSsoLoginRequestDto.getMemberType(),
+                userSsoLoginRequestDto.getPostId(),
+                userSsoLoginRequestDto.getCompanyId(),
+                userSsoLoginRequestDto.getPostType(),
+                sso);
 
         PageMoveWithMessage pmwm = userService.login(loginDto, session);
         if (pmwm.getId() != null) {
