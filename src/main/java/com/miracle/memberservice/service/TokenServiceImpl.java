@@ -24,8 +24,10 @@ public class TokenServiceImpl implements TokenService {
         CommonTokenRequestDto dto;
         if (Const.RequestHeader.COMPANY.equals(memberType)) {
             dto = new CompanyTokenRequestDto((Long) claims.get("id"), email, memberType, claims.get("bno").toString());
-        } else {
+        } else if (Const.RequestHeader.USER.equals(memberType)){
             dto = new UserTokenRequestDto((Long) claims.get("id"), email, memberType, claims.get("name").toString());
+        } else {
+            dto = new CommonTokenRequestDto((Long) claims.get("id"), email, memberType);
         }
 
         HttpHeaders headers = new HttpHeaders();
