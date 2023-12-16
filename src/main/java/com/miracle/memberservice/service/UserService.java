@@ -73,9 +73,9 @@ public class UserService {
     }
 
     /* KADE : sso 가입 여부 확인 */
-    public Boolean checkEmail(HttpSession session, String email) {
+    public Boolean checkEmail(HttpSession session, String email, String sso) {
 
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/check-email/" + email);
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/check-email/" + email + "?sso=" + sso);
 
         if (Boolean.TRUE.equals(response.getData()))
             return Boolean.TRUE;
