@@ -96,7 +96,12 @@ public class GuestController {
     }
 
     @GetMapping("/admin/login-form")
-    public String adminLoginForm() {
+    public String adminLoginForm(HttpSession session, HttpServletResponse response) {
+        session.invalidate();
+        Cookie cookie = new Cookie("token", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
         return "guest/admin-login";
     }
 
