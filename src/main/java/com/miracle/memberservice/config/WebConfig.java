@@ -4,15 +4,28 @@ import com.miracle.memberservice.filter.AdminLoginCheckFilter;
 import com.miracle.memberservice.filter.CompanyLoginCheckFilter;
 import com.miracle.memberservice.filter.TokenFilter;
 import com.miracle.memberservice.filter.UserLoginCheckFilter;
+import com.miracle.memberservice.interceptor.TokenInterceptor;
+import lombok.RequiredArgsConstructor;
 import com.miracle.memberservice.service.TokenService;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.Filter;
 
 @Component
-public class WebConfig {
+@RequiredArgsConstructor
+public class WebConfig implements WebMvcConfigurer {
+
+    private final TokenInterceptor tokenInterceptor;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(tokenInterceptor)
+                .addPathPatterns("/v1/**");
+    }
 
     @Bean
     public FilterRegistrationBean<TokenFilter> tokenFilter(TokenService tokenService) {
