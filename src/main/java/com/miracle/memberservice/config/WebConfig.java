@@ -43,7 +43,10 @@ public class WebConfig implements WebMvcConfigurer {
                 "/v1/email/authentication/{authentication}",
                 "/v1/search/{posts,total}/{strNum:\\d+}",
                 "/v1/click/post/{postId:\\d+}/detail",
-                "/v1/jwt/**"
+                "/v1/jwt/**",
+                "/v1/user/validation",
+                "/v1/user/additional-info",
+                "/v1/user/joinwith"
         );
 
         filterRegistrationBean.setFilter(tokenFilter);
