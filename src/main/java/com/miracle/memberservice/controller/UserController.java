@@ -1,7 +1,10 @@
 package com.miracle.memberservice.controller;
 
 import com.miracle.memberservice.dto.request.*;
-import com.miracle.memberservice.dto.response.*;
+import com.miracle.memberservice.dto.response.JobResponseDto;
+import com.miracle.memberservice.dto.response.ResumeResponseDto;
+import com.miracle.memberservice.dto.response.StackResponseDto;
+import com.miracle.memberservice.dto.response.UserBaseInfoResponseDto;
 import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.service.UserService;
@@ -13,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,8 +36,12 @@ public class UserController {
     private final CompanyService companyService;
 
     @GetMapping("/logout")
-    public String logout(HttpSession session) {
+    public String logout(HttpSession session, HttpServletResponse response) {
         session.invalidate();
+        Cookie cookie = new Cookie("token", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
         return "redirect:/v1";
     }
 

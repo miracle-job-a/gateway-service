@@ -25,4 +25,13 @@ public interface TokenService {
      * @author chocola
      */
     boolean validateToken(String token);
+
+    /**
+     * Parse token
+     *
+     * @param token Token to parse
+     * @return Return claims
+     * @author chocola
+     */
+    Map<String, String> parseToken(String token);
 }

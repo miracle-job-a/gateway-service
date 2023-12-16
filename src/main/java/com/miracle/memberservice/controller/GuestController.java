@@ -22,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -44,7 +45,31 @@ public class GuestController {
     private String passwordChecker;
 
     @GetMapping
-    public String index(HttpSession session, Model model) {
+    public String index(HttpServletRequest request, Model model) {
+        HttpSession session = request.getSession();
+        Optional<Cookie> tokenCookieOpt = Arrays.stream(request.getCookies())
+                .filter(c -> "token".equals(c.getName()))
+                .findFirst();
+
+        if (tokenCookieOpt.isEmpty()) {
+            session.getAttributeNames()
+                    .asIterator()
+                    .forEachRemaining(session::removeAttribute);
+        } else {
+            String token = tokenCookieOpt.get().getValue();
+            Map<String, String> parsedToken = tokenService.parseToken(token);
+            parsedToken.forEach((key, value) -> {
+                if (key.equals("id")) {
+                    session.setAttribute("id", Long.parseLong(value));
+                } else if (key.equals("sub")) {
+                    value = value.substring(value.indexOf(':') + 1);
+                    session.setAttribute("email", value);
+                } else {
+                    session.setAttribute(key, value);
+                }
+            });
+        }
+
         PageMoveWithMessage pmwm = companyService.mainPage(session);
         if (Objects.nonNull(session.getAttribute("bno"))) {
             Long id = (Long) session.getAttribute("id");
@@ -202,13 +227,14 @@ public class GuestController {
         PageMoveWithMessage pmwm = userService.login(loginDto, session);
 
         Long id = pmwm.getId();
+        String name = pmwm.getNameOrBno();
         if (id != null) {
             String email = pmwm.getEmail();
             session.setAttribute("id", id);
             session.setAttribute("email", email);
-            session.setAttribute("name", pmwm.getNameOrBno());
+            session.setAttribute("name", name);
 
-            addJwtInCookie(response, Const.RequestHeader.USER, email, Map.of("id", id));
+            addJwtInCookie(response, Const.RequestHeader.USER, email, Map.of("id", id, "name", name));
         }
         if (Objects.nonNull(loginDto.getPostId())) {
             redirectAttributes.addAttribute("companyId", loginDto.getCompanyId());
@@ -239,8 +265,9 @@ public class GuestController {
 
     private void addJwtInCookie(HttpServletResponse response, String memberType, String email, Map<String, Object> claims) {
         AccessToken tokenDto = tokenService.createToken(memberType, email, claims);
+        Objects.requireNonNull(tokenDto);
         Cookie cookie = new Cookie("token", tokenDto.getToken());
-        cookie.setMaxAge(60);
+        cookie.setMaxAge(300);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         response.addCookie(cookie);

@@ -7,15 +7,9 @@ import org.springframework.util.AntPathMatcher;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpFilter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -45,6 +39,20 @@ public class TokenFilter extends HttpFilter {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
+
+        String token = tokenOpt.get();
+        HttpSession session = request.getSession();
+        Map<String, String> parsedToken = tokenService.parseToken(token);
+        parsedToken.forEach((key, value) -> {
+            if (key.equals("id")) {
+                session.setAttribute("id", Long.parseLong(value));
+            } else if (key.equals("sub")) {
+                value = value.substring(value.indexOf(':') + 1);
+                session.setAttribute("email", value);
+            } else {
+                session.setAttribute(key, value);
+            }
+        });
 
         chain.doFilter(request, response);
     }
