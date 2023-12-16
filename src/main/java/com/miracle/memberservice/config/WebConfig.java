@@ -46,7 +46,8 @@ public class WebConfig implements WebMvcConfigurer {
                 "/v1/jwt/**",
                 "/v1/user/validation",
                 "/v1/user/additional-info",
-                "/v1/user/joinwith"
+                "/v1/user/joinwith",
+                "/v1/user/loginwith"
         );
 
         filterRegistrationBean.setFilter(tokenFilter);
