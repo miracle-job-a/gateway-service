@@ -16,19 +16,12 @@
             /*<![CDATA[*/
             var daysInMonth = /*[[${daysInMonth}]]*/ null;
             /*]]>*/
-
-            for (var i = 0; i < chartData.length; i++) {
-                chartData[i][1] = parseInt(chartData[i][1]);
-            }
-
+            var minYValue = 0;
             var data = new google.visualization.DataTable();
             data.addColumn('number', 'Date');
-            data.addColumn('number', '공고');
+            data.addColumn('number', 'MZ 공고');
+            data.addColumn('number', '일반 공고');
             data.addRows(chartData);
-
-            var minYValue = Math.min.apply(null, chartData.map(function(row) {
-                return row[1];
-            }));
 
             var options = {
                 hAxis: {
@@ -52,18 +45,12 @@
             /*<![CDATA[*/
             var daysInMonth = /*[[${daysInMonth}]]*/ null;
             /*]]>*/
-            for (var i = 0; i < chartData.length; i++) {
-                chartData[i][1] = parseInt(chartData[i][1]);
-            }
-
+            var minYValue = 0;
             var data = new google.visualization.DataTable();
             data.addColumn('number', 'Date');
-            data.addColumn('number', '공고');
+            data.addColumn('number', 'MZ 공고');
+            data.addColumn('number', '일반 공고');
             data.addRows(chartData);
-
-            var minYValue = Math.min.apply(null, chartData.map(function(row) {
-                return row[1];
-            }));
 
             var options = {
                 hAxis: {
