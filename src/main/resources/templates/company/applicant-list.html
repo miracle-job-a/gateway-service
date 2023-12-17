@@ -99,73 +99,77 @@
                                 <button type="button" class="custom-border-option-btn" id="goListBtn" onclick="goList()">공고관리 돌아가기</button>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- 목록 페이지 시작 -->
-                        <div class="col-lg-12 col-12 my-4 text-center"
-                             th:if="${#lists.size(applicantList) == 0 or applicantList==null}">
-                            <h5>지원자가 없습니다.</h5>
-                        </div>
-                        <!-- 목록 1칸 -->
-                        <div th:each="postList, postListStat : ${applicantList}"
-                             th:id="'postPage'+${postListStat.index}">
-                            <div class="col-lg-12 col-12 my-3 post-form" th:each="post, postStat : ${postList}">
-                                <div class="custom-block d-flex">
-                                    <div class="custom-block-info">
-                                        <h6 style="display: inline-block">
-                                            <a th:text="${post.email}" th:if="${post.email!='null'}"></a>
-                                        </h6>
-                                        <button type="button" class="btn btn-outline-secondary mx-1"
+                    <!-- 목록 페이지 시작 -->
+                    <div class="col-lg-12 col-12 my-4 text-center"
+                         th:if="${#lists.size(applicantList) == 0 or applicantList==null}">
+                        <h5>지원자가 없습니다.</h5>
+                    </div>
+                    <!-- 목록 1칸 -->
+                    <div class="col-lg-10 col-12 my-2" th:each="postList, postListStat : ${applicantList}"
+                         th:id="'postPage'+${postListStat.index}">
+                        <div class="col-12 my-2 mx-auto" th:each="post, postStat : ${postList}">
+                            <div class="custom-block d-flex">
+                                <div class="custom-block-info ">
+                                    <div class="mb-2 d-inline-flex" th:if="${post.resumeTitle != 'null'}">
+                                        <button type="button" class="btn btn-outline-secondary mx1"
                                                 th:if="${post.resumeTitle != 'null'}"
                                                 th:onclick="resumeClick([[${post.applicationLetterId}]], [[${post.userId}]])">
-                                            지원 이력서
+                                            이력서
                                         </button>
                                         <button type="button" class="btn btn-outline-secondary mx-1"
                                                 th:if="${post.resumeTitle != 'null'}"
                                                 th:onclick="coverLetterClick([[${post.applicationLetterId}]], [[${post.userId}]])">
-                                            지원 자기소개서
+                                            자기소개서
                                         </button>
+                                    </div>
+                                    <h6>
+                                        <a th:text="${post.email}" th:if="${post.email!='null'}"></a>
+                                    </h6>
 
-                                        <div class="custom-block-bottom d-flex mt-1">
-                                            <div class="col-auto d-flex m-2"><span>이름:<span
-                                                    th:text="${post.name}"></span></span></div>
-                                            <div class="col-auto d-flex m-2"><span>주소:<span
-                                                    th:text="${post.address}"></span></span></div>
-                                            <div class="col-auto d-flex m-2"><span>지원날짜: <span
-                                                    th:text="${post.submitDate}"></span></span></div>
-                                        </div>
+
+                                    <div class="custom-block-bottom d-flex flex-column flex-md-row mt-1">
+                                        <div class="col-auto d-flex m-2"><span>이름:<span
+                                                th:text="${post.name}"></span></span></div>
+                                        <div class="col-auto d-flex m-2"><span>주소:<span
+                                                th:text="${post.address}"></span></span></div>
+                                        <div class="col-auto d-flex m-2"><span>지원날짜: <span
+                                                th:text="${post.submitDate}"></span></span></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="col-lg-4 col-12 mx-auto">
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination pagination-lg justify-content-center mt-5">
-                                    <li class="page-item" th:if="${strNum>=5}">
-                                        <a class="page-link"
-                                           th:href="@{/v1/company/post/applicant/{strNum}(strNum=${strNum}-5, postId=${postId}, sort=${sort})}"
-                                           aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                        </a>
-                                    </li>
-                                    <div th:each="post, postStat:${applicantList}">
-                                        <li class="page-item" th:id="'page'+${postStat.index}"><a class="page-link"
-                                                                                                  th:onclick="showOnlySelected([[${postStat.index}]])"
-                                                                                                  th:text="${postStat.index+strNum}"></a>
-                                        </li>
-                                    </div>
-                                    <li class="page-item"
-                                        th:if="${#lists.size(applicantList)>=5 and #lists.size(applicantList[4])==9}">
-                                        <a class="page-link"
-                                           th:href="@{/v1/company/post/applicant/{strNum}(strNum=${strNum}+5, postId=${postId}, sort=${sort})}"
-                                           aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
                     </div>
+
+                    <div class="col-lg-4 col-12 mx-auto">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination pagination-lg justify-content-center mt-5">
+                                <li class="page-item" th:if="${strNum>=5}">
+                                    <a class="page-link"
+                                       th:href="@{/v1/company/post/applicant/{strNum}(strNum=${strNum}-5, postId=${postId}, sort=${sort})}"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <div th:each="post, postStat:${applicantList}">
+                                    <li class="page-item" th:id="'page'+${postStat.index}"><a class="page-link"
+                                                                                              th:onclick="showOnlySelected([[${postStat.index}]])"
+                                                                                              th:text="${postStat.index+strNum}"></a>
+                                    </li>
+                                </div>
+                                <li class="page-item"
+                                    th:if="${#lists.size(applicantList)>=5 and #lists.size(applicantList[4])==9}">
+                                    <a class="page-link"
+                                       th:href="@{/v1/company/post/applicant/{strNum}(strNum=${strNum}+5, postId=${postId}, sort=${sort})}"
+                                       aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+
                 </div>
             </div>
         </section>
