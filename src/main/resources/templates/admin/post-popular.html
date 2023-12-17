@@ -1,0 +1,67 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+        google.charts.load('current', {packages: ['corechart', 'bar']});
+        google.charts.setOnLoadCallback(drawStuff);
+
+        function drawStuff() {
+            /*<![CDATA[*/
+            var chartData = /*[[${chartData}]]*/ null;
+            /*]]>*/
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Post');
+            data.addColumn('number', 'The number of Applicants');
+            data.addColumn('number', 'Rank');
+
+            // 데이터 추가
+            for (var i = 0; i < chartData.length; i++) {
+                var post = chartData[i];
+                data.addRow(["공고 타입 : " + post.postType + "\n\n 공고 제목 : " + post.title, post.applicant, i + 1]);
+            }
+
+            var options = {
+                bars: 'horizontal',
+                series: {
+                    0: {axis: 'The number of Applicants'},
+                    1: {axis: 'Rank'}
+                },
+                axes: {
+                    x: {
+                        Applicants: {label: 'The number of Applicants'},
+                        Rank: {side: 'top', label: 'Rank'}
+                    }
+                }
+            };
+
+            var chart = new google.charts.Bar(document.getElementById('dual_x_div'));
+            chart.draw(data, google.charts.Bar.convertOptions(options));
+        }
+    </script>
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
+
+        <section class="latest-podcast-section" id="section_2">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-9 col-12">
+                        <div class="section-title-wrap mb-5">
+                            <h4 class="section-title">지원자 수 Top 3 공고 현황</h4>
+                        </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="card p-2 my-3 col-6 post-form align-self-center bg-white" style="width: 1000px; height: 700px;" id="dual_x_div"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+</html>
