@@ -1,6 +1,7 @@
 package com.miracle.memberservice.controller;
 
 import com.miracle.memberservice.dto.response.CompanyListResponseDto;
+import com.miracle.memberservice.dto.response.ManagePostsResponseDto;
 import com.miracle.memberservice.dto.response.StackAndJobResponseDto;
 import com.miracle.memberservice.dto.response.UserJoinListResponseDto;
 import com.miracle.memberservice.service.AdminService;
@@ -14,11 +15,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +27,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.YearMonth;
+import java.util.stream.Collectors;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/v1/admin")
@@ -164,8 +170,12 @@ public class AdminController {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpSession session) {
+    public String logout(HttpSession session, HttpServletResponse response) {
         session.invalidate();
+        Cookie cookie = new Cookie("token", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
         return "redirect:/v1";
     }
 
@@ -175,7 +185,7 @@ public class AdminController {
     }
 
     @GetMapping("/stacks")
-    private String getStackList(HttpSession session, Model model){
+    private String getStackList(HttpSession session, Model model) {
         PageMoveWithMessage pmwm = adminService.getAllStack(session);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
 
@@ -212,7 +222,7 @@ public class AdminController {
     }
 
     @GetMapping("/jobs")
-    private String getJobList(HttpSession session, Model model){
+    private String getJobList(HttpSession session, Model model) {
         PageMoveWithMessage pmwm = adminService.getAllJob(session);
         List<StackAndJobResponseDto> data = (List<StackAndJobResponseDto>) pmwm.getData();
 
@@ -253,13 +263,6 @@ public class AdminController {
         return pmwm.getPageName();
     }
 
-    @GetMapping("/posts")
-    public String getPostCount(HttpSession session, Model model) {
-        PageMoveWithMessage pmwm = companyService.getPostCount(session);
-        model.addAttribute("chartData", pmwm.getData());
-        return pmwm.getPageName();
-    }
-
     @GetMapping("/posts/today")
     public String getTodayPostCount(@RequestParam(name = "year", required = false, defaultValue = "0") int year,
                                     @RequestParam(name = "month", required = false, defaultValue = "0") int month,
@@ -282,5 +285,35 @@ public class AdminController {
         Map<String, Object> map = new HashMap<>();
         map.put("chartData", pmwm.getData());
         return ResponseEntity.status(HttpStatus.OK).body(map);
+    }
+
+    @GetMapping("/post/popular")
+    public String getPopularPosts(HttpSession session, Model model) {
+        PageMoveWithMessage companyListResult = adminService.getCompanyList(session, 1, 5);
+        List<List<CompanyListResponseDto>> companyList = (List<List<CompanyListResponseDto>>) companyListResult.getData();
+
+        List<ManagePostsResponseDto> allPost = new ArrayList<>();
+
+        for (List<CompanyListResponseDto> companies : companyList) {
+            for (CompanyListResponseDto company : companies) {
+                PageMoveWithMessage postListResult = companyService.postList(session, company.getId(), 1, 10, "latest");
+
+                List<List<ManagePostsResponseDto>> postListData = (List<List<ManagePostsResponseDto>>) postListResult.getData();
+                List<ManagePostsResponseDto> postList = postListData.stream()
+                        .flatMap(List::stream)
+                        .collect(Collectors.toList());
+
+                allPost.addAll(postList);
+            }
+        }
+
+        List<ManagePostsResponseDto> popularPosts = allPost.stream()
+                .sorted(Comparator.comparingInt(ManagePostsResponseDto::getApplicant).reversed())
+                .limit(3)
+                .collect(Collectors.toList());
+
+        model.addAttribute("chartData", popularPosts);
+
+        return "admin/post-popular";
     }
 }

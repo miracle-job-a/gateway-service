@@ -18,13 +18,15 @@ public class LoginDto {
     private final String postId;
     private final String companyId;
     private final String postType;
+    private final String sso;
 
-    public LoginDto(String email, String password, String memberType, String postId, String companyId, String postType) {
+    public LoginDto(String email, String password, String memberType, String postId, String companyId, String postType, String sso) {
         this.email = email;
         this.password = password;
         this.memberType = memberType;
         this.postId = postId;
         this.companyId = companyId;
         this.postType = postType;
+        this.sso = sso;
     }
 }

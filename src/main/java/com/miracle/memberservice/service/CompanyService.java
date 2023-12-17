@@ -96,6 +96,15 @@ public class CompanyService {
         return new PageMoveWithMessage("company/post-list", postList);
     }
 
+    public PageMoveWithMessage postList(HttpSession session, Long companyId, int strNum, int endNum, String sort) {
+        ApiResponse response = ServiceCall.getParamList(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts", strNum, endNum, sort);
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("redirect:/v1", response.getMessage());
+
+        List<List<ManagePostsResponseDto>> postList = ApiResponseToList.postList(response.getData(), session);
+
+        return new PageMoveWithMessage("admin/post-popular", postList);
+    }
+
     // 확인 용도
     public Boolean statusCompany(HttpSession session) {
         Long companyId = (Long) session.getAttribute("id");
@@ -380,61 +389,37 @@ public class CompanyService {
         }
     }
 
-    public PageMoveWithMessage getPostCount(HttpSession session) {
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/posts/count");
-        if (response.getHttpStatus() != 200) {
-            return new PageMoveWithMessage("admin/main", response.getMessage());
-        } else {
-            Object responseData = response.getData();
-
-            if (responseData instanceof Map) {
-                Map<String, Integer> postCounts = (Map<String, Integer>) responseData;
-
-                List<List<Object>> chartData = new ArrayList<>();
-                chartData.add(Arrays.asList("Type", "Num"));
-
-                for (Map.Entry<String, Integer> entry : postCounts.entrySet()) {
-                    String type;
-                    switch (entry.getKey()) {
-                        case "countNormalPosts":
-                            type = "일반 공고";
-                            break;
-                        case "countMZPosts":
-                            type = "MZ 공고";
-                            break;
-                        default:
-                            type = entry.getKey();
-                    }
-
-                    chartData.add(Arrays.asList(type, entry.getValue()));
-                }
-
-                return new PageMoveWithMessage("admin/post-chart", chartData);
-            } else {
-                return new PageMoveWithMessage("admin/main", response.getMessage());
-            }
-        }
-    }
-
     public PageMoveWithMessage getTodayPostCount(int year, int month, HttpSession session) {
         ApiResponse response = ServiceCall.getParams(session, Const.RequestHeader.COMPANY, "/company/posts/today", year, month);
         if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("admin/main", response.getMessage());
         } else {
             List<Map<String, Object>> postData = (List<Map<String, Object>>) response.getData();
-
-            Map<Integer, Integer> dayCounts = new HashMap<>();
+            System.out.println(postData);
+            Map<Integer, List<Integer>> dayCounts = new HashMap<>();
 
             for (Map<String, Object> post : postData) {
                 LocalDateTime createdAt = LocalDateTime.parse((CharSequence) post.get("createdAt"));
                 int dayOfMonth = createdAt.getDayOfMonth();
-                dayCounts.put(dayOfMonth, dayCounts.getOrDefault(dayOfMonth, 0) + 1);
+
+                String postType = (String) post.get("postType");
+
+                dayCounts.putIfAbsent(dayOfMonth, new ArrayList<>(Arrays.asList(0, 0)));
+
+                List<Integer> countList = dayCounts.get(dayOfMonth);
+                if ("NORMAL".equals(postType)) {
+                    countList.set(1, countList.get(1) + 1);
+                } else if ("MZ".equals(postType)) {
+                    countList.set(0, countList.get(0) + 1);
+                }
             }
 
             List<List<Integer>> formattedData = new ArrayList<>();
             for (int i = 1; i <= 31; i++) {
-                formattedData.add(List.of(i, dayCounts.getOrDefault(i, 0)));
+                List<Integer> countList = dayCounts.getOrDefault(i, Arrays.asList(0, 0));
+                formattedData.add(Arrays.asList(i, countList.get(0), countList.get(1)));
             }
+            System.out.println(formattedData);
             return new PageMoveWithMessage("admin/today-post-chart", formattedData);
         }
     }
@@ -488,6 +473,49 @@ public class CompanyService {
             String stackName = entry.getKey();
             Integer count = entry.getValue();
             result.add(List.of(stackName, count));
+        }
+
+        return result;
+    }
+
+    public Object getJobChartData(HttpSession session, Long companyId) {
+        ApiResponse adminResponse = ServiceCall.get(session, Const.RequestHeader.ADMIN, "/admin/jobs");
+        if (adminResponse.getHttpStatus() != 200)
+            return null;
+
+        ApiResponse companyResponse = ServiceCall.get(session, Const.RequestHeader.COMPANY, "/company/" + companyId + "/posts/jobstacks");
+        if (companyResponse.getHttpStatus() != 200)
+            return null;
+
+        List<Map<String, Object>> adminDataList = (List<Map<String, Object>>) adminResponse.getData();
+        List<Map<String, Object>> companyDataList = (List<Map<String, Object>>) companyResponse.getData();
+
+        Map<Long, String> jobIdToNameMap = new HashMap<>();
+        Map<String, Integer> jobNameToCountMap = new HashMap<>();
+
+        for (Map<String, Object> adminData : adminDataList) {
+            Number jobId = (Number) adminData.get("id");
+            String jobName = (String) adminData.get("name");
+            jobIdToNameMap.put(jobId.longValue(), jobName);
+        }
+
+        for (Map<String, Object> companyData : companyDataList) {
+            List<Number> jobIdSet = (List<Number>) companyData.get("jobIdSet");
+
+            for (Number jobId : jobIdSet) {
+                String jobName = jobIdToNameMap.get(jobId.longValue());
+
+                jobNameToCountMap.put(jobName, jobNameToCountMap.getOrDefault(jobName, 0) + 1);
+            }
+        }
+
+        List<List<Object>> result = new ArrayList<>();
+        result.add(List.of("Job", "num"));
+
+        for (Map.Entry<String, Integer> entry : jobNameToCountMap.entrySet()) {
+            String jobName = entry.getKey();
+            Integer count = entry.getValue();
+            result.add(List.of(jobName, count));
         }
 
         return result;

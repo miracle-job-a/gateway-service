@@ -52,7 +52,23 @@
                 pieHole: 0.4,
             };
 
-            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+            var chart = new google.visualization.PieChart(document.getElementById('stackPiechart'));
+
+            chart.draw(data, options);
+        }
+
+        function jobDrawChart() {
+            /*<![CDATA[*/
+            var chartData = /*[[${jobChartData}]]*/ null;
+            /*]]>*/
+
+            var data = google.visualization.arrayToDataTable(chartData);
+
+            var options = {
+                pieHole: 0.4,
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('jobPiechart'));
 
             chart.draw(data, options);
         }
@@ -130,7 +146,7 @@
                                 <a href="/v1/user/join" class="custom-btn mt-2 mb-4 col-5 text-center" style="width: 189px">
                                     유저 회원가입
                                 </a>
-                                <a href="#"><img src="/images/google-login.png" class="my-2" alt="" style="width: 189px"></a>
+                                <a id="googleLogin" style="cursor: pointer;"><img src="/images/google-login.png" class="my-2" alt="" style="width: 189px"></a>
                             </div>
                             <div class="custom-card-border col-11 my-4 d-flex flex-column align-items-center">
                                 <label class="my-3 col-lg-8 col-12 mx-auto text-center">원하는 인재를 찾아보세요.</label>
@@ -269,81 +285,80 @@
 
                     <div class="col-lg-12 col-12">
                         <div class="section-title-wrap mb-5">
-                            <h4 class="section-title">공고 수 정보</h4>
+                            <h3 class="section-title">공고 수 정보</h3>
                         </div>
                     </div>
 
                     <div class="row mx-auto">
-                        <div class="col-lg-4 col-12 mb-4 mb-lg-0">
-                            <div class="custom-block custom-block-full mb-2">
-                                <div class="custom-block-image-wrap">
-                                </div>
-
-                                <div class="custom-block-info">
-                                    <div class="d-flex justify-content-center">
-                                        <h5 class="mb-0 text-info">전체 공고 수</h5>
+                        <div onclick="window.location.href='/v1/company/post/list/1?sort=latest'" class="col-lg-4 col-12 mb-4 mb-lg-0" style="cursor: pointer;">
+                                <div class="custom-block custom-block-all mb-2">
+                                    <div class="custom-block-image-wrap"></div>
+                                    <div class="custom-block-info">
+                                        <div class="d-flex justify-content-center">
+                                            <h5 class="mb-0 text-info">전체 공고 수</h5>
+                                        </div>
+                                        <hr>
+                                        <div class="d-flex justify-content-center">
+                                            <h5 class="mb-0 text-secondary" th:text="${count.countAllPosts}"></h5>
+                                        </div>
                                     </div>
-                                    <hr>
-                                    <div class="d-flex justify-content-center">
-                                        <h5 class="mb-0 text-secondary" th:text="${count.countAllPosts}"></h5>
-                                    </div>
                                 </div>
-                            </div>
                         </div>
-                        <div class="col-lg-4 col-12 mb-4 mb-lg-0">
-                            <div class="custom-block custom-block-full mb-2">
-                                <div class="custom-block-image-wrap">
-                                </div>
-
-                                <div class="custom-block-info">
-                                    <div class="d-flex justify-content-center">
-                                        <h5 class="mb-0 text-success">진행중인 공고 수</h5>
+                        <div onclick="window.location.href='/v1/company/post/list/1?sort=open'" class="col-lg-4 col-12 mb-4 mb-lg-0" style="cursor: pointer;">
+                                <div class="custom-block custom-block-now mb-2">
+                                    <div class="custom-block-image-wrap"></div>
+                                    <div class="custom-block-info">
+                                        <div class="d-flex justify-content-center">
+                                            <h5 class="mb-0 text-success">진행중인 공고 수</h5>
+                                        </div>
+                                        <hr>
+                                        <div class="d-flex justify-content-center">
+                                            <h5 class="mb-0 text-secondary" th:text="${count.countOpen}"></h5>
+                                        </div>
                                     </div>
-                                    <hr>
-                                    <div class="d-flex justify-content-center">
-                                        <h5 class="mb-0 text-secondary" th:text="${count.countOpen}"></h5>
-                                    </div>
                                 </div>
-                            </div>
                         </div>
-                        <div class="col-lg-4 col-12 mb-4 mb-lg-0">
-                            <div class="custom-block custom-block-full mb-2">
-                                <div class="custom-block-image-wrap">
-                                </div>
-
-                                <div class="custom-block-info">
-                                    <div class="d-flex justify-content-center">
-                                        <h5 class="mb-0 text-warning">마감 공고 수</h5>
+                        <div onclick="window.location.href='/v1/company/post/list/1?sort=close'" class="col-lg-4 col-12 mb-4 mb-lg-0" style="cursor: pointer;">
+                                <div class="custom-block custom-block-end mb-2">
+                                    <div class="custom-block-image-wrap"></div>
+                                    <div class="custom-block-info">
+                                        <div class="d-flex justify-content-center">
+                                            <h5 class="mb-0 text-warning">마감된 공고 수</h5>
+                                        </div>
+                                        <hr>
+                                        <div class="d-flex justify-content-center">
+                                            <h5 class="mb-0 text-secondary" th:text="${count.countEndedPosts}"></h5>
+                                        </div>
                                     </div>
-                                    <hr>
-                                    <div class="d-flex justify-content-center">
-                                        <h5 class="mb-0 text-secondary" th:text="${count.countEndedPosts}"></h5>
-                                    </div>
                                 </div>
-                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row mx-auto mt-2">
+                <div class="row mx-auto mt-5">
 
                     <div class="col-lg-12 col-12">
-                        <div class="section-title-wrap mb-5">
-                            <h4 class="section-title">기업 인사이트</h4>
+                        <div class="section-title-wrap my-5">
+                            <h3 class="section-title">기업 인사이트</h3>
                         </div>
                     </div>
 
                     <div class="row mx-auto">
 
                         <div class="row justify-content-center">
-                            <div style="margin-top: 5%" class="card bg-outline-light bg-transparent text-dark shadow-lg col-6 post-form">
                                 <h4 class="section-title">현재 진행 중인 공고의 스택 비율</h4>
-                                <div th:if="${stackChartData}" class="card p-4 mt-3 mb-3 col-6 post-form align-self-center" style="width: 900px; height: 500px;" id="piechart"></div>
-                                <div th:unless="${stackChartData}">
-                                    <h5 class="mb-0 text-secondary">현재 진행 중인 공고가 없으므로</h5>
-                                    <h5 class="mb-0 text-secondary">차트를 불러올 수 없습니다.</h5>
+                                <div th:if="${stackChartData}" class="card p-4 mt-3 mb-3 col-6 post-form align-self-center" style="width: 900px; height: 500px;" id="stackPiechart"></div>
+                                <div th:unless="${stackChartData}" class="my-5 text-center">
+                                    <h5 class="text-secondary">현재 진행 중인 공고가 없으므로<br/>차트를 불러올 수 없습니다.</h5>
+<!--                                    <h5 class="text-secondary">차트를 불러올 수 없습니다.</h5>-->
                                 </div>
-                            </div>
+
+                                <h4 class="section-title">현재 진행 중인 공고의 직무 비율</h4>
+                                <div th:if="${jobChartData}" class="card p-4 mt-3 mb-3 col-6 post-form align-self-center" style="width: 900px; height: 500px;" id="jobPiechart"></div>
+                                <div th:unless="${jobChartData}" class="my-5 text-center">
+                                    <h5 class="text-secondary">현재 진행 중인 공고가 없으므로<br/>차트를 불러올 수 없습니다.</h5>
+<!--                                    <h5 class="text-secondary">차트를 불러올 수 없습니다.</h5>-->
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -351,6 +366,90 @@
         </section>
 
     </main>
+
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithPhoneNumber, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyCXluBKXBrihziX_rN1Z-5LX06mEmRJadI",
+            authDomain: "job-a-9841f.firebaseapp.com",
+            projectId: "job-a-9841f",
+            storageBucket: "job-a-9841f.appspot.com",
+            messagingSenderId: "915882627362",
+            appId: "1:915882627362:web:5a39b8aa8b4719d5f7957b",
+            measurementId: "G-JHCHPZ8ZTX"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+        const provider = new GoogleAuthProvider();
+
+        const auth = getAuth();
+        auth.languageCode = 'ko';
+
+
+        document.getElementById('googleLogin').addEventListener
+        ('click', () => {
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    // This gives you a Google Access Token. You can use it to access the Google API.
+                    const credential = GoogleAuthProvider.credentialFromResult(result);
+                    const token = credential.accessToken;
+                    // The signed-in user info.
+                    const user = result.user;
+                    // IdP data available using getAdditionalUserInfo(result)
+
+                    const googleDto = {
+                        uid: user.uid,
+                        email: user.email
+                    };
+                    // 다른 필요한 사용자 데이터 추가
+
+
+                    // ...
+                    fetch("https://www.job-a.shop/v1/user/validation?sso=google", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(googleDto),
+                    })
+                        .then(response => response.text())
+                        .then(data => {
+                            if (data == 'true') {
+                                location.href="/v1/user/loginwith?sso=google&email="+googleDto.email+"&uid="+googleDto.uid;
+                            }else{
+                                location.href="/v1/user/additional-info?sso=google&email="+googleDto.email+"&uid="+googleDto.uid;
+                            }
+                        })
+                        .catch(error => {
+                            location.href="/error/404";
+                        });
+                }).catch((error) => {
+                // Handle Errors here.
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // The email of the user's account used.
+                const email = error.customData.email;
+                // The AuthCredential type that was used.
+                const credential = GoogleAuthProvider.credentialFromError(error);
+                // ...
+                location.href="/error/500";
+            });
+        })
+    </script>
+
 
 </div>
 </html>

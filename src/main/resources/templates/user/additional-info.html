@@ -1,0 +1,348 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+
+        if (errorMessage != null) {
+            alert(errorMessage);
+            // 이후 로직 추가 가능
+        }
+    </script>
+    <script type="text/javascript">
+        /* 주소 API */
+        window.onload = function () {
+            document.getElementById("addressInputBtn").addEventListener("click", function () { //주소입력칸을 클릭하면
+                //카카오 지도 발생
+                new daum.Postcode({
+                    oncomplete: function (data) {
+                        // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                        // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                        // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                        var addr = ''; // 주소 변수
+                        var extraAddr = ''; // 참고항목 변수
+
+                        //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                        if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                            addr = data.roadAddress;
+                        } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                            addr = data.jibunAddress;
+                        }
+
+                        // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+                        if (data.userSelectedType === 'R') {
+                            // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                            // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                            if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+                                extraAddr += data.bname;
+                            }
+                            // 건물명이 있고, 공동주택일 경우 추가한다.
+                            if (data.buildingName !== '' && data.apartment === 'Y') {
+                                extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                            }
+                            // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                            if (extraAddr !== '') {
+                                extraAddr = ' (' + extraAddr + ')';
+                            }
+                            // 조합된 참고항목을 해당 필드에 넣는다.
+                            document.getElementById("address").value = extraAddr;
+
+                        } else {
+                            document.getElementById("address").value = '';
+                        }
+
+                        // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                        document.getElementById('address').value = data.zonecode;
+                        document.getElementById("address").value = addr;
+                        // 커서를 상세주소 필드로 이동한다.
+                        document.getElementById("detailAddress").focus();
+                    }
+                }).open();
+            });
+        }
+
+        /* 전화번호 정규식 */
+        function onInputPhone(target) {
+            target.value = target.value
+                .replace(/[^0-9]/g, '')
+                .replace(/(^02.{0}|^01.{1}|[0-9]{3,4})([0-9]{3,4})([0-9]{4})/g, "$1-$2-$3");
+        }
+
+        function updateSubmitButton() {
+            // 약관 동의 체크박스가 체크되고, 비밀번호와 비밀번호 확인이 일치하며, 비밀번호가 조건을 충족하면 submit 버튼 활성화
+            var termsAgreeChecked = $('#termsAgree').prop('checked');
+          /*  var phoneValidation = $('#phoneNumberButton').prop('disabled');*/
+
+            let address = document.getElementById("address");
+            if (!termsAgreeChecked) {
+                alert("약관 동의를 체크해 주세요.");
+                return false;
+            }
+
+
+            /*if (!phoneValidation) {
+                alert("전화번호 인증을 확인해 주세요.");
+                return false;
+            }
+*/
+
+            if (!address.value) {
+                alert("주소 찾기 버튼을 통해 주소를 넣어주세요.")
+                return false;
+            }
+
+            var eventDateTimeInput = document.getElementById('birth');
+            var enteredDateTime = new Date(eventDateTimeInput.value);
+            var currentDateTime = new Date();
+
+            if (enteredDateTime > currentDateTime) {
+                alert("생일이 현재 날짜 이전이어야 합니다.")
+                return false;
+            }
+
+            return true;
+        }
+
+    </script>
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
+
+        <section class="contact-section section-padding pt-0">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-lg-8 col-12 mx-auto">
+                        <div class="section-title-wrap mb-5">
+                            <h4 class="section-title">Google 연동 회원가입<span class="text-danger"
+                                                                          style="font-size: 15px">*필수 사항 표시</span></h4>
+                        </div>
+
+                        <!-- 회원가입 폼  -->
+                        <form th:action="'/v1/user/joinwith?sso='+${sso}" method="post" class="custom-form contact-form" role="form"
+                              onsubmit="return updateSubmitButton()">
+                            <div class="row">
+
+                                <!-- 이메일 주소 입력 -->
+                                <div class="row mt-3 col-12">
+                                    <div class="col-lg-6 col-md-6 my-2 col-12">
+                                        <div class="form-floating">
+                                            <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*"
+                                                   class="form-control my-1 my-auto" placeholder="Email address" required="" th:value="${email}" readonly>
+                                            <label for="floatingInput">가입 이메일<span class="text-danger">*</span></label>
+                                            <input type="hidden" name="uid" id="uid" pattern="[^ @]*@[^ @]*"
+                                                   class="form-control my-1 my-auto" placeholder="Email address" required="" th:value="${uid}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <!-- 전화번호 -->
+                                <div class="col-lg-4 col-md-4 my-2 col-12">
+                                    <div class="form-floating">
+                                        <input type="text" name="phone" id="phoneNumber" class="form-control my-1 my-auto"
+                                               placeholder="전화번호"  oninput="onInputPhone(this)"
+                                               maxlength="14">
+                                        <label for="phoneNumber">전화번호<span class="text-danger">*</span></label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-12 my-auto">
+                                    <div class="form-floating">
+                                        <button type="button" id="phoneNumberButton" class="btn my-3 my-auto">인증하기<span class="text-danger">*</span></button>
+                                    </div>
+                                </div>
+
+                                <!-- 전화번호 인증 입력 -->
+                                <div class="col-lg-4 col-md-4 my-2 col-12">
+                                    <div class="form-floating">
+                                        <input type="text" name="phoneValidation"
+                                               class="form-control my-1 my-auto"
+                                               placeholder="인증전화번호"  id="confirmCode" disabled>
+                                        <label for="confirmCode" id="phoneValidationLabel">인증번호 입력<span
+                                                class="text-danger">*</span></label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-12 my-auto">
+                                    <div class="form-floating">
+                                        <button type="button" id="confirmCodeButton"
+                                                class="btn my-3 my-auto" disabled>인증확인<span class="text-danger">*</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- 생년월일 -->
+                                <div class="col-lg-5 col-md-5 mt-3 col-12">
+                                    <div class="form-floating">
+                                        <input type="date" name="birth" id="birth" class="form-control my-auto"
+                                               placeholder="생년월일" required="">
+                                        <label for="floatingInput">생년월일<span class="text-danger">*</span></label>
+                                    </div>
+                                </div>
+
+                                <!-- 유저이름 -->
+                                <div class="col-lg-5 col-md-5 mt-3 col-12">
+                                    <div class="form-floating">
+                                        <input type="text" name="name" id="name" class="form-control my-auto"
+                                               placeholder="이름" required="">
+                                        <label for="floatingInput">이름<span class="text-danger">*</span></label>
+                                    </div>
+                                </div>
+
+
+                                <!-- 주소 -->
+                                <div class="col-lg-5 col-md-5 mt-3 col-12">
+                                    <div class="form-floating">
+                                        <input type="text" name="address" id="address" class="form-control my-1 my-auto"
+                                               placeholder="address" readonly required="">
+                                        <label for="address">주소입력<span class="text-secondary">(주소찾기를 눌러주세요.)</span> <span class="text-danger text-end">*</span></label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-5 col-md-5 mt-3 col-12">
+                                    <div class="form-floating">
+                                        <input type="text" name="detailAddress" id="detailAddress" class="form-control my-auto"
+                                               placeholder="address" required="">
+                                        <label for="detailAddress">상세주소입력<span class="text-danger">*</span></label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 mt-4 col-12 ">
+                                    <div class="form-floating">
+                                        <button type="button" class="btn my-auto" id="addressInputBtn">주소찾기<span
+                                                class="text-danger">*</span></button>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 my-3"></div>
+
+                                <div class="col-lg-8 col-md-8 mt-1 col-12">
+                                    <p>이용약관</p>
+                                </div>
+                                <div class="form-floating">
+                                        <textarea class="form-control" id="message" name="message"
+                                                  placeholder="Describe message here" disabled>제1조 (목적)
+본 약관은 ㈜잡아(이하 “회사”)이 “서비스”를 제공함에 있어, “회사”와 회원 간의 이용조건 및 제반 절차, 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다. 회사에서 운영하는 웹사이트(이하 “사이트”) 및 모바일 어플리케이션(이하 “어플리케이션”)을 총칭하여 “사이트 등”이라고 합니다.
+제2조 (용어의 정의)
+본 약관에서 사용하는 용어의 정의는 아래와 같습니다.
+① “사이트”라 함은 회사와 계열사가 서비스를 이용자에게 제공하기 위하여 제작, 운영하는 사이트를 말합니다. 현재 회사가 운영하는 사이트의 주소는 아래와 같습니다.
+- biz.jumpit.co.kr
+- www.jumpit.co.kr
+② “어플리케이션”이라 함은 회사와 계열사가 서비스를 이용자에게 제공하기 위하여 IOS, AOS 등 운영체제와 관계없이 스마트폰 또는 기타 휴대용 단말기에서 이용할 수 있도록 제작, 운영하는 프로그램을 말합니다. 현재 회사가 운영하는 어플리케이션은 아래와 같습니다.
+- 점핏
+③ “서비스”라 함은 채용정보, 이력서 및 기업정보 제공 기타의 서비스를 통하여 구직자와 기업의 연결을 돕는 플랫폼 서비스입니다. 구직자는 회사가 운영하는 사이트 및 어플리케이션을 통해 본인의 이력서를 작성하고 채용정보를 탐색한 후, 입사지원이 가능합니다. 본인의 이력정보가 기업에 제공됨을 동의한 경우만 본인의 이력정보가 지원하는 회사로 제공됩니다. 회사가 운영하는 사이트 및 어플리케이션을 통해 구인과 구직활동을 목적으로 등록하는 자료를 DB화하여 각각의 목적에 맞게 분류 가공, 집계하여 정보를 제공하는 서비스 및 기타 구인∙구직이 원활히 이루어지도록 하기 위하여 사이트 등에서 제공하는 모든 서비스를 말합니다. 서비스는 원칙적으로 무료로 제공되나, 일부 서비스는 유료로 제공될 수 있습니다.
+④ “이용자”라 함은 사이트 등에 접속하여 본 약관에 따라 회사가 제공하는 서비스를 이용하는 회원(기업회원 및 개인회원을 포함) 및 비회원을 말합니다.
+⑤ “개인회원”이라 함은 본 서비스를 이용하기 위하여 본 약관에 동의하여 회사와 이용계약을 체결한 이용자를 말합니다.
+⑥ “비회원”이라 함은 회사와 서비스 이용계약을 체결하지 않은 상태에서 사이트 등을 통하여 회사가 제공하는 서비스를 이용하는 이용자를 말합니다.
+⑦ “서비스 이용계약”이라 함은 회사가 개인회원을 위해 제공하는 서비스를 계속적으로 이용하기 위하여 회사와 이용자 사이에 체결되는 계약을 말합니다.
+⑧ “ID”는 회원의 식별 및 서비스를 이용하기 위하여 회원이 가입시 사용한 이메일 주소를 말합니다.
+⑨ “비밀번호”라 함은 회사가 서비스를 이용하려는 사람이 ID를 부여받은 자와 동일임을 확인하고 회원의 권익을 보호하기 위하여 회원이 선정한 문자와 숫자의 조합을 말합니다.
+⑩ “이력서”라 함은 개인회원이 입사 지원을 위하여 작성하고, 사이트에 업로드한 전자 파일을 말합니다.
+⑪ “계정”이라 함은 개인회원의 개인정보, 이력서 등 이력서를 관리할 수 있도록 회사가 개인회원에게 제공하는 공간을 말합니다.
+                                        </textarea>
+
+
+                                </div>
+
+
+                                <div class="col-4 d-flex justify-content-center">
+                                    <label class="justify-content-center">
+                                        <input type="checkbox" name="termsAgree" id="termsAgree" required="">
+                                        동의합니다.<span class="text-danger">*</span>
+                                    </label>
+                                </div>
+                                <div class="col-4 mb-5">
+                                    <button type="submit" class="form-control" id="submit-button">가입하기</button>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+    </main>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import {initializeApp} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import {getAnalytics} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithPhoneNumber, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyCXluBKXBrihziX_rN1Z-5LX06mEmRJadI",
+            authDomain: "job-a-9841f.firebaseapp.com",
+            projectId: "job-a-9841f",
+            storageBucket: "job-a-9841f.appspot.com",
+            messagingSenderId: "915882627362",
+            appId: "1:915882627362:web:5a39b8aa8b4719d5f7957b",
+            measurementId: "G-JHCHPZ8ZTX"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+
+        const provider = new GoogleAuthProvider();
+
+        const auth = getAuth();
+
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'phoneNumberButton', {
+            'size': 'invisible',
+            'callback': (response) => {
+                // reCAPTCHA solved, allow signInWithPhoneNumber.
+                //onSignInSubmit();
+            }
+        });
+
+        document.getElementById('phoneNumberButton').addEventListener('click', (event) => {
+            event.preventDefault();
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const appVerifier = window.recaptchaVerifier;
+            const auth = getAuth();
+            signInWithPhoneNumber(auth, '+82' + phoneNumber, appVerifier)
+                .then((confirmationResult) => {
+                    // SMS sent. Prompt user to type the code from the message, then sign the
+                    // user in with confirmationResult.confirm(code).
+                    window.confirmationResult = confirmationResult;
+                    /*$('#confirmCode').prop('disabled', false);
+                    $('#confirmCodeButton').prop('disabled', false);*/
+                    console.log(confirmationResult)
+                    // ...
+                }).catch((error) => {
+
+                // Error; SMS not sent
+                // ...
+            });
+        })
+        document.getElementById('confirmCodeButton').addEventListener('click', (event) => {
+            event.preventDefault();
+            const code = document.getElementById('confirmCode').value;
+            confirmationResult.confirm(code).then((result) => {
+                // User signed in successfully.
+                const user = result.user;
+                alert("인증에 성공했습니다.");
+               /* $('#phoneNumberButton').prop('disabled', true);
+                $('#confirmCodeButton').prop('disabled', true);*/
+
+
+            }).catch((error) => {
+                /*$('#confirmCode').prop('disabled', true);
+                $('#confirmCodeButton').prop('disabled', true);*/
+                alert(error);
+
+
+            });
+        })
+    </script>
+</div>
+</html>

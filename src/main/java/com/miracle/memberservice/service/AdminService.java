@@ -94,7 +94,7 @@ public class AdminService {
 
     public PageMoveWithMessage getUserList(HttpSession session, int strNum, int endNum) {
         ApiResponse response = ServiceCall.getParamList(session, Const.RequestHeader.USER, "/user", strNum, endNum);
-        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("index", response.getMessage());
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("admin/main", response.getMessage());
         List<List<UserListResponseDto>> userList = ApiResponseToList.userList(response.getData());
 
         return new PageMoveWithMessage("admin/user-list", userList);
@@ -102,7 +102,7 @@ public class AdminService {
 
     public PageMoveWithMessage getCompanyList(HttpSession session, int strNum, int endNum) {
         ApiResponse response = ServiceCall.getParamList(session, Const.RequestHeader.COMPANY, "/company/list", strNum, endNum, false);
-        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("index", response.getMessage());
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("admin/main", response.getMessage());
         List<List<CompanyListResponseDto>> companyList = ApiResponseToList.companyList(response.getData());
 
         return new PageMoveWithMessage("admin/company-list", companyList);
