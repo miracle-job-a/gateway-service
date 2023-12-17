@@ -69,7 +69,7 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: '/v1/company/bno/',
+                    url: '/v1/company/bno',
                     data: {bno: value},
                     success: function (result) {
                         $('#bnoResult').css("color", "#660099").html(result);
