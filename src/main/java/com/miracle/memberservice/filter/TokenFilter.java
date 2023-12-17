@@ -36,6 +36,15 @@ public class TokenFilter extends HttpFilter {
                 .findFirst();
 
         if (tokenOpt.isEmpty() || !tokenService.validateToken(tokenOpt.get())) {
+            HttpSession session = request.getSession();
+            Optional<Cookie> tokenCookieOpt = Arrays.stream(request.getCookies())
+                    .filter(c -> "token".equals(c.getName()))
+                    .findFirst();
+            if (tokenCookieOpt.isEmpty()) {
+                session.getAttributeNames()
+                        .asIterator()
+                        .forEachRemaining(session::removeAttribute);
+            }
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
