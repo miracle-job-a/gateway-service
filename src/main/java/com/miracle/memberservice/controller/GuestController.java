@@ -47,16 +47,17 @@ public class GuestController {
     @GetMapping
     public String index(HttpServletRequest request, Model model) {
         HttpSession session = request.getSession();
-        Optional<Cookie> tokenCookieOpt = Arrays.stream(request.getCookies())
-                .filter(c -> "token".equals(c.getName()))
+        Optional<String> tokenOpt = Arrays.stream(request.getCookies())
+                .filter(c -> c.getName().equals("token"))
+                .map(Cookie::getValue)
                 .findFirst();
 
-        if (tokenCookieOpt.isEmpty()) {
+        if (tokenOpt.isEmpty() || !tokenService.validateToken(tokenOpt.get())) {
             session.getAttributeNames()
                     .asIterator()
                     .forEachRemaining(session::removeAttribute);
         } else {
-            String token = tokenCookieOpt.get().getValue();
+            String token = tokenOpt.get();
             Map<String, String> parsedToken = tokenService.parseToken(token);
             parsedToken.forEach((key, value) -> {
                 if (key.equals("id")) {
