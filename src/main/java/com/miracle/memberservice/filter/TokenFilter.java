@@ -35,22 +35,17 @@ public class TokenFilter extends HttpFilter {
                 .map(Cookie::getValue)
                 .findFirst();
 
+        HttpSession session = request.getSession();
         if (tokenOpt.isEmpty() || !tokenService.validateToken(tokenOpt.get())) {
-            HttpSession session = request.getSession();
-            Optional<Cookie> tokenCookieOpt = Arrays.stream(request.getCookies())
-                    .filter(c -> "token".equals(c.getName()))
-                    .findFirst();
-            if (tokenCookieOpt.isEmpty()) {
-                session.getAttributeNames()
-                        .asIterator()
-                        .forEachRemaining(session::removeAttribute);
-            }
+            session.getAttributeNames()
+                    .asIterator()
+                    .forEachRemaining(session::removeAttribute);
+
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
         String token = tokenOpt.get();
-        HttpSession session = request.getSession();
         Map<String, String> parsedToken = tokenService.parseToken(token);
         parsedToken.forEach((key, value) -> {
             if (key.equals("id")) {
