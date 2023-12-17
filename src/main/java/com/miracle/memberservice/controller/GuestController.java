@@ -47,28 +47,32 @@ public class GuestController {
     @GetMapping
     public String index(HttpServletRequest request, Model model) {
         HttpSession session = request.getSession();
-        Optional<String> tokenOpt = Arrays.stream(request.getCookies())
-                .filter(c -> c.getName().equals("token"))
-                .map(Cookie::getValue)
-                .findFirst();
+        Cookie[] cookies = request.getCookies();
 
-        if (tokenOpt.isEmpty() || !tokenService.validateToken(tokenOpt.get())) {
-            session.getAttributeNames()
-                    .asIterator()
-                    .forEachRemaining(session::removeAttribute);
-        } else {
-            String token = tokenOpt.get();
-            Map<String, String> parsedToken = tokenService.parseToken(token);
-            parsedToken.forEach((key, value) -> {
-                if (key.equals("id")) {
-                    session.setAttribute("id", Long.parseLong(value));
-                } else if (key.equals("sub")) {
-                    value = value.substring(value.indexOf(':') + 1);
-                    session.setAttribute("email", value);
-                } else {
-                    session.setAttribute(key, value);
-                }
-            });
+        if (cookies != null) {
+            Optional<String> tokenOpt = Arrays.stream(cookies)
+                    .filter(c -> c.getName().equals("token"))
+                    .map(Cookie::getValue)
+                    .findFirst();
+
+            if (tokenOpt.isEmpty() || !tokenService.validateToken(tokenOpt.get())) {
+                session.getAttributeNames()
+                        .asIterator()
+                        .forEachRemaining(session::removeAttribute);
+            } else {
+                String token = tokenOpt.get();
+                Map<String, String> parsedToken = tokenService.parseToken(token);
+                parsedToken.forEach((key, value) -> {
+                    if (key.equals("id")) {
+                        session.setAttribute("id", Long.parseLong(value));
+                    } else if (key.equals("sub")) {
+                        value = value.substring(value.indexOf(':') + 1);
+                        session.setAttribute("email", value);
+                    } else {
+                        session.setAttribute(key, value);
+                    }
+                });
+            }
         }
 
         PageMoveWithMessage pmwm = companyService.mainPage(session);
