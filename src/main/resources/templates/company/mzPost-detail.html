@@ -6,6 +6,17 @@
 <div layout:fragment="content">
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 모든 자동 크기 조절 textarea에 대해 초기 높이 조정
+            document.querySelectorAll('textarea.autoresize').forEach(function (textarea) {
+                adjustTextareaHeight(textarea);
+            });
+        });
+
+        function adjustTextareaHeight(textarea) {
+            textarea.style.height = 'auto'; // 높이를 자동으로 재설정
+            textarea.style.height = textarea.scrollHeight + 'px'; // 스크롤 높이에 맞게 높이 설정
+        }
 
         function enableEditing() {
 
@@ -353,14 +364,14 @@
 
                                 <div class="col-12 mx-auto my-4">
                                     <h6>주요업무 <small class="text-danger" style="font-size: small"> *필수</small> </h6>
-                                    <textarea class="form-control autoresize" rows="5" id="mainTask" name="mainTask"
+                                    <textarea class="form-control autoresize" id="mainTask" name="mainTask"
                                               th:text="${detail.mainTask}" readonly required></textarea>
                                 </div>
 
                                 <div class="col-12 mx-auto my-3">
                                     <hr class="my-2">
                                     <h6>근무조건 <small class="text-danger" style="font-size: small"> *필수</small> </h6>
-                                    <textarea class="form-control autoresize" rows="5" id="workCondition"
+                                    <textarea class="form-control autoresize" id="workCondition"
                                               name="workCondition"  th:text="${detail.workCondition}"
                                               readonly required></textarea>
                                 </div>

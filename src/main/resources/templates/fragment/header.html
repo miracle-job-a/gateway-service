@@ -22,19 +22,20 @@
       <a class="nav-link" href="/v1/search/posts/1">채용공고</a>
      </li>
 
-     <li class="nav-item my-auto">
+     <li class="nav-item my-auto" th:if="${session.id!=null}">
       <a class="nav-link mx-1" href="/v1/user/resumes">이력서</a>
      </li>
 
-     <li class="nav-item my-auto">
+     <li class="nav-item my-auto" th:if="${session.id!=null}">
       <a class="nav-link mx-1" href="/v1/user/cover-letters/1">자기소개서</a>
      </li>
 
-     <li class="nav-item dropdown my-auto">
+     <li class="nav-item dropdown my-auto" th:if="${session.id!=null}">
       <a class="nav-link dropdown-toggle mx-1" href="/v1/user/my-page/apply-list" id="navbarLightDropdownMenuLink" role="button"
          data-bs-toggle="dropdown" aria-expanded="false">마이페이지</a>
 
-      <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink">
+      <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink"
+          th:if="${session.id!=null}">
        <li><a class="dropdown-item" href="/v1/user/my-page/apply-list/1">내 지원 현황</a></li>
        <li><a class="dropdown-item" href="/v1/user/my-page/my-info">개인정보</a></li>
       </ul>
