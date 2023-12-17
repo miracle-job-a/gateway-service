@@ -50,17 +50,6 @@
             $('#editBtn').css('display', 'none');
             $('#goBackListBtn').css('display','none');
             $('#cancelBtn').css('display', 'block');
-
-            // textarea의 readonly 해제 및 스크롤 활성화
-            var textareas = ['mainTask','workCondition','qualification','benefit','process','notice'];
-            textareas.forEach(function(id) {
-                var textarea = document.getElementById(id);
-                if(textarea) {
-                    textarea.readOnly = false; // readonly 해제
-                    textarea.style.overflowY = 'auto'; // 스크롤 활성화
-                    adjustTextareaHeight(textarea); // 높이 조절
-                }
-            });
         }
 
         function cancelEditing() {
@@ -375,14 +364,14 @@
 
                                 <div class="col-12 mx-auto my-4">
                                     <h6>주요업무 <small class="text-danger" style="font-size: small"> *필수</small> </h6>
-                                    <textarea class="form-control autoresize" rows="5" id="mainTask" name="mainTask"
+                                    <textarea class="form-control autoresize" id="mainTask" name="mainTask"
                                               th:text="${detail.mainTask}" readonly required></textarea>
                                 </div>
 
                                 <div class="col-12 mx-auto my-3">
                                     <hr class="my-2">
                                     <h6>근무조건 <small class="text-danger" style="font-size: small"> *필수</small> </h6>
-                                    <textarea class="form-control autoresize" rows="5" id="workCondition"
+                                    <textarea class="form-control autoresize" id="workCondition"
                                               name="workCondition"  th:text="${detail.workCondition}"
                                               readonly required></textarea>
                                 </div>

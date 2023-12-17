@@ -16,8 +16,10 @@
             z-index: 1040; /* 모달보다 앞에 위치하도록 z-index 설정 */
         }
 
-        .form-control-plaintext {
-            resize: none;
+        textarea.autoresize {
+            min-height: 50px; /* 최소 높이 */
+            resize: none; /* 사용자가 크기를 조절할 수 없음 */
+            overflow-y: hidden; /* 세로 스크롤바 숨김 */
         }
     </style>
     <script th:inline="javascript">
@@ -29,13 +31,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            /*var textareas = document.querySelectorAll('.autoresize');
-            textareas.forEach(function(textarea) {
-                adjustTextareaHeight(textarea);
-                textarea.addEventListener('input', function() {
-                    adjustTextareaHeight(textarea);
-                });
-            });*/
 
             function adjustTextareaHeight(textarea) {
                 textarea.style.height = 'auto';

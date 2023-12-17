@@ -4,6 +4,13 @@
         layout:decorate="~{layout/default_layout}" lang="ko">
 
 <div layout:fragment="content">
+    <style>
+        textarea.autoresize {
+        min-height: 50px; /* 최소 높이 */
+        resize: none; /* 사용자가 크기를 조절할 수 없음 */
+        overflow-y: hidden; /* 세로 스크롤바 숨김 */
+        }
+    </style>
     <script th:inline="javascript">
         // 뒤로가기
         function goBack() {
