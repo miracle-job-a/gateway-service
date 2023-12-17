@@ -6,6 +6,17 @@
 <div layout:fragment="content">
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 모든 자동 크기 조절 textarea에 대해 초기 높이 조정
+            document.querySelectorAll('textarea.autoresize').forEach(function (textarea) {
+                adjustTextareaHeight(textarea);
+            });
+        });
+
+        function adjustTextareaHeight(textarea) {
+            textarea.style.height = 'auto'; // 높이를 자동으로 재설정
+            textarea.style.height = textarea.scrollHeight + 'px'; // 스크롤 높이에 맞게 높이 설정
+        }
 
         function enableEditing() {
 
@@ -39,6 +50,17 @@
             $('#editBtn').css('display', 'none');
             $('#goBackListBtn').css('display','none');
             $('#cancelBtn').css('display', 'block');
+
+            // textarea의 readonly 해제 및 스크롤 활성화
+            var textareas = ['mainTask','workCondition','qualification','benefit','process','notice'];
+            textareas.forEach(function(id) {
+                var textarea = document.getElementById(id);
+                if(textarea) {
+                    textarea.readOnly = false; // readonly 해제
+                    textarea.style.overflowY = 'auto'; // 스크롤 활성화
+                    adjustTextareaHeight(textarea); // 높이 조절
+                }
+            });
         }
 
         function cancelEditing() {
