@@ -4,6 +4,7 @@ import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.JobResponseDto;
 import com.miracle.memberservice.dto.response.ResumeResponseDto;
 import com.miracle.memberservice.dto.response.StackResponseDto;
+import com.miracle.memberservice.dto.response.UserBaseInfoResponseDto;
 import com.miracle.memberservice.service.AdminService;
 import com.miracle.memberservice.service.CompanyService;
 import com.miracle.memberservice.service.UserService;
@@ -12,9 +13,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +36,12 @@ public class UserController {
     private final CompanyService companyService;
 
     @GetMapping("/logout")
-    public String logout(HttpSession session) {
+    public String logout(HttpSession session, HttpServletResponse response) {
         session.invalidate();
+        Cookie cookie = new Cookie("token", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
         return "redirect:/v1";
     }
 
@@ -40,9 +49,14 @@ public class UserController {
     public String createResume(HttpSession session, Model model, @RequestParam(required = false) String postId, @RequestParam(required = false) String companyId, @RequestParam(required = false) String postType) {
         PageMoveWithMessage pmwm = userService.formResume(session);
         Map<String, List<?>> allJobsAndStacks = adminService.getAllJobsAndStacks(session);
+
+        UserBaseInfoResponseDto data = (UserBaseInfoResponseDto) pmwm.getData();
+        List<StackResponseDto> stacks = adminService.getStacks(session, data.getStackIdSet());
+
         model.addAttribute("info", pmwm.getData());
         model.addAttribute("jobs", allJobsAndStacks.get("jobs"));
         model.addAttribute("stacks", allJobsAndStacks.get("stacks"));
+        model.addAttribute("stackIdSet", stacks);
         model.addAttribute("postId", postId);
         model.addAttribute("companyId", companyId);
         model.addAttribute("postType", postType);
@@ -50,8 +64,8 @@ public class UserController {
     }
 
     @PostMapping("/resume")
-    public String addResume(RedirectAttributes redirectAttributes, HttpSession session, ResumeRequestDto resumeRequestDto) {
-        PageMoveWithMessage pmwm = userService.addResume(session, resumeRequestDto);
+    public String addResume(RedirectAttributes redirectAttributes, HttpSession session, ResumeRequestDto resumeRequestDto, @RequestParam MultipartFile file) throws IOException {
+        PageMoveWithMessage pmwm = userService.addResume(session, resumeRequestDto, file);
         if (Objects.nonNull(resumeRequestDto.getPostId())) {
             redirectAttributes.addAttribute("companyId", resumeRequestDto.getCompanyId());
             redirectAttributes.addAttribute("postType", resumeRequestDto.getPostType());
@@ -103,8 +117,9 @@ public class UserController {
     public String updateResume(HttpSession session,
                                @PathVariable Long resumeId,
                                @ModelAttribute ResumeRequestDto requestDto,
-                               RedirectAttributes redirectAttributes) {
-        PageMoveWithMessage pmwm = userService.updateResume(session, requestDto, resumeId);
+                               RedirectAttributes redirectAttributes,
+                               @RequestParam MultipartFile file) throws IOException {
+        PageMoveWithMessage pmwm = userService.updateResume(session, requestDto, resumeId, file);
         redirectAttributes.addAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }

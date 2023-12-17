@@ -1,7 +1,7 @@
 package com.miracle.memberservice.controller;
 
+import org.apache.http.HttpStatus;
 import org.springframework.boot.web.servlet.error.ErrorController;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,12 +20,17 @@ public class CustomErrorController implements ErrorController {
         if (status != null) {
             int statusCode = Integer.parseInt(status.toString());
 
-            if (statusCode == HttpStatus.NOT_FOUND.value()) {
+            if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
+                model.addAttribute("errorMessage", "로그인이 필요합니다.");
+                return "redirect:/v1/user/login-form";
+            }
+
+            if (statusCode == HttpStatus.SC_NOT_FOUND) {
                 model.addAttribute("errorMessage", "해당 url이 존재하지 않습니다.");
                 return VIEW_PATH + "404";
             }
 
-            if (statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()){
+            if (statusCode == HttpStatus.SC_INTERNAL_SERVER_ERROR){
                 model.addAttribute("errorMessage", "해당 url이 존재하지 않습니다.");
                 return VIEW_PATH + "500";
             }

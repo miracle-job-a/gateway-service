@@ -2,6 +2,7 @@ package com.miracle.memberservice.dto.request;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
 @ToString
 @Getter
@@ -17,11 +18,11 @@ public class CompanyJoinDto {
     private final String introduction;
     private final int employeeNum;
 
-    public CompanyJoinDto(String email, String name, String password, String photo, String bno, String ceoName, String sector, String address, String detailAddress, String introduction, int employeeNum) {
+    public CompanyJoinDto(String email, String name, String password, String bno, String ceoName, String sector, String address, String detailAddress, String introduction, int employeeNum) {
         this.email = email;
         this.name = name;
         this.password = password;
-        this.photo = photo;
+        this.photo = bno;
         this.bno = bno;
         this.ceoName = ceoName;
         this.sector = sector;

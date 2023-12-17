@@ -4,10 +4,54 @@
         layout:decorate="~{layout/default_layout}" lang="ko">
 
 <div layout:fragment="content">
+    <style>
+        /* CSS */
+        .modal-backdrop-dark {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.5); /* 어두운 배경 색상 */
+            z-index: 1040; /* 모달보다 앞에 위치하도록 z-index 설정 */
+        }
+    </style>
     <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+
+        if (errorMessage != null) {
+            alert(errorMessage);
+            // 이후 로직 추가 가능
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
             // 페이지 로딩 시 초기 상태 설정
             initializePage();
+
+            // 모달관련 기능 (applicationLetterId 값 복사)
+            var changeStatusButton = document.querySelector('[data-bs-target="#myModal"]');
+            var letterId = document.getElementById('letterId').value;
+            var appIdInput = document.querySelector('[name="appId"]');
+
+            changeStatusButton.addEventListener('click', function() {
+                appIdInput.value = letterId;
+            });
+
+            var submitButton = document.querySelector('.modal-footer .btn-warning');
+            var appIdInput = document.querySelector('[name="appId"]');
+            var applicationStatusSelect = document.querySelector('[name="applicationStatus"]');
+
+            submitButton.addEventListener('click', function() {
+                var applicationLetterId = appIdInput.value;
+                var applicationStatus = applicationStatusSelect.value;
+
+                if (applicationStatus) {
+                    var url = '/v1/user/my-page/apply-list/update/' + applicationLetterId + '/' + applicationStatus;
+                    window.location.href = url;
+                } else {
+                    alert("진행 상태를 선택해 주세요.");
+                }
+            });
         });
 
         function initializePage() {
@@ -46,6 +90,7 @@
             location.href = "/v1/user/my-page/apply-list/1?sort=" + id;
         }
 
+
     </script>
     <main>
         <header class="site-header d-flex flex-column justify-content-center align-items-center">
@@ -80,7 +125,7 @@
                     <!-- Thymeleaf 반복문을 사용하여 ArrayList 내의 객체들을 처리 -->
                     <div th:each="letterItem, letterItemStat : ${letter}" th:id="'postPage'+${letterItemStat.index}">
                         <div th:each="letters, lettersStat : ${letterItem}" class="col-lg-10 col-12 mb-4 mb-lg-2 mx-auto">
-                            <div class="custom-block d-flex">
+                            <div class="custom-block d-flex ">
                                 <div class="custom-block-info">
                                     <!-- th:with를 사용하여 현재 letter의 postId를 변수에 저장 -->
                                     <div th:with="currentPostId=${letters.postId}">
@@ -92,16 +137,18 @@
                                                         <i class="bi-clock-fill custom-icon" th:title="'지원일자 : ' + ${letters.submitDate.substring(0, 10)}"></i>
                                                         <span th:text="'지원일자 : ' + ${letters.submitDate}"></span>
                                                     </small>
-                                                    <small>
-                                                        <span th:if="${letters.postType eq 'MZ'}" class="badge bg-primary me-1">MZ 공고</span>
-                                                        <span th:if="${letters.postType eq 'NORMAL'}" class="badge bg-secondary me-1">일반 공고</span>
-                                                    </small>
-                                                    <small>
-                                                        <span th:if="${letters.applicationStatus eq 'IN_PROGRESS'}" class="badge bg-warning ms-1 me-1">진행중</span>
-                                                        <span th:if="${letters.applicationStatus eq 'PASS'}" class="badge bg-success ms-1 me-1">합격</span>
-                                                        <span th:if="${letters.applicationStatus eq 'FAIL'}" class="badge bg-secondary ms-1 me-1">불합격</span>
-                                                    </small>
-                                                    <small><span class="badge bg-dark ms-1" th:text="${letters.job}" th:if="${letters.postType eq 'NORMAL'}"></span></small>
+                                                    <div class="badge-wrap">
+                                                        <small>
+                                                            <span th:if="${letters.postType eq 'MZ'}" class="badge bg-primary mx-1">MZ 공고</span>
+                                                            <span th:if="${letters.postType eq 'NORMAL'}" class="badge bg-secondary mx-1">일반 공고</span>
+                                                        </small>
+                                                        <small>
+                                                            <span th:if="${letters.applicationStatus eq 'IN_PROGRESS'}" class="badge bg-warning mx-1">진행중</span>
+                                                            <span th:if="${letters.applicationStatus eq 'PASS'}" class="badge bg-success mx-1">합격</span>
+                                                            <span th:if="${letters.applicationStatus eq 'FAIL'}" class="badge bg-secondary mx-1">불합격</span>
+                                                        </small>
+                                                        <small><span class="badge bg-dark mx-1" th:text="${letters.job}" th:if="${letters.postType eq 'NORMAL'}"></span></small>
+                                                    </div>
                                                 </div>
 
                                                 <h5 class="m-2 text-dark" th:text="${companyInfo.title}+' - '+${companyInfo.companyName}"></h5>
@@ -127,10 +174,51 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- 버튼 부 -->
+                                <div class="d-flex flex-column ms-auto">
+                                    <button type="button" class="btn btn-outline-secondary" th:id="${letters.applicationLetterId}" name="delete">
+                                        <span class="d-none d-sm-inline">지원취소</span>
+                                        <span class="d-inline d-sm-done"></span>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary mt-2" data-bs-toggle="modal" data-bs-target="#myModal" >진행상태 변경</button>
+                                </div>
                             </div>
                         </div>
                     </div>
 
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="myModal" tabindex="-2"
+                         aria-labelledby="exampleModalLabel" aria-hidden="true"
+                         data-bs-backdrop="false">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">진행상태 변경</h5>
+                                </div>
+                                <div class="modal-body container-fluid">
+                                    <div class="row align-self-center">
+                                        <div class="col-9 m-2 align-self-center mx-auto">
+                                            <select class="form-select" name="applicationStatus">
+                                                <option selected disabled>진행상태를 선택해 주세요.</option>
+                                                <option name="applicationStatus" value="IN_PROGRESS">진행중</option>
+                                                <option name="applicationStatus" value="PASS">합격</option>
+                                                <option name="applicationStatus" value="FAIL">불합격</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-ourline-secondary"
+                                            data-bs-dismiss="modal">취소
+                                    </button>
+                                    <input type="hidden" name="appId" />
+                                    <button type="button" class="btn btn-warning">변경</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="col-lg-4 col-12 mx-auto">
                         <nav aria-label="Page navigation example">
@@ -207,6 +295,17 @@
                     } else {
                         // id가 0이 아니면 일반적인 이동
                         window.location.href = '/v1/user/my-page/interview/' + applicationLetterId + "/" + interviewId;
+                    }
+                });
+            });
+
+            /* 지원취소(삭제) */
+            document.querySelectorAll('[name="delete"]').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var applicationLetterId = button.id;
+                    var confirmDelete = confirm("정말로 지원을 취소하시겠습니까?\n이 작업은 되돌릴 수 없습니다.\n(저장했던 공고, 면접 기록이 삭제됩니다.)");
+                    if (confirmDelete) {
+                        window.location.href = '/v1/user/my-page/apply-list/delete/' + applicationLetterId;
                     }
                 });
             });

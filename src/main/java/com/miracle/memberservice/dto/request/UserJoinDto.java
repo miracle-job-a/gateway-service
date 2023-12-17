@@ -16,8 +16,9 @@ public class UserJoinDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private final LocalDate birth;
     private final String address;
+    private final String sso;
 
-    public UserJoinDto(String email, String name, String password, String phone, LocalDate birth, String address, String detailAddress) {
+    public UserJoinDto(String email, String name, String password, String phone, LocalDate birth, String address, String detailAddress, String sso) {
         this.email = email;
         this.name = name;
         this.password = password;
@@ -25,5 +26,6 @@ public class UserJoinDto {
         this.phone = split[0]+split[1]+split[2];
         this.birth = birth;
         this.address = address + " " + detailAddress;
+        this.sso = sso;
     }
 }

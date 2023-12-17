@@ -22,12 +22,13 @@ public class ResumeInApplicationLetterResponseDto {
     private final ArrayList<Integer> userStackIdSet;
     private final String userEducation;
     private final String userGitLink;
+    private final String photo;
     private final List<String> userCareerDetailList;
     private final List<String> userProjectList;
     private final List<String> userEtcList;
 
     @Builder
-    public ResumeInApplicationLetterResponseDto(String resumeTitle, String userName, String userEmail, int userCareer, String userBirth, String userPhone, String userAddress, String userJob, ArrayList<Integer> userStackIdSet, String userEducation, String userGitLink, List<String> userCareerDetailList, List<String> userProjectList, List<String> userEtcList) {
+    public ResumeInApplicationLetterResponseDto(String resumeTitle, String userName, String userEmail, int userCareer, String userBirth, String userPhone, String userAddress, String userJob, ArrayList<Integer> userStackIdSet, String userEducation, String userGitLink, String photo, List<String> userCareerDetailList, List<String> userProjectList, List<String> userEtcList) {
         this.resumeTitle = resumeTitle;
         this.userName = userName;
         this.userEmail = userEmail;
@@ -39,6 +40,7 @@ public class ResumeInApplicationLetterResponseDto {
         this.userStackIdSet = userStackIdSet;
         this.userEducation = userEducation;
         this.userGitLink = userGitLink;
+        this.photo = photo;
         this.userCareerDetailList = userCareerDetailList;
         this.userProjectList = userProjectList;
         this.userEtcList = userEtcList;

@@ -42,10 +42,26 @@ public class MyPageController {
         return pmwm.getPageName();
     }
 
+    // 지원서 취소(삭제)
+    @GetMapping("/apply-list/delete/{applicationLetterId}")
+    public String deleteApplicationLetter(@PathVariable Long applicationLetterId, HttpSession session){
+        PageMoveWithMessage pmwm = myPageService.deleteApplicationLetter(session, applicationLetterId);
+        return pmwm.getPageName();
+    }
+
+    // 지원서 상태 변경
+    @GetMapping("/apply-list/update/{applicationLetterId}/{applicationStatus}")
+    public String updateApplicationLetter(@PathVariable Long applicationLetterId, @PathVariable String applicationStatus,
+                                          HttpSession session){
+        PageMoveWithMessage pmwm = myPageService.updateApplicationLetter(session, applicationLetterId, applicationStatus);
+        return pmwm.getPageName();
+    }
+
+
     // 지원 이력서
     @GetMapping("/apply-list/submitted-resume/{applicationLetterId}")
-    public String applyResume(HttpSession session, Model model, @PathVariable(required = false) Long applicationLetterId) {
-        PageMoveWithMessage pmwm = myPageService.resumeInApplicationLetterDetail(session, applicationLetterId);
+    public String applyResume(HttpSession session, Model model, @PathVariable(required = false) Long applicationLetterId, @RequestParam(required = false) Long userId) {
+        PageMoveWithMessage pmwm = myPageService.resumeInApplicationLetterDetail(session, applicationLetterId, userId);
 
         ResumeInApplicationLetterResponseDto responseDto = (ResumeInApplicationLetterResponseDto) pmwm.getData();
 
@@ -57,8 +73,8 @@ public class MyPageController {
 
     // 지원 자소서
     @GetMapping("/apply-list/submitted-coverLetter/{applicationLetterId}")
-    public String applyCoverLetter(HttpSession session, Model model, @PathVariable Long applicationLetterId) {
-        PageMoveWithMessage pmwm = myPageService.coverLetterInApplicationLetterDetail(session, applicationLetterId);
+    public String applyCoverLetter(HttpSession session, Model model, @PathVariable Long applicationLetterId, @RequestParam(required = false) Long userId) {
+        PageMoveWithMessage pmwm = myPageService.coverLetterInApplicationLetterDetail(session, applicationLetterId, userId);
 
         model.addAttribute("letter", pmwm.getData());
         return pmwm.getPageName();
@@ -169,6 +185,12 @@ public class MyPageController {
             requestDto.setPassword(password);
         }
         PageMoveWithMessage pmwm = myPageService.updateUserInfo(session, requestDto);
+        return pmwm.getPageName();
+    }
+
+    @GetMapping("/signout")
+    public String signoutUser(HttpSession session){
+        PageMoveWithMessage pmwm = myPageService.signoutUser(session);
         return pmwm.getPageName();
     }
 }

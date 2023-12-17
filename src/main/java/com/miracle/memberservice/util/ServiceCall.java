@@ -3,6 +3,7 @@ package com.miracle.memberservice.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.miracle.memberservice.dto.response.ApiResponse;
+import com.miracle.memberservice.dto.response.TokenDto;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -17,6 +18,7 @@ public class ServiceCall {
 
     private static final String BASE_URL = "http://";
     private static final String VERSION = "/v1";
+    public static final TokenDto tokenDto = new TokenDto();
 
     private static WebClient.Builder createWebClientBuilder(String serviceType) {
         return WebClient.builder()
@@ -28,12 +30,31 @@ public class ServiceCall {
         String capitalizeFirstLetter = capitalizeFirstLetter(serviceType);
         MiracleTokenKey key = new MiracleTokenKey(httpSession);
 
+        String tokenValidated = "Bearer " + tokenDto.getToken();
+
         return request
                 .header(Const.RequestHeader.MIRACLE, key.getHashcode())
                 .header(Const.RequestHeader.SESSION_ID, key.getSessionId())
                 .header(capitalizeFirstLetter + Const.RequestHeader.HEADER_ID, String.valueOf(httpSession.getAttribute(Const.RequestHeader.ID)))
                 .header(capitalizeFirstLetter + Const.RequestHeader.HEADER_EMAIL, (String) httpSession.getAttribute(Const.RequestHeader.EMAIL))
                 .header(capitalizeFirstLetter + Const.RequestHeader.HEADER_BNO, (String) httpSession.getAttribute(Const.RequestHeader.BNO))
+                .header(Const.RequestHeader.HEADER_AUTHORIZATION, tokenValidated)
+                .retrieve()
+                .bodyToMono(ApiResponse.class)
+                .onErrorResume(handleError());
+    }
+
+    private static Mono<ApiResponse> anotherHeaders(WebClient.RequestHeadersSpec<?> request, HttpSession httpSession, String serviceType, String userId) {
+        String capitalizeFirstLetter = capitalizeFirstLetter(serviceType);
+        MiracleTokenKey key = new MiracleTokenKey(httpSession);
+
+        String tokenValidated = "Bearer " + tokenDto.getToken();
+
+        return request
+                .header(Const.RequestHeader.MIRACLE, key.getHashcode())
+                .header(Const.RequestHeader.SESSION_ID, key.getSessionId())
+                .header(capitalizeFirstLetter + Const.RequestHeader.HEADER_ID, userId)
+                .header(Const.RequestHeader.HEADER_AUTHORIZATION, tokenValidated)
                 .retrieve()
                 .bodyToMono(ApiResponse.class)
                 .onErrorResume(handleError());
@@ -42,6 +63,21 @@ public class ServiceCall {
     public static ApiResponse get(HttpSession httpSession, String serviceType, String url) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()), httpSession, serviceType).block();
+    }
+
+    public static ApiResponse getSso(HttpSession httpSession, String serviceType, String url, String sso) {
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("sso", sso).build()), httpSession, serviceType).block();
+    }
+
+    public static ApiResponse getParams(HttpSession httpSession, String serviceType, String url, int year, int month) {
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("year", year).queryParam("month", month).build()), httpSession, serviceType).block();
+    }
+
+    public static ApiResponse getAnother(HttpSession httpSession, String serviceType, String url, Long userId) {
+        return anotherHeaders(createWebClientBuilder(serviceType).build().get()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()), httpSession, serviceType, String.valueOf(userId)).block();
     }
 
     public static ApiResponse post(HttpSession httpSession, Object dto, String serviceType, String url) {
@@ -62,6 +98,11 @@ public class ServiceCall {
     public static ApiResponse put(HttpSession httpSession, Object dto, String serviceType, String url) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().put()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()).bodyValue(dto), httpSession, serviceType).block();
+    }
+
+    public static ApiResponse putParam(HttpSession httpSession, String serviceType, String url, String name, String value) {
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().put()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam(name, value).build()), httpSession, serviceType).block();
     }
 
     public static ApiResponse putModifyParam(HttpSession httpSession, String serviceType, String url, String stackId, String modifiedName) {
@@ -104,11 +145,6 @@ public class ServiceCall {
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).queryParam("today", today).build()), httpSession, serviceType).block();
     }
 
-    public static ApiResponse getUserParamList(HttpSession httpSession, String serviceType, String url, int strNum, int endNum) {
-        return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
-                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("startPage", strNum).queryParam("endPage", endNum).queryParam("pageSize", 5).build()), httpSession, serviceType).block();
-    }
-
     public static ApiResponse getUserParamListSort(HttpSession httpSession, String serviceType, String url, int strNum, int endNum, String sort) {
         return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("startPage", strNum).queryParam("endPage", endNum).queryParam("pageSize", 9).queryParam("sort", sort).build()), httpSession, serviceType).block();
@@ -134,13 +170,22 @@ public class ServiceCall {
                 .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).queryParam("today", today).build()), httpSession, serviceType).block();
     }
 
+    public static ApiResponse getParamListForCount(HttpSession httpSession, String serviceType, String url) {
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).build()), httpSession, serviceType).block();
+    }
+
+    public static ApiResponse getParamListWithTodayFalse(HttpSession httpSession, String serviceType, String url, int strNum, int endNum) {
+        return addCommonHeaders(createWebClientBuilder(serviceType).build().get()
+                .uri(uriBuilder -> uriBuilder.path(VERSION + url).queryParam("strNum", strNum).queryParam("endNum", endNum).queryParam("today", false).build()), httpSession, serviceType).block();
+    }
+
     private static String port(String memberType) {
         switch (memberType) {
             case Const.RequestHeader.USER:
                 return "3.36.113.249:60001";
             case Const.RequestHeader.COMPANY:
                 return "13.125.211.61:60002";
-
             case Const.RequestHeader.ADMIN:
                 return "3.36.98.12:60003";
             default:
@@ -167,4 +212,5 @@ public class ServiceCall {
             return Mono.just(apiResponse);
         };
     }
+
 }

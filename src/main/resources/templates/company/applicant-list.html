@@ -48,6 +48,13 @@
             location.href = "/v1/company/post/applicant/1?sort=" + id + "&postId=" + postId;
         }
 
+        function resumeClick(applicationLetterId, userId) {
+            window.location.href = '/v1/user/my-page/apply-list/submitted-resume/' + applicationLetterId + '?userId=' + userId;
+        }
+
+        function coverLetterClick(applicationLetterId, userId) {
+            window.location.href = '/v1/user/my-page/apply-list/submitted-coverLetter/' + applicationLetterId + '?userId=' + userId;
+        }
 
     </script>
     <main>
@@ -97,15 +104,17 @@
                         <div th:each="post, postStat : ${postList}">
                             <div class="custom-block d-flex">
                                 <div class="custom-block-info">
-                                    <h6>
+                                    <h6 style="display: inline-block">
                                         <a th:text="${post.email}" th:if="${post.email!='null'}"></a>
                                     </h6>
-                                    <button type="button" class="btn btn-outline-secondary ms-1 me-1" th:id="${post.applicationLetterId}" th:if="${post.resumeTitle != 'null'}" name="resume">
+                                    <button type="button" class="btn btn-outline-secondary ms-1 me-1"
+                                            th:if="${post.resumeTitle != 'null'}"
+                                            th:onclick="resumeClick([[${post.applicationLetterId}]], [[${post.userId}]])">
                                         지원 이력서
                                     </button>
                                     <button type="button" class="btn btn-outline-secondary ms-1 me-1"
-                                            th:id="${post.applicationLetterId}" name="coverLetter"
-                                            th:if="${post.resumeTitle != 'null'}">
+                                            th:if="${post.resumeTitle != 'null'}"
+                                            th:onclick="coverLetterClick([[${post.applicationLetterId}]], [[${post.userId}]])">
                                         지원 자기소개서
                                     </button>
 
@@ -126,7 +135,8 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-lg justify-content-center mt-5">
                                 <li class="page-item" th:if="${strNum>=5}">
-                                    <a class="page-link" th:href="@{/v1/company/post/applicant/{strNum}(strNum=${strNum}-5, postId=${postId}, sort=${sort})}"
+                                    <a class="page-link"
+                                       th:href="@{/v1/company/post/applicant/{strNum}(strNum=${strNum}-5, postId=${postId}, sort=${sort})}"
                                        aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
@@ -139,7 +149,8 @@
                                 </div>
                                 <li class="page-item"
                                     th:if="${#lists.size(applicantList)>=5 and #lists.size(applicantList[4])==9}">
-                                    <a class="page-link" th:href="@{/v1/company/post/applicant/{strNum}(strNum=${strNum}+5, postId=${postId}, sort=${sort})}"
+                                    <a class="page-link"
+                                       th:href="@{/v1/company/post/applicant/{strNum}(strNum=${strNum}+5, postId=${postId}, sort=${sort})}"
                                        aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
@@ -151,24 +162,6 @@
                 </div>
             </div>
         </section>
-
-        <script th:inline="javascript">
-            /*지원이력서이동*/
-            document.querySelectorAll('[name="resume"]').forEach(function(button) {
-                button.addEventListener('click', function() {
-                    var applicationLetterId = button.id;
-                    window.location.href = '/v1/user/my-page/apply-list/submitted-resume/' + applicationLetterId;
-                });
-            });
-
-            /*지원자소서이동*/
-            document.querySelectorAll('[name="coverLetter"]').forEach(function(button) {
-                button.addEventListener('click', function() {
-                    var applicationLetterId = button.id;
-                    window.location.href = '/v1/user/my-page/apply-list/submitted-coverLetter/' + applicationLetterId;
-                });
-            });
-        </script>
 
     </main>
 </div>
