@@ -29,18 +29,23 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            var textareas = document.querySelectorAll('.autoresize');
+            /*var textareas = document.querySelectorAll('.autoresize');
             textareas.forEach(function(textarea) {
                 adjustTextareaHeight(textarea);
                 textarea.addEventListener('input', function() {
                     adjustTextareaHeight(textarea);
                 });
-            });
+            });*/
 
             function adjustTextareaHeight(textarea) {
                 textarea.style.height = 'auto';
                 textarea.style.height = textarea.scrollHeight + 'px';
             }
+
+            // 모든 자동 크기 조절 textarea에 대해 초기 높이 조정
+            document.querySelectorAll('textarea.autoresize').forEach(function (textarea) {
+                adjustTextareaHeight(textarea);
+            });
         });
 
         function loginform() {
