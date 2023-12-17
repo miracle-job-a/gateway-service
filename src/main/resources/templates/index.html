@@ -72,6 +72,12 @@
 
             chart.draw(data, options);
         }
+
+        function redirectToUrl(element) {
+            var url = element.getAttribute('data-href');
+            window.location.href = url;
+        }
+
     </script>
     <main>
         <section class="hero-section">
@@ -176,7 +182,7 @@
 
                     <div class="row mx-auto">
                         <div class="col-lg-4 col-12 mb-4 mb-lg-2 " th:each="post, postStat : ${map.newest}">
-                            <div class="custom-block custom-block-full mb-2 ">
+                            <div class="custom-block custom-block-full mb-2 " th:data-href="@{/v1/click/post/{postId}/detail(companyId=${post.companyId}, postId=${post.id}, postType=${post.postType})}" onclick="redirectToUrl(this)">
                                 <div class="custom-block-image-wrap">
                                     <a th:href="@{/v1/click/post/{postId}/detail(companyId=${post.companyId}, postId=${post.id}, postType=${post.postType})}">
                                         <img th:src="${post.photo}"
@@ -234,7 +240,7 @@
 
                     <div class="row mx-auto">
                         <div class="col-lg-4 col-12 mb-5 mb-lg-0" th:each="post, postStat : ${map.deadline}">
-                            <div class="custom-block custom-block-full mb-2">
+                            <div class="custom-block custom-block-full mb-2" th:data-href="@{/v1/click/post/{postId}/detail(companyId=${post.companyId}, postId=${post.id}, postType=${post.postType})}" onclick="redirectToUrl(this)">
                                 <div class="custom-block-image-wrap">
                                     <a th:href="@{/v1/click/post/{postId}/detail(companyId=${post.companyId}, postId=${post.id}, postType=${post.postType})}">
                                         <img th:src="${post.photo}"

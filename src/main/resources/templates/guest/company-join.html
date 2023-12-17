@@ -69,7 +69,7 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: '/v1/company/bno/',
+                    url: '/v1/company/bno',
                     data: {bno: value},
                     success: function (result) {
                         $('#bnoResult').css("color", "#660099").html(result);
@@ -131,6 +131,7 @@
                     data: {authentication: value},
                     success: function (result) {
                         alert("인증 번호 성공");
+                        $('#email').prop('readonly', true)
                         $('#emailCheck').prop('disabled', true); // 버튼 비활성화
                         $('#authenticationButton').prop('disabled', true); // 버튼 비활성화
                         $('#authentication').prop('disabled', true); // 버튼 비활성화
