@@ -69,11 +69,12 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: '/v1/company/bno/',
+                    url: '/v1/company/bno',
                     data: {bno: value},
                     success: function (result) {
                         $('#bnoResult').css("color", "#660099").html(result);
                         $('#bnoCertify').prop('disabled', true); // 버튼 비활성화
+                        $('#bno').prop('readonly', true);
                     },
                     error: function (xhr) {
                         msg = xhr;
@@ -130,6 +131,7 @@
                     data: {authentication: value},
                     success: function (result) {
                         alert("인증 번호 성공");
+                        $('#email').prop('readonly', true)
                         $('#emailCheck').prop('disabled', true); // 버튼 비활성화
                         $('#authenticationButton').prop('disabled', true); // 버튼 비활성화
                         $('#authentication').prop('disabled', true); // 버튼 비활성화
@@ -270,6 +272,18 @@
 
             return true;
         }
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('preview').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                document.getElementById('preview').src = "";
+            }
+        }
     </script>
     <main>
         <header class="site-header d-flex flex-column justify-content-center align-items-center">
@@ -287,26 +301,25 @@
 
                         <!-- 회원가입 폼  -->
                         <form action="/v1/company/join" method="post" class="custom-form contact-form" role="form"
-                              onsubmit="return updateSubmitButton()">
+                              onsubmit="return updateSubmitButton()" enctype="multipart/form-data">
                             <div class="row">
 
                                 <!-- 이메일 주소 입력 -->
-                                <div class="col-lg-4 col-md-4 col-12">
+                                <div class="col-lg-4 col-md-4 col-12 my-auto">
                                     <div class="form-floating">
                                         <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*"
                                                class="form-control" placeholder="Email address" required="">
                                         <label for="email">가입 이메일<span class="text-danger">*</span></label>
                                     </div>
                                 </div>
-                                <div class="col-lg-2 col-md-2 col-12">
-                                    <div class="form-floating">
+                                <div class="col-lg-2 col-md-2 col-12 ">
+                                    <div class="form-floating mb-4 my-auto">
                                         <button type="button" id="emailCheck" class="custom-btn">인증하기<span
                                                 class="text-danger">*</span></button>
                                     </div>
                                 </div>
 
-                                <!-- 이메일 인증 번호 입력 -->
-                                <div class="col-lg-4 col-md-4 col-12">
+                                <div class="col-lg-4 col-md-4 col-12 my-auto">
                                     <div class="form-floating">
                                         <input type="text" name="authentication" id="authentication"
                                                class="form-control"
@@ -315,14 +328,15 @@
                                                 class="text-danger">*</span></label>
                                     </div>
                                 </div>
-                                <div class="col-lg-2 col-md-2 col-12">
-                                    <div class="form-floating">
+
+                                <div class="col-lg-2 col-md-2 col-12 ">
+                                    <div class="form-floating mb-4 my-auto">
                                         <button type="button" class="custom-btn" disabled id="authenticationButton">인증확인<span
                                                 class="text-danger">*</span></button>
                                     </div>
                                 </div>
+                                <!-- 이메일 인증 번호 입력 -->
 
-                                <div class="col-12 pt-3"></div>
 
                                 <!-- 비밀번호 -->
                                 <div class="col-lg-12 col-md-5 col-12">
@@ -438,11 +452,14 @@
                                         <div class="input-group">
                                             <input type="file" class="form-control" name="photo" id="imageInput"
                                                    accept="image/jpeg,image/png" aria-describedby="imageInputHelp"
-                                                   required>
+                                                   required onchange="readURL(this);">
                                         </div>
                                         <small id="imageInputHelp" class="form-text text-muted">jpeg, png 이미지만 업로드
                                             가능합니다.</small>
                                     </div>
+                                </div>
+                                <div class="col-lg-6 col-12 pt-1 pb-1">
+                                    <img id="preview" class="custom-block-image img-fluid">
                                 </div>
 
                                 <div class="col-lg-8 col-md-8 col-12 mt-2">
@@ -483,13 +500,13 @@
                                 </div>
 
 
-                                <div class="col-4 d-flex justify-content-center">
+                                <div class="col-4 mb-5 d-flex justify-content-center">
                                     <label class="justify-content-center">
                                         <input type="checkbox" name="termsAgree" id="termsAgree" required="">
                                         동의합니다.<span class="text-danger">*</span>
                                     </label>
                                 </div>
-                                <div class="col-4">
+                                <div class="col-4 mb-5">
                                     <button type="submit" class="form-control" id="submit-button">가입하기</button>
                                 </div>
 

@@ -14,7 +14,7 @@
         }
 
         /* 전화번호 정규식 */
-        window.onload = function() {
+        window.onload = function () {
             // 처음에 들어온 값을 적용하기 위해
             var phoneElement = document.getElementById('phone');
             if (phoneElement) {
@@ -24,7 +24,6 @@
 
         // 처음에 들어온 값을 적용하기 위해
         document.getElementById('phone').value = document.getElementById('phone').value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
-
 
 
         // 수정취소 (상세보기로 돌아가기)
@@ -37,20 +36,19 @@
             window.history.back();
         }
 
-    function enableEditing(){
+        function enableEditing() {
 
-        $('#cancelBtn ').css('display', 'block');
-        $('#addressInputBtn').css('display', 'block');
-        $('#passwordCard').css('display', 'block');
-        $('#detailAddress').css('display', 'block');
-        $('#subAddress').css('display', 'block');
-        $('#phone').removeAttr('readonly');
+            $('#cancelBtn ').css('display', 'block');
+            $('#addressInputBtn').css('display', 'block');
+            $('#passwordCard').css('display', 'block');
+            $('#detailAddress').css('display', 'block');
+            $('#subAddress').css('display', 'block');
+            $('#phone').removeAttr('readonly');
 
-        $('.editStacks').css('display', 'inline-block');
+            $('.editStacks').css('display', 'inline-block');
 
 
-    }
-
+        }
 
     </script>
 
@@ -68,75 +66,123 @@
                         </div>
 
                         <div class="row justify-content-center">
-                            <div class="row ">
-                                <div class="col-lg-3 col-12">
-                                    <div class="custom-block-icon-wrap">
-                                        <div class="custom-block-image-wrap custom-block-image-detail-page">
-                                            <img src="/images/niniz.png" class="custom-block-image img-fluid" alt="">
-                                        </div>
+
+                            <div class="col-lg-9 col-12 ">
+                                <div class="custom-block-info post-form">
+
+                                    <div class="col-10 mt-4 mx-auto">
+                                        <h2 class="mb-2 " th:text="${info.name}"></h2>
                                     </div>
-                                </div>
 
-                                <div class="col-lg-9 col-12 ">
-                                    <div class="custom-block-info post-form">
+                                    <div class="col-10 mt-3 mx-auto">
+                                        <hr>
+                                        <h6>생년월일</h6>
+                                        <input type="date" readonly class="form-control-plaintext mt-2" id="birth"
+                                               name="birth" th:value="${info.birth}">
+                                    </div>
 
-                                        <div class="col-10 mt-4 mx-auto">
-                                            <h2 class="mb-2 " th:text="${info.name}"></h2>
-                                        </div>
+                                    <div class="col-10 mt-3 mx-auto">
+                                        <hr>
+                                        <h6>전화번호</h6>
+                                        <input type="text" readonly class="form-control-plaintext mt-2" id="phone" name="phone"
+                                               th:value="${info.phone}" oninput="onInputPhone(this)" maxlength="13"/>
+                                    </div>
 
-                                        <div class="col-10 mt-3 mx-auto">
-                                            <label>생년월일</label>
-                                            <input type="date" readonly class="form-control-plaintext mt-2" id="birth" name="birth" th:value="${info.birth}">
-                                        </div>
+                                    <div class="col-10 mt-3 mx-auto">
+                                        <hr>
+                                        <h6>주소</h6>
+                                        <input type="text" readonly class="form-control-plaintext mt-2" id="getAddress"
+                                               name="address" th:value="${info.address}">
+                                        <!--<div id="map" style="width:712px;height:300px;"></div>-->
+                                    </div>
 
-                                        <div class="col-10 mt-3 mx-auto">
-                                            <label>전화번호</label>
-                                            <input type="text" readonly class="form-control mt-2" id="phone" name="phone" th:value="${info.phone}" oninput="onInputPhone(this)" maxlength="13" />
-                                        </div>
-
-                                        <div class="col-10 mt-3 mx-auto">
-                                            <label>주소</label>
-                                            <input type="text" readonly class="form-control mt-2" id="address" name="address" th:value="${info.address}">
-                                        </div>
-
-                                        <div class="col-10 mt-3 mx-auto">
-                                            <label for="stack">보유한 기술 스택</label>
-                                            <div class="card mt-2 mb-4 p-4 col-12 post-form align-self-center">
-                                                <div id="stacks">
-                                                    <div th:each="stack : ${stacks}"  style="display: inline-block;">
-                                                        <label class="form-check-label bi-view-stacked" th:text="'  '+${stack.name}"></label>
-                                                        <br/>
-                                                    </div>
+                                    <div class="col-10 mt-3 mx-auto">
+                                        <hr>
+                                        <h6>기본 기술 스택</h6>
+                                        <div class="card mt-2 mb-4 p-4 col-12 post-form align-self-center">
+                                            <div id="stacks">
+                                                <div th:each="stack : ${stacks}" style="display: inline-block;">
+                                                    <label class="form-check-label bi-view-stacked"
+                                                           th:text="'  '+${stack.name}"></label>
+                                                    <br/>
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <input hidden type="text" name="photo" />
-
-
-                                        <div class="row col-12 my-5">
-                                            <div class="col-4">
-                                                <button type="button" class="form-control" id="back" onclick="goBack()">돌아가기</button>
-                                            </div>
-                                            <div class="col-4">
-
-                                            </div>
-                                            <div class="col-4">
-                                                <button type="button" class="form-control" id="edit" onclick="editBtn()">정보수정</button>
-                                            </div>
-                                        </div>
-
-
                                     </div>
+
+                                    <input hidden type="text" name="photo"/>
+
+
+                                    <div class="row col-12 my-5">
+                                        <div class="col-4">
+                                            <button type="button" class="form-control" id="back" onclick="goBack()">
+                                                돌아가기
+                                            </button>
+                                        </div>
+                                        <div class="col-4">
+
+                                        </div>
+                                        <div class="col-4">
+                                            <button type="button" class="form-control" id="edit" onclick="editBtn()">
+                                                정보수정
+                                            </button>
+                                        </div>
+                                    </div>
+
+
                                 </div>
                             </div>
-
                         </div>
-                    </div>
 
+                    </div>
                 </div>
+
             </div>
         </section>
+
+        <script type="text/javascript"
+                src="//dapi.kakao.com/v2/maps/sdk.js?appkey=aa6e6d1d4d257f830137caee8c12d716&libraries=services,clusterer,drawing"></script>
+
+        <script>
+            var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+                mapOption = {
+                    center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                    level: 3 // 지도의 확대 레벨
+                };
+
+            // 지도를 생성합니다
+            var map = new kakao.maps.Map(mapContainer, mapOption);
+
+            // 주소-좌표 변환 객체를 생성합니다
+            var geocoder = new kakao.maps.services.Geocoder();
+
+            //회사명 및 주소 정보를 위 태그에서 가져오기
+            var address = document.getElementById('getAddress').textContent;
+            // 주소로 좌표를 검색합니다
+            geocoder.addressSearch(address, function (result, status) {
+
+                // 정상적으로 검색이 완료됐으면
+                if (status === kakao.maps.services.Status.OK) {
+
+                    var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+                    // 결과값으로 받은 위치를 마커로 표시합니다
+                    var marker = new kakao.maps.Marker({
+                        map: map,
+                        position: coords
+                    });
+
+                    // 인포윈도우로 장소에 대한 설명을 표시합니다
+                    var infowindow = new kakao.maps.InfoWindow({
+                        content: '<div style="width:150px;text-align:center;padding:6px 0;"></div>'
+                    });
+                    infowindow.open(map, marker);
+
+                    // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+                    map.setCenter(coords);
+                }
+            });
+        </script>
     </main>
 </div>
 

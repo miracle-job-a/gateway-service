@@ -1,46 +1,51 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-    <footer class="site-footer" th:fragment="commonFooter">
+<footer class="site-footer mt-4" th:fragment="commonFooter">
 
-        <div class="container pt-5">
-            <div class="row align-items-center">
+    <div class="container">
+        <div class="row align-items-center">
 
-                <div class="col-lg-2 col-md-3 col-12">
-                    <a class="navbar-brand" href="/v1/admin/login-form">
-                        <img src="/images/pod-talk-logo.png" class="logo-image img-fluid" alt="Job-a logo-image">
-                    </a>
-                </div>
+            <div class="col-lg-2 col-md-3 col-12">
+                    <img src="/images/pod-talk-logo.png" class="logo-image img-fluid" alt="Job-a logo-image">
+            </div>
 
-                <div class="col-lg-7 col-md-9 col-12">
-                    <h6 class="site-footer-title mb-3">Contact Us</h6>
 
-                    <ul class="social-icon">
-                        <li class="social-icon-item">
-                            <a href="https://github.com/miracle-job-a" class="social-icon-link bi-github"></a>
-                        </li>
 
-                        <li class="social-icon-item">
-                            <a href="https://www.erdcloud.com/d/iKgKPWWkfP4ZrpR9T" class="social-icon-link bi-stack"></a>
-                        </li>
+            <!-- 시안2 배경색 없음 -->
+            <div class="col-lg-2 col-md-3 col-12 my-auto">
+                <h6 class="site-footer-title my-3">Contact Us</h6>
+            </div>
 
-                        <li class="social-icon-item">
-                            <a href="https://www.figma.com/file/kHi1SsYIl9jVqQXYxbZ0x5/Figma-basics?type=design&node-id=1669-162202&mode=design" class="social-icon-link bi-front"></a>
-                        </li>
+            <div class="col-lg-3 col-md-3 col-12 my-auto">
+                <ul class="social-icon my-2">
+                    <li class="social-icon-item">
+                        <a href="https://github.com/miracle-job-a" class="social-icon-link bi-github"></a>
+                    </li>
 
-                        <li class="social-icon-item">
-                            <a href="https://hamel0.notion.site/38a0ac7cd2424841a89839b345083993?pvs=4" class="social-icon-link bi-people"></a>
-                        </li>
-                    </ul>
-                </div>
+                    <li class="social-icon-item">
+                        <a href="https://www.erdcloud.com/d/iKgKPWWkfP4ZrpR9T" class="social-icon-link bi-stack"></a>
+                    </li>
 
-                <div class="col-lg-3 col-12">
-                    <p class="copyright-text mb-0">Copyright © 2023 Miracle Company
-                        <br><br>
-                        Design: <a rel="nofollow" href="https://templatemo.com/page/1" target="_parent">TemplateMo</a>
-                    </p> Distribution: <a rel="nofollow" href="https://themewagon.com" target="_blank">ThemeWagon</a>
+                    <li class="social-icon-item">
+                        <a href="https://www.figma.com/file/kHi1SsYIl9jVqQXYxbZ0x5/Figma-basics?type=design&node-id=1669-162202&mode=design" class="social-icon-link bi-front"></a>
+                    </li>
+
+                    <li class="social-icon-item">
+                        <a href="https://hamel0.notion.site/38a0ac7cd2424841a89839b345083993?pvs=4" class="social-icon-link bi-people"></a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="row col-lg-5 col-12 justify-content-end">
+                <div class="col-7 text-black">
+                    <p class="copyright-text mb-0">Copyright <span onclick="location.href='/v1/admin/login-form';">©</span>2023 Miracle Company</p>
+                        <br>
+                        Design: <a class="text-secondary" rel="nofollow" href="https://templatemo.com/page/1" target="_parent">TemplateMo</a>
                 </div>
             </div>
+
         </div>
-    </footer>
+    </div>
+</footer>
 
 </html>

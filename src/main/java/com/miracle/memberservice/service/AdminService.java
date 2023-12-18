@@ -94,18 +94,18 @@ public class AdminService {
 
     public PageMoveWithMessage getUserList(HttpSession session, int strNum, int endNum) {
         ApiResponse response = ServiceCall.getParamList(session, Const.RequestHeader.USER, "/user", strNum, endNum);
-        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("index", response.getMessage());
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("admin/main", response.getMessage());
         List<List<UserListResponseDto>> userList = ApiResponseToList.userList(response.getData());
 
-        return new PageMoveWithMessage("admin/userList", userList);
+        return new PageMoveWithMessage("admin/user-list", userList);
     }
 
     public PageMoveWithMessage getCompanyList(HttpSession session, int strNum, int endNum) {
         ApiResponse response = ServiceCall.getParamList(session, Const.RequestHeader.COMPANY, "/company/list", strNum, endNum, false);
-        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("index", response.getMessage());
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("admin/main", response.getMessage());
         List<List<CompanyListResponseDto>> companyList = ApiResponseToList.companyList(response.getData());
 
-        return new PageMoveWithMessage("admin/companyList", companyList);
+        return new PageMoveWithMessage("admin/company-list", companyList);
     }
 
     public PageMoveWithMessage getAllJob(HttpSession session) {
@@ -115,7 +115,7 @@ public class AdminService {
             return new PageMoveWithMessage("admin/main", response.getMessage());
 
         List<StackAndJobResponseDto> dtos = ApiResponseToList.stackAndJobList(response.getData());
-        return new PageMoveWithMessage("admin/jobList", dtos);
+        return new PageMoveWithMessage("admin/job-list", dtos);
     }
 
     public PageMoveWithMessage registerJob(HttpSession session, String jobName) {
@@ -142,7 +142,7 @@ public class AdminService {
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("admin/main", response.getMessage());
         List<StackAndJobResponseDto> dtos = ApiResponseToList.stackAndJobList(response.getData());
-        return new PageMoveWithMessage("admin/jobList", dtos);
+        return new PageMoveWithMessage("admin/job-list", dtos);
     }
 
     public PageMoveWithMessage getAllStack(HttpSession session) {
@@ -152,7 +152,7 @@ public class AdminService {
             return new PageMoveWithMessage("admin/main", response.getMessage());
 
         List<StackAndJobResponseDto> dtos = ApiResponseToList.stackAndJobList(response.getData());
-        return new PageMoveWithMessage("admin/stackList", dtos);
+        return new PageMoveWithMessage("admin/stack-list", dtos);
     }
 
     public PageMoveWithMessage registerStack(HttpSession session, String stackName) {
@@ -170,7 +170,7 @@ public class AdminService {
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("admin/main", response.getMessage());
 
-        return new PageMoveWithMessage("admin/stackList", response.getMessage());
+        return new PageMoveWithMessage("admin/stack-list", response.getMessage());
     }
 
     public PageMoveWithMessage searchStack(HttpSession session, String stackName) {
@@ -178,6 +178,6 @@ public class AdminService {
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("admin/main", response.getMessage());
         List<StackAndJobResponseDto> dtos = ApiResponseToList.stackAndJobList(response.getData());
-        return new PageMoveWithMessage("admin/stackList", dtos);
+        return new PageMoveWithMessage("admin/stack-list", dtos);
     }
 }

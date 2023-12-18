@@ -1,0 +1,215 @@
+<!doctype html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+        layout:decorate="~{layout/default_layout}" lang="ko">
+
+<div layout:fragment="content">
+    <script>
+        var badgeJobName;
+
+        function isJobNameExists(jobName) {
+            var jobList = document.querySelectorAll('[data-job-id]');
+            for (var i = 0; i < jobList.length; i++) {
+                if (jobList[i].textContent === jobName) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function registerJob() {
+            var jobName = document.getElementById('register').value.trim();
+
+            if (!jobName) {
+                alert('등록하고자 하는 직무명을 입력해주세요.');
+                return;
+            }
+
+            if (isJobNameExists(jobName)) {
+                alert('이미 등록된 직무입니다.');
+                return;
+            }
+
+            var confirmation = confirm("등록 후에는 삭제 할 수 없습니다. 등록하시겠습니까?");
+            if (confirmation) {
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "/v1/admin/register/job", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                var param = "jobName=" + encodeURIComponent(jobName);
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            console.log("직무가 성공적으로 등록되었습니다!");
+                            alert("성공적으로 처리되었습니다.");
+                            location.reload();
+                        } else {
+                            console.error("직무 등록에 실패했습니다. status: " + xhr.status);
+                            alert("직무 등록에 실패하였습니다.");
+                        }
+                    }
+                };
+
+                xhr.send(param);
+            }
+        }
+
+        function fillModifyForm(button) {
+            var jobId = button.getAttribute('data-job-id');
+            var jobName = button.textContent;
+            badgeJobName = button.textContent;
+
+            document.getElementById('modifyId').value = jobId;
+            document.getElementById('modify').value = jobName;
+        }
+
+        async function modifyJob() {
+            var modifiedName = document.getElementById('modify').value;
+            var jobId = document.getElementById('modifyId').value;
+
+            if (badgeJobName === modifiedName) {
+                alert('변경사항이 없습니다. 수정 할 직무명을 다시 입력해주세요.');
+                return;
+            }
+
+            if (!modifiedName) {
+                alert('수정하고자 하는 직무명을 입력해주세요.');
+                return;
+            }
+
+            if (!jobId) {
+                alert('직무명을 클릭 후 수정해주세요.');
+                return;
+            }
+
+            if (isJobNameExists(modifiedName)) {
+                alert('이미 등록되어있는 직무입니다.');
+                return;
+            }
+
+            try {
+                var response = await fetch("/v1/admin/jobs", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: "jodId=" + encodeURIComponent(jobId) + "&modifiedName=" + encodeURIComponent(modifiedName),
+                });
+
+                if (response.ok) {
+                    console.log("직무이 성공적으로 수정되었습니다!");
+                    alert("성공적으로 처리되었습니다.");
+                    location.reload();
+                } else {
+                    console.error("직무 수정에 실패했습니다. status: " + response.status);
+                    alert("직무 수정에 실패했습니다.");
+                }
+            } catch (error) {
+                console.error("modifyJob 요청 중 오류 발생:", error);
+                alert("직무 수정 중 오류가 발생했습니다.");
+            }
+        }
+
+        function validateSearch() {
+            var jobNameInput = document.querySelector('input[name="jobName"]');
+            if (jobNameInput.value.trim() === '') {
+                alert('검색하고자 하는 직무명을 입력해주세요.')
+                return false;
+            }
+            return true;
+        }
+
+    </script>
+
+
+    <main>
+        <header class="site-header d-flex flex-column justify-content-center align-items-center">
+        </header>
+
+        <section class="latest-podcast-section" id="section_2">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-9 col-12 mx-auto">
+                        <div class="section-title-wrap mb-2">
+                            <h4 class="section-title">직무 관리</h4>
+                        </div>
+
+
+                        <div class="row justify-content-center mx-auto">
+                            <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 mt-2 mb-5">
+
+                                <!-- 입력, 섹션 시작 -->
+                                <div class="card px-2 my-3 col-11 post-form mx-auto">
+                                    <div class="row col-12 my-2">
+                                        <div class="col-md-2 col-12 d-flex justify-content-center align-items-center">
+                                            <p class="h5 mb-0">등록</p>
+                                        </div>
+                                        <div class="col-md-10 col-12 ">
+                                            <div class="input-group">
+                                                <input type="text" name="name" id="register"
+                                                       class="form-control" placeholder="등록하려는 직무명 기입" required="" />
+                                                <button class="btn bi-floppy2-fill" type="button" onclick="registerJob()"></button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row col-12 my-2">
+                                        <div class="col-md-2 col-12 d-flex justify-content-center align-items-center">
+                                            <p class="h5 mb-0">수정</p>
+                                        </div>
+                                        <div class="col-md-10 col-12">
+                                            <div class="input-group">
+                                                <input type="text" name="name" id="modify"
+                                                       class="form-control" placeholder="스택 클릭 후 수정하고 싶은 직무명 기입하세요." required="" />
+                                                <input type="hidden" name="id" id="modifyId" />
+                                                <button class="btn bi-pencil-square" type="button" onclick="modifyJob()"></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <hr>
+                                <div class="card px-2 mt-4 mb-2 col-11 mx-auto">
+
+                                    <form action="/v1/admin/search/job" method="get" onsubmit="return validateSearch()" class="row col-12 my-1">
+                                        <div class="col-md-12 col-12 mx-auto ">
+                                            <div class="input-group justify-content-center align-items-center">
+                                                <input type="text" class="form-control col-lg-4" placeholder="스택을 검색" name="jobName">
+                                                <button class="btn btn-outline-secondary bi-search" type="submit" style="width: 80px;"></button>
+                                                <button  class="btn btn-outline-secondary my-2 bi-arrow-repeat"
+                                                         onclick="location.href='/v1/admin/jobs';" style="width: 80px;"></button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="card px-2 mt-1 mb-5 col-11 post-form mx-auto">
+                                    <div class="row col-12 my-2">
+                                    </div>
+                                    <div class="custom-card-border row my-1 py-4 ">
+                                        <div class="row">
+                                            <div th:each="job : ${totalJobList}" class="form-check col-md-4 col-6 ">
+                                                <span class="badge bg-light text-dark my-2"
+                                                      th:attr="data-stack-id=${job.id}"
+                                                      th:text="${job.name}"
+                                                      onclick="fillModifyForm(this)"
+                                                      style="font-size: 1.1em; padding: 0.5em;">
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+</html>

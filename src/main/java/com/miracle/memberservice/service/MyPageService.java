@@ -1,21 +1,24 @@
 package com.miracle.memberservice.service;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.miracle.memberservice.dto.request.*;
 import com.miracle.memberservice.dto.response.*;
-import com.miracle.memberservice.util.ApiResponseToList;
-import com.miracle.memberservice.util.Const;
-import com.miracle.memberservice.util.PageMoveWithMessage;
-import com.miracle.memberservice.util.ServiceCall;
+import com.miracle.memberservice.util.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.PushBuilder;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MyPageService {
+
+    private final S3Method s3Method;
 
     // 지원현황 목록 불러오기
     public PageMoveWithMessage applicationLetterList(HttpSession session, int startPage, String sort) {
@@ -28,11 +31,32 @@ public class MyPageService {
         return new PageMoveWithMessage("user/apply-list", letter);
     }
 
-    // 지원 이력서 조회하기
-    public PageMoveWithMessage resumeInApplicationLetterDetail(HttpSession session, Long applicationLetterId) {
+    // 지원취소 (지원서 삭제)
+    public PageMoveWithMessage deleteApplicationLetter(HttpSession session, Long applicationLetterId) {
         Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId);
 
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId + "/resume");
+        return new PageMoveWithMessage("redirect:/v1/user/my-page/apply-list/1");
+    }
+
+    // 지원상태 변경하기
+    public PageMoveWithMessage updateApplicationLetter(HttpSession session, Long applicationLetterId, String applicationStatus) {
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.putParam(session, Const.RequestHeader.USER,
+                "/user/" + userId + "/application-letter/" + applicationLetterId, "applicationStatus", applicationStatus);
+
+        return new PageMoveWithMessage("redirect:/v1/user/my-page/apply-list/1");
+    }
+
+    // 지원 이력서 조회하기
+    public PageMoveWithMessage resumeInApplicationLetterDetail(HttpSession session, Long applicationLetterId, Long userId) {
+        ApiResponse response;
+        if (Objects.nonNull(userId)) {
+            response = ServiceCall.getAnother(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId + "/resume", userId);
+        } else {
+            userId = (Long) session.getAttribute("id");
+            response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId + "/resume");
+        }
 
         LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
@@ -48,6 +72,7 @@ public class MyPageService {
                 .userStackIdSet((ArrayList<Integer>) data.get("userStackIdSet"))
                 .userEducation((String) data.get("userEducation"))
                 .userGitLink((String) data.get("userGitLink"))
+                .photo(s3Method.getUrl(Const.RequestHeader.RESUME, (String) data.get("userPhoto")))
                 .userCareerDetailList((List<String>) data.get("userCareerDetailList"))
                 .userProjectList((List<String>) data.get("userProjectList"))
                 .userEtcList((List<String>) data.get("userEtcList"))
@@ -57,10 +82,14 @@ public class MyPageService {
     }
 
     // 지원 자소서 조회하기
-    public PageMoveWithMessage coverLetterInApplicationLetterDetail(HttpSession session, Long applicationLetterId) {
-        Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId + "/cover-letter");
-
+    public PageMoveWithMessage coverLetterInApplicationLetterDetail(HttpSession session, Long applicationLetterId, Long userId) {
+        ApiResponse response;
+        if (Objects.nonNull(userId)) {
+            response = ServiceCall.getAnother(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId + "/cover-letter", userId);
+        } else {
+            userId = (Long) session.getAttribute("id");
+            response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId + "/application-letter/" + applicationLetterId + "/cover-letter");
+        }
         LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
         CoverLetterInApplicationLetterResponseDto letter = CoverLetterInApplicationLetterResponseDto.builder()
@@ -68,7 +97,7 @@ public class MyPageService {
                 .qnaList((List<QnaDto>) data.get("qnaList"))
                 .build();
 
-        return new PageMoveWithMessage("/user/submitted-coverLetter", letter);
+        return new PageMoveWithMessage("user/submitted-coverLetter", letter);
     }
 
     // 면접 생성
@@ -98,7 +127,7 @@ public class MyPageService {
         InterviewResponseDto interview = InterviewResponseDto.builder()
                 .qnaList((List<QnaDto>) data.get("qnaList")).build();
 
-        return new PageMoveWithMessage("/user/interview-detail", interview);
+        return new PageMoveWithMessage("user/interview-detail", interview);
     }
 
     // 면접 삭제
@@ -120,7 +149,7 @@ public class MyPageService {
     // 유저 정보 조회
     public PageMoveWithMessage userInfo(HttpSession session) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.get(session,Const.RequestHeader.USER, "/user/" + userId);
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId);
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("redirect:/v1", response.getMessage());
         Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
@@ -137,8 +166,9 @@ public class MyPageService {
 
     // 수정폼 접근 인증 api
     public PageMoveWithMessage validationUser(HttpSession session, LoginDto loginDto) {
+        loginDto.setEmail((String) session.getAttribute("email"));
         ApiResponse response = ServiceCall.post(session, loginDto, Const.RequestHeader.USER, "/user/login");
-        if (response.getHttpStatus() != 200){
+        if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("user/validation", response.getMessage());
         }
 
@@ -146,9 +176,9 @@ public class MyPageService {
     }
 
     // 수정폼 요청
-    public PageMoveWithMessage modifyUserInfo(HttpSession session){
+    public PageMoveWithMessage modifyUserInfo(HttpSession session) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.get(session,Const.RequestHeader.USER, "/user/" + userId);
+        ApiResponse response = ServiceCall.get(session, Const.RequestHeader.USER, "/user/" + userId);
         if (response.getHttpStatus() != 200)
             return new PageMoveWithMessage("redirect:/v1", response.getMessage());
         Map<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
@@ -165,12 +195,35 @@ public class MyPageService {
 
     public PageMoveWithMessage updateUserInfo(HttpSession session, UserUpdateInfoRequestDto requestDto) {
         Long userId = (Long) session.getAttribute("id");
-        ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.USER, "/user/" + userId );
+        ApiResponse response = ServiceCall.put(session, requestDto, Const.RequestHeader.USER, "/user/" + userId);
         if (response.getHttpStatus() != 200) {
             return new PageMoveWithMessage("user/modify-form", response.getMessage());
         }
         session.removeAttribute("password");
         return new PageMoveWithMessage("redirect:/v1/user/my-page/my-info");
+    }
+
+    public PageMoveWithMessage signoutUser(HttpSession session) {
+        Long userId = (Long) session.getAttribute("id");
+        ApiResponse response = ServiceCall.delete(session, Const.RequestHeader.USER, "/user/" + userId);
+        if (response.getHttpStatus() != 200) return new PageMoveWithMessage("redirect:/v1/user/my-page/my-info");
+
+        deleteResumePhotos(userId);
+
+        return new PageMoveWithMessage("redirect:/v1/user/logout");
+    }
+
+    private void deleteResumePhotos(Long userId) {
+        int i = 1;
+        while (true) {
+            String fileName = userId + "_" + i;
+            if (s3Method.isExistFile(Const.RequestHeader.RESUME, fileName)) {
+                s3Method.deleteFile(Const.RequestHeader.RESUME, fileName);
+                i++;
+            } else {
+                break;
+            }
+        }
     }
 
 }

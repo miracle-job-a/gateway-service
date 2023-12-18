@@ -69,7 +69,7 @@
         }
 
         /* 전화번호 정규식 */
-        window.onload = function() {
+        window.onload = function () {
 
             document.getElementById("addressInputBtn").addEventListener("click", function () {
                 new daum.Postcode({
@@ -110,7 +110,6 @@
         document.getElementById('phone').value = document.getElementById('phone').value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
 
 
-
         /* 전화번호 정규식 */
         function onInputPhone(input) {
             if (input.id === 'phone') {
@@ -123,10 +122,21 @@
         function cancelEditing() {
             var confirmResult = confirm("수정 취소 하시겠습니까?")
 
-            if (confirmResult){
+            if (confirmResult) {
                 window.location.href = '/v1/user/my-page/my-info';
             } else {
 
+            }
+        }
+
+        function signoutUser() {
+            var confirmResult = confirm("회원 탈퇴하시겠습니까?")
+
+            if (confirmResult) {
+                if(confirm(`정말로 탈퇴하시겠습니까?
+작성하신 이력서와 자소서, 지원한 내역 모두 삭제됩니다.`)){
+                    location.href='/v1/user/my-page/signout';
+                }
             }
         }
 
@@ -152,7 +162,7 @@
             return true;
         }
 
-        function validateForm(){
+        function validateForm() {
 
             // 빈칸 경고
 
@@ -195,7 +205,6 @@
         }
 
 
-
     </script>
 
     <main>
@@ -212,57 +221,59 @@
                         </div>
 
                         <div class="row justify-content-center">
-                            <div class="row ">
-                                <div class="col-lg-3 col-12">
-                                    <div class="custom-block-icon-wrap">
-                                        <div class="custom-block-image-wrap custom-block-image-detail-page">
-                                            <img src="/images/niniz.png" class="custom-block-image img-fluid" alt="">
-                                        </div>
+
+                            <div class="col-lg-9 col-12 ">
+                                <div class="custom-block-info post-form">
+
+                                    <div class="col-md-10 col-12 mt-4 mx-auto">
+                                        <h2 class="mb-2 " th:text="${info.name}"></h2>
                                     </div>
-                                </div>
-
-                                <div class="col-lg-9 col-12 ">
-                                    <div class="custom-block-info post-form">
-
-                                        <div class="col-10 mt-4 mx-auto">
-                                            <h2 class="mb-2 " th:text="${info.name}"></h2>
-                                        </div>
-                                        <form action="/v1/user/my-page/my-info/update" method="post" role="form" onsubmit="return validateForm()">
-                                        <div class="col-10 mt-4 mx-auto" >
-                                            <label>비밀번호 변경</label>
+                                    <form action="/v1/user/my-page/my-info/update" method="post" role="form"
+                                          onsubmit="return validateForm()">
+                                        <div class="col-md-10 col-12 mt-4 mx-auto">
+                                            <hr>
+                                            <h6><small>비밀번호 변경</small></h6>
                                             <div class="form-floating">
-                                                <input type="password" name="password" id="inputPw" class="form-control"
+                                                <input type="password" name="password" id="inputPw" class="form-control my-1"
                                                        placeholder="비밀번호" autocomplete="off">
                                                 <label for="floatingInput" id="checkPw">비밀번호(알파벳 포함 숫자 6자리 이상, 특수문자 1개
                                                     포함)<span class="text-danger">*</span></label>
                                             </div>
                                             <div class="form-floating">
-                                                <input type="password" name="passwordConfirm" id="pwConfirm"
+                                                <input type="password" name="passwordConfirm" id="pwConfirm my-1"
                                                        class="form-control mt-1"
-                                                       placeholder="비밀번호확인" >
+                                                       placeholder="비밀번호확인">
                                                 <label for="floatingInput" id="pwConfirmMsg">비밀번호 확인<span
                                                         class="text-danger">*</span></label>
                                             </div>
                                         </div>
 
-                                        <div class="col-10 mt-3 mx-auto">
-                                            <label>생년월일</label>
-                                            <input type="date" readonly class="form-control-plaintext mt-2" id="birth" name="birth" th:value="${info.birth}">
+                                        <div class="col-md-10 col-12 mt-3 mx-auto">
+                                            <hr>
+                                            <h6>생년월일</h6>
+                                            <input type="date" readonly class="form-control-plaintext mt-2" id="birth"
+                                                   name="birth" th:value="${info.birth}">
                                         </div>
 
-                                        <div class="col-10 mt-3 mx-auto">
-                                            <label>전화번호</label>
-                                            <input type="text" class="form-control mt-2" id="phone" name="phone" th:value="${info.phone}" oninput="onInputPhone(this)" maxlength="13" required/>
+                                        <div class="col-md-10 col-12 mt-3 mx-auto">
+                                            <hr>
+                                            <h6>전화번호</h6>
+                                            <input type="text" class="form-control mt-2" id="phone" name="phone"
+                                                   th:value="${info.phone}" oninput="onInputPhone(this)" maxlength="13"
+                                                   required/>
                                         </div>
 
-                                        <div class="col-10 mt-3 mx-auto">
-                                            <label>주소</label>
-                                            <input type="text" readonly class="form-control mt-2" id="address" name="address" th:value="${info.address}" required>
+                                        <div class="col-md-10 col-12 mt-3 mx-auto">
+                                            <hr>
+                                            <h6>주소</h6>
+                                            <input type="text" readonly class="form-control mt-2" id="address"
+                                                   name="address" th:value="${info.address}" required>
                                         </div>
 
-                                        <div class="col-10 mt-1 mx-auto" >
-                                            <label>상세 주소</label>
-                                            <input type="text" readonly class="form-control mt-2" id="detailAddress" name="detailAddress"  />
+                                        <div class="col-10 mt-1 mx-auto">
+                                            <h6>상세 주소</h6>
+                                            <input type="text" readonly class="form-control mt-2" id="detailAddress"
+                                                   name="detailAddress"/>
                                         </div>
 
                                         <div class="col-10 mt-1 mx-auto">
@@ -270,51 +281,54 @@
                                         </div>
 
                                         <div class="col-10 mt-3 mx-auto">
-                                            <label for="stack">보유한 기술 스택</label>
-                                            <div class="card mt-2 mb-4 p-4 col-12 post-form align-self-center">
-                                                <div id="stacks">
-                                                    <div th:each="stack : ${stacks}"  th:if="${stacks != null}">
-                                                        <label class="form-check-label bi-view-stacked" th:text="'  '+${stack.name}"></label>
+                                            <hr>
+                                            <h6>보유 기술 스택</h6>
+                                            <div class="custom-card-border row my-3 py-2 px-1 justify-content-center">
+                                                <div class="row">
+                                                    <div th:each="stack : ${allStack}" class="editStacks form-check col-md-4 col-6 mx-1 mx-auto">
+                                                        <input class="form-check-input" type="checkbox"
+                                                               th:id="'stack'+${stack.id}"
+                                                               name="stackIdSet"
+                                                               th:value="${stack.id}"
+                                                               th:checked="${stacks != null and stacks.contains(stack)}"/>
+                                                        <label class="form-check-label" th:text="${stack.name}"></label>
                                                         <br/>
                                                     </div>
                                                 </div>
-                                                <div th:each="stack : ${allStack}" class="editStacks" >
-                                                    <input class="form-check-input" type="checkbox" th:id="'stack'+${stack.id}"
-                                                           name="stackIdSet"
-                                                           th:value="${stack.id}"
-                                                           th:checked="${stacks != null and stacks.contains(stack)}"/>
-                                                    <label class="form-check-label" th:text="${stack.name}"></label>
-                                                    <br/>
-                                                </div>
                                             </div>
                                         </div>
 
-                                        <input hidden type="text" name="photo" />
+                                        <input hidden type="text" name="photo"/>
 
 
-                                        <div class="row col-12 my-5">
+                                        <div class="row col-12 my-5 mx-auto">
                                             <div class="col-4">
-                                                <button type="button" class="form-control" id="cancelBtn" onclick="cancelEditing()" >수정 취소</button>
+                                                <button type="button" class="form-control rounded-pill" id="cancelBtn"
+                                                        onclick="cancelEditing()">수정 취소
+                                                </button>
+                                            </div>
+                                            <div class="col-4">
+                                                <button type="button" class="form-control rounded-pill" id="signoutBtn"
+                                                        onclick="signoutUser()">회원 탈퇴하기
+                                                </button>
                                             </div>
                                             <div class="col-4">
 
-                                            </div>
-                                            <div class="col-4">
-
-                                                <button type="submit" class="form-control" id="submitBtn" onclick="validateForm()">수정하기</button>
+                                                <button type="submit" class="form-control" id="submitBtn"
+                                                        onclick="validateForm()">수정하기
+                                                </button>
                                             </div>
                                         </div>
 
 
-                                        </form>
-                                    </div>
+                                    </form>
                                 </div>
                             </div>
-
                         </div>
-                    </div>
 
+                    </div>
                 </div>
+
             </div>
         </section>
     </main>

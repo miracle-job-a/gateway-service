@@ -4,6 +4,18 @@
         layout:decorate="~{layout/default_layout}" lang="ko">
 
 <div layout:fragment="content">
+    <div th:if="${not #strings.isEmpty(errorMessage)}">
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            var errorMessage = [[${errorMessage}]];
+
+            if (errorMessage != null) {
+                alert(errorMessage);
+                // 이후 로직 추가 가능
+            }
+            /*]]>*/
+        </script>
+    </div>
     <script>
         // 경력사항에 대한 새로운 입력 필드 추가
         function addCareerItem(preSetId, fieldId, type) {
@@ -12,7 +24,7 @@
 
             // 새로운 입력 필드 추가 로직
             var newField = document.createElement("div");
-            newField.className = "input-group m-1 career";
+            newField.className = "input-group my-1 career";
             newField.innerHTML = `
         <input type="date" class="form-control" name="${type}_start_date" value="">
         <input type="date" class="form-control" name="${type}_end_date" value="">
@@ -132,10 +144,10 @@
                 document.getElementById('education').value,
                 document.getElementById('gitLink').value,
                 document.getElementById('career_title').value,
-                ...Array.from(document.getElementsByClassName('project')).map(function(element) {
+                ...Array.from(document.getElementsByClassName('project')).map(function (element) {
                     return element.value;
                 }),
-                ...Array.from(document.getElementsByClassName('etc')).map(function(element) {
+                ...Array.from(document.getElementsByClassName('etc')).map(function (element) {
                     return element.value;
                 })
             ];
@@ -151,7 +163,7 @@
             return true;
         }
 
-        function validateForm(){
+        function validateForm() {
 
             // 빈칸 경고
             var careerInput = document.getElementById('careerCal');
@@ -181,6 +193,12 @@
                 return false;
             }
 
+            var fileInput = document.getElementById('fileInput');
+            if (fileInput.value.trim() === '') {
+                alert('이력서 사진을 입력해주세요.');
+                return false;
+            }
+
             if (!validateSpecialCharacters()) {
                 event.preventDefault();
                 return false;
@@ -188,6 +206,19 @@
 
             // 모든 조건이 충족되면 true 반환
             return true;
+
+        }
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('preview').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                document.getElementById('preview').src = "";
+            }
 
         }
 
@@ -201,17 +232,18 @@
             <div class="container">
                 <div class="row justify-content-center">
                     <!-- 전체 박스 크기 -->
-                    <div class="col-lg-9 col-12">
-                        <div class="section-title-wrap mb-5">
+                    <form action="/v1/user/resume" method="post" role="form"
+                          class="col-lg-9 col-12" onsubmit="return validateForm()" enctype="multipart/form-data">
+                        <!-- <div class="col-lg-9 col-12"> -->
+                        <div class="section-title-wrap mb-3">
                             <h4 class="section-title">이력서 등록</h4>
                         </div>
 
                         <div class="row justify-content-center">
-                            <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
-                                <div class="col-12 mt-5"></div>
+                            <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form mb-5">
 
                                 <!-- 유저의 기본 정보 -->
-                                <div class="card p-4 col-11 post-form align-self-center">
+                                <div class="card mt-4 col-11 post-form align-self-center">
                                     <div class="row">
                                         <div class="m-2 col-12 justify-content-around">
                                             <h6 class="justify-content-around align-items-center">
@@ -219,205 +251,232 @@
                                             </h6>
                                         </div>
 
-                                        <div class="col-lg-4 col-12 ps-5 pe-5 align-self-auto">
-                                            <img src="/images/niniz.png" class="rounded float-start" alt="templatemo pod talk">
+                                        <div class="col-lg-4 col-12 px-3 align-self-auto">
+                                            <div class="custom-block-image-wrap row d-flex align-items-center justify-content-center">
+                                                <div>
+                                                    <img id="preview" class="img-fluid" alt="" style="width: 220px; height: auto; object-fit: cover;">
+                                                </div>
+                                            </div>
                                         </div>
-                                        <!--<div class="col-lg-2 col-12 align-self-auto"></div>-->
-                                        <div class="col-lg-6 col-12 ps-5 pe-5 align-self-center">
+
+                                        <div class="col-lg-7 col-12 px-3 align-self-center mx-auto">
 
                                             <div class="mb-3 row">
-                                                <label for="name" class="col-sm-3 col-form-label">이름</label>
-                                                <div class="col-sm-9">
-                                                    <input type="text" readonly class="form-control-plaintext text-center"
-                                                           style="font-size: 18px;"
-                                                           id="name" th:value="${info.name}">
+                                                <label for="name" class="col-sm-3 col-4 col-form-label mx-auto">이름</label>
+                                                <div class="col-sm-9 col-8 mx-auto">
+                                                    <input type="text" readonly="" class="form-control-plaintext text-center mx-auto" style="font-size: 18px;" id="name" th:value="${info.name}">
                                                 </div>
                                             </div>
 
                                             <div class="mb-3 row">
-                                                <label for="email" class="col-sm-3 col-form-label">이메일</label>
-                                                <div class="col-sm-9">
-                                                    <input type="email" readonly class="form-control-plaintext text-center"
-                                                           style="font-size: 18px;"
-                                                           id="email" th:value="${info.email}">
+                                                <label for="email" class="col-sm-3 col-3 col-form-label mx-auto">이메일</label>
+                                                <div class="col-sm-9 col-9 mx-auto">
+                                                    <input type="email" readonly="" class="form-control-plaintext text-center mx-auto" style="font-size: 18px;" id="email" th:value="${info.email}">
                                                 </div>
                                             </div>
 
                                             <div class="mb-3 row">
-                                                <label for="birth" class="col-sm-3 col-form-label">생년월일</label>
-                                                <div class="col-sm-9">
-                                                    <input type="date" readonly class="form-control-plaintext text-center"
-                                                           style="font-size: 18px;"
-                                                           id="birth" th:value="${info.birth}">
+                                                <label for="birth" class="col-sm-3 col-4 col-form-label mx-auto">생년월일</label>
+                                                <div class="col-sm-9 col-8 mx-auto">
+                                                    <input type="text" readonly="" class="form-control-plaintext text-center" style="font-size: 18px;" id="birth" th:value="${info.birth}">
                                                 </div>
                                             </div>
 
                                             <div class="mb-3 row">
-                                                <label for="phone" class="col-sm-3 col-form-label">전화번호</label>
-                                                <div class="col-sm-9">
-                                                    <input type="tel" readonly class="form-control-plaintext text-center"
-                                                           pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}"
-                                                           style="font-size: 18px;"
-                                                           id="phone" th:value="${info.phone}">
+                                                <label for="phone" class="col-sm-3 col-4 col-form-label mx-auto">전화번호</label>
+                                                <div class="col-sm-9 col-8 mx-auto">
+                                                    <input type="tel" readonly="" class="form-control-plaintext text-center" id="phone" th:value="${info.phone}">
                                                 </div>
                                             </div>
 
                                             <div class="mb-3 row">
-                                                <label for="address" class="col-sm-3 col-form-label">주소</label>
-                                                <div class="col-sm-9">
-                                                    <input type="tel" readonly class="form-control-plaintext text-center"
-                                                           style="font-size: 18px;"
-                                                           id="address" th:value="${info.address}">
+                                                <label for="address" class="col-sm-3 col-4 col-form-label mx-auto">주소</label>
+                                                <div class="col-sm-9 col-8 mx-auto">
+                                                    <input type="tel" readonly="" class="form-control-plaintext text-center" style="font-size: 18px;" id="address" th:value="${info.address}">
                                                 </div>
                                             </div>
+
+                                            <div class="mb-3 row">
+                                                <label for="fileInput" class="col-sm-3 col-4 col-form-label mx-auto">사진추가</label>
+                                                <div class="col-sm-9 col-8 mx-auto d-flex justify-content-center">
+                                                    <input type="file" id="fileInput" name="file" style="display: none;" onchange="readURL(this);" required>
+                                                    <button onclick="document.getElementById('fileInput').click();" class="confirm-btn">파일 업로드</button>
+                                                </div>
+                                            </div>
+
 
                                         </div>
                                     </div>
-
+                                    <hr>
                                 </div>
 
                                 <!-- 이력서 생성 폼 시작 -->
-                                <div class="card mt-4 mb-4 p-4 col-11 post-form align-self-center">
-                                    <form action="/v1/user/resume" method="post" role="form" class="row align-self-center col-12" onsubmit="return validateForm()">
-                                        <div class="col-12 mt-2">
-                                            <div class="mb-1">
-                                                <label for="title">이력서 제목</label>
+                                <div class="card mb-4 col-11 post-form align-self-center">
+                                    <div class="row align-self-center col-12">
+                                        <div class="card px-3 col-12 post-form align-self-center">
+                                            <div class="col-12 mt-1">
+                                                <div class="mb-1">
+                                                    <label for="title">이력서 제목</label>
+                                                </div>
+                                                <input type="text" name="title" id="title" class="form-control" placeholder="이력서 제목" required=""/>
                                             </div>
-                                            <input type="text" name="title" id="title"
-                                                   class="form-control" placeholder="이력서 제목" required="" />
-                                        </div>
+                                            <div class="col-12 mt-3">
+                                                <div class="mb-1">
+                                                    <label for="education">최종학력</label>
+                                                </div>
+                                                <input type="text" name="education" id="education" class="form-control" placeholder="최종학력을 기입해주세요." required=""/>
+                                            </div>
+                                            <div class="col-12 mt-3">
+                                                <div class="mb-1">
+                                                    <label for="gitLink">GitHub 주소</label>
+                                                </div>
+                                                <input type="url" class="form-control" id="gitLink" name="gitLink" placeholder="http://www.github.com" value="https://github.com/"
+                                                       size="30">
+                                            </div>
 
-                                        <div class="card mt-3 p-3 col-12 post-form align-self-center">
-                                            <div class="mb-1">
-                                                <label for="job">개발 가능한 직무를 골라주세요.</label>
-                                            </div>
-                                            <div class="card mt-2 mb-4 p-4 col-11 post-form align-self-center">
-                                                <div class="scrollable-checkboxes" style="max-height: 150px; overflow-y: auto;">
-                                                    <div th:each="job, jobStat : ${jobs}">
-                                                        <input class="form-check-input" type="checkbox" id="job" name="jobIdSet" th:value="${job.id}" />
-                                                        <label class="form-check-label" th:text="${job.name}"></label>
+                                            <div class="card mt-3 col-12 mx-auto">
+                                                <div class="mb-1">
+                                                    <label for="job">개발 가능한 직무를 골라주세요.</label>
+                                                </div>
+                                                <div class="custom-card-border row my-1 py-2 px-1 ">
+                                                    <div class="row mx-auto">
+                                                        <div th:each="job, jobStat : ${jobs}" class="editJobs form-check col-md-4 col-6 mx-auto">
+                                                            <input class="form-check-input" type="checkbox" id="job"
+                                                                   name="jobIdSet" th:value="${job.id}"/>
+                                                            <label class="form-check-label" th:text="${job.name}"></label>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="card mt-3 p-3 col-12 post-form align-self-center">
-                                            <div class="mb-1">
-                                                <label for="stack">보유한 기술 스택</label>
-                                            </div>
-                                            <div class="card mt-2 mb-4 p-4 col-11 post-form align-self-center">
-                                                <div class="scrollable-checkboxes" style="max-height: 150px; overflow-y: auto;">
-                                                    <div th:each="stack, stackStat : ${stacks}">
-                                                        <input class="form-check-input" type="checkbox" id="stack" name="stackIdSet" th:value="${stack.id}" />
-                                                        <label class="form-check-label" th:text="${stack.name}"></label>
+
+                                            <div class="card mt-3 col-12 mx-auto">
+                                                <div class="mb-1">
+                                                    <label for="stack">보유한 기술 스택</label><label class="text-secondary"> (불러오는
+                                                    스택을 변경하려면 마이페이지에서 수정가능합니다.)</label>
+                                                </div>
+                                                <div class="custom-card-border row my-1 py-2 px-1 ">
+                                                    <div class="row mx-auto">
+                                                        <div th:each="stack : ${stacks}" class="editJobs form-check col-md-3 col-6 mx-auto">
+                                                            <input class="form-check-input" type="checkbox" id="stack" name="stackIdSet"
+                                                                   th:value="${stack.id}"
+                                                                   th:checked="${stackIdSet != null and stackIdSet.contains(stack)}"/>
+                                                            <label class="form-check-label" th:text="${stack.name}"></label>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-12 mt-2">
-                                            <h6></h6>
-                                        </div>
-                                        <div class="col-12 mt-2">
-                                            <div class="mb-1">
-                                                <label for="education">최종학력</label>
-                                            </div>
-                                            <input type="text" name="education" id="education"
-                                                   class="form-control" placeholder="최종학력을 기입해주세요." required="" />
-                                        </div>
-                                        <div class="col-12 mt-2">
-                                            <div class="mb-1">
-                                                <label for="gitLink">GitHub 주소</label>
-                                            </div>
-                                            <input type="url" class="form-control" id="gitLink" name="gitLink" placeholder="http://www.github.com" value="https://github.com/" size="30" >
-                                        </div>
 
-                                        <!-- 경력사항 -->
-                                        <div class="card mt-3 p-3 col-12 post-form align-self-center" id="item1">
-                                            <div class="mb-1">
-                                                <label for="careerDetail">경력사항</label>
-                                                <button class="btn m-2" type="button" onclick="addCareerItem('pre_set1', 'field1', 'career')">+</button>
-                                                <button class="btn m-2" type="button" onclick="calculateAndSetCareer()">경력기간 계산</button>
-                                                <input type="text" readonly class="form-control" name="careerNum" id="careerInput" />
-                                                <input type="hidden" name="career" id="careerCal" value="" />
+
+                                            <!-- 경력사항 -->
+                                            <div class="card col-12 mt-3" id="item1">
+                                                <div class="mb-2 col-12">
+                                                    <label for="careerDetail">경력사항</label>
+                                                    <button class="btn m-2" type="button" onclick="addCareerItem('pre_set1', 'field1', 'career')">+</button>
+                                                    <button class="btn m-2 rounded-pill" type="button" onclick="calculateAndSetCareer()">경력기간 계산</button>
+                                                    <input type="text" readonly class="form-control" name="careerNum"
+                                                           id="careerInput"/>
+                                                    <input type="hidden" name="career" id="careerCal" value=""/>
+                                                </div>
+                                                <div class="pre_set" id="pre_set1">
+                                                    <div class="input-group my-1 career">
+                                                        <input type="date" class="form-control" name="career_start_date"
+                                                               id="start_date" value=""/>
+                                                        <input type="date" class="form-control" name="career_end_date"
+                                                               id="end_date" value=""/>
+                                                        <input type="text" class="form-control" name="career_title"
+                                                               id="career_title" value=""/>
+                                                        <input type="hidden" name="careerDetailList" id="careerDetailList"/>
+                                                        <button class="btn" type="button" value="삭제"
+                                                                onclick="removeItem(this)">-
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="field" id="field1"></div>
                                             </div>
-                                            <div class="pre_set" id="pre_set1">
-                                                <div class="input-group m-1 career">
-                                                    <input type="date" class="form-control" name="career_start_date" id="start_date" value="" />
-                                                    <input type="date" class="form-control" name="career_end_date" id="end_date" value="" />
-                                                    <input type="text" class="form-control" name="career_title" id="career_title" value="" />
-                                                    <input type="hidden" name="careerDetailList" id="careerDetailList" />
-                                                    <button class="btn" type="button" value="삭제" onclick="removeItem(this)">-</button>
+
+                                            <!-- 프로젝트 -->
+                                            <div class="card col-12 mt-3" id="item2">
+                                                <div class="mb-1 col-12">
+                                                    <label for="projectList">프로젝트</label>
+                                                    <button class="btn m-2" type="button"
+                                                            onclick="addItem('pre_set2', 'projectList')">+
+                                                    </button>
+                                                </div>
+                                                <div class="pre_set" id="pre_set2">
+                                                    <div class="input-group my-1">
+                                                        <input type="text" class="form-control" id="project"
+                                                               name="projectList" value="">
+                                                        <button class="btn" type="button" value="삭제"
+                                                                onclick="removeItem(this)">-
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="field" id="projectList"></div>
+                                            </div>
+
+                                            <!-- 기타사항 -->
+                                            <div class="card col-12 mt-3" id="item3">
+                                                <div class="mb-1 col-12">
+                                                    <label for="etcList">기타사항</label>
+                                                    <button class="btn m-2" type="button"
+                                                            onclick="addItem('pre_set3', 'etcList', 'etc')">+
+                                                    </button>
+                                                </div>
+                                                <div class="pre_set" id="pre_set3">
+                                                    <div class="input-group my-1">
+                                                        <input type="text" class="form-control" id="etc" name="etcList"
+                                                               value="">
+                                                        <button class="btn" type="button" value="삭제"
+                                                                onclick="removeItem(this)">-
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="field" id="etcList"></div>
+                                            </div>
+
+                                            <div class="col-12 mt-2 mb-4">
+                                                <div class="mb-1 col-12">
+                                                    <label for="open">이력서 공개여부</label>
+                                                </div>
+                                                <select class="form-select" aria-label="Default select example" id="open"
+                                                        name="open">
+                                                    <option value="true" selected>공개</option>
+                                                    <option value="false">비공개</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="row col-12 mx-auto">
+                                                <div class="col-4 pt-4 m-auto justify-content-center">
+                                                    <button type="button" class="form-control rounded-pill" id="back" onclick="goBack()">
+                                                        돌아가기
+                                                    </button>
+                                                </div>
+                                                <div class="col-4 pt-4 m-auto justify-content-center">
+                                                </div>
+                                                <div class="col-4 pt-4 m-auto justify-content-center">
+                                                    <div th:if="${postId!=null}">
+                                                        <input type="hidden" name="postId" th:value="${postId}">
+                                                        <input type="hidden" name="companyId" th:value="${companyId}">
+                                                        <input type="hidden" name="postType" th:value="${postType}">
+                                                    </div>
+                                                    <button type="submit" class="form-control" onclick="validateForm()">
+                                                        등록하기
+                                                    </button>
                                                 </div>
                                             </div>
-                                            <div class="field" id="field1"></div>
                                         </div>
-
-                                        <!-- 프로젝트 -->
-                                        <div class="card mt-3 p-3 col-12 post-form align-self-center" id="item2">
-                                            <div class="mb-1">
-                                                <label for="projectList">프로젝트</label>
-                                                <button class="btn m-2" type="button" onclick="addItem('pre_set2', 'projectList')">+</button>
-                                            </div>
-                                            <div class="pre_set" id="pre_set2">
-                                                <div class="input-group m-1">
-                                                    <input type="text" class="form-control" id="project" name="projectList" value="">
-                                                    <button class="btn" type="button" value="삭제" onclick="removeItem(this)">-</button>
-                                                </div>
-                                            </div>
-                                            <div class="field" id="projectList"></div>
-                                        </div>
-
-                                        <!-- 기타사항 -->
-                                        <div class="card mt-3 mb-3 p-3 col-12 post-form align-self-center" id="item3">
-                                            <div class="mb-1">
-                                                <label for="etcList">기타사항</label>
-                                                <button class="btn m-2" type="button" onclick="addItem('pre_set3', 'etcList', 'etc')">+</button>
-                                            </div>
-                                            <div class="pre_set" id="pre_set3">
-                                                <div class="input-group m-1">
-                                                    <input type="text" class="form-control" id="etc" name="etcList" value="">
-                                                    <button class="btn" type="button" value="삭제" onclick="removeItem(this)">-</button>
-                                                </div>
-                                            </div>
-                                            <div class="field" id="etcList"></div>
-                                        </div>
-
-                                        <div class="col-12 mt-2 mb-4">
-                                            <div class="mb-1">
-                                                <label for="open">이력서 공개여부</label>
-                                            </div>
-                                            <select class="form-select" aria-label="Default select example" id="open" name="open">
-                                                <option value="true" selected>공개</option>
-                                                <option value="false">비공개</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="row col-12">
-                                            <div class="col-4 pt-4 m-auto justify-content-center">
-                                                <div th:if="${postId!=null}">
-                                                    <input type="hidden" name="postId" th:value="${postId}">
-                                                    <input type="hidden" name="companyId" th:value="${companyId}">
-                                                    <input type="hidden" name="postType" th:value="${postType}">
-                                                </div>
-                                                <button type="submit" class="form-control" onclick="validateForm()" >등록하기</button>
-                                            </div>
-                                            <div class="col-4 pt-4 m-auto justify-content-center">
-                                            </div>
-                                            <div class="col-4 pt-4 m-auto justify-content-center">
-                                                <button type="button" class="form-control" id="back" onclick="goBack()">돌아가기</button>
-                                            </div>
-                                        </div>
-                                    </form>
+                                    </div>
                                 </div>
 
 
                             </div>
                         </div>
-                    </div>
-
                 </div>
+
             </div>
-        </section>
-    </main>
+</div>
+</section>
+</main>
 </div>
 
 </html>
