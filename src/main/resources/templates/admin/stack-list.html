@@ -78,6 +78,11 @@
                 return;
             }
 
+            if (!stackId) {
+                alert('스택명을 클릭 후 수정해주세요.');
+                return;
+            }
+
             if (isStackNameExists(modifiedName)) {
                 alert('이미 등록되어 있는 스택입니다.');
                 return;
