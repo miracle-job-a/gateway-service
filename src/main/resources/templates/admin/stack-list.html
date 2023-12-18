@@ -111,14 +111,12 @@
                 }
         }
 
-        function validateForm() {
-            var stackName = document.getElementById('stackNameInput').value;
-
-            if (stackName.trim() === '') {
-                alert('스택명을 검색해주세요');
+        function validateSearch() {
+            var jobNameInput = document.querySelector('input[name="jobName"]');
+            if (jobNameInput.value.trim() === '') {
+                alert('검색하고자 하는 스택명을 입력해주세요.')
                 return false;
             }
-
             return true;
         }
     </script>
@@ -161,7 +159,7 @@
                                 </div>
 
                                 <div class="card mt-4 mb-4 p-4 col-11 post-form align-self-center">
-                                    <form action="/v1/admin/search/stack" method="get" onsubmit="return validateForm()">
+                                    <form action="/v1/admin/search/stack" method="get" onsubmit="return validateSearch()">
                                     <div class="col-12 mt-3 input-group m-1 mb-5">
                                         <input type="text" class="form-control col-lg-4" placeholder="Search" name="stackName">
                                         <button class="btn" type="submit">검색</button>
