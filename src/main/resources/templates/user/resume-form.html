@@ -4,6 +4,18 @@
         layout:decorate="~{layout/default_layout}" lang="ko">
 
 <div layout:fragment="content">
+    <div th:if="${not #strings.isEmpty(errorMessage)}">
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            var errorMessage = [[${errorMessage}]];
+
+            if (errorMessage != null) {
+                alert(errorMessage);
+                // 이후 로직 추가 가능
+            }
+            /*]]>*/
+        </script>
+    </div>
     <script>
         // 경력사항에 대한 새로운 입력 필드 추가
         function addCareerItem(preSetId, fieldId, type) {

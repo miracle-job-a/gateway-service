@@ -68,8 +68,16 @@
                 var chart = new google.visualization.PieChart(document.getElementById('jobPiechart'));
                 chart.draw(data, options);
             }
+        
+
+        function redirectToUrl(element) {
+            var url = element.getAttribute('data-href');
+            window.location.href = url;
         }
+
+
         /*]]>*/
+
     </script>
 
     <main>
@@ -78,12 +86,12 @@
                 <div class="row">
                     <div class="col-lg-12 col-12 mt-3">
                         <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
-                            <div class="carousel-indicators">
+                            <!--<div class="carousel-indicators">
                                 <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
                                 <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
                                 <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
                                 <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
-                            </div>
+                            </div>-->
                             <div class="carousel-inner rounded-2">
                                 <div class="carousel-item active">
                                     <img src="/images/carousel/banner1.jpg" class="d-block w-100" >
@@ -104,11 +112,9 @@
                                     </div>
                                 </div>
                                 <div class="carousel-item" >
-                                    <a href="/v1/click/post/26/detail?companyId=41&postType=MZ">
+                                    <a href="/v1/click/post/26/detail?companyId=41&postType=MZ" class="d-block w-100">
                                         <img src="/images/carousel/banner4.jpg" class="d-block w-100" >
                                     </a>
-                                    <div class="carousel-caption d-md-block">
-                                    </div>
                                 </div>
                             </div>
                             <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
@@ -177,7 +183,7 @@
 
                     <div class="row mx-auto">
                         <div class="col-lg-4 col-12 mb-4 mb-lg-2 " th:each="post, postStat : ${map.newest}">
-                            <div class="custom-block custom-block-full mb-2 ">
+                            <div class="custom-block custom-block-full mb-2 " th:data-href="@{/v1/click/post/{postId}/detail(companyId=${post.companyId}, postId=${post.id}, postType=${post.postType})}" onclick="redirectToUrl(this)">
                                 <div class="custom-block-image-wrap">
                                     <a th:href="@{/v1/click/post/{postId}/detail(companyId=${post.companyId}, postId=${post.id}, postType=${post.postType})}">
                                         <img th:src="${post.photo}"
@@ -235,7 +241,7 @@
 
                     <div class="row mx-auto">
                         <div class="col-lg-4 col-12 mb-5 mb-lg-0" th:each="post, postStat : ${map.deadline}">
-                            <div class="custom-block custom-block-full mb-2">
+                            <div class="custom-block custom-block-full mb-2" th:data-href="@{/v1/click/post/{postId}/detail(companyId=${post.companyId}, postId=${post.id}, postType=${post.postType})}" onclick="redirectToUrl(this)">
                                 <div class="custom-block-image-wrap">
                                     <a th:href="@{/v1/click/post/{postId}/detail(companyId=${post.companyId}, postId=${post.id}, postType=${post.postType})}">
                                         <img th:src="${post.photo}"

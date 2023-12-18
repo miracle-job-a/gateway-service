@@ -4,10 +4,24 @@
         layout:decorate="~{layout/default_layout}" lang="ko">
 
 <div layout:fragment="content">
+    <div th:if="${not #strings.isEmpty(errorMessage)}">
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            var errorMessage = [[${errorMessage}]];
+
+            if (errorMessage != null) {
+                alert(errorMessage);
+                // 이후 로직 추가 가능
+            }
+            /*]]>*/
+        </script>
+    </div>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script th:inline="javascript">
+
         document.addEventListener("DOMContentLoaded", function () {
             /*<![CDATA[*/
+
             var careerDetailList = document.getElementById('careerList').value;
             var detailsArray = parseCareerDetailList(careerDetailList);
 
@@ -27,7 +41,11 @@
 
 
                 document.getElementById('field1').insertAdjacentHTML('beforeend', html);
-                document.getElementById('calculateCareerBtn').addEventListener('click', calculateAndSetCareer);
+                /*document.getElementById('calculateCareerBtn').addEventListener('click', calculateAndSetCareer);*/
+                var calculateCareerBtn = document.getElementById('calculateCareerBtn');
+                if (calculateCareerBtn) {
+                    calculateCareerBtn.addEventListener('click', calculateAndSetCareer);
+                }
 
             });
 
@@ -362,7 +380,9 @@
                                                 <div class="mb-3 row">
                                                     <label for="fileInput" class="col-sm-3 col-4 col-form-label mx-auto" id="fileLabel" style="display: none">사진추가</label>
                                                     <div class="col-sm-9 col-8 mx-auto d-flex justify-content-center" id="photoUpload" style="display: none">
-                                                        <input type="file" id="fileInput" name="file" style="display: none;" onchange="readURL(this);">
+
+                                                        <input type="file" id="fileInput" name="file" style="display: none;" onchange="readURL(this);" >
+
                                                         <button onclick="document.getElementById('fileInput').click();" id="fileUpload" style="display: none" class="confirm-btn">파일 업로드</button>
                                                     </div>
                                                 </div>
@@ -508,7 +528,7 @@
 
                                             <div class="row col-12 mx-auto">
                                                 <div class="col-4 pt-4 m-auto justify-content-center">
-                                                    <button type="button" class="form-control" th:attr="data-delete-id=${resume.id}" id="cancelBtn" onclick="cancelEditing(this)" style="display:none;">취소</button>
+                                                    <button type="button" class="form-control rounded-pill" th:attr="data-delete-id=${resume.id}" id="cancelBtn" onclick="cancelEditing(this)" style="display:none;">취소</button>
                                                     <button type="button" class="form-control" id="back" onclick="goBack()">돌아가기</button>
                                                 </div>
                                                 <div class="col-4 pt-4 m-auto justify-content-center">
