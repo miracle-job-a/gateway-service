@@ -381,7 +381,7 @@ public class ApiResponseToList {
                 }
             }
         }
-        System.out.println("ApiResponseToList pageList : " + pageList);
+
         return pageList;
     }
 
