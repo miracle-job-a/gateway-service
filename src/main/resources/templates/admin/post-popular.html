@@ -17,30 +17,29 @@
             var data = new google.visualization.DataTable();
             data.addColumn('string', 'Post');
             data.addColumn('number', 'The number of Applicants');
-            data.addColumn('number', 'Rank');
 
-            // 데이터 추가
             for (var i = 0; i < chartData.length; i++) {
                 var post = chartData[i];
-                data.addRow(["공고 타입 : " + post.postType + "\n\n 공고 제목 : " + post.title, post.applicant, i + 1]);
+                var label = "공고 타입: " + post.postType + "\n공고 제목: " + post.title;
+                data.addRow([label, post.applicant]);
             }
 
             var options = {
                 bars: 'horizontal',
                 series: {
-                    0: {axis: 'The number of Applicants'},
-                    1: {axis: 'Rank'}
+                    0: {axis: 'The number of Applicants'}
                 },
-                axes: {
-                    x: {
-                        Applicants: {label: 'The number of Applicants'},
-                        Rank: {side: 'top', label: 'Rank'}
-                    }
-                }
+                hAxis: {
+                    title: 'The number of Applicants',
+                    format: '0'
+                },
+                legend: { position: 'none' },
+                tooltip: { isHtml: true },
+                chartArea: { width: '50%' }
             };
 
-            var chart = new google.charts.Bar(document.getElementById('dual_x_div'));
-            chart.draw(data, google.charts.Bar.convertOptions(options));
+            var chart = new google.visualization.BarChart(document.getElementById('dual_x_div'));
+            chart.draw(data, options);
         }
     </script>
     <main>
@@ -52,11 +51,11 @@
                 <div class="row justify-content-center">
                     <div class="col-lg-9 col-12">
                         <div class="section-title-wrap mb-5">
-                            <h4 class="section-title">지원자 수 Top 3 공고 현황</h4>
+                            <h4 class="section-title">지원자가 많은 공고 TOP 3</h4>
                         </div>
                         </div>
                         <div class="row justify-content-center">
-                            <div class="card p-2 my-3 col-6 post-form align-self-center bg-white" style="width: 1000px; height: 700px;" id="dual_x_div"></div>
+                            <div class="card p-2 my-3 col-6 post-form align-self-center bg-white" style="width: 1000px; height: 600px;" id="dual_x_div"></div>
                         </div>
                     </div>
                 </div>
