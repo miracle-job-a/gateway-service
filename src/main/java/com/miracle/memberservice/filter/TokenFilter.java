@@ -30,33 +30,36 @@ public class TokenFilter extends HttpFilter {
             return;
         }
 
-        Optional<String> tokenOpt = Arrays.stream(request.getCookies())
-                .filter(c -> c.getName().equals("token"))
-                .map(Cookie::getValue)
-                .findFirst();
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            Optional<String> tokenOpt = Arrays.stream(cookies)
+                    .filter(c -> c.getName().equals("token"))
+                    .map(Cookie::getValue)
+                    .findFirst();
 
-        HttpSession session = request.getSession();
-        if (tokenOpt.isEmpty() || !tokenService.validateToken(tokenOpt.get())) {
-            session.getAttributeNames()
-                    .asIterator()
-                    .forEachRemaining(session::removeAttribute);
+            HttpSession session = request.getSession();
+            if (tokenOpt.isEmpty() || !tokenService.validateToken(tokenOpt.get())) {
+                session.getAttributeNames()
+                        .asIterator()
+                        .forEachRemaining(session::removeAttribute);
 
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }
-
-        String token = tokenOpt.get();
-        Map<String, String> parsedToken = tokenService.parseToken(token);
-        parsedToken.forEach((key, value) -> {
-            if (key.equals("id")) {
-                session.setAttribute("id", Long.parseLong(value));
-            } else if (key.equals("sub")) {
-                value = value.substring(value.indexOf(':') + 1);
-                session.setAttribute("email", value);
-            } else {
-                session.setAttribute(key, value);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
             }
-        });
+
+            String token = tokenOpt.get();
+            Map<String, String> parsedToken = tokenService.parseToken(token);
+            parsedToken.forEach((key, value) -> {
+                if (key.equals("id")) {
+                    session.setAttribute("id", Long.parseLong(value));
+                } else if (key.equals("sub")) {
+                    value = value.substring(value.indexOf(':') + 1);
+                    session.setAttribute("email", value);
+                } else {
+                    session.setAttribute(key, value);
+                }
+            });
+        }
 
         chain.doFilter(request, response);
     }

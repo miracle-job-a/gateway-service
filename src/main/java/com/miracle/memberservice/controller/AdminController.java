@@ -100,7 +100,7 @@ public class AdminController {
     }
 
     @GetMapping("/company/join-count")
-    public String getCompanyJoinCountByMonth(
+    public String getCompanyJoinCountByDay(
             @RequestParam(name = "year", required = false, defaultValue = "0") int year,
             @RequestParam(name = "month", required = false, defaultValue = "0") int month,
             HttpSession session, Model model) {
@@ -119,7 +119,7 @@ public class AdminController {
 
     @ResponseBody
     @GetMapping("/company/join-count/ajax")
-    public ResponseEntity<Map<String, Object>> getReloadCompanyJoinCountByMonth(
+    public ResponseEntity<Map<String, Object>> getReloadCompanyJoinCountByDay(
             @RequestParam(name = "year", required = false, defaultValue = "0") int year,
             @RequestParam(name = "month", required = false, defaultValue = "0") int month,
             HttpSession session) {
@@ -133,7 +133,7 @@ public class AdminController {
     }
 
     @GetMapping("/join-count")
-    public String getJoinCountByMonth(
+    public String getJoinCountByDay(
             @RequestParam(name = "year", required = false, defaultValue = "0") int year,
             @RequestParam(name = "month", required = false, defaultValue = "0") int month,
             HttpSession session, Model model) {
@@ -154,7 +154,7 @@ public class AdminController {
 
     @ResponseBody
     @GetMapping("/join-count/ajax")
-    public ResponseEntity<Map<String, Object>> getReloadJoinCountByMonth(
+    public ResponseEntity<Map<String, Object>> getReloadJoinCountByDay(
             @RequestParam(name = "year", required = false, defaultValue = "0") int year,
             @RequestParam(name = "month", required = false, defaultValue = "0") int month,
             HttpSession session) {

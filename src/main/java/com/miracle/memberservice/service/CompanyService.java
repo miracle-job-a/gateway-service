@@ -395,7 +395,6 @@ public class CompanyService {
             return new PageMoveWithMessage("admin/main", response.getMessage());
         } else {
             List<Map<String, Object>> postData = (List<Map<String, Object>>) response.getData();
-            System.out.println(postData);
             Map<Integer, List<Integer>> dayCounts = new HashMap<>();
 
             for (Map<String, Object> post : postData) {
@@ -419,7 +418,6 @@ public class CompanyService {
                 List<Integer> countList = dayCounts.getOrDefault(i, Arrays.asList(0, 0));
                 formattedData.add(Arrays.asList(i, countList.get(0), countList.get(1)));
             }
-            System.out.println(formattedData);
             return new PageMoveWithMessage("admin/today-post-chart", formattedData);
         }
     }
