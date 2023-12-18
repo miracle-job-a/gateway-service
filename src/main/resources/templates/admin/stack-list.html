@@ -46,7 +46,7 @@
                             location.reload();
                         } else {
                             console.error("스택 등록에 실패했습니다. status: " + xhr.status);
-                            alert("스택 수정에 실패하였습니다.");
+                            alert("스택 등록에 실패하였습니다.");
                         }
                     }
                 };
@@ -78,32 +78,46 @@
                 return;
             }
 
+            if (!stackId) {
+                alert('스택명을 클릭 후 수정해주세요.');
+                return;
+            }
+
             if (isStackNameExists(modifiedName)) {
                 alert('이미 등록되어 있는 스택입니다.');
                 return;
             }
 
             try {
-                    var response = await fetch("/v1/admin/stacks", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded",
-                        },
-                        body: "stackId=" + encodeURIComponent(stackId) + "&modifiedName=" + encodeURIComponent(modifiedName),
-                    });
+                var response = await fetch("/v1/admin/stacks", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: "stackId=" + encodeURIComponent(stackId) + "&modifiedName=" + encodeURIComponent(modifiedName),
+                });
 
-                    if (response.ok) {
-                        console.log("스택이 성공적으로 수정되었습니다!");
-                        alert("성공적으로 처리되었습니다.");
-                        location.reload();
-                    } else {
-                        console.error("스택 수정에 실패했습니다. status: " + response.status);
-                        alert("스택 수정에 실패했습니다.");
-                    }
-                } catch (error) {
-                    console.error("modifyStack 요청 중 오류 발생:", error);
-                    alert('스택 수정 중 오류가 발생했습니다. 다시 시도해주세요.');
+                if (response.ok) {
+                    console.log("스택이 성공적으로 수정되었습니다!");
+                    alert("성공적으로 처리되었습니다.");
+                    location.reload();
+                } else {
+                    console.error("스택 수정에 실패했습니다. status: " + response.status);
+                    alert("스택 수정에 실패했습니다.");
                 }
+            } catch (error) {
+                console.error("modifyStack 요청 중 오류 발생:", error);
+                alert('스택 수정 중 오류가 발생했습니다. 다시 시도해주세요.');
+            }
+        }
+
+        function validateSearch() {
+            var jobNameInput = document.querySelector('input[name="stackName"]');
+            if (jobNameInput.value.trim() === '') {
+                alert('검색하고자 하는 스택명을 입력해주세요.')
+                return false;
+            }
+            return true;
         }
     </script>
 
@@ -115,56 +129,77 @@
         <section class="latest-podcast-section" id="section_2">
             <div class="container">
                 <div class="row justify-content-center">
-                    <div class="col-lg-9 col-12">
-                        <div class="section-title-wrap mb-4">
+                    <div class="col-lg-9 col-12 mx-auto">
+                        <div class="section-title-wrap mb-2">
                             <h4 class="section-title">기술스택 관리</h4>
                         </div>
-                        <button style="float: right" class="section-title" onclick="location.href='/v1/admin/stacks';">목록보기</button>
+                        <div class="col-lg-9 col-12 align-items-end">
+                            <button  class="btn btn-outline-secondary my-2" onclick="location.href='/v1/admin/stacks';">전체보기</button>
+                        </div>
 
-                        <div style="margin-top: 10%" class="row justify-content-center">
-                            <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 mt-1 post-form">
+                        <div class="row justify-content-center mx-auto">
+                            <div class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 mt-1 ">
 
-                                <div class="col-12 mt-5"></div>
                                 <!-- 입력, 섹션 시작 -->
-                                <div class="card p-4 col-11 post-form align-self-center">
-                                    <div class="mb-1">
-                                        <label for="register">스택 등록</label>
-                                    </div>
-                                    <div class="col-12 mt-2 input-group">
-                                        <input type="text" name="name" id="register"
-                                               class="form-control" placeholder="등록하려는 스택명 기입" required="" />
-                                        <button class="btn" type="button" onclick="registerStack()">등록</button>
+                                <div class="card px-2 my-3 col-11 post-form mx-auto">
+                                    <div class="row col-12 my-2">
+                                        <div class="col-md-2 col-12 d-flex justify-content-center align-items-center">
+                                            <p class="h4 mb-0">등록</p>
+                                        </div>
+                                        <div class="col-md-10 col-12 ">
+                                            <div class="input-group">
+                                                <input type="text" name="name" id="register"
+                                                       class="form-control" placeholder="등록하려는 스택명 기입" required="" />
+                                                <button class="btn bi-floppy2-fill" type="button" onclick="registerStack()"></button>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div class="col-12 mt-2 input-group">
-                                        <input type="text" name="name" id="modify"
-                                               class="form-control" placeholder="스택 클릭 후 수정하고 싶은 스택명 기입" required="" />
-                                        <input type="hidden" name="id" id="modifyId" />
-                                        <button class="btn" type="button" onclick="modifyStack()">수정</button>
-                                    </div>
-                                </div>
-
-                                <div class="card mt-4 mb-4 p-4 col-11 post-form align-self-center">
-                                    <form action="/v1/admin/search/stack" method="get">
-                                    <div class="col-12 mt-3 input-group m-1 mb-5">
-                                        <input type="text" class="form-control col-lg-4" placeholder="Search" name="stackName">
-                                        <button class="btn" type="submit">검색</button>
-                                    </div>
-                                    </form>
-
-                                    <div class="col-12 mt-2 input-group justify-content-center">
-                                        <!-- 목록 -->
-                                        <div id="stackListContainer" class="row row-cols-lg-7">
-                                            <div class="col-lg-3 col-1 mb-4 mb-lg-2" th:each="stack : ${totalStackList}">
-                                                <button class="badge" style="background-color: #FCB711"
-                                                        th:attr="data-stack-id=${stack.id}"
-                                                        th:text="${stack.name}"
-                                                        onclick="fillModifyForm(this)">
-                                                </button>
+                                    <div class="row col-12 my-2">
+                                        <div class="col-md-2 col-12 d-flex justify-content-center align-items-center">
+                                            <p class="h4 mb-0">수정</p>
+                                        </div>
+                                        <div class="col-md-10 col-12">
+                                            <div class="input-group">
+                                                <input type="text" name="name" id="modify"
+                                                       class="form-control" placeholder="스택 클릭 후 수정하고 싶은 스택명 기입하세요." required="" />
+                                                <input type="hidden" name="id" id="modifyId" />
+                                                <button class="btn bi-pencil-square" type="button" onclick="modifyStack()"></button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
+                                <hr>
+                                <div class="card px-2 mt-4 mb-2 col-11 mx-auto">
+
+                                    <form action="/v1/admin/search/stack" method="get" onsubmit="return validateSearch()" class="row col-12 my-1">
+                                        <div class="col-md-10 col-12 mx-auto ">
+                                            <div class="input-group justify-content-center align-items-center">
+                                                <input type="text" class="form-control col-lg-4" placeholder="스택을 검색" name="stackName">
+                                                <button class="btn btn-outline-secondary bi-search" type="submit"></button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="card px-2 mt-1 mb-4 col-11 post-form mx-auto">
+                                    <div class="row col-12 my-2">
+                                    </div>
+                                    <div class="custom-card-border row my-1 py-4 px-1 ">
+                                        <div class="row mx-auto">
+                                            <div th:each="stack : ${totalStackList}" class="form-check col-md-4 col-6 text-center">
+                                                <span class="badge bg-light text-dark my-2"
+                                                        th:attr="data-stack-id=${stack.id}"
+                                                        th:text="${stack.name}"
+                                                        onclick="fillModifyForm(this)"
+                                                      style="font-size: 1.2em; padding: 0.5em 1em;">
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

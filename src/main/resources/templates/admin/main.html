@@ -4,100 +4,22 @@
         layout:decorate="~{layout/default_layout}" lang="ko">
 
 <div layout:fragment="content">
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-        google.charts.load('current', {'packages':['bar']});
-        google.charts.setOnLoadCallback(drawChart);
-
-        function drawChart() {
-            var data = google.visualization.arrayToDataTable([
-                ['Dialogue', 'Send', 'Resoponse'],
-                ['Dialogue 1', 0.5, 0.5],
-                ['Dialogue 2', 0.7, 0.3],
-                ['Dialogue 3', 0.4, 0.8],
-                ['Dialogue 4', 0.2, 1]
-            ]);
-
-            var options = {
-                chart: {
-                    title: 'Analysis of Dialogue System',
-                    subtitle: '',
-                }
-            };
-
-            var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
-
-            chart.draw(data, google.charts.Bar.convertOptions(options));
-        }
-
-        google.charts.load('current', {packages: ['corechart', 'line']});
-        google.charts.setOnLoadCallback(drawBackgroundColor);
-
-        function drawBackgroundColor() {
-            var data = new google.visualization.DataTable();
-            data.addColumn('number', 'X');
-            data.addColumn('number', 'Company');
-
-            data.addRows([
-                [0, 0],   [1, 10],  [2, 23],  [3, 17],  [4, 18],  [5, 9],
-                [6, 11],  [7, 27],  [8, 33],  [9, 40],  [10, 32], [11, 35],
-                [12, 30], [13, 40], [14, 42], [15, 47], [16, 44], [17, 48],
-                [18, 52], [19, 54], [20, 42], [21, 55], [22, 56], [23, 57],
-                [24, 60], [25, 50], [26, 52], [27, 51], [28, 49], [29, 53],
-                [30, 55], [31, 60], [32, 61], [33, 59], [34, 62], [35, 65],
-                [36, 62], [37, 58], [38, 55], [39, 61], [40, 64], [41, 65],
-                [42, 63], [43, 66], [44, 67], [45, 69], [46, 69], [47, 70],
-                [48, 72], [49, 68], [50, 66], [51, 65], [52, 67], [53, 70],
-                [54, 71], [55, 72], [56, 73], [57, 75], [58, 70], [59, 68],
-                [60, 64], [61, 60], [62, 65], [63, 67], [64, 68], [65, 69],
-                [66, 70], [67, 72], [68, 75], [69, 80]
-            ]);
-
-            var options = {
-                hAxis: {
-                    title: 'Date'
-                },
-                vAxis: {
-                    title: 'Total'
-                },
-                backgroundColor: '#f1f8e9'
-            };
-
-            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-            chart.draw(data, options);
-        }
-    </script>
-
     <main>
         <header class="site-header d-flex flex-column justify-content-center align-items-center">
         </header>
 
         <section class="latest-podcast-section" id="section_2">
             <div class="container">
-                <div class="row justify-content-center">
+                <div class="row justify-content-center mx-auto">
                     <!-- 전체 박스 크기 -->
-                    <div class="col-lg-9 col-12">
-                        <div class="section-title-wrap mb-5">
-                            <h4 class="section-title">메인 페이지</h4>
+                    <div class="col-lg-10 col-12">
+                        <div class="section-title-wrap mb-3">
+                            <h4 class="section-title">서비스 모니터링</h4>
                         </div>
+                    </div>
 
-                        <div class="row justify-content-center">
-                            <div style="margin-top: 5%" class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
-                                <div class="card p-4 mt-3 mb-3 col-6 post-form align-self-center" id="columnchart_material" style="width: 800px; height: 500px;"></div>
-                                <div class="card p-4 mt-3 mb-3 col-6 post-form align-self-center" id="chart_div" style="width: 800px; height: 500px;"></div>
-                            </div>
-                        </div>
-
-                        <div class="row justify-content-center">
-                            <div style="margin-top: 5%" class="card bg-outline-light bg-transparent text-dark shadow-lg col-12 post-form">
-                                <div class="card p-4 mt-3 mb-3 col-6 post-form align-self-center">
-                                    인사이트3
-                                </div>
-                                <div class="card p-4 mt-3 mb-3 col-6 post-form align-self-center">
-                                    인사이트4
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-12 mt-2 mb-4 mx-auto">
+                        <iframe src="http://3.36.98.12:3000/d/dfc62b67-629a-41d7-8fc4-f15632600309/mysql-admin-management?orgId=1&from=1702876427300&to=1702880027300&theme=light" width="100%" height="900px" style="border:none;"></iframe>
                     </div>
 
                 </div>
