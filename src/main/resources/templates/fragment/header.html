@@ -41,7 +41,11 @@
       </ul>
      </li>
 
-     <div class="m-auto">
+     <div class="m-auto my-2">
+      <button th:if="${session.id==null}" class="login-btn mx-2" data-bs-toggle="modal" data-bs-target="#myModal" >회원가입</button>
+     </div>
+
+     <div class="m-auto my-2">
       <a th:if="${session.id!=null}" href="/v1/user/logout" class="login-btn mx-1">로그아웃</a>
       <a th:if="${session.id==null}" href="/v1/user/login-form" class="login-btn mx-1">로그인</a>
      </div>
