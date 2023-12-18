@@ -70,7 +70,7 @@ public class UserController {
             redirectAttributes.addAttribute("companyId", resumeRequestDto.getCompanyId());
             redirectAttributes.addAttribute("postType", resumeRequestDto.getPostType());
         }
-        redirectAttributes.addAttribute("errorMessage", pmwm.getErrorMessage());
+        redirectAttributes.addFlashAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
 
@@ -120,7 +120,7 @@ public class UserController {
                                RedirectAttributes redirectAttributes,
                                @RequestParam MultipartFile file) throws IOException {
         PageMoveWithMessage pmwm = userService.updateResume(session, requestDto, resumeId, file);
-        redirectAttributes.addAttribute("errorMessage", pmwm.getErrorMessage());
+        redirectAttributes.addFlashAttribute("errorMessage", pmwm.getErrorMessage());
         return pmwm.getPageName();
     }
 

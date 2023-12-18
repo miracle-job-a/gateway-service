@@ -210,8 +210,7 @@ public class MyPageService {
 
         deleteResumePhotos(userId);
 
-        session.invalidate();
-        return new PageMoveWithMessage("redirect:/v1");
+        return new PageMoveWithMessage("redirect:/v1/user/logout");
     }
 
     private void deleteResumePhotos(Long userId) {

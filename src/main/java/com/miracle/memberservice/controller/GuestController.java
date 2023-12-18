@@ -47,33 +47,39 @@ public class GuestController {
     @GetMapping
     public String index(HttpServletRequest request, Model model) {
         HttpSession session = request.getSession();
-        Optional<Cookie> tokenCookieOpt = Arrays.stream(request.getCookies())
-                .filter(c -> "token".equals(c.getName()))
-                .findFirst();
+        Cookie[] cookies = request.getCookies();
 
-        if (tokenCookieOpt.isEmpty()) {
-            session.getAttributeNames()
-                    .asIterator()
-                    .forEachRemaining(session::removeAttribute);
-        } else {
-            String token = tokenCookieOpt.get().getValue();
-            Map<String, String> parsedToken = tokenService.parseToken(token);
-            parsedToken.forEach((key, value) -> {
-                if (key.equals("id")) {
-                    session.setAttribute("id", Long.parseLong(value));
-                } else if (key.equals("sub")) {
-                    value = value.substring(value.indexOf(':') + 1);
-                    session.setAttribute("email", value);
-                } else {
-                    session.setAttribute(key, value);
-                }
-            });
+        if (cookies != null) {
+            Optional<String> tokenOpt = Arrays.stream(cookies)
+                    .filter(c -> c.getName().equals("token"))
+                    .map(Cookie::getValue)
+                    .findFirst();
+
+            if (tokenOpt.isEmpty() || !tokenService.validateToken(tokenOpt.get())) {
+                session.getAttributeNames()
+                        .asIterator()
+                        .forEachRemaining(session::removeAttribute);
+            } else {
+                String token = tokenOpt.get();
+                Map<String, String> parsedToken = tokenService.parseToken(token);
+                parsedToken.forEach((key, value) -> {
+                    if (key.equals("id")) {
+                        session.setAttribute("id", Long.parseLong(value));
+                    } else if (key.equals("sub")) {
+                        value = value.substring(value.indexOf(':') + 1);
+                        session.setAttribute("email", value);
+                    } else {
+                        session.setAttribute(key, value);
+                    }
+                });
+            }
         }
 
         PageMoveWithMessage pmwm = companyService.mainPage(session);
         if (Objects.nonNull(session.getAttribute("bno"))) {
             Long id = (Long) session.getAttribute("id");
             model.addAttribute("count", companyService.mainPageCompany(session, id));
+            model.addAttribute("sessionBno", session.getAttribute("bno"));
             model.addAttribute("stackChartData", companyService.getStackChartData(session, id));
             model.addAttribute("jobChartData", companyService.getJobChartData(session, id));
         }

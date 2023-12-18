@@ -432,7 +432,7 @@ public class CompanyService {
 
         s3Method.deleteFile(Const.RequestHeader.COMPANY, bno);
         session.invalidate();
-        return new PageMoveWithMessage("redirect:/v1");
+        return new PageMoveWithMessage("redirect:/v1/company/logout");
     }
 
     public Object getStackChartData(HttpSession session, Long companyId) {

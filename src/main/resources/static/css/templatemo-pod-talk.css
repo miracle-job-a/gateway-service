@@ -1304,12 +1304,8 @@ h6.my-2 {
   SITE FOOTER              
 -----------------------------------------*/
 .site-footer {
- /* background-image: linear-gradient(#cf82f5, #660099);*/
   /* 시안1 단색 스타일 */
   background-image: linear-gradient(#F9F1FE, #F9F1FE);
-  /* 시안2 배경색 없음 */
-  /*border-top: 3px solid #660099;
-  background-image: var(--white-color);*/
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -1438,7 +1434,7 @@ h6.my-2 {
 @media screen and (min-width: 1600px) {
   .site-footer {
     margin-top: 40px;
-    padding-top: 60px;
+    padding-top: 20px;
   }
 }
 
@@ -1529,7 +1525,7 @@ h6.my-2 {
 
   .site-footer {
     margin-top: -50px;
-    padding-top: 50px;
+   /* padding-top: 30px;*/
     padding-bottom: 100px;
   }
 
@@ -1586,6 +1582,26 @@ h6.my-2 {
   .badge-wrap {
     display: flex;
     flex-wrap: nowrap;
+  }
+
+  .header-bno-expire, .header-approval {
+    visibility: hidden; /* 원래 텍스트를 보이지 않게 함 */
+    position: relative; /* 새로운 텍스트 위치 조정을 위해 */
+  }
+
+  .header-bno-expire::before, .header-approval::before {
+    visibility: visible; /* 새로운 텍스트 보이게 함 */
+    position: absolute; /* 부모 요소에 대해 절대 위치 설정 */
+    left: 0; top: 50%; /* 좌측 정렬 및 수직 중앙 정렬 */
+    transform: translateY(-50%); /* 수직 중앙 정렬 보정 */
+  }
+
+  .header-bno-expire::before {
+    content: "만료 여부";
+  }
+
+  .header-approval::before {
+    content: "승인";
   }
 
 }
