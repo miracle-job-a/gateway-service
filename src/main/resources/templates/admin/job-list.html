@@ -110,6 +110,17 @@
                 alert("직무 수정 중 오류가 발생했습니다.");
             }
         }
+
+        function validateForm() {
+            var jobName = document.getElementById('jobNameInput').value;
+
+            if (jobName.trim() === '') {
+                alert('직무명을 검색해주세요');
+                return false;
+            }
+
+            return true;
+        }
     </script>
 
 
