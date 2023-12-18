@@ -156,14 +156,18 @@
                                                     <input type="hidden" id="letterId" th:value="${letters.applicationLetterId}">
                                                     <input type="hidden" id="companyId" th:value="${companyInfo.companyId}">
                                                     <input type="hidden" id="postType" th:value="${letters.postType}">
-                                                    <button type="button" class="btn btn-outline-secondary me-1" th:id="${letters.postId}" name="post">공고정보</button>
+                                                    <button type="button" class="btn btn-outline-secondary me-1" th:id="${letters.postId}" name="post">
+                                                        공고
+                                                    </button>
                                                     <button type="button" class="btn btn-outline-secondary ms-1 me-1" th:id="${letters.applicationLetterId}" th:if="${letters.postType eq 'NORMAL'}" name="resume">
-                                                        지원 이력서
+                                                        <span class="d-none d-sm-inline">지원 이력서</span>
+                                                        <span class="d-sm-none">이력서</span>
                                                     </button>
                                                     <button type="button" class="btn btn-outline-secondary ms-1 me-1"
                                                             th:id="${letters.applicationLetterId}" name="coverLetter"
                                                             th:if="${letters.postType != 'MZ'}">
-                                                        지원 자기소개서
+                                                        <span class="d-none d-sm-inline">지원 자기소개서</span>
+                                                        <span class="d-sm-none">자소서</span>
                                                     </button>
                                                     <button type="button" class="btn btn-outline-secondary ms-1"
                                                             th:id="${#strings.isEmpty(letters.interviewId) ? '0' : letters.interviewId}" name="interview">
@@ -176,20 +180,35 @@
                                 </div>
 
                                 <!-- 버튼 부 -->
+                                <!--<div class="d-flex flex-column ms-auto">
+                                    <button type="button" class="btn btn-outline-secondary" th:id="${letters.applicationLetterId}" name="delete">
+                                        <span class="d-none d-sm-inline">지원취소</span>
+                                        <span class="d-inline d-sm-done">🗑️</span>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary mt-2" data-bs-toggle="modal" data-bs-target="#myModal" >
+                                        <span class="d-none d-sm-inline">진행상태 변경</span>
+                                        <span class="d-inline d-sm-zone bi-check-circle"></span>
+                                    </button>
+                                </div>-->
                                 <div class="d-flex flex-column ms-auto">
                                     <button type="button" class="btn btn-outline-secondary" th:id="${letters.applicationLetterId}" name="delete">
                                         <span class="d-none d-sm-inline">지원취소</span>
-                                        <span class="d-inline d-sm-done"></span>
+                                        <span class="d-sm-none">🗑️</span>
                                     </button>
-                                    <button type="button" class="btn btn-outline-secondary mt-2" data-bs-toggle="modal" data-bs-target="#myModal" >진행상태 변경</button>
+                                    <button type="button" class="btn btn-outline-secondary mt-2" data-bs-toggle="modal" data-bs-target="#myModal">
+                                        <span class="d-none d-sm-inline">진행상태 변경</span>
+                                        <span class="d-sm-none bi-check-circle"></span>
+                                    </button>
                                 </div>
+
+
                             </div>
                         </div>
                     </div>
 
 
                     <!-- Modal -->
-                    <div class="modal fade" id="myModal" tabindex="-2"
+                    <div class="modal modal-backdrop-dark fade" id="myModal" tabindex="-2"
                          aria-labelledby="exampleModalLabel" aria-hidden="true"
                          data-bs-backdrop="false">
                         <div class="modal-dialog modal-dialog-centered">
