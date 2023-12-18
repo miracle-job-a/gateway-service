@@ -46,7 +46,7 @@
                             location.reload();
                         } else {
                             console.error("직무 등록에 실패했습니다. status: " + xhr.status);
-                            alert("직무 수정에 실패하였습니다.");
+                            alert("직무 등록에 실패하였습니다.");
                         }
                     }
                 };
@@ -78,7 +78,12 @@
                 return;
             }
 
-            if (isStackNameExists(modifiedName)) {
+            if (!jobId) {
+                alert('직무명을 클릭 후 수정해주세요.');
+                return;
+            }
+
+            if (isJobNameExists(modifiedName)) {
                 alert('이미 등록되어있는 직무입니다.');
                 return;
             }
@@ -165,6 +170,7 @@
                                         </div>
                                     </div>
                                 </div>
+
 
                                 <hr>
                                 <div class="card px-2 mt-4 mb-2 col-11 mx-auto">
