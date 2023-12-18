@@ -34,49 +34,12 @@
             }
         }
     </script>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" th:inline="javascript">
-
-        /*<![CDATA[*/
-        var bnoNotNull = /*[[${sessionBno}]]*/ false;
-
-        if (bnoNotNull) {
-            google.charts.load('current', {'packages':['corechart']});
-            google.charts.setOnLoadCallback(stackDrawChart);
-            google.charts.setOnLoadCallback(jobDrawChart);
-
-            function stackDrawChart() {
-                var chartData = /*[[${stackChartData}]]*/ null;
-                var data = google.visualization.arrayToDataTable(chartData);
-
-                var options = {
-                    pieHole: 0.4,
-                };
-
-                var chart = new google.visualization.PieChart(document.getElementById('stackPiechart'));
-                chart.draw(data, options);
-            }
-
-            function jobDrawChart() {
-                var chartData = /*[[${jobChartData}]]*/ null;
-                var data = google.visualization.arrayToDataTable(chartData);
-
-                var options = {
-                    pieHole: 0.4,
-                };
-
-                var chart = new google.visualization.PieChart(document.getElementById('jobPiechart'));
-                chart.draw(data, options);
-            }
-        
 
         function redirectToUrl(element) {
             var url = element.getAttribute('data-href');
             window.location.href = url;
         }
-
-
-        /*]]>*/
 
     </script>
 
@@ -128,7 +91,7 @@
                         </div>
                     </div>
 
-                    <div class="row col-12 mt-1 text-end">
+                    <!--<div class="row col-12 mt-1 text-end">
                         <div class="col-2 d-none d-md-block"></div>
                         <div class="col-2 d-none d-md-block"></div>
                         <div class="col-2 d-none d-md-block"></div>
@@ -136,7 +99,7 @@
                         <div class="col-md-4 col-12">
                             <button th:if="${session.id==null}" type="button" class="btn custom-btn" data-bs-toggle="modal" data-bs-target="#myModal" >회원가입</button>
                         </div>
-                    </div>
+                    </div>-->
                 </div>
             </div>
 
