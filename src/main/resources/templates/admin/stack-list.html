@@ -110,6 +110,17 @@
                     alert('스택 수정 중 오류가 발생했습니다. 다시 시도해주세요.');
                 }
         }
+
+        function validateForm() {
+            var stackName = document.getElementById('stackNameInput').value;
+
+            if (stackName.trim() === '') {
+                alert('스택명을 검색해주세요');
+                return false;
+            }
+
+            return true;
+        }
     </script>
 
 
@@ -150,7 +161,7 @@
                                 </div>
 
                                 <div class="card mt-4 mb-4 p-4 col-11 post-form align-self-center">
-                                    <form action="/v1/admin/search/stack" method="get">
+                                    <form action="/v1/admin/search/stack" method="get" onsubmit="return validateForm()">
                                     <div class="col-12 mt-3 input-group m-1 mb-5">
                                         <input type="text" class="form-control col-lg-4" placeholder="Search" name="stackName">
                                         <button class="btn" type="submit">검색</button>
