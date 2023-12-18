@@ -483,6 +483,7 @@
                 // User signed in successfully.
                 const user = result.user;
                 alert("인증에 성공했습니다.");
+                $('#phoneNumber').prop('readonly', true);
                 $('#phoneNumberButton').prop('disabled', true);
                 $('#confirmCodeButton').prop('disabled', true);
 
