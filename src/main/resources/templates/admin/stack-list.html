@@ -46,7 +46,7 @@
                             location.reload();
                         } else {
                             console.error("스택 등록에 실패했습니다. status: " + xhr.status);
-                            alert("스택 수정에 실패하였습니다.");
+                            alert("스택 등록에 실패하였습니다.");
                         }
                     }
                 };
@@ -78,6 +78,11 @@
                 return;
             }
 
+            if (!stackId) {
+                alert('스택명을 클릭 후 수정해주세요.');
+                return;
+            }
+
             if (isStackNameExists(modifiedName)) {
                 alert('이미 등록되어 있는 스택입니다.');
                 return;
@@ -104,6 +109,15 @@
                     console.error("modifyStack 요청 중 오류 발생:", error);
                     alert('스택 수정 중 오류가 발생했습니다. 다시 시도해주세요.');
                 }
+        }
+
+        function validateSearch() {
+            var jobNameInput = document.querySelector('input[name="stackName"]');
+            if (jobNameInput.value.trim() === '') {
+                alert('검색하고자 하는 스택명을 입력해주세요.')
+                return false;
+            }
+            return true;
         }
     </script>
 
@@ -145,7 +159,7 @@
                                 </div>
 
                                 <div class="card mt-4 mb-4 p-4 col-11 post-form align-self-center">
-                                    <form action="/v1/admin/search/stack" method="get">
+                                    <form action="/v1/admin/search/stack" method="get" onsubmit="return validateSearch()">
                                     <div class="col-12 mt-3 input-group m-1 mb-5">
                                         <input type="text" class="form-control col-lg-4" placeholder="Search" name="stackName">
                                         <button class="btn" type="submit">검색</button>

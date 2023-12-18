@@ -46,7 +46,7 @@
                             location.reload();
                         } else {
                             console.error("직무 등록에 실패했습니다. status: " + xhr.status);
-                            alert("직무 수정에 실패하였습니다.");
+                            alert("직무 등록에 실패하였습니다.");
                         }
                     }
                 };
@@ -78,7 +78,12 @@
                 return;
             }
 
-            if (isStackNameExists(modifiedName)) {
+            if (!jobId) {
+                alert('직무명을 클릭 후 수정해주세요.');
+                return;
+            }
+
+            if (isJobNameExists(modifiedName)) {
                 alert('이미 등록되어있는 직무입니다.');
                 return;
             }
@@ -104,6 +109,15 @@
                 console.error("modifyJob 요청 중 오류 발생:", error);
                 alert("직무 수정 중 오류가 발생했습니다.");
             }
+        }
+
+        function validateSearch() {
+            var jobNameInput = document.querySelector('input[name="jobName"]');
+            if (jobNameInput.value.trim() === '') {
+                alert('검색하고자 하는 직무명을 입력해주세요.')
+                return false;
+            }
+            return true;
         }
     </script>
 
@@ -146,7 +160,7 @@
                                 </div>
 
                                 <div class="card mt-4 mb-4 p-4 col-11 post-form align-self-center">
-                                    <form action="/v1/admin/search/job" method="get">
+                                    <form action="/v1/admin/search/job" method="get" onsubmit="return validateSearch()">
                                     <div class="col-12 mt-3 input-group m-1 mb-5">
                                         <input type="text" class="form-control col-lg-4" placeholder="Search" name="jobName">
                                         <button class="btn" type="submit">검색</button>
