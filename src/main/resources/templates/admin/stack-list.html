@@ -119,6 +119,15 @@
             }
             return true;
         }
+
+        function validateSearch() {
+            var jobNameInput = document.querySelector('input[name="stackName"]');
+            if (jobNameInput.value.trim() === '') {
+                alert('검색하고자 하는 스택명을 입력해주세요.')
+                return false;
+            }
+            return true;
+        }
     </script>
 
 
@@ -180,6 +189,7 @@
                                                 <button class="btn btn-outline-secondary bi-search" type="submit"></button>
                                             </div>
                                         </div>
+
                                     </form>
                                 </div>
 

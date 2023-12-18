@@ -37,48 +37,49 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" th:inline="javascript">
 
-        google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(stackDrawChart);
-        google.charts.setOnLoadCallback(jobDrawChart);
+        /*<![CDATA[*/
+        var bnoNotNull = /*[[${sessionBno}]]*/ false;
 
-        function stackDrawChart() {
-            /*<![CDATA[*/
-            var chartData = /*[[${stackChartData}]]*/ null;
-            /*]]>*/
+        if (bnoNotNull) {
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(stackDrawChart);
+            google.charts.setOnLoadCallback(jobDrawChart);
 
-            var data = google.visualization.arrayToDataTable(chartData);
+            function stackDrawChart() {
+                var chartData = /*[[${stackChartData}]]*/ null;
+                var data = google.visualization.arrayToDataTable(chartData);
 
-            var options = {
-                pieHole: 0.4,
-            };
+                var options = {
+                    pieHole: 0.4,
+                };
 
-            var chart = new google.visualization.PieChart(document.getElementById('stackPiechart'));
+                var chart = new google.visualization.PieChart(document.getElementById('stackPiechart'));
+                chart.draw(data, options);
+            }
 
-            chart.draw(data, options);
-        }
+            function jobDrawChart() {
+                var chartData = /*[[${jobChartData}]]*/ null;
+                var data = google.visualization.arrayToDataTable(chartData);
 
-        function jobDrawChart() {
-            /*<![CDATA[*/
-            var chartData = /*[[${jobChartData}]]*/ null;
-            /*]]>*/
+                var options = {
+                    pieHole: 0.4,
+                };
 
-            var data = google.visualization.arrayToDataTable(chartData);
-
-            var options = {
-                pieHole: 0.4,
-            };
-
-            var chart = new google.visualization.PieChart(document.getElementById('jobPiechart'));
-
-            chart.draw(data, options);
-        }
+                var chart = new google.visualization.PieChart(document.getElementById('jobPiechart'));
+                chart.draw(data, options);
+            }
+        
 
         function redirectToUrl(element) {
             var url = element.getAttribute('data-href');
             window.location.href = url;
         }
 
+
+        /*]]>*/
+
     </script>
+
     <main>
         <section class="hero-section">
             <div class="container">
