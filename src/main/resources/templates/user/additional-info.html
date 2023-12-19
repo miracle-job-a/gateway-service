@@ -76,7 +76,7 @@
         function updateSubmitButton() {
             // 약관 동의 체크박스가 체크되고, 비밀번호와 비밀번호 확인이 일치하며, 비밀번호가 조건을 충족하면 submit 버튼 활성화
             var termsAgreeChecked = $('#termsAgree').prop('checked');
-          /*  var phoneValidation = $('#phoneNumberButton').prop('disabled');*/
+            /*  var phoneValidation = $('#phoneNumberButton').prop('disabled');*/
 
             let address = document.getElementById("address");
             if (!termsAgreeChecked) {
@@ -85,11 +85,10 @@
             }
 
 
-            /*if (!phoneValidation) {
+            if (!phoneValidation) {
                 alert("전화번호 인증을 확인해 주세요.");
                 return false;
             }
-*/
 
             if (!address.value) {
                 alert("주소 찾기 버튼을 통해 주소를 넣어주세요.")
@@ -314,8 +313,8 @@
                     // SMS sent. Prompt user to type the code from the message, then sign the
                     // user in with confirmationResult.confirm(code).
                     window.confirmationResult = confirmationResult;
-                    /*$('#confirmCode').prop('disabled', false);
-                    $('#confirmCodeButton').prop('disabled', false);*/
+                    $('#confirmCode').prop('disabled', false);
+                    $('#confirmCodeButton').prop('disabled', false);
                     console.log(confirmationResult)
                     // ...
                 }).catch((error) => {
@@ -331,13 +330,13 @@
                 // User signed in successfully.
                 const user = result.user;
                 alert("인증에 성공했습니다.");
-               /* $('#phoneNumberButton').prop('disabled', true);
-                $('#confirmCodeButton').prop('disabled', true);*/
+                 $('#phoneNumberButton').prop('disabled', true);
+                 $('#confirmCodeButton').prop('disabled', true);
 
 
             }).catch((error) => {
-                /*$('#confirmCode').prop('disabled', true);
-                $('#confirmCodeButton').prop('disabled', true);*/
+                $('#confirmCode').prop('disabled', true);
+                $('#confirmCodeButton').prop('disabled', true);
                 alert(error);
 
 
