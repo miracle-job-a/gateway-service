@@ -265,10 +265,13 @@
 
                                 <div class="custom-block-bottom d-flex justify-content-between mt-2">
                                     <a class="bi-person me-1">
-                                        <span class="text-black" th:text="'경력 '+${post.career}+'년'"></span>
+                                        <span class="text-black" th:if="${post.career} == 0"
+                                              style="font-size: 15px">신입</span>
+                                        <span class="text-black" th:unless="${post.career} == 0" th:text="'경력 '+${post.career}+'년'"
+                                              style="font-size: 15px"></span>
                                     </a>
 
-                                    <span th:text="${post.job}"></span>
+                                    <span th:text="${post.job}" style="font-size: 15px"></span>
 
                                 </div>
                             </div>

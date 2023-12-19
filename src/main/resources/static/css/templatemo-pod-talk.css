@@ -1609,6 +1609,9 @@ h6.my-2 {
     height: 400px; !* 높이를 400픽셀로 조정 *!
   }*/
 
+  .job-font {
+    font-size: 14px;
+  }
 }
 
 @media screen and (max-width: 480px) {
