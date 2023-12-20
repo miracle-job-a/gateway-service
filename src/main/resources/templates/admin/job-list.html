@@ -160,7 +160,7 @@
                                         <div class="col-md-10 col-12">
                                             <div class="input-group">
                                                 <input type="text" name="name" id="modify"
-                                                       class="form-control" placeholder="스택 클릭 후 수정하고 싶은 직무명 기입하세요." required="" />
+                                                       class="form-control" placeholder="직무 클릭 후 수정하고 싶은 직무명 기입하세요." required="" />
                                                 <input type="hidden" name="id" id="modifyId" />
                                                 <button class="btn bi-pencil-square" type="button" onclick="modifyJob()"></button>
                                             </div>
@@ -175,7 +175,7 @@
                                     <form action="/v1/admin/search/job" method="get" onsubmit="return validateSearch()" class="row col-12 my-1">
                                         <div class="col-md-12 col-12 mx-auto ">
                                             <div class="input-group justify-content-center align-items-center">
-                                                <input type="text" class="form-control col-lg-4" placeholder="스택을 검색" name="jobName">
+                                                <input type="text" class="form-control col-lg-4" placeholder="직무을 검색" name="jobName">
                                                 <button class="btn btn-outline-secondary bi-search" type="submit" style="width: 80px;"></button>
                                                 <button  class="btn btn-outline-secondary my-2 bi-arrow-repeat"
                                                          onclick="location.href='/v1/admin/jobs';" style="width: 80px;"></button>
