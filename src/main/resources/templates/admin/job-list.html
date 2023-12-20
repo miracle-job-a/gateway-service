@@ -191,7 +191,7 @@
                                         <div class="row">
                                             <div th:each="job : ${totalJobList}" class="form-check col-md-4 col-6 text-center">
                                                 <span class="badge bg-light text-dark my-2"
-                                                      th:attr="data-stack-id=${job.id}"
+                                                      th:attr="data-job-id=${job.id}"
                                                       th:text="${job.name}"
                                                       onclick="fillModifyForm(this)"
                                                       style="font-size: 1em; padding: 0.5em;">
