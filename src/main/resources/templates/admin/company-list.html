@@ -98,7 +98,7 @@
                                           </td>
                                           <td>
                                               <!-- 승인 버튼 -->
-                                              <button th:if="${company.approveStatus == false}" th:attr="data-company-id=${company.id}" class="btn btn-outline-dark rounded-3" onclick="Approval(this)">
+                                              <button th:if="${company.approveStatus == false}" th:attr="data-company-id=${company.id}" class="custom-border-cancel-btn" onclick="Approval(this)">
                                                   <span class="d-none d-sm-inline">미승인</span>
                                                   <span class="d-sm-none bi-ban"></span>
                                               </button>

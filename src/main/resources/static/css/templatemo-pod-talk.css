@@ -285,6 +285,23 @@ main {
   color: var(--white-color);
 }
 
+.custom-border-cancel-btn{
+  background: transparent;
+  border: 2px solid #6c757d;
+  border-radius: var(--border-radius-small);
+  color: #6c757d;
+  font-weight: var(--font-weight-semibold);
+  transition: all 0.3s;
+}
+
+.custom-border-cancel-btn:hover {
+  background: #6c757d; /* 변경사항: 배경색을 설정하세요 */
+  border: 2px solid #6c757d;
+  border-radius: var(--border-radius-small);
+  color: var(--white-color); /* 변경사항: 텍스트 색상을 변경하세요 */
+  font-weight: var(--font-weight-semibold);
+}
+
 .custom-border-option-btn {
   background: transparent;
   border: 2px solid var(--custom-btn-bg-color);
