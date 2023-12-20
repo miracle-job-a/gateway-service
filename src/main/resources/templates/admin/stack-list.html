@@ -37,6 +37,7 @@
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
                 var param = "stackName=" + encodeURIComponent(stackName);
+                xhr.send(param);
 
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -50,8 +51,6 @@
                         }
                     }
                 };
-
-                xhr.send(param);
             }
         }
 
