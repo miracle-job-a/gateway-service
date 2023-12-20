@@ -135,7 +135,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Modal -->
             <div class="modal modal-backdrop-dark fade" id="myModal" tabindex="-2" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="false">
                 <div class="modal-dialog modal-dialog-centered mx-auto">
@@ -434,7 +433,7 @@
                     })
                         .then(response => response.text())
                         .then(data => {
-                            if (data == 'true') {
+                            if (data === 'true') {
                                 location.href="/v1/user/loginwith?sso=google&email="+googleDto.email+"&uid="+googleDto.uid;
                             }else{
                                 location.href="/v1/user/additional-info?sso=google&email="+googleDto.email+"&uid="+googleDto.uid;
