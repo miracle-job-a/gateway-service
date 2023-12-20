@@ -1,6 +1,5 @@
  <!doctype html>
-<html
-        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         layout:decorate="~{layout/default_layout}" lang="ko">
 <div layout:fragment="content">
     <script th:inline="javascript">
@@ -128,9 +127,9 @@
                     })
                         .then(response => response.text())
                         .then(data => {
-                            if (data === 'true') {
+                            if (data == 'true') {
                                 location.href="/v1/user/loginwith?sso=google&email="+googleDto.email+"&uid="+googleDto.uid;
-                            } else {
+                            }else{
                                 location.href="/v1/user/additional-info?sso=google&email="+googleDto.email+"&uid="+googleDto.uid;
                             }
                         })
